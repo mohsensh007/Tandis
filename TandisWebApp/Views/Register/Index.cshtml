@@ -1,0 +1,106 @@
+@{
+    ViewData["Title"] = "ثبت‌نام";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">دسته‌بندی ورزش‌ها</div>
+            <div class="card-body p-0">
+                <ul id="categoryList" class="list-group list-group-flush">
+                    <li class="list-group-item text-center text-muted">در حال بارگذاری...</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">سانس‌های قابل ثبت‌نام</div>
+            <div class="card-body">
+                <div id="sanseList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="registerModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">ثبت‌نام در دوره</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="regInfo"></div>
+                <div class="mb-3 mt-3">
+                    <label class="form-label">تاریخ شروع</label>
+                    <input type="text" id="regStartDate" class="form-control" placeholder="مثال: 1405/03/20" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnConfirmRegister">ثبت‌نام</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    var selectedSanse = null;
+
+    function loadCategories() {
+        apiCall('/api/Register/SportCategories', 'GET', null, function (res) {
+            var html = '<li class="list-group-item list-group-item-action active" data-id="0" onclick="filterSanses(0)">همه</li>';
+            $.each(res.data, function (i, c) {
+                html += '<li class="list-group-item list-group-item-action" data-id="' + c.sportCatID + '" onclick="filterSanses(' + c.sportCatID + ')">' + c.sportName + '</li>';
+            });
+            $('#categoryList').html(html);
+        });
+    }
+
+    function filterSanses(catId) {
+        $('#categoryList li').removeClass('active');
+        $('#categoryList li[data-id="' + catId + '"]').addClass('active');
+        var url = '/api/Register/AvailableSanses' + (catId > 0 ? '?sportCatID=' + catId : '');
+        apiCall(url, 'GET', null, function (res) {
+            var html = '';
+            if (!res.data || res.data.length === 0) {
+                html = '<div class="text-center text-muted p-3">سانسی یافت نشد</div>';
+            } else {
+                html = '<div class="table-responsive"><table class="table table-hover"><thead><tr>' +
+                    '<th>ورزش</th><th>سانس</th><th>مربی</th><th>نوع</th><th>جلسات</th><th>مبلغ</th><th></th>' +
+                    '</tr></thead><tbody>';
+                $.each(res.data, function (i, s) {
+                    html += '<tr><td>' + s.sportName + '</td><td>' + s.sanseName + '</td>' +
+                        '<td>' + (s.coachName || '-') + '</td><td>' + s.membershipTypeDesc + '</td>' +
+                        '<td>' + s.sessionCountInPeriod + '</td><td>' + s.totalAmountDisplay + '</td>' +
+                        '<td><button class="btn btn-sm btn-primary" onclick="openRegister(' + s.sportSanseID + ',\'' + s.sportName + ' - ' + s.sanseName + '\',' + s.totalAmount + ',\'' + s.totalAmountDisplay + '\')">ثبت‌نام</button></td></tr>';
+                });
+                html += '</tbody></table></div>';
+            }
+            $('#sanseList').html(html);
+        });
+    }
+
+    function openRegister(id, name, amount, display) {
+        selectedSanse = id;
+        $('#regInfo').html('<strong>' + name + '</strong><br/><span class="text-muted">مبلغ: ' + display + '</span>');
+        $('#regStartDate').val('');
+        new bootstrap.Modal('#registerModal').show();
+    }
+
+    $('#btnConfirmRegister').click(function () {
+        var date = $.trim($('#regStartDate').val());
+        if (!date) { showToast('تاریخ شروع را وارد کنید', 'error'); return; }
+        apiCall('/api/Register/Register', 'POST', { sportSanseID: selectedSanse, startDate: date }, function (res) {
+            if (res.success) {
+                showToast(res.message, 'success');
+                bootstrap.Modal.getInstance('#registerModal').hide();
+                filterSanses($('#categoryList li.active').data('id') || 0);
+            } else { showToast(res.message, 'error'); }
+        });
+    });
+
+    $(function () { loadCategories(); filterSanses(0); });
+</script>
+}

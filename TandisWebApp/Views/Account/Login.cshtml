@@ -1,0 +1,82 @@
+@{
+    ViewData["Title"] = "ورود";
+    Layout = "_LoginLayout";
+}
+
+<div class="mb-3">
+    <div id="loginForm">
+        <div class="mb-3">
+            <label class="form-label">کد ملی</label>
+            <input type="text" id="txtNationalCode" class="form-control" placeholder="کد ملی ۱۰ رقم" maxlength="10" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">رمز عبور</label>
+            <input type="password" id="txtPassword" class="form-control" placeholder="رمز عبور" />
+        </div>
+        <button id="btnLogin" class="btn btn-primary w-100 py-2">ورود</button>
+    </div>
+    <div id="changePassForm" style="display:none;">
+        <h6 class="text-center mb-3 text-warning">⚠️ لطفاً رمز عبور خود را تغییر دهید</h6>
+        <div class="mb-3">
+            <label class="form-label">رمز قدیم</label>
+            <input type="password" id="txtOldPass" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">رمز جدید</label>
+            <input type="password" id="txtNewPass" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">تکرار رمز جدید</label>
+            <input type="password" id="txtConfirmPass" class="form-control" />
+        </div>
+        <button id="btnChangePass" class="btn btn-warning w-100 py-2">تغییر رمز</button>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    var memberName = '';
+
+    $('#btnLogin').click(function () {
+        var nc = $.trim($('#txtNationalCode').val());
+        var pw = $('#txtPassword').val();
+        if (!nc || nc.length < 10) { showToast('کد ملی را صحیح وارد کنید', 'error'); return; }
+        if (!pw) { showToast('رمز عبور را وارد کنید', 'error'); return; }
+
+        apiCall('/api/Account/Login', 'POST', { nationalCode: nc, password: pw }, function (res) {
+            if (res.success) {
+                memberName = res.data.fullName;
+                if (res.data.mustChangePassword) {
+                    $('#loginForm').hide();
+                    $('#changePassForm').show();
+                    showToast('لطفاً رمز عبور خود را تغییر دهید', 'warning');
+                } else {
+                    showToast('ورود موفقیت‌آمیز', 'success');
+                    setTimeout(function () { window.location.href = '/Home'; }, 800);
+                }
+            } else {
+                showToast(res.message, 'error');
+            }
+        });
+    });
+
+    $('#btnChangePass').click(function () {
+        var old = $('#txtOldPass').val();
+        var newP = $('#txtNewPass').val();
+        var conf = $('#txtConfirmPass').val();
+        if (!old || !newP || !conf) { showToast('تمام فیلدها را پر کنید', 'error'); return; }
+        if (newP !== conf) { showToast('رمز جدید و تکرار آن مطابقت ندارد', 'error'); return; }
+
+        apiCall('/api/Account/ChangePassword', 'POST', { oldPassword: old, newPassword: newP, confirmPassword: conf }, function (res) {
+            if (res.success) {
+                showToast(res.message, 'success');
+                setTimeout(function () { window.location.href = '/Home'; }, 800);
+            } else {
+                showToast(res.message, 'error');
+            }
+        });
+    });
+
+    $('#txtPassword').keypress(function(e) { if (e.which === 13) $('#btnLogin').click(); });
+</script>
+}

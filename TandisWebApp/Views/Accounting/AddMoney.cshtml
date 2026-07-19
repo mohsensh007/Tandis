@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "شارژ اعتبار";
+}
+
+<div class="card" style="max-width:500px;margin:auto">
+    <div class="card-header">💰 شارژ اعتبار</div>
+    <div class="card-body">
+        <div class="alert alert-info">شارژ در همین لحظه ثبت می‌شود (بدون درگاه آنلاین).</div>
+        <div class="mb-3">
+            <label class="form-label">نوع اعتبار</label>
+            <select id="ddlCreditType" class="form-select"></select>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">مبلغ (ریال)</label>
+            <input type="number" id="txtAmount" class="form-control" placeholder="مثال: 500000" min="10000" />
+        </div>
+        <button class="btn btn-success w-100" id="btnAddMoney">شارژ</button>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(function () {
+        apiCall('/api/Accounting/CreditTypes', 'GET', null, function (res) {
+            var html = '';
+            $.each(res.data, function (i, c) {
+                html += '<option value="' + c.creditTypeID + '">' + c.creditType + '</option>';
+            });
+            $('#ddlCreditType').html(html);
+        });
+    });
+
+    $('#btnAddMoney').click(function () {
+        var amount = parseInt($('#txtAmount').val()) || 0;
+        var creditTypeID = parseInt($('#ddlCreditType').val()) || 11;
+        if (amount < 10000) { showToast('حداقل مبلغ ۱۰,۰۰۰ ریال', 'error'); return; }
+        apiCall('/api/Accounting/AddMoney', 'POST', { amount: amount, creditTypeID: creditTypeID }, function (res) {
+            if (res.success) { showToast(res.message, 'success'); $('#txtAmount').val(''); }
+            else { showToast(res.message, 'error'); }
+        });
+    });
+</script>
+}

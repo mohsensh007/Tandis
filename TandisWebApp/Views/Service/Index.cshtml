@@ -1,0 +1,42 @@
+@{
+    ViewData["Title"] = "سرویس";
+}
+
+<div class="card">
+    <div class="card-header">💁 خرید سرویس <small class="text-light">(اعتبار سرویس کسر می‌شود)</small></div>
+    <div class="card-body">
+        <div id="serviceList"><div class="text-center text-muted p-3">در حال بارگذاری...</div></div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(function () {
+        apiCall('/api/Service/List', 'GET', null, function (res) {
+            var html = '';
+            if (!res.data || res.data.length === 0) {
+                html = '<div class="text-center text-muted p-3">سرویسی یافت نشد</div>';
+            } else {
+                html = '<div class="row g-3">';
+                $.each(res.data, function (i, s) {
+                    html += '<div class="col-md-4 col-6"><div class="card text-center h-100"><div class="card-body">' +
+                        '<p class="mb-1">' + s.serviceDesc + '</p>' +
+                        '<strong class="text-primary">' + s.amountDisplay + '</strong>' +
+                        '<button class="btn btn-success btn-sm mt-2 w-100" onclick="buyService(' + s.serviceID + ')">خرید</button>' +
+                        '</div></div></div>';
+                });
+                html += '</div>';
+            }
+            $('#serviceList').html(html);
+        });
+    });
+
+    function buyService(id) {
+        if (!confirm('آیا مطمئن هستید؟ مبلغ از اعتبار سرویس شما کسر خواهد شد.')) return;
+        apiCall('/api/Service/Buy', 'POST', { serviceID: id }, function (res) {
+            if (res.success) { showToast(res.message, 'success'); }
+            else { showToast(res.message, 'error'); }
+        });
+    }
+</script>
+}

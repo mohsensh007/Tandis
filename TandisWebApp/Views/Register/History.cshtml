@@ -1,0 +1,35 @@
+@{
+    ViewData["Title"] = "تاریخچه ثبت‌نام";
+}
+
+<div class="card">
+    <div class="card-header">تاریخچه ثبت‌نام‌ها</div>
+    <div class="card-body">
+        <div id="historyList"><div class="text-center text-muted p-3">در حال بارگذاری...</div></div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(function () {
+        apiCall('/api/Register/History', 'GET', null, function (res) {
+            var html = '';
+            if (!res.data || res.data.length === 0) {
+                html = '<div class="text-center text-muted p-3">ثبت‌نامی یافت نشد</div>';
+            } else {
+                html = '<div class="table-responsive"><table class="table table-striped"><thead><tr>' +
+                    '<th>دوره</th><th>مربی</th><th>شروع</th><th>پایان</th><th>وضعیت</th><th>مبلغ</th><th>جلسات</th>' +
+                    '</tr></thead><tbody>';
+                $.each(res.data, function (i, h) {
+                    var badge = h.isActive ? '<span class="badge badge-active">فعال</span>' : '<span class="badge badge-inactive">غیرفعال</span>';
+                    html += '<tr><td>' + h.sportSanseName + '</td><td>' + (h.coachName || '-') + '</td>' +
+                        '<td>' + (h.startDate || '-') + '</td><td>' + (h.endDate || '-') + '</td>' +
+                        '<td>' + badge + '</td><td>' + h.finalPaymentDisplay + '</td><td>' + h.remainingSessions + '</td></tr>';
+                });
+                html += '</tbody></table></div>';
+            }
+            $('#historyList').html(html);
+        });
+    });
+</script>
+}

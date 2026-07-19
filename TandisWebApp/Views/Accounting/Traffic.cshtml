@@ -1,0 +1,34 @@
+@{
+    ViewData["Title"] = "گزارش تردد";
+}
+
+<div class="card">
+    <div class="card-header">گزارش تردد</div>
+    <div class="card-body">
+        <div id="trafficList"><div class="text-center text-muted p-3">در حال بارگذاری...</div></div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(function () {
+        apiCall('/api/Accounting/TrafficReport', 'GET', null, function (res) {
+            var html = '';
+            if (!res.data || res.data.length === 0) {
+                html = '<div class="text-center text-muted p-3">ترددی یافت نشد</div>';
+            } else {
+                html = '<div class="table-responsive"><table class="table table-striped table-sm"><thead><tr>' +
+                    '<th>تاریخ ورود</th><th>ساعت ورود</th><th>تاریخ خروج</th><th>ساعت خروج</th><th>توضیحات</th>' +
+                    '</tr></thead><tbody>';
+                $.each(res.data, function (i, t) {
+                    html += '<tr><td>' + (t.entryDate || '-') + '</td><td>' + (t.entryTime || '-') + '</td>' +
+                        '<td>' + (t.exitDate || '-') + '</td><td>' + (t.exitTime || '-') + '</td>' +
+                        '<td>' + (t.entryDesc || '-') + '</td></tr>';
+                });
+                html += '</tbody></table></div>';
+            }
+            $('#trafficList').html(html);
+        });
+    });
+</script>
+}

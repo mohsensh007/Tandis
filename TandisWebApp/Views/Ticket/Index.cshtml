@@ -1,0 +1,45 @@
+@{
+    ViewData["Title"] = "خرید بلیت";
+}
+
+<div class="card">
+    <div class="card-header">خرید بلیت جلسه آزاد</div>
+    <div class="card-body">
+        <div class="alert alert-info">مبلغ بلیت از اعتبار ورزشی شما کسر خواهد شد.</div>
+        <div id="tarefeList"><div class="text-center text-muted p-3">در حال بارگذاری...</div></div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(function () {
+        apiCall('/api/Ticket/TarefeList', 'GET', null, function (res) {
+            var html = '';
+            if (!res.data || res.data.length === 0) {
+                html = '<div class="text-center text-muted p-3">تعرفه‌ای یافت نشد</div>';
+            } else {
+                html = '<div class="row g-3">';
+                $.each(res.data, function (i, t) {
+                    html += '<div class="col-md-4 col-6">' +
+                        '<div class="card text-center h-100"><div class="card-body">' +
+                        '<h6>' + (t.sans || '-') + '</h6>' +
+                        '<p class="mb-1">' + t.tarefe + '</p>' +
+                        '<strong class="text-primary">' + t.amountDisplay + '</strong>' +
+                        '<button class="btn btn-success btn-sm mt-2 w-100" onclick="buyTicket(' + t.tarefeID + ')">خرید</button>' +
+                        '</div></div></div>';
+                });
+                html += '</div>';
+            }
+            $('#tarefeList').html(html);
+        });
+    });
+
+    function buyTicket(id) {
+        if (!confirm('آیا مطمئن هستید؟ مبلغ از اعتبار شما کسر خواهد شد.')) return;
+        apiCall('/api/Ticket/Buy', 'POST', { tarefeID: id }, function (res) {
+            if (res.success) { showToast(res.message, 'success'); }
+            else { showToast(res.message, 'error'); }
+        });
+    }
+</script>
+}

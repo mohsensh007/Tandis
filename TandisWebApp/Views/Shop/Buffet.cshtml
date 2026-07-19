@@ -1,0 +1,122 @@
+@{
+    ViewData["Title"] = "بوفه";
+}
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-header">دسته‌بندی</div>
+            <div class="card-body p-0">
+                <ul id="catList" class="list-group list-group-flush">
+                    <li class="list-group-item list-group-item-action active" data-id="0" onclick="filterStuffs(0)">همه</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-9">
+        <div class="card">
+            <div class="card-header">☕ بوفه <small class="text-light">(اعتبار فروشگاه کسر می‌شود)</small></div>
+            <div class="card-body">
+                <div id="stuffList"><div class="text-center text-muted p-3">در حال بارگذاری...</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-header">🛒 سبد خرید</div>
+    <div class="card-body">
+        <div id="basketList" class="text-muted">سبد خرید خالی است</div>
+        <div id="basketTotal" class="mt-2" style="display:none">
+            <strong>جمع کل: <span id="totalAmount">0</span> ریال</strong>
+            <button class="btn btn-success float-start" id="btnBuyBasket">ثبت خرید</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    var basket = [];
+
+    function loadCategories() {
+        apiCall('/api/Shop/Categories?isBuffet=true', 'GET', null, function (res) {
+            $.each(res.data, function (i, c) {
+                $('#catList').append('<li class="list-group-item list-group-item-action" data-id="' + c.stuffCategoryID + '" onclick="filterStuffs(' + c.stuffCategoryID + ')">' + c.categoryDesc + '</li>');
+            });
+        });
+    }
+
+    function filterStuffs(catId) {
+        $('#catList li').removeClass('active');
+        $('#catList li[data-id="' + catId + '"]').addClass('active');
+        var url = '/api/Shop/Stuffs?isBuffet=true' + (catId > 0 ? '&categoryID=' + catId : '');
+        apiCall(url, 'GET', null, function (res) {
+            var html = '';
+            if (!res.data || res.data.length === 0) {
+                html = '<div class="text-center text-muted p-3">کالایی یافت نشد</div>';
+            } else {
+                html = '<div class="row g-3">';
+                $.each(res.data, function (i, s) {
+                    html += '<div class="col-md-4 col-6"><div class="card text-center h-100"><div class="card-body">' +
+                        '<p class="mb-1">' + s.stuffDesc + '</p>' +
+                        '<strong class="text-primary">' + s.amountDisplay + '</strong>' +
+                        '<div class="mt-2"><input type="number" min="1" value="1" class="form-control form-control-sm d-inline w-auto" id="cnt_' + s.stuffID + '">' +
+                        ' <button class="btn btn-sm btn-outline-primary" onclick="addToBasket(' + s.stuffID + ',\'' + s.stuffDesc.replace(/'/g, "\\'") + '\',' + s.stuffAmount + ')">افزودن</button></div>' +
+                        '</div></div></div>';
+                });
+                html += '</div>';
+            }
+            $('#stuffList').html(html);
+        });
+    }
+
+    function addToBasket(id, name, price) {
+        var cnt = parseInt($('#cnt_' + id).val()) || 1;
+        var existing = basket.find(function(b) { return b.stuffID === id; });
+        if (existing) { existing.count += cnt; }
+        else { basket.push({ stuffID: id, name: name, unitPrice: price, count: cnt }); }
+        renderBasket();
+        showToast('افزوده شد', 'success');
+    }
+
+    function removeFromBasket(id) {
+        basket = basket.filter(function(b) { return b.stuffID !== id; });
+        renderBasket();
+    }
+
+    function renderBasket() {
+        if (basket.length === 0) {
+            $('#basketList').html('<span class="text-muted">سبد خرید خالی است</span>');
+            $('#basketTotal').hide();
+            return;
+        }
+        var html = '<table class="table table-sm"><tbody>';
+        var total = 0;
+        $.each(basket, function (i, b) {
+            var t = b.unitPrice * b.count;
+            total += t;
+            html += '<tr><td>' + b.name + '</td><td>' + b.count + '</td><td>' + Number(t).toLocaleString() + ' ریال</td>' +
+                '<td><button class="btn btn-sm btn-danger" onclick="removeFromBasket(' + b.stuffID + ')">حذف</button></td></tr>';
+        });
+        html += '</tbody></table>';
+        $('#basketList').html(html);
+        $('#totalAmount').text(Number(total).toLocaleString());
+        $('#basketTotal').show();
+    }
+
+    $('#btnBuyBasket').click(function () {
+        if (basket.length === 0) return;
+        if (!confirm('آیا مطمئن هستید؟')) return;
+        var items = basket.map(function(b) { return { stuffID: b.stuffID, unitPrice: b.unitPrice, count: b.count }; });
+        apiCall('/api/Shop/Buy', 'POST', { items: items, isBuffet: true }, function (res) {
+            if (res.success) {
+                showToast(res.message, 'success');
+                basket = [];
+                renderBasket();
+            } else { showToast(res.message, 'error'); }
+        });
+    });
+
+    $(function () { loadCategories(); filterStuffs(0); });
+</script>
+}
