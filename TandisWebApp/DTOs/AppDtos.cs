@@ -46,6 +46,23 @@ namespace TandisWebApp.DTOs
         public string FinalPaymentDisplay { get; set; } = string.Empty;
     }
 
+    /// <summary>اطلاعات یک سانس فعال عضو (برای داشبورد)</summary>
+    public class ActiveSanseDto
+    {
+        public long SportMemberID { get; set; }
+        public int SportSanseID { get; set; }
+        public string SportName { get; set; } = string.Empty;
+        public string SanseName { get; set; } = string.Empty;
+        public string? CoachName { get; set; }
+        public string StartDate { get; set; } = string.Empty;
+        public string EndDate { get; set; } = string.Empty;
+        public int TotalSessions { get; set; }
+        public int UsedSessions { get; set; }
+        public int RemainingSessions { get; set; }
+        public string? MembershipTypeDesc { get; set; }
+        public string? PeriodDesc { get; set; }
+    }
+
     // ============================================================
     //  بلیط / جلسه آزاد / سرویس / فروشگاه
     // ============================================================

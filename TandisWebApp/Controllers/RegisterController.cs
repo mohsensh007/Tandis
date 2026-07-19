@@ -87,5 +87,15 @@ namespace TandisWebApp.Controllers
             var list = await _register.GetRegisterHistoryAsync(memberID);
             return Ok(new { success = true, data = list });
         }
+
+        /// <summary>دریافت سانس‌های فعال فعلی کاربر (برای داشبورد)</summary>
+        [HttpGet]
+        [Route("api/Register/ActiveSanses")]
+        public async Task<IActionResult> ActiveSanses()
+        {
+            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
+            var list = await _register.GetActiveSansesAsync(memberID);
+            return Ok(new { success = true, data = list });
+        }
     }
 }

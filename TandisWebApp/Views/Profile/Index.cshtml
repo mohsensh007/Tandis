@@ -8,10 +8,6 @@
             <div class="card-header">تصویر پروفایل</div>
             <div class="card-body">
                 <div id="avatar" class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width:120px;height:120px;font-size:2.5rem">👤</div>
-                <div class="mt-3">
-                    <input type="file" id="photoInput" accept="image/*" class="form-control form-control-sm" style="display:none" />
-                    <button class="btn btn-sm btn-outline-primary" onclick="$('#photoInput').click()">آپلود عکس</button>
-                </div>
             </div>
         </div>
     </div>
@@ -22,11 +18,11 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">نام</label>
-                        <input type="text" id="txtFirstName" class="form-control" />
+                        <input type="text" id="txtFirstName" class="form-control" readonly />
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">نام خانوادگی</label>
-                        <input type="text" id="txtLastName" class="form-control" />
+                        <input type="text" id="txtLastName" class="form-control" readonly />
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">کد ملی</label>
@@ -34,18 +30,17 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">شماره موبایل</label>
-                        <input type="text" id="txtMobile" class="form-control" />
+                        <input type="text" id="txtMobile" class="form-control" readonly />
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">تاریخ تولد</label>
-                        <input type="text" id="txtBirthDate" class="form-control" placeholder="1400/01/01" />
+                        <input type="text" id="txtBirthDate" class="form-control" readonly />
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">کد عضویت</label>
                         <input type="text" id="txtMemberID" class="form-control" readonly />
                     </div>
                 </div>
-                <button class="btn btn-primary mt-3" id="btnSaveProfile">ذخیره تغییرات</button>
             </div>
         </div>
     </div>
@@ -66,7 +61,7 @@
     </div>
     <div class="col-md-3">
         <div class="card text-center p-3">
-            <div class="text-muted small">اعتبار سرویس</div>
+            <div class="text-muted small">اعتبار خدمات</div>
             <div class="fw-bold text-warning fs-5" id="creditService">-</div>
         </div>
     </div>
@@ -91,39 +86,13 @@
             $('#txtMobile').val(d.mobile || '');
             $('#txtBirthDate').val(d.birthDate || '');
             $('#txtMemberID').val(d.memberID);
+            if (d.personImageBase64) {
+                $('#avatar').html('<img src="data:image/png;base64,' + d.personImageBase64 + '" class="rounded-circle" style="width:120px;height:120px;object-fit:cover" />');
+            }
             $('#creditSport').text(Number(d.sportCredit).toLocaleString() + ' ریال');
             $('#creditBuffet').text(Number(d.buffetCredit).toLocaleString() + ' ریال');
             $('#creditService').text(Number(d.serviceCredit).toLocaleString() + ' ریال');
             $('#totalDebit').text(Number(d.totalDebit).toLocaleString() + ' ریال');
-        });
-    });
-
-    $('#photoInput').change(function () {
-        var file = this.files[0];
-        if (!file) return;
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            var base64 = e.target.result.split(',')[1];
-            apiCall('/api/Profile/UpdatePhoto', 'POST', { photoBase64: base64 }, function (res) {
-                if (res.success) {
-                    showToast(res.message, 'success');
-                    $('#avatar').html('<img src="' + e.target.result + '" class="rounded-circle" style="width:120px;height:120px;object-fit:cover" />');
-                } else { showToast(res.message, 'error'); }
-            });
-        };
-        reader.readAsDataURL(file);
-    });
-
-    $('#btnSaveProfile').click(function () {
-        var data = {
-            firstName: $.trim($('#txtFirstName').val()),
-            lastName: $.trim($('#txtLastName').val()),
-            mobile: $.trim($('#txtMobile').val()),
-            birthDate: $.trim($('#txtBirthDate').val())
-        };
-        apiCall('/api/Profile/UpdateInfo', 'POST', data, function (res) {
-            if (res.success) { showToast(res.message, 'success'); }
-            else { showToast(res.message, 'error'); }
         });
     });
 </script>

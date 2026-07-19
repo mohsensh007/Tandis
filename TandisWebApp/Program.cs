@@ -119,9 +119,13 @@ app.UseAuthorization();
 // ============================================================
 // 6) Routes
 // ============================================================
-// مسیر پیش‌فرض: داشبورد (اگر کاربر لاگین نکرده باشد، به‌طور خودکار به /Account/Login هدایت می‌شود)
+
+// مسیر ریشه: ریدایرکت به صفحه لاگین
+app.MapGet("/", () => Results.Redirect("/Account/Login"));
+
+// مسیر پیش‌فرض: اگر URL فقط controller باشه، action پیش‌فرض Index اجرا میشه
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Account}/{action=Login}/{id?}");
+    pattern: "{controller}/{action=Index}/{id?}");
 
 app.Run();

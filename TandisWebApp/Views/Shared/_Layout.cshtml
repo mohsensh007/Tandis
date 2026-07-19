@@ -8,23 +8,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - تندیس</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand fw-bold" href="/Home">🏆 تندیس</a>
+            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/Home">
+                <img src="~/images/logo2.png" alt="تندیس" height="36" />
+                تندیس
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarMain">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item"><a class="nav-link" href="/Home"><i class="bi bi-house"></i> داشبورد</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/Register"><i class="bi bi-pencil-square"></i> ثبت‌نام</a></li>
                     <li class="nav-item"><a class="nav-link" href="/Register/Renew"><i class="bi bi-arrow-repeat"></i> تمدید</a></li>
                     <li class="nav-item"><a class="nav-link" href="/Ticket"><i class="bi bi-ticket-perforated"></i> بلیت</a></li>
                     <li class="nav-item"><a class="nav-link" href="/Shop"><i class="bi bi-bag"></i> فروشگاه</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/Service"><i class="bi bi-gear"></i> سرویس</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/Service"><i class="bi bi-gear"></i> خدمات</a></li>
                     <li class="nav-item"><a class="nav-link" href="/Accounting"><i class="bi bi-wallet2"></i> مالی</a></li>
                     <li class="nav-item"><a class="nav-link" href="/Profile"><i class="bi bi-person-circle"></i> پروفایل</a></li>
                 </ul>

@@ -2,13 +2,17 @@
     ViewData["Title"] = "داشبورد";
 }
 
+@* === نوار اطلاعات کاربر === *@
 <div id="profileBar" class="card mb-3">
     <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <div>
-            <strong id="dashFullName">در حال بارگذاری...</strong>
-            <span class="text-muted me-3" id="dashMemberId"></span>
+        <div class="d-flex align-items-center gap-3">
+            <div id="dashAvatar" class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center" style="width:48px;height:48px;font-size:1.4rem">👤</div>
+            <div>
+                <strong id="dashFullName">در حال بارگذاری...</strong>
+                <div class="text-muted small" id="dashMemberId"></div>
+            </div>
         </div>
-        <div class="d-flex gap-3">
+        <div class="d-flex gap-2 flex-wrap">
             <span class="badge bg-success fs-6" id="dashSportCredit">-</span>
             <span class="badge bg-info fs-6" id="dashBuffetCredit">-</span>
             <span class="badge bg-warning text-dark fs-6" id="dashServiceCredit">-</span>
@@ -16,44 +20,284 @@
     </div>
 </div>
 
-<div class="row g-3">
-    <div id="dashCards" class="col-12"></div>
+@* === سانس‌های فعال === *@
+<div class="card mb-3">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span>🎟️ سانس‌های فعال شما</span>
+        <span class="badge bg-light text-dark" id="activeSansesCount">۰</span>
+    </div>
+    <div class="card-body">
+        <div id="activeSanses" class="row g-3">
+            <div class="empty-state">
+                <div class="empty-icon">⏳</div>
+                در حال بارگذاری...
+            </div>
+        </div>
+    </div>
+</div>
+
+@* === کارت‌های آمار مالی === *@
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-3">
+        <div class="card stat-card h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-gradient-success">💳</div>
+                <div>
+                    <div class="stat-label">اعتبار ورزشی</div>
+                    <div class="stat-value" id="statSport">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-gradient-info">🛒</div>
+                <div>
+                    <div class="stat-label">اعتبار فروشگاه</div>
+                    <div class="stat-value" id="statBuffet">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-gradient-warning">💆</div>
+                <div>
+                    <div class="stat-label">اعتبار خدمات</div>
+                    <div class="stat-value" id="statService">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card stat-card h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-gradient-danger">⚠️</div>
+                <div>
+                    <div class="stat-label">بدهی</div>
+                    <div class="stat-value" id="statDebit">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* === گزارش‌ها === *@
+<div class="card">
+    <div class="card-header">📊 گزارش‌ها</div>
+    <div class="card-body">
+        <ul class="nav nav-tabs nav-tabs-custom mb-3" id="reportTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="finance-tab" data-bs-toggle="tab" data-bs-target="#financePane" type="button" role="tab">💰 گزارش مالی</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="traffic-tab" data-bs-toggle="tab" data-bs-target="#trafficPane" type="button" role="tab" role="tab">🚪 گزارش تردد</button>
+            </li>
+        </ul>
+
+        <div class="tab-content">
+            @* --- گزارش مالی --- *@
+            <div class="tab-pane fade show active" id="financePane" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table report-table">
+                        <thead>
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>نوع</th>
+                                <th>شرح</th>
+                                <th class="text-end">مبلغ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financeRows">
+                            <tr><td colspan="4" class="empty-state">⏳ در حال بارگذاری...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            @* --- گزارش تردد --- *@
+            <div class="tab-pane fade" id="trafficPane" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table report-table">
+                        <thead>
+                            <tr>
+                                <th>تاریخ ورود</th>
+                                <th>ساعت ورود</th>
+                                <th>تاریخ خروج</th>
+                                <th>ساعت خروج</th>
+                                <th>شرح</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trafficRows">
+                            <tr><td colspan="5" class="empty-state">⏳ در حال بارگذاری...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* === دسترسی سریع === *@
+<div class="row g-3 mt-1">
+    <div class="col-4 col-md-2"><a href="/Register/Renew" class="quick-link"><div class="ql-icon">🔄</div><div class="ql-title">تمدید دوره</div></a></div>
+    <div class="col-4 col-md-2"><a href="/Ticket" class="quick-link"><div class="ql-icon">🎫</div><div class="ql-title">خرید بلیت</div></a></div>
+    <div class="col-4 col-md-2"><a href="/Shop" class="quick-link"><div class="ql-icon">🛒</div><div class="ql-title">فروشگاه</div></a></div>
+    <div class="col-4 col-md-2"><a href="/Shop/Buffet" class="quick-link"><div class="ql-icon">☕</div><div class="ql-title">بوفه</div></a></div>
+    <div class="col-4 col-md-2"><a href="/Service" class="quick-link"><div class="ql-icon">💆</div><div class="ql-title">خدمات</div></a></div>
+    <div class="col-4 col-md-2"><a href="/Profile" class="quick-link"><div class="ql-icon">👤</div><div class="ql-title">پروفایل</div></a></div>
 </div>
 
 @section Scripts {
 <script>
-    $(function () {
-        // بارگذاری پروفایل سریع
-        apiCall('/api/Profile/GetProfile', 'GET', null, function (res) {
-            if (res.success) {
-                var d = res.data;
-                $('#dashFullName').text(d.fullName);
-                $('#dashMemberId').text('کد عضویت: ' + d.memberID);
-                $('#dashSportCredit').text('اعتبار ورزشی: ' + Number(d.sportCredit).toLocaleString() + ' ریال');
-                $('#dashBuffetCredit').text('اعتبار فروشگاه: ' + Number(d.buffetCredit).toLocaleString() + ' ریال');
-                $('#dashServiceCredit').text('اعتبار سرویس: ' + Number(d.serviceCredit).toLocaleString() + ' ریال');
-            }
-        });
+    var faDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+    function toFa(n) { return String(n).replace(/[0-9]/g, function(d){ return faDigits[d]; }); }
+    function fmtNum(n) { return Number(n || 0).toLocaleString('fa-IR'); }
 
-        // کارت‌های داشبورد
-        var cards = [
-            { icon: '🏃', title: 'ثبت‌نام دوره', color: '#667eea', href: '/Register' },
-            { icon: '🔄', title: 'تمدید دوره', color: '#764ba2', href: '/Register/Renew' },
-            { icon: '🎫', title: 'خرید بلیت', color: '#f093fb', href: '/Ticket' },
-            { icon: '🛒', title: 'فروشگاه', color: '#11998e', href: '/Shop' },
-            { icon: '☕', title: 'بوفه', color: '#fc5c7d', href: '/Shop/Buffet' },
-            { icon: '💆', title: 'سرویس', color: '#f7971e', href: '/Service' },
-            { icon: '💰', title: 'شارژ اعتبار', color: '#56ab2f', href: '/Accounting/AddMoney' },
-            { icon: '👤', title: 'پروفایل', color: '#2193b0', href: '/Profile' }
-        ];
-        var html = '<div class="row g-3">';
-        $.each(cards, function (i, c) {
-            html += '<a href="' + c.href + '" class="col-6 col-md-3 text-decoration-none">' +
-                '<div class="card dash-card"><div class="icon" style="font-size:2.5rem">' + c.icon + '</div>' +
-                '<div class="title">' + c.title + '</div></div></a>';
-        });
-        html += '</div>';
-        $('#dashCards').html(html);
+    // --- ساخت دایره درصدی SVG ---
+    function buildCircle(pct, used, total, remaining) {
+        var r = 36, cx = 40, cy = 40;
+        var c = 2 * Math.PI * r;
+        var offset = c - (pct / 100) * c;
+        var color = pct >= 90 ? '#cb356b' : pct >= 70 ? '#f7971e' : '#11998e';
+        return '<div class="d-flex flex-column align-items-center gap-2" style="min-width:110px">' +
+            '<svg viewBox="0 0 80 80" width="90" height="90">' +
+                '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="#e9ecef" stroke-width="7"/>' +
+                '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="7" stroke-linecap="round" stroke-dasharray="'+c+'" stroke-dashoffset="'+offset+'" transform="rotate(-90 '+cx+' '+cy+')" style="transition:stroke-dashoffset 1s ease"/>' +
+                '<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" dominant-baseline="middle" fill="#2c3e50" font-size="16" font-weight="700" font-family="Tahoma">'+toFa(pct)+'٪</text>' +
+                '<text x="'+cx+'" y="'+(cy+14)+'" text-anchor="middle" fill="#6c757d" font-size="8" font-family="Tahoma">مصرف شده</text>' +
+            '</svg>' +
+            '<div class="text-center small">' +
+                '<div class="fw-bold" style="color:'+color+'">'+toFa(remaining)+' جلسه باقی‌مانده</div>' +
+                '<div class="text-muted">مصرف: '+toFa(used)+' از '+toFa(total)+'</div>' +
+            '</div>' +
+        '</div>';
+    }
+
+    // --- تبدیل شرح تردد به فارسی ---
+    function trafficDescLabel(desc) {
+        if (!desc || desc === '' || desc === '-') return '-';
+        return desc;
+    }
+
+    // --- بارگذاری پروفایل و آمار مالی ---
+    apiCall('/api/Profile/GetProfile', 'GET', null, function (res) {
+        if (!res.success) return;
+        var d = res.data;
+        $('#dashFullName').text(d.fullName);
+        $('#dashMemberId').text('کد عضویت: ' + toFa(d.memberID));
+        $('#statSport').text(fmtNum(d.sportCredit) + ' ریال');
+        $('#statBuffet').text(fmtNum(d.buffetCredit) + ' ریال');
+        $('#statService').text(fmtNum(d.serviceCredit) + ' ریال');
+        $('#statDebit').text(fmtNum(d.totalDebit) + ' ریال');
+        $('#dashSportCredit').text('ورزشی: ' + fmtNum(d.sportCredit));
+        $('#dashBuffetCredit').text('فروشگاه: ' + fmtNum(d.buffetCredit));
+        $('#dashServiceCredit').text('خدمات: ' + fmtNum(d.serviceCredit));
+        if (d.personImageBase64) {
+            $('#dashAvatar').html('<img src="data:image/png;base64,' + d.personImageBase64 + '" class="rounded-circle" style="width:48px;height:48px;object-fit:cover" />');
+        }
     });
+
+    // --- بارگذاری سانس‌های فعال ---
+    apiCall('/api/Register/ActiveSanses', 'GET', null, function (res) {
+        var $box = $('#activeSanses');
+        if (!res.success || !res.data || res.data.length === 0) {
+            $box.html('<div class="empty-state"><div class="empty-icon">🎟️</div>شما در حال حاضر سانس فعالی ندارید.<br><a href="/Register/Renew" class="btn btn-sm btn-primary mt-2">تمدید دوره</a></div>');
+            $('#activeSansesCount').text('۰');
+            return;
+        }
+        $('#activeSansesCount').text(toFa(res.data.length));
+        var html = '';
+        $.each(res.data, function (i, s) {
+            var total = Number(s.totalSessions || 0);
+            var used = Number(s.usedSessions || 0);
+            var remaining = Number(s.remainingSessions || 0);
+            var pct = total > 0 ? Math.round((used / total) * 100) : 0;
+
+            html += '<div class="col-lg-6">' +
+                '<div class="card session-card h-100">' +
+                    '<div class="session-bg"></div>' +
+                    '<div class="card-body position-relative">' +
+                        '<div class="row align-items-center g-3">' +
+                            '<div class="col-12 col-md-7">' +
+                                '<div class="session-name">' + esc(s.sportName) + ' - ' + esc(s.sanseName) + '</div>' +
+                                '<div class="session-coach mt-1">👤 مربی: ' + esc(s.coachName || '-') + '</div>' +
+                                '<div class="d-flex flex-wrap gap-2 mt-2">' +
+                                    '<span class="session-end-badge">📅 پایان: ' + esc(s.endDate || '-') + '</span>' +
+                                    (s.startDate ? '<span class="session-end-badge">📆 شروع: ' + esc(s.startDate) + '</span>' : '') +
+                                '</div>' +
+                                '<div class="mt-2 small" style="opacity:.85">' +
+                                    (s.membershipTypeDesc ? '🏷️ ' + esc(s.membershipTypeDesc) : '') +
+                                    (s.periodDesc ? ' &nbsp; ⏱️ ' + esc(s.periodDesc) : '') +
+                                '</div>' +
+                            '</div>' +
+                            '<div class="col-12 col-md-5 d-flex justify-content-center">' +
+                                buildCircle(pct, used, total, remaining) +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        });
+        $box.html(html);
+    });
+
+    // --- بارگذاری گزارش مالی ---
+    function loadFinance() {
+        apiCall('/api/Accounting/FinanceDocs', 'GET', null, function (res) {
+            var $rows = $('#financeRows');
+            if (!res.success || !res.data || res.data.length === 0) {
+                $rows.html('<tr><td colspan="4" class="empty-state"><div class="empty-icon">💰</div>هیچ تراکنشی یافت نشد</td></tr>');
+                return;
+            }
+            var html = '';
+            $.each(res.data, function (i, d) {
+                var isCredit = d.docType === 'بستانکار';
+                var sign = isCredit ? '+' : '-';
+                var colorClass = isCredit ? 'text-success' : 'text-danger';
+                var badge = isCredit ? 'badge-credit' : 'badge-debit';
+                // تاریخ فارسی: ایجادDateDisplay یا تاریخ از CreationTime
+                var dateStr = d.creationDateDisplay || '-';
+                html += '<tr>' +
+                    '<td>' + esc(dateStr) + '</td>' +
+                    '<td><span class="' + badge + '">' + esc(d.docType) + '</span></td>' +
+                    '<td>' + esc(d.docDesc || '-') + '</td>' +
+                    '<td class="text-end fw-bold ' + colorClass + '">' + sign + ' ' + fmtNum(d.amount) + ' ریال</td>' +
+                '</tr>';
+            });
+            $rows.html(html);
+        });
+    }
+    loadFinance();
+
+    // --- بارگذاری گزارش تردد ---
+    function loadTraffic() {
+        apiCall('/api/Accounting/TrafficReport', 'GET', null, function (res) {
+            var $rows = $('#trafficRows');
+            if (!res.success || !res.data || res.data.length === 0) {
+                $rows.html('<tr><td colspan="5" class="empty-state"><div class="empty-icon">🚪</div>هیچ ترددی ثبت نشده</td></tr>');
+                return;
+            }
+            var html = '';
+            $.each(res.data, function (i, t) {
+                html += '<tr>' +
+                    '<td>' + esc(t.entryDate || '-') + '</td>' +
+                    '<td>' + esc(t.entryTime || '-') + '</td>' +
+                    '<td>' + esc(t.exitDate || '-') + '</td>' +
+                    '<td>' + esc(t.exitTime || '-') + '</td>' +
+                    '<td>' + esc(trafficDescLabel(t.entryDesc)) + '</td>' +
+                '</tr>';
+            });
+            $rows.html(html);
+        });
+    }
+    loadTraffic();
+
+    function esc(str) {
+        if (str === null || str === undefined) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
 </script>
 }

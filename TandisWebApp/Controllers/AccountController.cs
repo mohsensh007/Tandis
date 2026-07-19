@@ -27,10 +27,6 @@ namespace TandisWebApp.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            // اگر قبلاً لاگین کرده، ریدایرکت به داشبورد
-            if (User.Identity?.IsAuthenticated == true)
-                return RedirectToAction("Index", "Home");
-
             return View();
         }
 

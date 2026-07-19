@@ -52,7 +52,7 @@
                     showToast('لطفاً رمز عبور خود را تغییر دهید', 'warning');
                 } else {
                     showToast('ورود موفقیت‌آمیز', 'success');
-                    setTimeout(function () { window.location.href = '/Home'; }, 800);
+                    setTimeout(function () { window.location.href = '/Home/Index'; }, 800);
                 }
             } else {
                 showToast(res.message, 'error');
@@ -70,7 +70,7 @@
         apiCall('/api/Account/ChangePassword', 'POST', { oldPassword: old, newPassword: newP, confirmPassword: conf }, function (res) {
             if (res.success) {
                 showToast(res.message, 'success');
-                setTimeout(function () { window.location.href = '/Home'; }, 800);
+                setTimeout(function () { window.location.href = '/Home/Index'; }, 800);
             } else {
                 showToast(res.message, 'error');
             }

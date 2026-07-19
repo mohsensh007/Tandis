@@ -376,5 +376,62 @@ namespace TandisWebApp.Services
 
             return list;
         }
+
+        /// <summary>
+        /// لیست سانس‌های فعال فعلی عضو (برای نمایش در داشبورد)
+        /// منطق معادل VI_MemberSportsList.RESTSesssion
+        /// </summary>
+        public async Task<List<ActiveSanseDto>> GetActiveSansesAsync(int memberID)
+        {
+            var raw = await (
+                from ms in _db.Acc_MemberSports
+                where ms.MemberID == memberID && ms.IsActive == true
+                orderby ms.SportMemberID descending
+                select new
+                {
+                    ms.SportMemberID,
+                    ms.SportSanseID,
+                    SportName = ms.Gen_SportSanse.Gen_Sport_Category.SportName ?? "",
+                    SanseName = ms.Gen_SportSanse.SanseName ?? "",
+                    CoachName = ms.Gen_SportSanse.Gen_Member.Gen_Person.FullName,
+                    ms.StartDate,
+                    ms.EndDate,
+                    SessionCount = ms.SessionCount ?? 0,
+                    TotalInPeriod = ms.Gen_SportSanse.SessionCountInPeriod ?? 0,
+                    MembershipTypeDesc = ms.Gen_SportSanse.Gen_MembershipType.MembershipTypeDesc,
+                    PeriodDesc = ms.Gen_SportSanse.Gen_Period.Description
+                }
+            ).ToListAsync();
+
+            var result = new List<ActiveSanseDto>();
+            foreach (var s in raw)
+            {
+                // محاسبه جلسات مصرف شده از روی رکوردهای تردد (معادل فرمول VI_MemberSportsList)
+                int usedSessions = await _db.ACC_Traffics
+                    .CountAsync(t => t.MemberID == memberID && t.SportMemberID == s.SportMemberID);
+
+                int total = s.SessionCount;
+                int remaining = total - usedSessions;
+                if (remaining < 0) remaining = 0;
+
+                result.Add(new ActiveSanseDto
+                {
+                    SportMemberID = s.SportMemberID,
+                    SportSanseID = s.SportSanseID ?? 0,
+                    SportName = s.SportName,
+                    SanseName = s.SanseName,
+                    CoachName = s.CoachName,
+                    StartDate = s.StartDate ?? "",
+                    EndDate = s.EndDate ?? "",
+                    TotalSessions = total,
+                    UsedSessions = usedSessions,
+                    RemainingSessions = remaining,
+                    MembershipTypeDesc = s.MembershipTypeDesc,
+                    PeriodDesc = s.PeriodDesc
+                });
+            }
+
+            return result;
+        }
     }
 }
