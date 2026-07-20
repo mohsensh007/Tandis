@@ -226,18 +226,17 @@ namespace TandisWebApp.Services
                     rec.CoachRevivalAmount = baseAmount * (sanse.CoachPercentForRevival ?? 0) / 100;
                 }
 
-                // بدلیل وجود Trigger روی جدول Acc_MemberSports، از ExecuteSqlRaw استفاده می‌کنیم
+                // بدلیل وجود Trigger روی جدول Acc_MemberSports، از ExecuteSqlInterpolated استفاده می‌کنیم
                 // (EF Core به‌طور پیش‌فرض از OUTPUT INSERTED استفاده می‌کنه که با trigger سازگار نیست)
-                await _db.Database.ExecuteSqlRawAsync(@"
+                await _db.Database.ExecuteSqlInterpolatedAsync($@"
                     INSERT INTO Acc_MemberSports (MemberID, SportSanseID, MembershipTypeID, ContractID, SessionCount,
                         Amount, Tax, DiscountAmount, FinalPayment, CoachPercent, CoachAmount,
                         CoachPercentForRevival, CoachRevivalAmount, PeriodID, StartDate, EndDate,
                         IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
-                    VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22})",
-                    rec.MemberID, rec.SportSanseID, rec.MembershipTypeID, rec.ContractID, rec.SessionCount,
-                    rec.Amount, rec.Tax, rec.DiscountAmount, rec.FinalPayment, rec.CoachPercent, rec.CoachAmount,
-                    rec.CoachPercentForRevival, rec.CoachRevivalAmount, rec.PeriodID, rec.StartDate, rec.EndDate,
-                    rec.IsActive, rec.IsRevival, rec.CommentText, rec.UserID, rec.CreationDate, rec.CreationTime);
+                    VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.ContractID}, {rec.SessionCount},
+                        {rec.Amount}, {rec.Tax}, {rec.DiscountAmount}, {rec.FinalPayment}, {rec.CoachPercent}, {rec.CoachAmount},
+                        {rec.CoachPercentForRevival}, {rec.CoachRevivalAmount}, {rec.PeriodID}, {rec.StartDate}, {rec.EndDate},
+                        {rec.IsActive}, {rec.IsRevival}, {rec.CommentText}, {rec.UserID}, {rec.CreationDate}, {rec.CreationTime})");
 
                 // خواندن ID رکورد درج شده (داخل تراکنش، قبل از commit)
                 var insertedId = await _db.Acc_MemberSports
@@ -312,10 +311,12 @@ namespace TandisWebApp.Services
 
                 if (isRevival)
                 {
-                    // UPDATE با raw SQL (برای هماهنگی با تراکنش و جلوگیری از tracking)
-                    var idList = string.Join(",", prevActiveIds);
-                    await _db.Database.ExecuteSqlRawAsync(
-                        $"UPDATE Acc_MemberSports SET IsActive = 0 WHERE SportMemberID IN ({idList})");
+                    // UPDATE با SQL پارامتری (برای هماهنگی با تراکنش)
+                    foreach (var prevId in prevActiveIds)
+                    {
+                        await _db.Database.ExecuteSqlInterpolatedAsync(
+                            $"UPDATE Acc_MemberSports SET IsActive = 0 WHERE SportMemberID = {prevId}");
+                    }
                 }
 
                 var rec = new Acc_MemberSport
@@ -349,18 +350,17 @@ namespace TandisWebApp.Services
                     rec.CoachRevivalAmount = baseAmount * (sanse.CoachPercentForRevival ?? 0) / 100;
                 }
 
-                // بدلیل وجود Trigger روی جدول Acc_MemberSports، از ExecuteSqlRaw استفاده می‌کنیم
+                // بدلیل وجود Trigger روی جدول Acc_MemberSports، از ExecuteSqlInterpolated استفاده می‌کنیم
                 // (EF Core به‌طور پیش‌فرض از OUTPUT INSERTED استفاده می‌کنه که با trigger سازگار نیست)
-                await _db.Database.ExecuteSqlRawAsync(@"
+                await _db.Database.ExecuteSqlInterpolatedAsync($@"
                     INSERT INTO Acc_MemberSports (MemberID, SportSanseID, MembershipTypeID, ContractID, SessionCount,
                         Amount, Tax, DiscountAmount, FinalPayment, CoachPercent, CoachAmount,
                         CoachPercentForRevival, CoachRevivalAmount, PeriodID, StartDate, EndDate,
                         IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
-                    VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8}, {9}, {10}, {11}, {12}, {13}, {14}, {15}, {16}, {17}, {18}, {19}, {20}, {21}, {22})",
-                    rec.MemberID, rec.SportSanseID, rec.MembershipTypeID, rec.ContractID, rec.SessionCount,
-                    rec.Amount, rec.Tax, rec.DiscountAmount, rec.FinalPayment, rec.CoachPercent, rec.CoachAmount,
-                    rec.CoachPercentForRevival, rec.CoachRevivalAmount, rec.PeriodID, rec.StartDate, rec.EndDate,
-                    rec.IsActive, rec.IsRevival, rec.CommentText, rec.UserID, rec.CreationDate, rec.CreationTime);
+                    VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.ContractID}, {rec.SessionCount},
+                        {rec.Amount}, {rec.Tax}, {rec.DiscountAmount}, {rec.FinalPayment}, {rec.CoachPercent}, {rec.CoachAmount},
+                        {rec.CoachPercentForRevival}, {rec.CoachRevivalAmount}, {rec.PeriodID}, {rec.StartDate}, {rec.EndDate},
+                        {rec.IsActive}, {rec.IsRevival}, {rec.CommentText}, {rec.UserID}, {rec.CreationDate}, {rec.CreationTime})");
 
                 // خواندن ID رکورد درج شده (داخل تراکنش، قبل از commit)
                 var insertedId = await _db.Acc_MemberSports
