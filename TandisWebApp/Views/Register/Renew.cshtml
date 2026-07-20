@@ -40,9 +40,15 @@
                     <button type="button" class="btn btn-sm btn-outline-secondary px-3" id="nextMonth">‹</button>
                 </div>
                 <table class="cal-table">
-                    <thead>
+                    <thead class="text-center">
                         <tr>
-                            <th>ش</th><th>ی</th><th>د</th><th>س</th><th>چ</th><th>پ</th><th>ج</th>
+                            <th>شنبه</th>
+                            <th>یک شنبه</th>
+                            <th>دو شنبه</th>
+                            <th>سه شنبه</th>
+                            <th>چهار شنبه</th>
+                            <th>پنج شنبه</th>
+                            <th>جمعه</th>
                         </tr>
                     </thead>
                     <tbody id="calendarBody"></tbody>
@@ -109,9 +115,7 @@
                 html = '<div class="empty-state"><div class="empty-icon">🔍</div>سانسی یافت نشد</div>';
             } else {
                 $.each(res.data, function (i, s) {
-                    var safeName = esc(s.sportName + ' - ' + s.sanseName);
-                    var safeAmount = esc(s.totalAmountDisplay);
-                    html += '<div class="sanse-card">' +
+                    html += '<div class="sanse-card" data-id="' + s.sportSanseID + '" data-name="' + esc(s.sportName + ' - ' + s.sanseName) + '" data-amount="' + esc(s.totalAmountDisplay) + '">' +
                         '<div class="sanse-top">' +
                             '<div class="sanse-sport"><i class="bi bi-trophy"></i> ' + esc(s.sportName) + '</div>' +
                             '<div class="sanse-name">' + esc(s.sanseName) + '</div>' +
@@ -122,15 +126,22 @@
                                 '<span class="sanse-badge"><i class="bi bi-tag"></i> ' + esc(s.membershipTypeDesc || '-') + '</span>' +
                                 '<span class="sanse-badge"><i class="bi bi-clock-history"></i> ' + esc(s.periodDesc || '-') + '</span>' +
                             '</div>' +
-                            '<div class="sanse-price">' + safeAmount + '</div>' +
-                            '<button class="btn btn-primary sanse-btn" onclick="openRenew(' + s.sportSanseID + ',\'' + safeName + '\',\'' + safeAmount + '\')">' +
-                                '<i class="bi bi-arrow-repeat"></i> تمدید دوره' +
-                            '</button>' +
+                            '<div class="sanse-price">' + esc(s.totalAmountDisplay) + '</div>' +
+                            '<button class="btn btn-primary sanse-btn renew-btn"><i class="bi bi-arrow-repeat"></i> تمدید دوره</button>' +
                         '</div>' +
                     '</div>';
                 });
             }
             $('#sanseList').html(html);
+
+            // event delegation
+            $('.renew-btn').off('click').on('click', function () {
+                var card = $(this).closest('.sanse-card');
+                var id = card.data('id');
+                var name = card.data('name');
+                var amount = card.data('amount');
+                openRenew(id, name, amount);
+            });
         });
     }
 
