@@ -79,10 +79,14 @@ namespace TandisWebApp.Services
                 .ToListAsync();
             foreach (var d in debits)
             {
+                string dateDisplay = "";
+                if (d.CreationTime.HasValue)
+                    dateDisplay = _helper.ToPersian(d.CreationTime.Value);
+
                 result.Add(new FinanceDocDto
                 {
                     CreationTime = d.CreationTime ?? DateTime.MinValue,
-                    CreationDateDisplay = "",
+                    CreationDateDisplay = dateDisplay,
                     Amount = d.Amount ?? 0,
                     AmountDisplay = _helper.SetSeprator(d.Amount ?? 0) + " ریال",
                     DocType = "بدهکار",
@@ -112,7 +116,8 @@ namespace TandisWebApp.Services
                     ExitTime = t.ExitTime,
                     PersonName = t.PersonName,
                     EntryDesc = t.EntryDesc,
-                    BoxID = t.BoxID
+                    BoxID = t.BoxID,
+                    TrafficStatus = t.TrafficStatus
                 }
             ).ToListAsync();
         }

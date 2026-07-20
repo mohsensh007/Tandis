@@ -104,8 +104,8 @@ namespace TandisWebApp.Services
             var query = from s in _db.Gen_SportSanses
                         where s.ShiftID == shiftID
                            && s.IsActive == true
-                           && s.Gen_Sport_Category.IsActive == true
                            && s.ShowInKiosk == true
+                           && s.Gen_Sport_Category.IsActive == true
                            && (sportCatID == null || sportCatID == 0 || s.SportCatID == sportCatID)
                         orderby s.SanseName
                         select new

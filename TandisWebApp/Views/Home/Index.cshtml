@@ -123,11 +123,11 @@
                     <table class="table report-table">
                         <thead>
                             <tr>
+                                <th>کد تردد</th>
                                 <th>تاریخ ورود</th>
                                 <th>ساعت ورود</th>
                                 <th>تاریخ خروج</th>
                                 <th>ساعت خروج</th>
-                                <th>شرح</th>
                             </tr>
                         </thead>
                         <tbody id="trafficRows">
@@ -283,11 +283,11 @@
             var html = '';
             $.each(res.data, function (i, t) {
                 html += '<tr>' +
+                    '<td class="fw-bold">' + toFa(t.trafficID) + '</td>' +
                     '<td>' + esc(t.entryDate || '-') + '</td>' +
                     '<td>' + esc(t.entryTime || '-') + '</td>' +
                     '<td>' + esc(t.exitDate || '-') + '</td>' +
                     '<td>' + esc(t.exitTime || '-') + '</td>' +
-                    '<td>' + esc(trafficDescLabel(t.entryDesc)) + '</td>' +
                 '</tr>';
             });
             $rows.html(html);

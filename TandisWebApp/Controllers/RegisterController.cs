@@ -18,9 +18,6 @@ namespace TandisWebApp.Controllers
 
         // ---------- Views ----------
         [HttpGet]
-        public IActionResult Index() => View();
-
-        [HttpGet]
         public IActionResult Renew() => View();
 
         [HttpGet]
@@ -37,15 +34,6 @@ namespace TandisWebApp.Controllers
         }
 
         [HttpGet]
-        [Route("api/Register/AvailableSanses")]
-        public async Task<IActionResult> AvailableSanses(int? sportCatID)
-        {
-            var shiftID = short.Parse(User.FindFirstValue("ShiftID") ?? "1");
-            var list = await _register.GetAvailableSansesAsync(shiftID, sportCatID);
-            return Ok(new { success = true, data = list });
-        }
-
-        [HttpGet]
         [Route("api/Register/SansesForRenew")]
         public async Task<IActionResult> SansesForRenew(int? sportCatID)
         {
@@ -53,18 +41,6 @@ namespace TandisWebApp.Controllers
             var shiftID = short.Parse(User.FindFirstValue("ShiftID") ?? "1");
             var list = await _register.GetSansesForRenewAsync(memberID, shiftID, sportCatID);
             return Ok(new { success = true, data = list });
-        }
-
-        [HttpPost]
-        [Route("api/Register/Register")]
-        public async Task<IActionResult> RegisterApi([FromBody] RegisterRequest req)
-        {
-            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
-            var shiftID = short.Parse(User.FindFirstValue("ShiftID") ?? "1");
-            var result = await _register.RegisterAsync(memberID, req, shiftID);
-            if (!result.Success)
-                return BadRequest(result);
-            return Ok(result);
         }
 
         [HttpPost]
@@ -88,7 +64,6 @@ namespace TandisWebApp.Controllers
             return Ok(new { success = true, data = list });
         }
 
-        /// <summary>دریافت سانس‌های فعال فعلی کاربر (برای داشبورد)</summary>
         [HttpGet]
         [Route("api/Register/ActiveSanses")]
         public async Task<IActionResult> ActiveSanses()

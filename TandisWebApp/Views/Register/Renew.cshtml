@@ -2,10 +2,10 @@
     ViewData["Title"] = "تمدید دوره";
 }
 
-<div class="row">
-    <div class="col-md-4">
+<div class="row g-3">
+    <div class="col-lg-3 col-md-4">
         <div class="card">
-            <div class="card-header">دسته‌بندی</div>
+            <div class="card-header"><i class="bi bi-list-ul"></i> دسته‌بندی ورزش‌ها</div>
             <div class="card-body p-0">
                 <ul id="categoryList" class="list-group list-group-flush">
                     <li class="list-group-item text-center text-muted">در حال بارگذاری...</li>
@@ -13,32 +13,72 @@
             </div>
         </div>
     </div>
-    <div class="col-md-8">
+    <div class="col-lg-9 col-md-8">
         <div class="card">
-            <div class="card-header">سانس‌ها (با وضعیت ثبت‌نام قبلی)</div>
+            <div class="card-header"><i class="bi bi-arrow-repeat"></i> سانس‌های قابل تمدید</div>
             <div class="card-body">
-                <div id="sanseList"></div>
+                <div id="sanseList">
+                    <div class="empty-state"><div class="empty-icon">⏳</div>در حال بارگذاری...</div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="renewModal" tabindex="-1">
-    <div class="modal-dialog">
+@* === تقویم روزهای اداری === *@
+<div class="modal fade" id="datePickerModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">تمدید دوره</h5>
+                <h5 class="modal-title"><i class="bi bi-calendar3"></i> انتخاب تاریخ شروع</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <div id="renewInfo"></div>
-                <div class="mb-3 mt-3">
-                    <label class="form-label">تاریخ شروع</label>
-                    <input type="text" id="renewStartDate" class="form-control" placeholder="مثال: 1405/03/20" />
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-secondary px-3" id="prevMonth">›</button>
+                    <strong id="currentMonthLabel" class="fs-5"></strong>
+                    <button type="button" class="btn btn-sm btn-outline-secondary px-3" id="nextMonth">‹</button>
+                </div>
+                <table class="cal-table">
+                    <thead>
+                        <tr>
+                            <th>ش</th><th>ی</th><th>د</th><th>س</th><th>چ</th><th>پ</th><th>ج</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendarBody"></tbody>
+                </table>
+                <div class="alert alert-info mt-3 mb-0 small">
+                    <i class="bi bi-info-circle"></i>
+                    فقط تاریخ‌های امروز و آینده قابل انتخاب هستند.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* === مودال تمدید === *@
+<div class="modal fade" id="renewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-arrow-repeat"></i> تأیید تمدید دوره</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div id="renewInfo" class="mb-3"></div>
+                <label class="form-label"><i class="bi bi-calendar-event"></i> تاریخ شروع دوره</label>
+                <div class="input-group">
+                    <input type="text" id="renewStartDate" class="form-control" placeholder="انتخاب کنید" readonly />
+                    <button type="button" class="btn btn-outline-primary" id="btnOpenCalendar">
+                        <i class="bi bi-calendar3"></i>
+                    </button>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="btnConfirmRenew">تمدید</button>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">انصراف</button>
+                <button type="button" class="btn btn-primary" id="btnConfirmRenew">
+                    <i class="bi bi-check-lg"></i> تأیید و تمدید
+                </button>
             </div>
         </div>
     </div>
@@ -47,12 +87,13 @@
 @section Scripts {
 <script>
     var selectedSanse = null;
+    var todayPersian = todayJalaliStr();
 
     function loadCategories() {
         apiCall('/api/Register/SportCategories', 'GET', null, function (res) {
-            var html = '<li class="list-group-item list-group-item-action active" data-id="0" onclick="filterSanses(0)">همه</li>';
+            var html = '<li class="list-group-item list-group-item-action active" data-id="0" onclick="filterSanses(0)"><i class="bi bi-grid"></i> همه</li>';
             $.each(res.data, function (i, c) {
-                html += '<li class="list-group-item list-group-item-action" data-id="' + c.sportCatID + '" onclick="filterSanses(' + c.sportCatID + ')">' + c.sportName + '</li>';
+                html += '<li class="list-group-item list-group-item-action" data-id="' + c.sportCatID + '" onclick="filterSanses(' + c.sportCatID + ')">' + esc(c.sportName) + '</li>';
             });
             $('#categoryList').html(html);
         });
@@ -65,35 +106,65 @@
         apiCall(url, 'GET', null, function (res) {
             var html = '';
             if (!res.data || res.data.length === 0) {
-                html = '<div class="text-center text-muted p-3">سانسی یافت نشد</div>';
+                html = '<div class="empty-state"><div class="empty-icon">🔍</div>سانسی یافت نشد</div>';
             } else {
-                html = '<div class="table-responsive"><table class="table table-hover"><thead><tr>' +
-                    '<th>ورزش</th><th>سانس</th><th>مربی</th><th>وضعیت</th><th>جلسات باقیمانده</th><th>مبلغ</th><th></th>' +
-                    '</tr></thead><tbody>';
                 $.each(res.data, function (i, s) {
-                    var badge = s.hasActiveRegister ? '<span class="badge bg-success">فعال</span>' : (s.activeStatus ? '<span class="badge bg-secondary">' + s.activeStatus + '</span>' : '-');
-                    html += '<tr><td>' + s.sportName + '</td><td>' + s.sanseName + '</td>' +
-                        '<td>' + (s.coachName || '-') + '</td><td>' + badge + '</td>' +
-                        '<td>' + (s.remainingSessions != null ? s.remainingSessions : '-') + '</td>' +
-                        '<td>' + s.totalAmountDisplay + '</td>' +
-                        '<td><button class="btn btn-sm btn-primary" onclick="openRenew(' + s.sportSanseID + ',\'' + s.sportName + ' - ' + s.sanseName + '\',' + s.totalAmount + ',\'' + s.totalAmountDisplay + '\')">تمدید</button></td></tr>';
+                    var safeName = esc(s.sportName + ' - ' + s.sanseName);
+                    var safeAmount = esc(s.totalAmountDisplay);
+                    html += '<div class="sanse-card">' +
+                        '<div class="sanse-top">' +
+                            '<div class="sanse-sport"><i class="bi bi-trophy"></i> ' + esc(s.sportName) + '</div>' +
+                            '<div class="sanse-name">' + esc(s.sanseName) + '</div>' +
+                        '</div>' +
+                        '<div class="sanse-body">' +
+                            '<div class="sanse-info">' +
+                                '<span class="sanse-badge"><i class="bi bi-person"></i> ' + esc(s.coachName || 'بدون مربی') + '</span>' +
+                                '<span class="sanse-badge"><i class="bi bi-tag"></i> ' + esc(s.membershipTypeDesc || '-') + '</span>' +
+                                '<span class="sanse-badge"><i class="bi bi-clock-history"></i> ' + esc(s.periodDesc || '-') + '</span>' +
+                            '</div>' +
+                            '<div class="sanse-price">' + safeAmount + '</div>' +
+                            '<button class="btn btn-primary sanse-btn" onclick="openRenew(' + s.sportSanseID + ',\'' + safeName + '\',\'' + safeAmount + '\')">' +
+                                '<i class="bi bi-arrow-repeat"></i> تمدید دوره' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>';
                 });
-                html += '</tbody></table></div>';
             }
             $('#sanseList').html(html);
         });
     }
 
-    function openRenew(id, name, amount, display) {
+    function openRenew(id, name, display) {
         selectedSanse = id;
-        $('#renewInfo').html('<strong>' + name + '</strong><br/><span class="text-muted">مبلغ: ' + display + '</span>');
-        $('#renewStartDate').val('');
+        $('#renewInfo').html(
+            '<div class="alert alert-light border">' +
+                '<strong>ورزش:</strong> ' + name + '<br/>' +
+                '<strong>مبلغ:</strong> <span class="text-primary">' + display + '</span>' +
+            '</div>'
+        );
+        $('#renewStartDate').val(todayPersian);
         new bootstrap.Modal('#renewModal').show();
     }
 
+    $('#btnOpenCalendar').click(function () {
+        bootstrap.Modal.getInstance('#renewModal').hide();
+        initCalendar('renewStartDate', '#renewModal');
+        new bootstrap.Modal('#datePickerModal').show();
+    });
+    $('#prevMonth').click(function () {
+        calendarDate.m++;
+        if (calendarDate.m > 12) { calendarDate.m = 1; calendarDate.y++; }
+        renderCalendar();
+    });
+    $('#nextMonth').click(function () {
+        calendarDate.m--;
+        if (calendarDate.m < 1) { calendarDate.m = 12; calendarDate.y--; }
+        renderCalendar();
+    });
+
     $('#btnConfirmRenew').click(function () {
         var date = $.trim($('#renewStartDate').val());
-        if (!date) { showToast('تاریخ شروع را وارد کنید', 'error'); return; }
+        if (!date) { showToast('تاریخ شروع را انتخاب کنید', 'error'); return; }
         apiCall('/api/Register/Renew', 'POST', { sportSanseID: selectedSanse, startDate: date }, function (res) {
             if (res.success) {
                 showToast(res.message, 'success');
@@ -102,6 +173,11 @@
             } else { showToast(res.message, 'error'); }
         });
     });
+
+    function esc(str) {
+        if (str === null || str === undefined) return '';
+        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
 
     $(function () { loadCategories(); filterSanses(0); });
 </script>

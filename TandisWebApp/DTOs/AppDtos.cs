@@ -185,6 +185,7 @@ namespace TandisWebApp.DTOs
         public string? PersonName { get; set; }
         public string? EntryDesc { get; set; }
         public short? BoxID { get; set; }
+        public byte? TrafficStatus { get; set; }
     }
 
     public class FinanceDocDto
