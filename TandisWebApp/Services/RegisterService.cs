@@ -204,6 +204,8 @@ namespace TandisWebApp.Services
                     Amount = sanse.TotalAmount,
                     Tax = 0,
                     DiscountAmount = 0,
+                    RegDiscountPercent = 0,
+                    RegDiscountAmount = 0,
                     FinalPayment = sanse.TotalAmount,
                     PeriodID = 1,
                     StartDate = req.StartDate,
@@ -228,13 +230,15 @@ namespace TandisWebApp.Services
 
                 // بدلیل وجود Trigger روی جدول Acc_MemberSports، از ExecuteSqlInterpolated استفاده می‌کنیم
                 // (EF Core به‌طور پیش‌فرض از OUTPUT INSERTED استفاده می‌کنه که با trigger سازگار نیست)
+                // نکته: RegDiscountPercent و RegDiscountAmount باید 0 باشند (نه NULL) تا Trigger درست کار کنه
                 await _db.Database.ExecuteSqlInterpolatedAsync($@"
                     INSERT INTO Acc_MemberSports (MemberID, SportSanseID, MembershipTypeID, ContractID, SessionCount,
-                        Amount, Tax, DiscountAmount, FinalPayment, CoachPercent, CoachAmount,
-                        CoachPercentForRevival, CoachRevivalAmount, PeriodID, StartDate, EndDate,
-                        IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
+                        Amount, Tax, DiscountAmount, RegDiscountPercent, RegDiscountAmount, FinalPayment,
+                        CoachPercent, CoachAmount, CoachPercentForRevival, CoachRevivalAmount,
+                        PeriodID, StartDate, EndDate, IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
                     VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.ContractID}, {rec.SessionCount},
-                        {rec.Amount}, {rec.Tax}, {rec.DiscountAmount}, {rec.FinalPayment}, {rec.CoachPercent}, {rec.CoachAmount},
+                        {rec.Amount}, {rec.Tax}, {rec.DiscountAmount}, {rec.RegDiscountPercent ?? 0}, {rec.RegDiscountAmount ?? 0},
+                        {rec.FinalPayment}, {rec.CoachPercent}, {rec.CoachAmount},
                         {rec.CoachPercentForRevival}, {rec.CoachRevivalAmount}, {rec.PeriodID}, {rec.StartDate}, {rec.EndDate},
                         {rec.IsActive}, {rec.IsRevival}, {rec.CommentText}, {rec.UserID}, {rec.CreationDate}, {rec.CreationTime})");
 
@@ -329,6 +333,8 @@ namespace TandisWebApp.Services
                     Amount = finalPayment,
                     Tax = 0,
                     DiscountAmount = 0,
+                    RegDiscountPercent = 0,
+                    RegDiscountAmount = 0,
                     FinalPayment = finalPayment,
                     PeriodID = 1,
                     StartDate = req.StartDate,
@@ -352,13 +358,15 @@ namespace TandisWebApp.Services
 
                 // بدلیل وجود Trigger روی جدول Acc_MemberSports، از ExecuteSqlInterpolated استفاده می‌کنیم
                 // (EF Core به‌طور پیش‌فرض از OUTPUT INSERTED استفاده می‌کنه که با trigger سازگار نیست)
+                // نکته: RegDiscountPercent و RegDiscountAmount باید 0 باشند (نه NULL) تا Trigger درست کار کنه
                 await _db.Database.ExecuteSqlInterpolatedAsync($@"
                     INSERT INTO Acc_MemberSports (MemberID, SportSanseID, MembershipTypeID, ContractID, SessionCount,
-                        Amount, Tax, DiscountAmount, FinalPayment, CoachPercent, CoachAmount,
-                        CoachPercentForRevival, CoachRevivalAmount, PeriodID, StartDate, EndDate,
-                        IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
+                        Amount, Tax, DiscountAmount, RegDiscountPercent, RegDiscountAmount, FinalPayment,
+                        CoachPercent, CoachAmount, CoachPercentForRevival, CoachRevivalAmount,
+                        PeriodID, StartDate, EndDate, IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
                     VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.ContractID}, {rec.SessionCount},
-                        {rec.Amount}, {rec.Tax}, {rec.DiscountAmount}, {rec.FinalPayment}, {rec.CoachPercent}, {rec.CoachAmount},
+                        {rec.Amount}, {rec.Tax}, {rec.DiscountAmount}, {rec.RegDiscountPercent ?? 0}, {rec.RegDiscountAmount ?? 0},
+                        {rec.FinalPayment}, {rec.CoachPercent}, {rec.CoachAmount},
                         {rec.CoachPercentForRevival}, {rec.CoachRevivalAmount}, {rec.PeriodID}, {rec.StartDate}, {rec.EndDate},
                         {rec.IsActive}, {rec.IsRevival}, {rec.CommentText}, {rec.UserID}, {rec.CreationDate}, {rec.CreationTime})");
 
