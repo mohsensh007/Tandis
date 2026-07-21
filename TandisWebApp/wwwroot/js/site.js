@@ -51,6 +51,28 @@ function formatNumber(n) {
     return Number(n).toLocaleString('fa-IR');
 }
 
+// --- بروزرسانی اعتبارها در تمام صفحات ---
+function refreshDashboardCredits() {
+    apiCall('/api/Profile/GetProfile', 'GET', null, function (res) {
+        if (!res.success) return;
+        var d = res.data;
+        // داشبورد
+        var f = function(n) { return Number(n || 0).toLocaleString('fa-IR'); };
+        $('#statSport').text(f(d.sportCredit) + ' ریال');
+        $('#statBuffet').text(f(d.buffetCredit) + ' ریال');
+        $('#statService').text(f(d.serviceCredit) + ' ریال');
+        $('#statDebit').text(f(d.totalDebit) + ' ریال');
+        $('#dashSportCredit').text('ورزشی: ' + f(d.sportCredit));
+        $('#dashBuffetCredit').text('فروشگاه: ' + f(d.buffetCredit));
+        $('#dashServiceCredit').text('خدمات: ' + f(d.serviceCredit));
+        // پروفایل
+        $('#creditSport').text(Number(d.sportCredit).toLocaleString() + ' ریال');
+        $('#creditBuffet').text(Number(d.buffetCredit).toLocaleString() + ' ریال');
+        $('#creditService').text(Number(d.serviceCredit).toLocaleString() + ' ریال');
+        $('#totalDebit').text(Number(d.totalDebit).toLocaleString() + ' ریال');
+    });
+}
+
 // --- ایجاد کارت لینک ---
 function createDashCard(icon, title, color, href) {
     return '<a href="' + href + '" class="col-6 col-md-3 text-decoration-none">' +

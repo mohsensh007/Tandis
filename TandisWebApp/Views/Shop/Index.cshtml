@@ -113,6 +113,7 @@
                 showToast(res.message, 'success');
                 basket = [];
                 renderBasket();
+                refreshDashboardCredits();
             } else { showToast(res.message, 'error'); }
         });
     });

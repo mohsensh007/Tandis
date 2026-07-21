@@ -37,7 +37,7 @@
     function buyTicket(id) {
         if (!confirm('آیا مطمئن هستید؟ مبلغ از اعتبار شما کسر خواهد شد.')) return;
         apiCall('/api/Ticket/Buy', 'POST', { tarefeID: id }, function (res) {
-            if (res.success) { showToast(res.message, 'success'); }
+            if (res.success) { showToast(res.message, 'success'); refreshDashboardCredits(); }
             else { showToast(res.message, 'error'); }
         });
     }

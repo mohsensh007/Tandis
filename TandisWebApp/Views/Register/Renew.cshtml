@@ -181,6 +181,7 @@
                 showToast(res.message, 'success');
                 bootstrap.Modal.getInstance('#renewModal').hide();
                 filterSanses($('#categoryList li.active').data('id') || 0);
+                refreshDashboardCredits();
             } else { showToast(res.message, 'error'); }
         });
     });

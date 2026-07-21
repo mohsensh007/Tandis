@@ -92,48 +92,60 @@ namespace TandisWebApp.Services
         /// <summary>
         /// بدهی کلی عضو (SP_GetDebitAmount).
         /// مثبت = بدهکار، منفی = بستانکار.
+        /// توجه: بدهی‌ها و بستانکارهای فروشگاه(2) و خدمات(3) مستثنی می‌شوند
+        /// چون این دو دارای حساب اعتباری جداگانه هستند.
         /// </summary>
         public async Task<long> GetDebitAmountAsync(int memberID)
         {
             long debit = 0;
             long credit = 0;
+            long refund = 0;
 
-            // بدهکارها
+            // بدهکارها (به جز فروشگاه و خدمات)
             debit += await _db.Cash_DebitStatements
-                .Where(x => x.MemberID == memberID)
+                .Where(x => x.MemberID == memberID && (x.DebitTypeID != CR_PAY_SHOP && x.DebitTypeID != CR_PAY_SERVICE))
                 .SumAsync(x => (long?)x.Amount) ?? 0;
 
-            // بستانکارها
+            // بستانکارها (به جز فروشگاه و خدمات)
             credit += await _db.Cash_CreditStatments
-                .Where(x => x.MemberID == memberID)
+                .Where(x => x.MemberID == memberID && (x.CreditTypeID != CR_PAY_SHOP && x.CreditTypeID != CR_PAY_SERVICE))
                 .SumAsync(x => (long?)x.Amount) ?? 0;
 
-            // بازپرداخت‌ها (کاهش اعتبار)
-            debit += await _db.Cash_RefundStatements
-                .Where(x => x.MemberID == memberID)
+            // بازپرداخت‌ها (به جز فروشگاه و خدمات)
+            refund += await _db.Cash_RefundStatements
+                .Where(x => x.MemberID == memberID && (x.RefundTypeID != CR_PAY_SHOP && x.RefundTypeID != CR_PAY_SERVICE))
                 .SumAsync(x => (long?)x.Amount) ?? 0;
 
-            return debit - credit;
+            return debit - credit + refund;
         }
 
         /// <summary>
-        /// اعتبار ورزشی (ریالی + جلسه آزاد) - کف 0
+        /// اعتبار ورزشی (ریالی + جلسه آزاد + شهریه) - کف 0
+        /// نکته: شهریه(1) هم شامل می‌شود تا ثبت‌نام‌های وب‌اپ بدون پرداخت POS،
+        /// از اعتبار ورزشی کسر شوند (درست مثل کیوسک که ثبت‌نام با POS پرداخت می‌شود
+        /// و در آن CreditTypeID=PayShahrie ثبت می‌گردد و خنثی می‌شود).
         /// </summary>
         public async Task<long> GetSportCreditAmountAsync(int memberID)
         {
             var credit = await _db.Cash_CreditStatments
                 .Where(x => x.MemberID == memberID
-                         && (x.CreditTypeID == CR_RIALI || x.CreditTypeID == CR_FREE_SESSION))
+                         && (x.CreditTypeID == CR_RIALI
+                          || x.CreditTypeID == CR_FREE_SESSION
+                          || x.CreditTypeID == CR_PAY_SHAHRIE))
                 .SumAsync(x => (long?)x.Amount) ?? 0;
 
             var debit = await _db.Cash_DebitStatements
                 .Where(x => x.MemberID == memberID
-                         && (x.DebitTypeID == CR_RIALI || x.DebitTypeID == CR_FREE_SESSION))
+                         && (x.DebitTypeID == CR_RIALI
+                          || x.DebitTypeID == CR_FREE_SESSION
+                          || x.DebitTypeID == CR_PAY_SHAHRIE))
                 .SumAsync(x => (long?)x.Amount) ?? 0;
 
             var refund = await _db.Cash_RefundStatements
                 .Where(x => x.MemberID == memberID
-                         && (x.RefundTypeID == CR_RIALI || x.RefundTypeID == CR_FREE_SESSION))
+                         && (x.RefundTypeID == CR_RIALI
+                          || x.RefundTypeID == CR_FREE_SESSION
+                          || x.RefundTypeID == CR_PAY_SHAHRIE))
                 .SumAsync(x => (long?)x.Amount) ?? 0;
 
             var result = credit - debit - refund;

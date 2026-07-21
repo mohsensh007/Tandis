@@ -35,7 +35,7 @@
         var creditTypeID = parseInt($('#ddlCreditType').val()) || 11;
         if (amount < 10000) { showToast('حداقل مبلغ ۱۰,۰۰۰ ریال', 'error'); return; }
         apiCall('/api/Accounting/AddMoney', 'POST', { amount: amount, creditTypeID: creditTypeID }, function (res) {
-            if (res.success) { showToast(res.message, 'success'); $('#txtAmount').val(''); }
+            if (res.success) { showToast(res.message, 'success'); $('#txtAmount').val(''); refreshDashboardCredits(); }
             else { showToast(res.message, 'error'); }
         });
     });

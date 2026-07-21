@@ -34,7 +34,7 @@
     function buyService(id) {
         if (!confirm('آیا مطمئن هستید؟ مبلغ از اعتبار سرویس شما کسر خواهد شد.')) return;
         apiCall('/api/Service/Buy', 'POST', { serviceID: id }, function (res) {
-            if (res.success) { showToast(res.message, 'success'); }
+            if (res.success) { showToast(res.message, 'success'); refreshDashboardCredits(); }
             else { showToast(res.message, 'error'); }
         });
     }

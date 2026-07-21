@@ -183,22 +183,25 @@
     }
 
     // --- بارگذاری پروفایل و آمار مالی ---
-    apiCall('/api/Profile/GetProfile', 'GET', null, function (res) {
-        if (!res.success) return;
-        var d = res.data;
-        $('#dashFullName').text(d.fullName);
-        $('#dashMemberId').text('کد عضویت: ' + toFa(d.memberID));
-        $('#statSport').text(fmtNum(d.sportCredit) + ' ریال');
-        $('#statBuffet').text(fmtNum(d.buffetCredit) + ' ریال');
-        $('#statService').text(fmtNum(d.serviceCredit) + ' ریال');
-        $('#statDebit').text(fmtNum(d.totalDebit) + ' ریال');
-        $('#dashSportCredit').text('ورزشی: ' + fmtNum(d.sportCredit));
-        $('#dashBuffetCredit').text('فروشگاه: ' + fmtNum(d.buffetCredit));
-        $('#dashServiceCredit').text('خدمات: ' + fmtNum(d.serviceCredit));
-        if (d.personImageBase64) {
-            $('#dashAvatar').html('<img src="data:image/png;base64,' + d.personImageBase64 + '" class="rounded-circle" style="width:48px;height:48px;object-fit:cover" />');
-        }
-    });
+    function loadDashboardCredits() {
+        apiCall('/api/Profile/GetProfile', 'GET', null, function (res) {
+            if (!res.success) return;
+            var d = res.data;
+            $('#dashFullName').text(d.fullName);
+            $('#dashMemberId').text('کد عضویت: ' + toFa(d.memberID));
+            $('#statSport').text(fmtNum(d.sportCredit) + ' ریال');
+            $('#statBuffet').text(fmtNum(d.buffetCredit) + ' ریال');
+            $('#statService').text(fmtNum(d.serviceCredit) + ' ریال');
+            $('#statDebit').text(fmtNum(d.totalDebit) + ' ریال');
+            $('#dashSportCredit').text('ورزشی: ' + fmtNum(d.sportCredit));
+            $('#dashBuffetCredit').text('فروشگاه: ' + fmtNum(d.buffetCredit));
+            $('#dashServiceCredit').text('خدمات: ' + fmtNum(d.serviceCredit));
+            if (d.personImageBase64) {
+                $('#dashAvatar').html('<img src="data:image/png;base64,' + d.personImageBase64 + '" class="rounded-circle" style="width:48px;height:48px;object-fit:cover" />');
+            }
+        });
+    }
+    loadDashboardCredits();
 
     // --- بارگذاری سانس‌های فعال ---
     apiCall('/api/Register/ActiveSanses', 'GET', null, function (res) {
