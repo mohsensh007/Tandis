@@ -50,5 +50,41 @@ namespace TandisWebApp.Services
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        /// <summary>ساخت توکن JWT برای یک مدیر (مجزا از توکن اعضا).</summary>
+        /// <param name="username">نام کاربری مدیر</param>
+        /// <param name="displayName">نام نمایشی مدیر</param>
+        /// <param name="shiftID">شماره شیفت مجاز (۱=آقایان، ۲=بانوان)</param>
+        public string GenerateAdminToken(string username, string displayName, short shiftID)
+        {
+            var jwtSettings = _config.GetSection("JwtSettings");
+            var secretKey = jwtSettings["SecretKey"]!;
+            var issuer = jwtSettings["Issuer"]!;
+            var audience = jwtSettings["Audience"]!;
+            var expiryMin = int.Parse(jwtSettings["ExpiryMinutes"] ?? "1440");
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, username),
+                new Claim(ClaimTypes.Name, displayName),
+                new Claim("IsAdmin", "true"),
+                new Claim("AdminUsername", username),
+                new Claim("AdminShiftID", shiftID.ToString()),
+                new Claim("FullName", displayName)
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(expiryMin),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
 }

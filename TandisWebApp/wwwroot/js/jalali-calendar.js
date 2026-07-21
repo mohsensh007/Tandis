@@ -46,14 +46,16 @@ function toFa(n) { return String(n).replace(/[0-9]/g, function(d){ return FaDigi
 var calendarDate = null;
 var calendarCallback = null;
 var calendarReturnModal = null; // مودالی که بعد از انتخاب تاریخ باید دوباره باز شود
+var calendarAllowPast = false;  // آیا روزهای گذشته قابل انتخاب باشند؟ (پیش‌فرض: خیر)
 
-function initCalendar(targetInputId, returnModalId) {
+function initCalendar(targetInputId, returnModalId, allowPast) {
     if (!calendarDate) {
         var t = todayJalaliStr().split('/');
         calendarDate = { y: parseInt(t[0]), m: parseInt(t[1]) };
     }
     calendarCallback = targetInputId;
     calendarReturnModal = returnModalId || null;
+    calendarAllowPast = (allowPast === true);
     renderCalendar();
 }
 
@@ -80,10 +82,12 @@ function renderCalendar() {
             if (cellIdx < startOffset || day > daysInMonth) {
                 html += '<td class="cal-empty"></td>';
             } else {
-                // فقط روزهای گذشته غیرفعال هستند؛ همه روزهای هفته قابل انتخاب‌اند
-                var isPast = (calendarDate.y < todayY) ||
-                             (calendarDate.y === todayY && calendarDate.m < todayM) ||
-                             (calendarDate.y === todayY && calendarDate.m === todayM && day < todayD);
+                // فقط روزهای گذشته غیرفعال هستند؛ مگر اینکه allowPast فعال باشد
+                var isPast = !calendarAllowPast && (
+                    (calendarDate.y < todayY) ||
+                    (calendarDate.y === todayY && calendarDate.m < todayM) ||
+                    (calendarDate.y === todayY && calendarDate.m === todayM && day < todayD)
+                );
 
                 if (isPast) {
                     html += '<td class="cal-disabled">' + toFa(day) + '</td>';

@@ -1,0 +1,100 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace TandisWebApp.DTOs
+{
+    // ============================================================
+    //  احراز هویت مدیر
+    // ============================================================
+
+    public class AdminLoginRequest
+    {
+        [Required(ErrorMessage = "نام کاربری را وارد کنید")]
+        public string Username { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "رمز عبور را وارد کنید")]
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class AdminLoginResponse
+    {
+        public string Token { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string DisplayName { get; set; } = string.Empty;
+        public short ShiftID { get; set; }
+    }
+
+    // ============================================================
+    //  گزارش ترددها
+    // ============================================================
+
+    public class AdminTrafficRowDto
+    {
+        public long TrafficID { get; set; }
+        public string? PersonName { get; set; }
+        public string? MemberCode { get; set; }
+        public string? EntryDate { get; set; }
+        public string? EntryTime { get; set; }
+        public string? ExitDate { get; set; }
+        public string? ExitTime { get; set; }
+        public string? EntryDesc { get; set; }
+        public bool? IsGuest { get; set; }
+    }
+
+    // ============================================================
+    //  گزارش ثبت‌نام و تمدید
+    // ============================================================
+
+    public class AdminRegisterRowDto
+    {
+        public long SportMemberID { get; set; }
+        public string? PersonName { get; set; }
+        public string? MemberCode { get; set; }
+        public string? SportName { get; set; }
+        public string? SanseName { get; set; }
+        public string? CoachName { get; set; }
+        public string? MembershipTypeDesc { get; set; }
+        public string? PeriodDesc { get; set; }
+        public long FinalPayment { get; set; }
+        public string FinalPaymentDisplay { get; set; } = string.Empty;
+        public string? StartDate { get; set; }
+        public string? EndDate { get; set; }
+        public string? CreationDate { get; set; }
+        public string? CreationTime { get; set; }
+        public bool IsRevival { get; set; }
+        public string TypeDesc => IsRevival ? "تمدید" : "ثبت‌نام";
+    }
+
+    // ============================================================
+    //  گزارش تک‌جلسه‌ها
+    // ============================================================
+
+    public class AdminOneSessionRowDto
+    {
+        public int TicketID { get; set; }
+        public string? PersonName { get; set; }
+        public string? MemberCode { get; set; }
+        public string? SansName { get; set; }
+        public string? TarefeName { get; set; }
+        public long Amount { get; set; }
+        public string AmountDisplay { get; set; } = string.Empty;
+        public string? CreationDate { get; set; }
+        public string? CreationTime { get; set; }
+        public string? TicketDesc { get; set; }
+    }
+
+    // ============================================================
+    //  گزارش بدهی‌ها و دریافت‌ها
+    // ============================================================
+
+    public class AdminFinanceRowDto
+    {
+        public long RowID { get; set; }
+        public string RowType { get; set; } = string.Empty; // "بستانکار" or "بدهکار"
+        public string? TypeDesc { get; set; }
+        public long Amount { get; set; }
+        public string AmountDisplay { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public string? PersonName { get; set; }
+        public string? DateDisplay { get; set; }
+    }
+}

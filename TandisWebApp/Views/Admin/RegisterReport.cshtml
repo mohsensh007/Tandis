@@ -1,0 +1,157 @@
+@{
+    ViewData["Title"] = "گزارش ثبت‌نام و تمدید";
+    Layout = "_AdminLayout";
+}
+
+<div class="card mb-3">
+    <div class="card-header"><i class="bi bi-funnel"></i> فیلتر بازه و نوع</div>
+    <div class="card-body">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">از تاریخ</label>
+                <div class="input-group">
+                    <input type="text" id="fromDate" class="form-control" placeholder="مثلاً 1405/01/01" readonly />
+                    <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('fromDate','از تاریخ')">
+                        <i class="bi bi-calendar3"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" onclick="$('#fromDate').val('')">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">تا تاریخ</label>
+                <div class="input-group">
+                    <input type="text" id="toDate" class="form-control" placeholder="مثلاً 1405/03/31" readonly />
+                    <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('toDate','تا تاریخ')">
+                        <i class="bi bi-calendar3"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" onclick="$('#toDate').val('')">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">نوع</label>
+                <div class="btn-group w-100" role="group">
+                    <input type="radio" class="btn-check" name="mode" id="modeBoth" value="both" checked>
+                    <label class="btn btn-outline-primary" for="modeBoth">هر دو</label>
+                    <input type="radio" class="btn-check" name="mode" id="modeReg" value="register">
+                    <label class="btn btn-outline-success" for="modeReg">ثبت‌نام</label>
+                    <input type="radio" class="btn-check" name="mode" id="modeRenew" value="renew">
+                    <label class="btn btn-outline-warning" for="modeRenew">تمدید</label>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100 mb-2" id="btnSearch"><i class="bi bi-search"></i> نمایش</button>
+                <button class="btn btn-success w-100" onclick="exportTableToCSV('tblRegister','گزارش-ثبت‌نام')">
+                    <i class="bi bi-file-earmark-excel"></i> خروجی اکسل
+                </button>
+            </div>
+        </div>
+        <div class="mt-2">
+            <small class="text-muted">مجموع مبالغ: <strong id="sumAmount">—</strong></small>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <span><i class="bi bi-list-ul"></i> لیست ثبت‌نام / تمدید</span>
+        <span class="badge bg-primary" id="rowCount">۰ رکورد</span>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover table-sm align-middle mb-0" id="tblRegister">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>نام شخص</th>
+                        <th>کد عضویت</th>
+                        <th>ورزش</th>
+                        <th>سانس</th>
+                        <th>مربی</th>
+                        <th>نوع</th>
+                        <th>دوره</th>
+                        <th>مبلغ</th>
+                        <th>شروع</th>
+                        <th>پایان</th>
+                        <th>تاریخ ثبت</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyRegister">
+                    <tr><td colspan="12" class="text-center text-muted p-4">برای نمایش گزارش، فیلتر را تنظیم کرده و دکمه «نمایش» را بزنید.</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $('#btnSearch').click(function () {
+        var from = $.trim($('#fromDate').val());
+        var to = $.trim($('#toDate').val());
+        var mode = $('input[name="mode"]:checked').val();
+        if (from && to && from > to) { showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error'); return; }
+
+        var qs = '?mode=' + mode + '&';
+        if (from) qs += 'from=' + encodeURIComponent(from) + '&';
+        if (to) qs += 'to=' + encodeURIComponent(to) + '&';
+
+        apiCall('/api/Admin/RegisterReport' + qs, 'GET', null, function (res) {
+            if (res.success) renderTable(res.data || []);
+        });
+    });
+
+    function renderTable(rows) {
+        $('#rowCount').text(faNum(rows.length) + ' رکورد');
+        var sum = 0;
+        if (rows.length === 0) {
+            $('#tbodyRegister').html('<tr><td colspan="12" class="text-center text-muted p-4">رکوردی در این بازه یافت نشد.</td></tr>');
+            $('#sumAmount').text('—');
+            return;
+        }
+        var html = '';
+        $.each(rows, function (i, r) {
+            sum += (r.finalPayment || 0);
+            var typeBadge = r.isRevival
+                ? '<span class="badge bg-warning text-dark">تمدید</span>'
+                : '<span class="badge bg-success">ثبت‌نام</span>';
+            html += '<tr>' +
+                '<td>' + faNum(i + 1) + '</td>' +
+                '<td>' + esc(r.personName || '-') + '</td>' +
+                '<td>' + esc(r.memberCode || '-') + '</td>' +
+                '<td>' + esc(r.sportName || '-') + '</td>' +
+                '<td>' + esc(r.sanseName || '-') + '</td>' +
+                '<td>' + esc(r.coachName || '-') + '</td>' +
+                '<td>' + typeBadge + '</td>' +
+                '<td>' + esc(r.periodDesc || '-') + '</td>' +
+                '<td class="text-nowrap">' + esc(r.finalPaymentDisplay || '-') + '</td>' +
+                '<td>' + esc(r.startDate || '-') + '</td>' +
+                '<td>' + esc(r.endDate || '-') + '</td>' +
+                '<td>' + esc(r.creationDate || '-') + (r.creationTime ? ' ' + esc(r.creationTime) : '') + '</td>' +
+                '</tr>';
+        });
+        $('#tbodyRegister').html(html);
+        $('#sumAmount').text(faNum(sum) + ' ریال');
+    }
+
+    function exportTableToCSV(tableId, fileName) {
+        var rows = document.querySelectorAll('#' + tableId + ' tr');
+        if (rows.length <= 1) { showToast('ابتدا گزارش را نمایش دهید', 'warning'); return; }
+        var csv = [];
+        for (var i = 0; i < rows.length; i++) {
+            var cols = rows[i].querySelectorAll('td, th');
+            var line = [];
+            for (var j = 0; j < cols.length; j++) line.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
+            csv.push(line.join(','));
+        }
+        var blob = new Blob(['\uFEFF' + csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        var link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = fileName + '.csv';
+        link.click();
+    }
+</script>
+}

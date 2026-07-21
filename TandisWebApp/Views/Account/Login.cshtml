@@ -6,8 +6,8 @@
 <div class="mb-3">
     <div id="loginForm">
         <div class="mb-3">
-            <label class="form-label">کد ملی</label>
-            <input type="text" id="txtNationalCode" class="form-control" placeholder="کد ملی ۱۰ رقم" maxlength="10" />
+            <label class="form-label">کد ملی / نام کاربری</label>
+            <input type="text" id="txtNationalCode" class="form-control" placeholder="کد ملی ۱۰ رقم یا نام کاربری مدیر" />
         </div>
         <div class="mb-3">
             <label class="form-label">رمز عبور</label>
@@ -40,9 +40,30 @@
     $('#btnLogin').click(function () {
         var nc = $.trim($('#txtNationalCode').val());
         var pw = $('#txtPassword').val();
-        if (!nc || nc.length < 10) { showToast('کد ملی را صحیح وارد کنید', 'error'); return; }
+
+        // === تشخیص خودکار مدیر: admin / adminb ===
+        var lower = nc.toLowerCase();
+        var isAdmin = (lower === 'admin' || lower === 'adminb');
+
+        if (!nc) { showToast('کد ملی / نام کاربری را وارد کنید', 'error'); return; }
+        // اعتبارسنجی طول کد ملی فقط برای اعضا اعمال می‌شود، نه مدیران
+        if (!isAdmin && nc.length < 10) { showToast('کد ملی را صحیح وارد کنید', 'error'); return; }
         if (!pw) { showToast('رمز عبور را وارد کنید', 'error'); return; }
 
+        if (isAdmin) {
+            // مسیر ورود مدیر
+            apiCall('/api/Admin/Login', 'POST', { username: lower, password: pw }, function (res) {
+                if (res.success) {
+                    showToast('ورود مدیر موفقیت‌آمیز', 'success');
+                    setTimeout(function () { window.location.href = '/Admin'; }, 800);
+                } else {
+                    showToast(res.message, 'error');
+                }
+            });
+            return;
+        }
+
+        // مسیر ورود عضو
         apiCall('/api/Account/Login', 'POST', { nationalCode: nc, password: pw }, function (res) {
             if (res.success) {
                 memberName = res.data.fullName;

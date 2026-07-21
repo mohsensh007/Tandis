@@ -45,14 +45,21 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero
     };
 
-    // JWT از کوکی "X-Access-Token" هم خوانده شود (برای صفحات Razor)
+    // JWT از کوکی "X-Access-Token" (اعضا) یا "X-Admin-Token" (مدیران) خوانده شود.
+    // اولویت با کوکی ادمین است تا در صورت ورود مدیر، توکن عضو نادیده گرفته شود.
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = ctx =>
         {
-            var token = ctx.Request.Cookies["X-Access-Token"];
-            if (!string.IsNullOrEmpty(token))
-                ctx.Token = token;
+            var adminToken = ctx.Request.Cookies["X-Admin-Token"];
+            if (!string.IsNullOrEmpty(adminToken))
+            {
+                ctx.Token = adminToken;
+                return Task.CompletedTask;
+            }
+            var memberToken = ctx.Request.Cookies["X-Access-Token"];
+            if (!string.IsNullOrEmpty(memberToken))
+                ctx.Token = memberToken;
             return Task.CompletedTask;
         }
     };
@@ -72,6 +79,10 @@ builder.Services.AddScoped<ServicePurchaseService>();
 builder.Services.AddScoped<AccountingService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<CommonHelperService>();
+// سرویس‌های ادمین — IAdminUserProvider فعلاً hardcoded است و در آینده با DbAdminUserProvider جایگزین می‌شود
+builder.Services.AddSingleton<IAdminUserProvider, HardcodedAdminUserProvider>();
+builder.Services.AddScoped<AdminAuthService>();
+builder.Services.AddScoped<AdminReportService>();
 
 // HttpContextAccessor برای استفاده در Service‌ها
 builder.Services.AddHttpContextAccessor();

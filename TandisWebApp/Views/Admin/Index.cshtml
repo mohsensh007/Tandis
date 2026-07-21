@@ -1,0 +1,60 @@
+@{
+    ViewData["Title"] = "داشبورد مدیر";
+    Layout = "_AdminLayout";
+}
+
+<div class="row g-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-grid-1x2"></i> گزارش‌های مدیریتی</h5>
+                <p class="text-muted">از منوی بالا یا کارت‌های زیر گزارش مورد نظر را انتخاب کنید.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6 col-lg-3">
+        <a href="/Admin/TrafficReport" class="text-decoration-none">
+            <div class="card text-center h-100" style="border-top:3px solid #0d6efd">
+                <div class="card-body p-4">
+                    <div style="font-size:2.5rem">🚪</div>
+                    <h6 class="mt-2">گزارش ترددها</h6>
+                    <small class="text-muted">ورود و خروج اعضای شیفت</small>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <a href="/Admin/RegisterReport" class="text-decoration-none">
+            <div class="card text-center h-100" style="border-top:3px solid #198754">
+                <div class="card-body p-4">
+                    <div style="font-size:2.5rem">🔄</div>
+                    <h6 class="mt-2">ثبت‌نام و تمدید</h6>
+                    <small class="text-muted">ثبت‌نام‌ها و تمدیدهای دوره</small>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <a href="/Admin/OneSessionReport" class="text-decoration-none">
+            <div class="card text-center h-100" style="border-top:3px solid #ffc107">
+                <div class="card-body p-4">
+                    <div style="font-size:2.5rem">🎫</div>
+                    <h6 class="mt-2">تک‌جلسه‌ها</h6>
+                    <small class="text-muted">بلیت‌های جلسه آزاد</small>
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <a href="/Admin/FinanceReport" class="text-decoration-none">
+            <div class="card text-center h-100" style="border-top:3px solid #dc3545">
+                <div class="card-body p-4">
+                    <div style="font-size:2.5rem">💰</div>
+                    <h6 class="mt-2">بدهی و دریافت</h6>
+                    <small class="text-muted">تراکنش‌های مالی شیفت</small>
+                </div>
+            </div>
+        </a>
+    </div>
+</div>
