@@ -61,7 +61,7 @@
                         <th>تاریخ خروج</th>
                         <th>ساعت خروج</th>
                         <th>توضیحات</th>
-                        <th>نوع</th>
+                        <th>نوع عضویت</th>
                     </tr>
                 </thead>
                 <tbody id="tbodyTraffic">
@@ -98,7 +98,7 @@
         $.each(rows, function (i, r) {
             var typeBadge = r.isGuest
                 ? '<span class="badge bg-warning text-dark">مهمان</span>'
-                : '<span class="badge bg-success">عضو</span>';
+                : '<span class="badge bg-success">ورزشکار</span>';
             html += '<tr>' +
                 '<td>' + faNum(i + 1) + '</td>' +
                 '<td>' + esc(r.personName || '-') + '</td>' +

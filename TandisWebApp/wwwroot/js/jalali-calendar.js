@@ -59,7 +59,10 @@ function initCalendar(targetInputId, returnModalId, allowPast) {
     renderCalendar();
 }
 
-function renderCalendar() {
+function renderCalendar(allowPast) {
+    // اگر پارامتر صریح پاس شده، از آن استفاده شود؛ در غیر این صورت از متغیر سراسری
+    var canSelectPast = (allowPast === true) ? true : calendarAllowPast;
+
     $('#currentMonthLabel').text(FaMonths[calendarDate.m - 1] + ' ' + toFa(calendarDate.y));
 
     var g = jalaliToGregorian(calendarDate.y, calendarDate.m, 1);
@@ -83,7 +86,7 @@ function renderCalendar() {
                 html += '<td class="cal-empty"></td>';
             } else {
                 // فقط روزهای گذشته غیرفعال هستند؛ مگر اینکه allowPast فعال باشد
-                var isPast = !calendarAllowPast && (
+                var isPast = !canSelectPast && (
                     (calendarDate.y < todayY) ||
                     (calendarDate.y === todayY && calendarDate.m < todayM) ||
                     (calendarDate.y === todayY && calendarDate.m === todayM && day < todayD)
