@@ -26,7 +26,7 @@ namespace TandisWebApp.Services
         //  گزارش ترددها
         // ============================================================
 
-        public async Task<List<AdminTrafficRowDto>> GetTrafficReportAsync(short shiftID, string? from, string? to)
+        public async Task<AdminReportResponse<AdminTrafficRowDto, TrafficReportSummaryDto>> GetTrafficReportAsync(short shiftID, string? from, string? to)
         {
             var query = _db.ACC_Traffics
                 .Where(t => t.ShiftID == shiftID);
@@ -36,56 +36,67 @@ namespace TandisWebApp.Services
             if (!string.IsNullOrWhiteSpace(to))
                 query = query.Where(t => t.EntryDate != null && t.EntryDate.CompareTo(to) <= 0);
 
-            var rows = await (
+            // Join با Gen_Members و Gen_Persons برای دریافت نام کامل و کد عضویت
+            // ابتدا داده‌های خام را می‌گیریم، بعد در حافظه فرمت می‌کنیم
+            var rawRows = await (
                 from t in query
+                join m in _db.Gen_Members on t.MemberID equals m.MemberID into memJoin
+                from m in memJoin.DefaultIfEmpty()
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID into personJoin
+                from p in personJoin.DefaultIfEmpty()
                 orderby t.TrafficID descending
-                select new AdminTrafficRowDto
+                select new
                 {
-                    TrafficID = t.TrafficID,
-                    PersonName = t.PersonName,
-                    EntryDate = t.EntryDate,
-                    EntryTime = t.EntryTime,
-                    ExitDate = t.ExitDate,
-                    ExitTime = t.ExitTime,
-                    EntryDesc = t.EntryDesc,
-                    IsGuest = t.IsGuest
+                    t.TrafficID,
+                    t.PersonName,
+                    t.EntryDate,
+                    t.EntryTime,
+                    t.ExitDate,
+                    t.ExitTime,
+                    t.EntryDesc,
+                    t.IsGuest,
+                    MemberFullName = p.FullName,
+                    MemberID = m.MemberID
                 }
             ).ToListAsync();
 
-            // اضافه کردن کد عضویت برای اعضا (نه مهمان)
-            foreach (var row in rows)
+            var rows = rawRows.Select(x => new AdminTrafficRowDto
             {
-                if (row.IsGuest != true && row.TrafficID > 0)
-                {
-                    var member = await (
-                        from t2 in _db.ACC_Traffics
-                        join m in _db.Gen_Members on t2.MemberID equals m.MemberID
-                        where t2.TrafficID == row.TrafficID
-                        select m.MemberID
-                    ).FirstOrDefaultAsync();
+                TrafficID = x.TrafficID,
+                PersonName = x.IsGuest == true ? x.PersonName : (x.MemberFullName ?? x.PersonName ?? "-"),
+                MemberCode = (x.MemberID > 0) ? _helper.SetSeprator(x.MemberID) : null,
+                EntryDate = x.EntryDate,
+                EntryTime = x.EntryTime,
+                ExitDate = x.ExitDate,
+                ExitTime = x.ExitTime,
+                EntryDesc = x.EntryDesc,
+                IsGuest = x.IsGuest
+            }).ToList();
 
-                    if (member > 0)
-                        row.MemberCode = _helper.SetSeprator(member);
-                }
-            }
+            // محاسبه خلاصه
+            var summary = new TrafficReportSummaryDto
+            {
+                TotalCount = rows.Count,
+                MemberCount = rows.Count(r => r.IsGuest != true),
+                GuestCount = rows.Count(r => r.IsGuest == true)
+            };
 
-            return rows;
+            return new AdminReportResponse<AdminTrafficRowDto, TrafficReportSummaryDto>
+            {
+                Data = rows,
+                Summary = summary
+            };
         }
 
         // ============================================================
         //  گزارش ثبت‌نام و تمدید
         // ============================================================
 
-        public async Task<List<AdminRegisterRowDto>> GetRegisterReportAsync(short shiftID, string? from, string? to, string mode)
+        public async Task<AdminReportResponse<AdminRegisterRowDto, RegisterReportSummaryDto>> GetRegisterReportAsync(short shiftID, string? from, string? to, string mode)
         {
-            // فقط سانس‌های مربوط به این شیفت
-            var sanseIDs = await _db.Gen_SportSanses
-                .Where(s => s.ShiftID == shiftID)
-                .Select(s => s.SportSanseID)
-                .ToListAsync();
-
+            // استفاده از Join به جای Contains برای جلوگیری از خطای SQL
             var query = _db.Acc_MemberSports
-                .Where(ms => sanseIDs.Contains(ms.SportSanseID ?? 0));
+                .Where(ms => ms.Gen_SportSanse != null && ms.Gen_SportSanse.ShiftID == shiftID);
 
             // فیلتر بازه زمانی بر اساس CreationDate (شمسی)
             if (!string.IsNullOrWhiteSpace(from))
@@ -95,7 +106,7 @@ namespace TandisWebApp.Services
 
             // فیلتر نوع: ثبت‌نام / تمدید / هر دو
             if (mode == "register")
-                query = query.Where(ms => ms.IsRevival != true);
+                query = query.Where(ms => ms.IsRevival == null || ms.IsRevival == false);
             else if (mode == "renew")
                 query = query.Where(ms => ms.IsRevival == true);
 
@@ -106,6 +117,10 @@ namespace TandisWebApp.Services
             ).ToListAsync();
 
             var result = new List<AdminRegisterRowDto>();
+            long totalAmount = 0;
+            int registerCount = 0;
+            int renewalCount = 0;
+
             foreach (var item in rows)
             {
                 var s = item.sanse;
@@ -129,6 +144,10 @@ namespace TandisWebApp.Services
                     }
                 }
 
+                bool isRevival = item.ms.IsRevival ?? false;
+                if (isRevival) renewalCount++; else registerCount++;
+                totalAmount += item.ms.FinalPayment ?? 0;
+
                 result.Add(new AdminRegisterRowDto
                 {
                     SportMemberID = item.ms.SportMemberID,
@@ -145,18 +164,31 @@ namespace TandisWebApp.Services
                     EndDate = item.ms.EndDate,
                     CreationDate = item.ms.CreationDate,
                     CreationTime = item.ms.CreationTime,
-                    IsRevival = item.ms.IsRevival ?? false
+                    IsRevival = isRevival
                 });
             }
 
-            return result;
+            var summary = new RegisterReportSummaryDto
+            {
+                TotalCount = result.Count,
+                RegisterCount = registerCount,
+                RenewalCount = renewalCount,
+                TotalAmount = totalAmount,
+                TotalAmountDisplay = _helper.SetSeprator(totalAmount) + " ریال"
+            };
+
+            return new AdminReportResponse<AdminRegisterRowDto, RegisterReportSummaryDto>
+            {
+                Data = result,
+                Summary = summary
+            };
         }
 
         // ============================================================
         //  گزارش تک‌جلسه‌ها
         // ============================================================
 
-        public async Task<List<AdminOneSessionRowDto>> GetOneSessionReportAsync(short shiftID, string? from, string? to)
+        public async Task<AdminReportResponse<AdminOneSessionRowDto, OneSessionReportSummaryDto>> GetOneSessionReportAsync(short shiftID, string? from, string? to)
         {
             var query = _db.ACC_Tickets
                 .Where(t => t.ShiftID == shiftID);
@@ -173,8 +205,11 @@ namespace TandisWebApp.Services
             ).ToListAsync();
 
             var result = new List<AdminOneSessionRowDto>();
+            long totalAmount = 0;
+
             foreach (var item in rows)
             {
+                totalAmount += item.t.Amount ?? 0;
                 result.Add(new AdminOneSessionRowDto
                 {
                     TicketID = item.t.TicketID,
@@ -191,18 +226,29 @@ namespace TandisWebApp.Services
                 });
             }
 
-            return result;
+            var summary = new OneSessionReportSummaryDto
+            {
+                TotalCount = result.Count,
+                TotalAmount = totalAmount,
+                TotalAmountDisplay = _helper.SetSeprator(totalAmount) + " ریال"
+            };
+
+            return new AdminReportResponse<AdminOneSessionRowDto, OneSessionReportSummaryDto>
+            {
+                Data = result,
+                Summary = summary
+            };
         }
 
         // ============================================================
-        //  گزارش بدهی‌ها و دریافت‌ها
+        //  گزارش صندوق (فقط دریافتی‌ها)
         // ============================================================
 
-        public async Task<List<AdminFinanceRowDto>> GetFinanceReportAsync(short shiftID, string? from, string? to)
+        public async Task<AdminReportResponse<AdminFinanceRowDto, FinanceReportSummaryDto>> GetFinanceReportAsync(short shiftID, string? from, string? to)
         {
             var result = new List<AdminFinanceRowDto>();
 
-            // --- بستانکارها ---
+            // --- فقط بستانکارها (دریافتی‌ها) ---
             var creditQuery = _db.Cash_CreditStatments.AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(from))
@@ -210,25 +256,24 @@ namespace TandisWebApp.Services
             if (!string.IsNullOrWhiteSpace(to))
                 creditQuery = creditQuery.Where(c => c.CreationDate != null && c.CreationDate.CompareTo(to) <= 0);
 
-            // فیلتر بر اساس ShiftID: از طریق Member → Gen_Members
-            var shiftMembers = await _db.Gen_Members
-                .Where(m => m.ShiftID == shiftID)
-                .Select(m => m.MemberID)
-                .ToListAsync();
+            // به جای Contains با لیست در حافظه، از Join استفاده می‌کنیم تا خطای SQL و محدودیت پارامتر پیش نیاید
+            var credits = await (
+                from c in creditQuery
+                join m in _db.Gen_Members.Where(m => m.ShiftID == shiftID) on c.MemberID equals m.MemberID
+                orderby c.CreditID descending
+                select c
+            ).ToListAsync();
 
-            var credits = await creditQuery
-                .Where(c => c.MemberID != null && shiftMembers.Contains(c.MemberID.Value))
-                .OrderByDescending(c => c.CreditID)
-                .ToListAsync();
-
+            long totalCredit = 0;
             foreach (var c in credits)
             {
                 var personName = await GetPersonNameAsync(c.MemberID ?? 0);
+                totalCredit += c.Amount ?? 0;
 
                 result.Add(new AdminFinanceRowDto
                 {
                     RowID = c.CreditID,
-                    RowType = "بستانکار",
+                    RowType = "دریافتی",
                     TypeDesc = GetCreditTypeDesc(c.CreditTypeID),
                     Amount = c.Amount ?? 0,
                     AmountDisplay = _helper.SetSeprator(c.Amount ?? 0) + " ریال",
@@ -238,40 +283,27 @@ namespace TandisWebApp.Services
                 });
             }
 
-            // --- بدهکارها ---
-            var debitQuery = _db.Cash_DebitStatements.AsQueryable();
-
-            if (!string.IsNullOrWhiteSpace(from))
-                debitQuery = debitQuery.Where(d => d.CreationTime != null
-                    && _helper.ToPersian(d.CreationTime.Value).CompareTo(from) >= 0);
-            if (!string.IsNullOrWhiteSpace(to))
-                debitQuery = debitQuery.Where(d => d.CreationTime != null
-                    && _helper.ToPersian(d.CreationTime.Value).CompareTo(to) <= 0);
-
-            var debits = await debitQuery
-                .Where(d => d.MemberID != null && shiftMembers.Contains(d.MemberID.Value))
-                .OrderByDescending(d => d.DebitID)
-                .ToListAsync();
-
-            foreach (var d in debits)
-            {
-                var personName = await GetPersonNameAsync(d.MemberID ?? 0);
-
-                result.Add(new AdminFinanceRowDto
-                {
-                    RowID = d.DebitID,
-                    RowType = "بدهکار",
-                    TypeDesc = GetDebitTypeDesc(d.DebitTypeID),
-                    Amount = d.Amount ?? 0,
-                    AmountDisplay = _helper.SetSeprator(d.Amount ?? 0) + " ریال",
-                    Description = d.DebitDesc,
-                    PersonName = personName,
-                    DateDisplay = d.CreationTime.HasValue ? _helper.ToPersian(d.CreationTime.Value) : ""
-                });
-            }
-
             // مرتب‌سازی نزولی بر اساس تاریخ
-            return result.OrderByDescending(r => r.DateDisplay).ToList();
+            var finalResult = result.OrderByDescending(r => r.DateDisplay).ToList();
+
+            var summary = new FinanceReportSummaryDto
+            {
+                TotalCount = finalResult.Count,
+                CreditCount = credits.Count,
+                DebitCount = 0,
+                TotalCredit = totalCredit,
+                TotalDebit = 0,
+                Balance = totalCredit,
+                TotalCreditDisplay = _helper.SetSeprator(totalCredit) + " ریال",
+                TotalDebitDisplay = "۰ ریال",
+                BalanceDisplay = _helper.SetSeprator(totalCredit) + " ریال"
+            };
+
+            return new AdminReportResponse<AdminFinanceRowDto, FinanceReportSummaryDto>
+            {
+                Data = finalResult,
+                Summary = summary
+            };
         }
 
         // ============================================================

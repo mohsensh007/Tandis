@@ -1,5 +1,5 @@
 @{
-    ViewData["Title"] = "گزارش بدهی و دریافت";
+    ViewData["Title"] = "گزارش صندوق";
     Layout = "_AdminLayout";
 }
 
@@ -35,25 +35,62 @@
                 <button class="btn btn-primary w-100" id="btnSearch"><i class="bi bi-search"></i> نمایش گزارش</button>
             </div>
             <div class="col-md-3">
-                <button class="btn btn-success w-100" onclick="exportTableToCSV('tblFinance','گزارش-مالی')">
+                <button class="btn btn-success w-100" onclick="exportTableToCSV('tblFinance','گزارش-صندوق')">
                     <i class="bi bi-file-earmark-excel"></i> خروجی اکسل
                 </button>
             </div>
         </div>
         <div class="mt-2">
             <small class="text-muted">
-                جمع بستانکار: <strong class="text-success" id="sumCredit">—</strong> &nbsp;|&nbsp;
-                جمع بدهکار: <strong class="text-danger" id="sumDebit">—</strong> &nbsp;|&nbsp;
-                مانده: <strong id="sumBalance">—</strong>
+                مجموع دریافتی: <strong class="text-success" id="sumCredit">—</strong>
             </small>
+        </div>
+    </div>
+</div>
+
+<!-- خلاصه گزارش -->
+<div class="row g-3 mb-3" id="summaryCards" style="display:none;">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h5 id="summaryTotal">۰</h5>
+                <small>تعداد تراکنش‌ها</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h5 id="summaryCreditCount">۰</h5>
+                <small>تعداد دریافتی</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h5 id="summaryTotalAmount">—</h5>
+                <small>مجموع دریافتی</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body text-center">
+                <h5 id="summaryAvg">—</h5>
+                <small>میانگین هر تراکنش</small>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <span><i class="bi bi-list-ul"></i> لیست تراکنش‌های مالی</span>
-        <span class="badge bg-primary" id="rowCount">۰ رکورد</span>
+        <span><i class="bi bi-cash-stack"></i> لیست دریافتی‌های صندوق</span>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-success" id="rowCount">۰ رکورد</span>
+            <input type="text" id="searchInput" class="form-control form-control-sm" style="width: 200px;" placeholder="جستجو در جدول..." />
+        </div>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -61,11 +98,11 @@
                 <thead class="table-light">
                     <tr>
                         <th>#</th>
-                        <th>نوع تراکنش</th>
+                        <th>نوع دریافتی</th>
                         <th>شرح</th>
                         <th>نام شخص</th>
                         <th>توضیحات</th>
-                        <th>مبلغ</th>
+                        <th>مبلغ (ریال)</th>
                         <th>تاریخ</th>
                     </tr>
                 </thead>
@@ -89,41 +126,66 @@
         if (to) qs += 'to=' + encodeURIComponent(to) + '&';
 
         apiCall('/api/Admin/FinanceReport' + qs, 'GET', null, function (res) {
-            if (res.success) renderTable(res.data || []);
+            if (res.success) renderTable(res.data || [], res.summary);
         });
     });
 
-    function renderTable(rows) {
+    function renderTable(rows, summary) {
         $('#rowCount').text(faNum(rows.length) + ' رکورد');
-        var sumCredit = 0, sumDebit = 0;
+        var sumCredit = 0;
+        
+        // نمایش خلاصه گزارش
+        if (summary) {
+            $('#summaryTotal').text(faNum(summary.totalCount));
+            $('#summaryCreditCount').text(faNum(summary.creditCount));
+            $('#summaryTotalAmount').text(summary.totalCreditDisplay);
+            var avg = summary.totalCount > 0 ? Math.round(summary.totalCredit / summary.totalCount) : 0;
+            $('#summaryAvg').text(faNum(avg) + ' ریال');
+            $('#summaryCards').show();
+        } else {
+            $('#summaryCards').hide();
+        }
+
         if (rows.length === 0) {
             $('#tbodyFinance').html('<tr><td colspan="7" class="text-center text-muted p-4">تراکنشی در این بازه یافت نشد.</td></tr>');
-            $('#sumCredit,#sumDebit,#sumBalance').text('—');
+            $('#sumCredit').text('—');
             return;
         }
         var html = '';
         $.each(rows, function (i, r) {
-            var isCredit = r.rowType === 'بستانکار';
-            if (isCredit) sumCredit += (r.amount || 0); else sumDebit += (r.amount || 0);
-            var typeBadge = isCredit
-                ? '<span class="badge bg-success">بستانکار</span>'
-                : '<span class="badge bg-danger">بدهکار</span>';
-            var amtClass = isCredit ? 'text-success' : 'text-danger';
+            sumCredit += (r.amount || 0);
+            var typeBadge = '<span class="badge bg-success">دریافتی</span>';
             html += '<tr>' +
                 '<td>' + faNum(i + 1) + '</td>' +
                 '<td>' + typeBadge + '</td>' +
                 '<td>' + esc(r.typeDesc || '-') + '</td>' +
                 '<td>' + esc(r.personName || '-') + '</td>' +
                 '<td>' + esc(r.description || '-') + '</td>' +
-                '<td class="text-nowrap ' + amtClass + '">' + esc(r.amountDisplay || '-') + '</td>' +
+                '<td class="text-nowrap text-success">' + esc(r.amountDisplay || '-') + '</td>' +
                 '<td>' + esc(r.dateDisplay || '-') + '</td>' +
                 '</tr>';
         });
         $('#tbodyFinance').html(html);
         $('#sumCredit').text(faNum(sumCredit) + ' ریال');
-        $('#sumDebit').text(faNum(sumDebit) + ' ریال');
-        var bal = sumCredit - sumDebit;
-        $('#sumBalance').text((bal >= 0 ? '+' : '') + faNum(bal) + ' ریال');
+        initTableSearch();
+    }
+
+    // جستجوی ساده در جدول
+    function initTableSearch() {
+        $('#searchInput').off('keyup').on('keyup', function () {
+            var value = $(this).val().toLowerCase();
+            var visibleCount = 0;
+            $('#tblFinance tbody tr').each(function () {
+                var text = $(this).text().toLowerCase();
+                var match = text.indexOf(value) > -1;
+                $(this).toggle(match);
+                if (match) {
+                    visibleCount++;
+                    $(this).find('td:first').text(faNum(visibleCount));
+                }
+            });
+            $('#rowCount').text(faNum(visibleCount) + ' رکورد');
+        });
     }
 
     function exportTableToCSV(tableId, fileName) {

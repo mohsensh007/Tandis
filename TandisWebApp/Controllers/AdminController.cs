@@ -88,32 +88,32 @@ namespace TandisWebApp.Controllers
         [Route("api/Admin/TrafficReport")]
         public async Task<IActionResult> TrafficReportApi(string? from, string? to)
         {
-            var data = await _reports.GetTrafficReportAsync(AdminShiftID, from, to);
-            return Ok(new { success = true, data });
+            var response = await _reports.GetTrafficReportAsync(AdminShiftID, from, to);
+            return Ok(new { success = true, data = response.Data, summary = response.Summary });
         }
 
         [HttpGet]
         [Route("api/Admin/RegisterReport")]
         public async Task<IActionResult> RegisterReportApi(string? from, string? to, string mode = "both")
         {
-            var data = await _reports.GetRegisterReportAsync(AdminShiftID, from, to, mode);
-            return Ok(new { success = true, data });
+            var response = await _reports.GetRegisterReportAsync(AdminShiftID, from, to, mode);
+            return Ok(new { success = true, data = response.Data, summary = response.Summary });
         }
 
         [HttpGet]
         [Route("api/Admin/OneSessionReport")]
         public async Task<IActionResult> OneSessionReportApi(string? from, string? to)
         {
-            var data = await _reports.GetOneSessionReportAsync(AdminShiftID, from, to);
-            return Ok(new { success = true, data });
+            var response = await _reports.GetOneSessionReportAsync(AdminShiftID, from, to);
+            return Ok(new { success = true, data = response.Data, summary = response.Summary });
         }
 
         [HttpGet]
         [Route("api/Admin/FinanceReport")]
         public async Task<IActionResult> FinanceReportApi(string? from, string? to)
         {
-            var data = await _reports.GetFinanceReportAsync(AdminShiftID, from, to);
-            return Ok(new { success = true, data });
+            var response = await _reports.GetFinanceReportAsync(AdminShiftID, from, to);
+            return Ok(new { success = true, data = response.Data, summary = response.Summary });
         }
 
         // ============================================================

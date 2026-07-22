@@ -43,10 +43,41 @@
     </div>
 </div>
 
+<!-- خلاصه گزارش -->
+<div class="row g-3 mb-3" id="summaryCards" style="display:none;">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h5 id="summaryTotal">۰</h5>
+                <small>کل ترددها</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h5 id="summaryMembers">۰</h5>
+                <small>اعضا</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-warning text-dark">
+            <div class="card-body text-center">
+                <h5 id="summaryGuests">۰</h5>
+                <small>مهمانان</small>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span><i class="bi bi-list-ul"></i> لیست ترددها</span>
-        <span class="badge bg-primary" id="rowCount">۰ رکورد</span>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-primary" id="rowCount">۰ رکورد</span>
+            <input type="text" id="searchInput" class="form-control form-control-sm" style="width: 200px;" placeholder="جستجو در جدول..." />
+        </div>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -84,12 +115,23 @@
         if (to) qs += 'to=' + encodeURIComponent(to) + '&';
 
         apiCall('/api/Admin/TrafficReport' + qs, 'GET', null, function (res) {
-            if (res.success) renderTable(res.data || []);
+            if (res.success) renderTable(res.data || [], res.summary);
         });
     });
 
-    function renderTable(rows) {
+    function renderTable(rows, summary) {
         $('#rowCount').text(faNum(rows.length) + ' رکورد');
+        
+        // نمایش خلاصه گزارش
+        if (summary) {
+            $('#summaryTotal').text(faNum(summary.totalCount));
+            $('#summaryMembers').text(faNum(summary.memberCount));
+            $('#summaryGuests').text(faNum(summary.guestCount));
+            $('#summaryCards').show();
+        } else {
+            $('#summaryCards').hide();
+        }
+
         if (rows.length === 0) {
             $('#tbodyTraffic').html('<tr><td colspan="9" class="text-center text-muted p-4">ترددی در این بازه یافت نشد.</td></tr>');
             return;
@@ -112,6 +154,27 @@
                 '</tr>';
         });
         $('#tbodyTraffic').html(html);
+        initTableSearch();
+    }
+
+    // جستجوی ساده در جدول
+    function initTableSearch() {
+        $('#searchInput').off('keyup').on('keyup', function () {
+            var value = $(this).val().toLowerCase().trim();
+            $('#tbodyTraffic tr').each(function () {
+                var text = $(this).text().toLowerCase();
+                $(this).toggle(text.indexOf(value) > -1);
+            });
+            updateRowNumbers('#tbodyTraffic');
+        });
+    }
+
+    // به‌روزرسانی شماره ردیف‌ها پس از فیلتر/جستجو
+    function updateRowNumbers(tbodySelector) {
+        var idx = 1;
+        $(tbodySelector + ' tr:visible').each(function () {
+            $(this).find('td:first').text(faNum(idx++));
+        });
     }
 
     // خروجی CSV

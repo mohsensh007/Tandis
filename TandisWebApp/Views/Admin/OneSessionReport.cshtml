@@ -40,8 +40,33 @@
                 </button>
             </div>
         </div>
-        <div class="mt-2">
-            <small class="text-muted">مجموع مبالغ: <strong id="sumAmount">—</strong></small>
+    </div>
+</div>
+
+<!-- خلاصه گزارش -->
+<div class="row g-3 mb-3" id="summaryCards" style="display:none;">
+    <div class="col-md-4">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h5 id="summaryTotal">۰</h5>
+                <small>کل</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h5 id="summaryAmount">—</h5>
+                <small>مجموع مبالغ</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h5 id="summaryAvg">—</h5>
+                <small>میانگین</small>
+            </div>
         </div>
     </div>
 </div>
@@ -49,7 +74,10 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span><i class="bi bi-list-ul"></i> لیست تک‌جلسه‌ها</span>
-        <span class="badge bg-primary" id="rowCount">۰ رکورد</span>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-primary" id="rowCount">۰ رکورد</span>
+            <input type="text" id="searchInput" class="form-control form-control-sm" style="width: 200px;" placeholder="جستجو در جدول..." />
+        </div>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -87,21 +115,30 @@
         if (to) qs += 'to=' + encodeURIComponent(to) + '&';
 
         apiCall('/api/Admin/OneSessionReport' + qs, 'GET', null, function (res) {
-            if (res.success) renderTable(res.data || []);
+            if (res.success) renderTable(res.data || [], res.summary);
         });
     });
 
-    function renderTable(rows) {
+    function renderTable(rows, summary) {
         $('#rowCount').text(faNum(rows.length) + ' رکورد');
-        var sum = 0;
+        
+        // نمایش خلاصه گزارش
+        if (summary) {
+            $('#summaryTotal').text(faNum(summary.totalCount));
+            $('#summaryAmount').text(summary.totalAmountDisplay);
+            var avg = summary.totalCount > 0 ? Math.round(summary.totalAmount / summary.totalCount) : 0;
+            $('#summaryAvg').text(faNum(avg) + ' ریال');
+            $('#summaryCards').show();
+        } else {
+            $('#summaryCards').hide();
+        }
+
         if (rows.length === 0) {
             $('#tbodyOneSession').html('<tr><td colspan="9" class="text-center text-muted p-4">تک‌جلسه‌ای در این بازه یافت نشد.</td></tr>');
-            $('#sumAmount').text('—');
             return;
         }
         var html = '';
         $.each(rows, function (i, r) {
-            sum += (r.amount || 0);
             html += '<tr>' +
                 '<td>' + faNum(i + 1) + '</td>' +
                 '<td>' + esc(r.personName || '-') + '</td>' +
@@ -115,7 +152,25 @@
                 '</tr>';
         });
         $('#tbodyOneSession').html(html);
-        $('#sumAmount').text(faNum(sum) + ' ریال');
+        initTableSearch();
+    }
+
+    // جستجوی ساده در جدول
+    function initTableSearch() {
+        $('#searchInput').off('keyup').on('keyup', function () {
+            var value = $(this).val().toLowerCase();
+            var visibleCount = 0;
+            $('#tblOneSession tbody tr').each(function () {
+                var text = $(this).text().toLowerCase();
+                var match = text.indexOf(value) > -1;
+                $(this).toggle(match);
+                if (match) {
+                    visibleCount++;
+                    $(this).find('td:first').text(faNum(visibleCount));
+                }
+            });
+            $('#rowCount').text(faNum(visibleCount) + ' رکورد');
+        });
     }
 
     function exportTableToCSV(tableId, fileName) {

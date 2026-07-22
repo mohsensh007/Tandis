@@ -33,14 +33,11 @@
             </div>
             <div class="col-md-3">
                 <label class="form-label">نوع</label>
-                <div class="btn-group w-100" role="group">
-                    <input type="radio" class="btn-check" name="mode" id="modeBoth" value="both" checked>
-                    <label class="btn btn-outline-primary" for="modeBoth">هر دو</label>
-                    <input type="radio" class="btn-check" name="mode" id="modeReg" value="register">
-                    <label class="btn btn-outline-success" for="modeReg">ثبت‌نام</label>
-                    <input type="radio" class="btn-check" name="mode" id="modeRenew" value="renew">
-                    <label class="btn btn-outline-warning" for="modeRenew">تمدید</label>
-                </div>
+                <select id="modeSelect" class="form-select form-select-lg fw-bold">
+                    <option value="both" selected>همه</option>
+                    <option value="register">ثبت‌نام</option>
+                    <option value="renew">تمدید</option>
+                </select>
             </div>
             <div class="col-md-3">
                 <button class="btn btn-primary w-100 mb-2" id="btnSearch"><i class="bi bi-search"></i> نمایش</button>
@@ -49,8 +46,41 @@
                 </button>
             </div>
         </div>
-        <div class="mt-2">
-            <small class="text-muted">مجموع مبالغ: <strong id="sumAmount">—</strong></small>
+    </div>
+</div>
+
+<!-- خلاصه گزارش -->
+<div class="row g-3 mb-3" id="summaryCards" style="display:none;">
+    <div class="col-md-3">
+        <div class="card bg-primary text-white">
+            <div class="card-body text-center">
+                <h5 id="summaryTotal">۰</h5>
+                <small>کل</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-success text-white">
+            <div class="card-body text-center">
+                <h5 id="summaryRegister">۰</h5>
+                <small>ثبت‌نام</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-warning text-dark">
+            <div class="card-body text-center">
+                <h5 id="summaryRenewal">۰</h5>
+                <small>تمدید</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card bg-info text-white">
+            <div class="card-body text-center">
+                <h5 id="summaryAmount">—</h5>
+                <small>مجموع مبالغ</small>
+            </div>
         </div>
     </div>
 </div>
@@ -58,7 +88,10 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
         <span><i class="bi bi-list-ul"></i> لیست ثبت‌نام / تمدید</span>
-        <span class="badge bg-primary" id="rowCount">۰ رکورد</span>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-primary" id="rowCount">۰ رکورد</span>
+            <input type="text" id="searchInput" class="form-control form-control-sm" style="width: 200px;" placeholder="جستجو در جدول..." />
+        </div>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
@@ -92,7 +125,7 @@
     $('#btnSearch').click(function () {
         var from = $.trim($('#fromDate').val());
         var to = $.trim($('#toDate').val());
-        var mode = $('input[name="mode"]:checked').val();
+        var mode = $('#modeSelect').val();
         if (from && to && from > to) { showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error'); return; }
 
         var qs = '?mode=' + mode + '&';
@@ -100,26 +133,34 @@
         if (to) qs += 'to=' + encodeURIComponent(to) + '&';
 
         apiCall('/api/Admin/RegisterReport' + qs, 'GET', null, function (res) {
-            if (res.success) renderTable(res.data || []);
+            if (res.success) renderTable(res.data || [], res.summary);
         });
     });
 
-    function renderTable(rows) {
-        $('#rowCount').text(faNum(rows.length) + ' رکورد');
-        var sum = 0;
+    function renderTable(rows, summary) {
+        // نمایش خلاصه گزارش
+        if (summary) {
+            $('#summaryTotal').text(faNum(summary.totalCount));
+            $('#summaryRegister').text(faNum(summary.registerCount));
+            $('#summaryRenewal').text(faNum(summary.renewalCount));
+            $('#summaryAmount').text(summary.totalAmountDisplay);
+            $('#summaryCards').show();
+        } else {
+            $('#summaryCards').hide();
+        }
+
         if (rows.length === 0) {
             $('#tbodyRegister').html('<tr><td colspan="12" class="text-center text-muted p-4">رکوردی در این بازه یافت نشد.</td></tr>');
-            $('#sumAmount').text('—');
+            updateRowCount(0);
             return;
         }
         var html = '';
         $.each(rows, function (i, r) {
-            sum += (r.finalPayment || 0);
             var typeBadge = r.isRevival
                 ? '<span class="badge bg-warning text-dark">تمدید</span>'
                 : '<span class="badge bg-success">ثبت‌نام</span>';
-            html += '<tr>' +
-                '<td>' + faNum(i + 1) + '</td>' +
+            html += '<tr data-index="' + i + '">' +
+                '<td class="row-number">' + faNum(i + 1) + '</td>' +
                 '<td>' + esc(r.personName || '-') + '</td>' +
                 '<td>' + esc(r.memberCode || '-') + '</td>' +
                 '<td>' + esc(r.sportName || '-') + '</td>' +
@@ -134,7 +175,29 @@
                 '</tr>';
         });
         $('#tbodyRegister').html(html);
-        $('#sumAmount').text(faNum(sum) + ' ریال');
+        initTableSearch();
+    }
+
+    // جستجوی ساده در جدول + آپدیت شماره ردیف و شمارش
+    function initTableSearch() {
+        $('#searchInput').off('keyup').on('keyup', function () {
+            var value = $(this).val().toLowerCase();
+            var visibleCount = 0;
+            $('#tblRegister tbody tr').each(function () {
+                var text = $(this).text().toLowerCase();
+                var match = text.indexOf(value) > -1;
+                $(this).toggle(match);
+                if (match) {
+                    visibleCount++;
+                    $(this).find('td.row-number').text(faNum(visibleCount));
+                }
+            });
+            updateRowCount(visibleCount);
+        });
+    }
+
+    function updateRowCount(count) {
+        $('#rowCount').text(faNum(count) + ' رکورد');
     }
 
     function exportTableToCSV(tableId, fileName) {

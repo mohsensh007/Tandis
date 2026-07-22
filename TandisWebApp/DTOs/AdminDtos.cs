@@ -24,6 +24,46 @@ namespace TandisWebApp.DTOs
     }
 
     // ============================================================
+    //  خلاصه گزارش‌ها (Summary DTOs)
+    // ============================================================
+
+    public class TrafficReportSummaryDto
+    {
+        public int TotalCount { get; set; }
+        public int MemberCount { get; set; }
+        public int GuestCount { get; set; }
+    }
+
+    public class RegisterReportSummaryDto
+    {
+        public int TotalCount { get; set; }
+        public int RegisterCount { get; set; }
+        public int RenewalCount { get; set; }
+        public long TotalAmount { get; set; }
+        public string TotalAmountDisplay { get; set; } = string.Empty;
+    }
+
+    public class OneSessionReportSummaryDto
+    {
+        public int TotalCount { get; set; }
+        public long TotalAmount { get; set; }
+        public string TotalAmountDisplay { get; set; } = string.Empty;
+    }
+
+    public class FinanceReportSummaryDto
+    {
+        public int TotalCount { get; set; }
+        public int CreditCount { get; set; }
+        public int DebitCount { get; set; }
+        public long TotalCredit { get; set; }
+        public long TotalDebit { get; set; }
+        public long Balance { get; set; }
+        public string TotalCreditDisplay { get; set; } = string.Empty;
+        public string TotalDebitDisplay { get; set; } = string.Empty;
+        public string BalanceDisplay { get; set; } = string.Empty;
+    }
+
+    // ============================================================
     //  گزارش ترددها
     // ============================================================
 
@@ -89,12 +129,22 @@ namespace TandisWebApp.DTOs
     public class AdminFinanceRowDto
     {
         public long RowID { get; set; }
-        public string RowType { get; set; } = string.Empty; // "بستانکار" or "بدهکار"
+        public string RowType { get; set; } = string.Empty; // "دریافتی" or "پرداختی"
         public string? TypeDesc { get; set; }
         public long Amount { get; set; }
         public string AmountDisplay { get; set; } = string.Empty;
         public string? Description { get; set; }
         public string? PersonName { get; set; }
         public string? DateDisplay { get; set; }
+    }
+
+    // ============================================================
+    //  پاسخ گزارش با خلاصه (Generic wrapper)
+    // ============================================================
+
+    public class AdminReportResponse<TRow, TSummary>
+    {
+        public List<TRow> Data { get; set; } = new();
+        public TSummary Summary { get; set; } = default!;
     }
 }

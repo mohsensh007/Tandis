@@ -169,9 +169,9 @@
                 '<text x="'+cx+'" y="'+(cy-4)+'" text-anchor="middle" dominant-baseline="middle" fill="#2c3e50" font-size="16" font-weight="700" font-family="Tahoma">'+toFa(pct)+'٪</text>' +
                 '<text x="'+cx+'" y="'+(cy+14)+'" text-anchor="middle" fill="#6c757d" font-size="8" font-family="Tahoma">مصرف شده</text>' +
             '</svg>' +
-            '<div class="text-center small">' +
-                '<div class="fw-bold" style="color:'+color+'">'+toFa(remaining)+' جلسه باقی‌مانده</div>' +
-                '<div class="text-muted">مصرف: '+toFa(used)+' از '+toFa(total)+'</div>' +
+            '<div class="text-center">' +
+                '<div class="fw-bold" style="color:'+color+' ;font-size:1.1rem;">'+toFa(remaining)+' جلسه باقی‌مانده</div>' +
+                '<div class="text-muted small">مصرف: '+toFa(used)+' از '+toFa(total)+'</div>' +
             '</div>' +
         '</div>';
     }
@@ -228,8 +228,8 @@
                                 '<div class="session-name">' + esc(s.sportName) + ' - ' + esc(s.sanseName) + '</div>' +
                                 '<div class="session-coach mt-1">👤 مربی: ' + esc(s.coachName || '-') + '</div>' +
                                 '<div class="d-flex flex-wrap gap-2 mt-2">' +
-                                    '<span class="session-end-badge">📅 پایان: ' + esc(s.endDate || '-') + '</span>' +
                                     (s.startDate ? '<span class="session-end-badge">📆 شروع: ' + esc(s.startDate) + '</span>' : '') +
+                                    '<span class="session-end-badge">📅 پایان: ' + esc(s.endDate || '-') + '</span>' +
                                 '</div>' +
                                 '<div class="mt-2 small" style="opacity:.85">' +
                                     (s.membershipTypeDesc ? '🏷️ ' + esc(s.membershipTypeDesc) : '') +
