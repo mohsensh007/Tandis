@@ -35,8 +35,9 @@ namespace TandisWebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
-            //await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            // حذف هر دو کوکی تا session کاملاً پاک شود
             Response.Cookies.Delete("X-Access-Token");
+            Response.Cookies.Delete("X-Admin-Token");
             return RedirectToAction("Login");
         }
 
@@ -52,6 +53,10 @@ namespace TandisWebApp.Controllers
             var result = await _auth.LoginAsync(req);
             if (!result.Success)
                 return BadRequest(result);
+
+            // حذف کوکی ادمین (اگر کاربر قبلاً به‌عنوان مدیر وارد شده بوده)
+            // تا توکن عضو اولویت پیدا کند و Session مدیر با عضو تداخل نکند.
+            Response.Cookies.Delete("X-Admin-Token");
 
             // ذخیره توکن در کوکی
             Response.Cookies.Append("X-Access-Token", result.Data!.Token, new CookieOptions

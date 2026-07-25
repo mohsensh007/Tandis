@@ -68,6 +68,10 @@ namespace TandisWebApp.Controllers
             if (!result.Success)
                 return Ok(result);
 
+            // حذف کوکی عضو (اگر قبلاً با کد ملی وارد شده بوده)
+            // تا توکن ادمین اولویت پیدا کند و session عضو با مدیر تداخل نکند.
+            Response.Cookies.Delete("X-Access-Token");
+
             // ذخیره توکن ادمین در کوکی جدا
             Response.Cookies.Append("X-Admin-Token", result.Data!.Token, new CookieOptions
             {
@@ -124,7 +128,9 @@ namespace TandisWebApp.Controllers
         [Route("Admin/Logout")]
         public IActionResult Logout()
         {
+            // حذف هر دو کوکی تا session کاملاً پاک شود
             Response.Cookies.Delete("X-Admin-Token");
+            Response.Cookies.Delete("X-Access-Token");
             return RedirectToAction("Login", "Account");
         }
     }
