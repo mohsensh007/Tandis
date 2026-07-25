@@ -24,6 +24,7 @@ namespace TandisWebApp.DTOs
         public string? Mobile { get; set; }
         public short ShiftID { get; set; }
         public bool MustChangePassword { get; set; }
+        public string ReturnUrl { get; set; } = "/Home";
     }
 
     public class ChangePasswordRequest

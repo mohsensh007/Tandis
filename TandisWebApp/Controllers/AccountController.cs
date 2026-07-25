@@ -25,8 +25,9 @@ namespace TandisWebApp.Controllers
 
         /// <summary>صفحه لاگین</summary>
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl = null)
         {
+            ViewData["ReturnUrl"] = returnUrl ?? "/Home";
             return View();
         }
 
@@ -48,7 +49,7 @@ namespace TandisWebApp.Controllers
         /// <summary>ورود با کد ملی و رمز</summary>
         [HttpPost]
         [Route("api/Account/Login")]
-        public async Task<IActionResult> LoginApi([FromBody] LoginRequest req)
+        public async Task<IActionResult> LoginApi([FromBody] LoginRequest req, string? returnUrl = null)
         {
             var result = await _auth.LoginAsync(req);
             if (!result.Success)
@@ -66,6 +67,9 @@ namespace TandisWebApp.Controllers
                 SameSite = SameSiteMode.Lax,
                 Expires = DateTimeOffset.UtcNow.AddHours(24)
             });
+
+            // returnUrl برای ریدایرکت در فرانت‌اند
+            result.Data.ReturnUrl = string.IsNullOrEmpty(returnUrl) ? "/Home" : returnUrl;
 
             return Ok(result);
         }

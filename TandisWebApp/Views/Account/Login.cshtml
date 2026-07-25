@@ -1,6 +1,7 @@
 @{
     ViewData["Title"] = "ورود";
     Layout = "_LoginLayout";
+    var returnUrl = ViewData["ReturnUrl"]?.ToString() ?? "/Home";
 }
 
 <div class="mb-3">
@@ -50,6 +51,8 @@
         if (!isAdmin && nc.length < 10) { showToast('کد ملی را صحیح وارد کنید', 'error'); return; }
         if (!pw) { showToast('رمز عبور را وارد کنید', 'error'); return; }
 
+        var returnUrl = '@returnUrl';
+
         if (isAdmin) {
             // مسیر ورود مدیر
             apiCall('/api/Admin/Login', 'POST', { username: lower, password: pw }, function (res) {
@@ -63,8 +66,8 @@
             return;
         }
 
-        // مسیر ورود عضو
-        apiCall('/api/Account/Login', 'POST', { nationalCode: nc, password: pw }, function (res) {
+        // مسیر ورود عضو - returnUrl رو در query string می‌فرستیم
+        apiCall('/api/Account/Login?returnUrl=' + encodeURIComponent(returnUrl), 'POST', { nationalCode: nc, password: pw }, function (res) {
             if (res.success) {
                 memberName = res.data.fullName;
                 if (res.data.mustChangePassword) {
@@ -73,7 +76,8 @@
                     showToast('لطفاً رمز عبور خود را تغییر دهید', 'warning');
                 } else {
                     showToast('ورود موفقیت‌آمیز', 'success');
-                    setTimeout(function () { window.location.href = '/Home/Index'; }, 800);
+                    var redirectUrl = res.data.returnUrl || '/Home';
+                    setTimeout(function () { window.location.href = redirectUrl; }, 800);
                 }
             } else {
                 showToast(res.message, 'error');

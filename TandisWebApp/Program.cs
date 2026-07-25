@@ -61,6 +61,30 @@ builder.Services.AddAuthentication(options =>
             if (!string.IsNullOrEmpty(memberToken))
                 ctx.Token = memberToken;
             return Task.CompletedTask;
+        },
+        // وقتی توکن منقضی شده یا معتبر نیست (401)، برای درخواست‌های MVC به صفحه لاگین ریدایرکت کن
+        // برای درخواست‌های AJAX/API کد 401 برگردان تا سمت کلاینت هندل شود
+        OnChallenge = async ctx =>
+        {
+            ctx.HandleResponse(); // پیش‌فرض 401 را متوقف می‌کند
+
+            var request = ctx.Request;
+            var isAjax = request.Headers["X-Requested-With"] == "XMLHttpRequest" ||
+                         request.Headers["Accept"].ToString().Contains("application/json") ||
+                         request.Path.StartsWithSegments("/api");
+
+            if (isAjax)
+            {
+                ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                ctx.Response.ContentType = "application/json";
+                await ctx.Response.WriteAsJsonAsync(new { success = false, message = "نشست منقضی شده است. لطفاً مجدداً وارد شوید.", redirectTo = "/Account/Login" });
+            }
+            else
+            {
+                // درخواست معمولی (مشاهده صفحه) -> به لاگین ریدایرکت
+                var returnUrl = request.Path + request.QueryString;
+                ctx.Response.Redirect($"/Account/Login?returnUrl={Uri.EscapeDataString(returnUrl)}");
+            }
         }
     };
 });
