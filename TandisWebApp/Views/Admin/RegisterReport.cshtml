@@ -12,7 +12,7 @@
             <div class="col-md-3">
                 <label class="form-label fw-medium">از تاریخ</label>
                 <div class="input-group">
-                    <input type="text" id="fromDate" class="form-control" placeholder="۱۴۰۳/۰۱/۰۱" readonly autocomplete="off" />
+                    <input type="text" id="fromDate" class="form-control" placeholder="۱۴۰۰/۰۱/۰۱" readonly autocomplete="off" value="1400/01/01" />
                     <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('fromDate','از تاریخ')" aria-label="انتخاب تاریخ">
                         <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M26 6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm0 18H6V8h20v16z"/><path d="M10 12h12v2H10v-2zm0 4h12v2H10v-2z"/></svg>
                     </button>
@@ -24,7 +24,7 @@
             <div class="col-md-3">
                 <label class="form-label fw-medium">تا تاریخ</label>
                 <div class="input-group">
-                    <input type="text" id="toDate" class="form-control" placeholder="۱۴۰۳/۱۲/۲۹" readonly autocomplete="off" />
+                    <input type="text" id="toDate" class="form-control" placeholder="۱۴۱۰/۱۲/۲۹" readonly autocomplete="off" value="1410/12/29" />
                     <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('toDate','تا تاریخ')" aria-label="تقویم"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M26 6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm0 18H6V8h20v16z"/><path d="M10 12h12v2H10v-2zm0 4h12v2H10v-2z"/></svg>
                     </button>
                     <button type="button" class="btn btn-outline-danger" onclick="$('#toDate').val('')" aria-label="پاک کردن"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M24.586 9.414 20 14l-4.586-4.586L14 8l4.586 4.586L14 17.172l1.414 1.414L20 15.414l4.586 4.586 1.414-1.414L21.414 15l4.586-4.586-1.414-1.414z"/></svg>
@@ -129,6 +129,8 @@
 
 @section Scripts {
 <script>
+    console.log('=== RegisterReport Scripts Loaded ===');
+
     // تبدیل تاریخ میلادی به شمسی (YYYY/MM/DD)
     function toPersianDate(d) {
         var p = new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit', calendar: 'persian' }).formatToParts(d);
@@ -138,12 +140,12 @@
         return y + '/' + m + '/' + d;
     }
 
-    // تنظیم تاریخ پیش‌فرض: امروز برای fromDate و toDate
+    // تنظیم تاریخ پیش‌فرض: بازه وسیع (۱۴۰۰/۰۱/۰۱ تا ۱۴۱۰/۱۲/۲۹)
     $(function () {
-        var today = new Date();
-        var pd = toPersianDate(today);
-        $('#fromDate').val(pd);
-        $('#toDate').val(pd);
+        console.log('DOM Ready - Setting default dates');
+        $('#fromDate').val('1400/01/01');
+        $('#toDate').val('1410/12/29');
+        console.log('Dates set:', $('#fromDate').val(), $('#toDate').val());
     });
 
     // Debounced table search
@@ -176,15 +178,20 @@
     });
 
     $('#btnSearch').on('click', function (e) {
+        console.log('btnSearch clicked');
         e.preventDefault();
         loadReport();
-    }
+    });
 
     function loadReport() {
+        console.log('=== loadReport called ===');
+        
         const from = $.trim($('#fromDate').val());
         const to = $.trim($('#toDate').val());
         // ✅ FIX: خواندن مقدار از radio انتخاب شده، نه hidden input
         const mode = $('input[name="modeRadio"]:checked').val();
+
+        console.log('Params:', { from, to, mode });
 
         if (from && to && from > to) {
             showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error');
@@ -195,12 +202,17 @@
         if (from) qs += '&from=' + encodeURIComponent(from);
         if (to) qs += '&to=' + encodeURIComponent(to);
 
+        console.log('Query string:', qs);
+
         $('#btnSearch').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>در حال بارگذاری...');
 
         apiCall('/api/Admin/RegisterReport' + qs, 'GET', null, function (res) {
+            console.log('API Response:', res);
+            
             $('#btnSearch').prop('disabled', false).html('<svg class="bi me-1" width="16" height="16"><use href="#search"/></svg>نمایش گزارش');
 
             if (res.success) {
+                console.log('API Success - Data length:', res.data?.length);
                 renderTable(res.data || [], res.summary);
             } else {
                 showToast(res.message || 'خطا در دریافت گزارش', 'error');
@@ -210,6 +222,8 @@
     }
 
     function renderTable(rows, summary) {
+        console.log('renderTable called:', rows?.length, summary);
+        
         // Summary cards
         if (summary) {
             $('#summaryTotal').text(faNum(summary.totalCount));
@@ -252,10 +266,10 @@
 
         $('#tbodyRegister').html(html);
         $('#rowCount').text(faNum(rows.length) + ' رکورد');
+        console.log('Table rendered, rows:', rows.length);
     }
 
     // Debounced table search
-    let searchTimer;
     $('#searchInput').on('input', function () {
         clearTimeout(searchTimer);
         searchTimer = setTimeout(filterTable, 150);
