@@ -3,117 +3,124 @@
     Layout = "_AdminLayout";
 }
 
-<div class="card mb-3">
-    <div class="card-header"><i class="bi bi-funnel"></i> فیلتر بازه و نوع</div>
+<div class="card mb-3 shadow-sm">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0"><i class="bi bi-funnel-fill me-2 text-primary"></i>فیلتر گزارش</h5>
+    </div>
     <div class="card-body">
-        <div class="row g-2 align-items-end">
+        <form id="filterForm" class="row g-3 align-items-end">
             <div class="col-md-3">
-                <label class="form-label">از تاریخ</label>
+                <label class="form-label fw-medium">از تاریخ</label>
                 <div class="input-group">
-                    <input type="text" id="fromDate" class="form-control" placeholder="مثلاً 1405/01/01" readonly />
-                    <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('fromDate','از تاریخ')">
-                        <i class="bi bi-calendar3"></i>
+                    <input type="text" id="fromDate" class="form-control" placeholder="۱۴۰۳/۰۱/۰۱" readonly autocomplete="off" />
+                    <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('fromDate','از تاریخ')" aria-label="انتخاب تاریخ">
+                        <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M26 6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm0 18H6V8h20v16z"/><path d="M10 12h12v2H10v-2zm0 4h12v2H10v-2z"/></svg>
                     </button>
-                    <button type="button" class="btn btn-outline-danger" onclick="$('#fromDate').val('')">
-                        <i class="bi bi-x-lg"></i>
+                    <button type="button" class="btn btn-outline-danger" onclick="$('#fromDate').val('')" aria-label="پاک کردن">
+                        <svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M24.586 9.414 20 14l-4.586-4.586L14 8l4.586 4.586L14 17.172l1.414 1.414L20 15.414l4.586 4.586 1.414-1.414L21.414 15l4.586-4.586-1.414-1.414z"/></svg>
                     </button>
                 </div>
             </div>
             <div class="col-md-3">
-                <label class="form-label">تا تاریخ</label>
+                <label class="form-label fw-medium">تا تاریخ</label>
                 <div class="input-group">
-                    <input type="text" id="toDate" class="form-control" placeholder="مثلاً 1405/03/31" readonly />
-                    <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('toDate','تا تاریخ')">
-                        <i class="bi bi-calendar3"></i>
+                    <input type="text" id="toDate" class="form-control" placeholder="۱۴۰۳/۱۲/۲۹" readonly autocomplete="off" />
+                    <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('toDate','تا تاریخ')" aria-label="تقویم"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M26 6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2zm0 18H6V8h20v16z"/><path d="M10 12h12v2H10v-2zm0 4h12v2H10v-2z"/></svg>
                     </button>
-                    <button type="button" class="btn btn-outline-danger" onclick="$('#toDate').val('')">
-                        <i class="bi bi-x-lg"></i>
+                    <button type="button" class="btn btn-outline-danger" onclick="$('#toDate').val('')" aria-label="پاک کردن"><svg width="16" height="16" viewBox="0 0 32 32" fill="currentColor"><path d="M24.586 9.414 20 14l-4.586-4.586L14 8l4.586 4.586L14 17.172l1.414 1.414L20 15.414l4.586 4.586 1.414-1.414L21.414 15l4.586-4.586-1.414-1.414z"/></svg>
                     </button>
                 </div>
             </div>
             <div class="col-md-3">
-                <label class="form-label">نوع</label>
-                <select id="modeSelect" class="form-select form-select-lg fw-bold">
-                    <option value="both" selected>همه</option>
-                    <option value="register">ثبت‌نام</option>
-                    <option value="renew">تمدید</option>
-                </select>
+                <label class="form-label fw-medium">نوع گزارش</label>
+                <div class="btn-group w-100" role="group" aria-label="نوع گزارش">
+                    <input type="radio" class="btn-check" name="modeRadio" id="modeBoth" value="both" checked autocomplete="off">
+                    <label class="btn btn-outline-primary" for="modeBoth"><svg class="bi me-1" width="16" height="16"><use href="#list-ul"/></svg>همه</label>
+                    <input type="radio" class="btn-check" name="modeRadio" id="modeRegister" value="register" autocomplete="off">
+                    <label class="btn btn-outline-success" for="modeRegister"><svg class="bi me-1" width="16" height="16"><use href="#plus-circle"/></svg>ثبت‌نام</label>
+                    <input type="radio" class="btn-check" name="modeRadio" id="modeRenew" value="renew" autocomplete="off">
+                    <label class="btn btn-outline-warning" for="modeRenew"><svg class="bi me-1" width="16" height="16"><use href="#arrow-repeat"/></svg>تمدید</label>
+                </div>
             </div>
-            <div class="col-md-3">
-                <button class="btn btn-primary w-100 mb-2" id="btnSearch"><i class="bi bi-search"></i> نمایش</button>
-                <button class="btn btn-success w-100" onclick="exportTableToCSV('tblRegister','گزارش-ثبت‌نام')">
-                    <i class="bi bi-file-earmark-excel"></i> خروجی اکسل
-                </button>
+            <div class="col-md-3 d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg" id="btnSearch"><svg class="bi me-1" width="16" height="16"><use href="#search"/></svg>نمایش گزارش</button>
+                <button type="button" class="btn btn-outline-success" onclick="exportTableToCSV('tblRegister','گزارش-ثبت‌نام')"><svg class="bi me-1" width="16" height="16"><use href="#file-earmark-excel"/></svg>خروجی اکسل</button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 
-<!-- خلاصه گزارش -->
+<!-- Summary Cards -->
 <div class="row g-3 mb-3" id="summaryCards" style="display:none;">
     <div class="col-md-3">
-        <div class="card bg-primary text-white">
-            <div class="card-body text-center">
-                <h5 id="summaryTotal">۰</h5>
-                <small>کل</small>
+        <div class="card bg-primary text-white h-100 shadow-sm">
+            <div class="card-body text-center py-3">
+                <h4 id="summaryTotal" class="mb-1">۰</h4>
+                <small class="text-white-50">مجموع</small>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card bg-success text-white">
-            <div class="card-body text-center">
-                <h5 id="summaryRegister">۰</h5>
-                <small>ثبت‌نام</small>
+        <div class="card bg-success text-white h-100 shadow-sm">
+            <div class="card-body text-center py-3">
+                <h4 id="summaryRegister" class="mb-1">۰</h4>
+                <small class="text-white-50">ثبت‌نام</small>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card bg-warning text-dark">
-            <div class="card-body text-center">
-                <h5 id="summaryRenewal">۰</h5>
-                <small>تمدید</small>
+        <div class="card bg-warning text-dark h-100 shadow-sm">
+            <div class="card-body text-center py-3">
+                <h4 id="summaryRenewal" class="mb-1">۰</h4>
+                <small class="text-white-50">تمدید</small>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card bg-info text-white">
-            <div class="card-body text-center">
-                <h5 id="summaryAmount">—</h5>
-                <small>مجموع مبالغ</small>
+        <div class="card bg-info text-white h-100 shadow-sm">
+            <div class="card-body text-center py-3">
+                <h4 id="summaryAmount" class="mb-1">—</h4>
+                <small class="text-white-50">مجموع مبالغ</small>
             </div>
         </div>
     </div>
 </div>
 
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <span><i class="bi bi-list-ul"></i> لیست ثبت‌نام / تمدید</span>
+<!-- Data Table -->
+<div class="card shadow-sm">
+    <div class="card-header bg-white d-flex flex-wrap justify-content-between align-items-center gap-2 py-3">
+        <h5 class="mb-0"><svg class="bi me-2 text-primary" width="20" height="20"><use href="#table"/></svg>نتایج گزارش</h5>
         <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-primary" id="rowCount">۰ رکورد</span>
-            <input type="text" id="searchInput" class="form-control form-control-sm" style="width: 200px;" placeholder="جستجو در جدول..." />
+            <span class="badge bg-primary fs-6 px-3 py-2" id="rowCount">۰ رکورد</span>
+            <input type="search" id="searchInput" class="form-control form-control-sm ms-2" placeholder="🔍 جستجو..." style="width: 220px;" aria-label="جستجو در جدول" />
         </div>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-striped table-hover table-sm align-middle mb-0" id="tblRegister">
-                <thead class="table-light">
+            <table class="table table-hover table-striped align-middle mb-0" id="tblRegister">
+                <thead class="table-light sticky-top">
                     <tr>
-                        <th>#</th>
+                        <th style="width: 50px;">#</th>
                         <th>نام شخص</th>
                         <th>کد عضویت</th>
                         <th>ورزش</th>
                         <th>سانس</th>
                         <th>مربی</th>
-                        <th>نوع</th>
+                        <th style="width: 100px;">نوع</th>
                         <th>دوره</th>
-                        <th>مبلغ</th>
+                        <th class="text-end" style="width: 130px;">مبلغ</th>
                         <th>شروع</th>
                         <th>پایان</th>
-                        <th>تاریخ ثبت</th>
+                        <th style="width: 150px;">تاریخ ثبت</th>
                     </tr>
                 </thead>
                 <tbody id="tbodyRegister">
-                    <tr><td colspan="12" class="text-center text-muted p-4">برای نمایش گزارش، فیلتر را تنظیم کرده و دکمه «نمایش» را بزنید.</td></tr>
+                    <tr>
+                        <td colspan="12" class="text-center py-5 text-muted">
+                            <svg class="bi fs-1 d-block mb-2 opacity-25" width="32" height="32"><use href="#funnel"/></svg>
+                            فیلترها را تنظیم کرده و <strong>نمایش گزارش</strong> را بزنید
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
@@ -122,96 +129,167 @@
 
 @section Scripts {
 <script>
-    $('#btnSearch').click(function () {
-        var from = $.trim($('#fromDate').val());
-        var to = $.trim($('#toDate').val());
-        var mode = $('#modeSelect').val();
-        if (from && to && from > to) { showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error'); return; }
+    // تبدیل تاریخ میلادی به شمسی (YYYY/MM/DD)
+    function toPersianDate(d) {
+        var p = new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: '2-digit', day: '2-digit', calendar: 'persian' }).formatToParts(d);
+        var y = p.find(x => x.type === 'year').value;
+        var m = p.find(x => x.type === 'month').value;
+        var d = p.find(x => x.type === 'day').value;
+        return y + '/' + m + '/' + d;
+    }
 
-        var qs = '?mode=' + mode + '&';
-        if (from) qs += 'from=' + encodeURIComponent(from) + '&';
-        if (to) qs += 'to=' + encodeURIComponent(to) + '&';
-
-        apiCall('/api/Admin/RegisterReport' + qs, 'GET', null, function (res) {
-            if (res.success) renderTable(res.data || [], res.summary);
-        });
+    // تنظیم تاریخ پیش‌فرض: امروز برای fromDate و toDate
+    $(function () {
+        var today = new Date();
+        var pd = toPersianDate(today);
+        $('#fromDate').val(pd);
+        $('#toDate').val(pd);
     });
 
+    // Debounced table search
+    let searchTimer;
+    $('#searchInput').on('input', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(filterTable, 150);
+    });
+
+    function filterTable() {
+        const value = $('#searchInput').val().toLowerCase().trim();
+        let visible = 0;
+
+        $('#tblRegister tbody tr').each(function () {
+            const $row = $(this);
+            const text = $row.text().toLowerCase();
+            const match = text.indexOf(value) > -1;
+            $row.toggle(match);
+            if (match) {
+                visible++;
+                $row.find('td:first').text(faNum(visible));
+            }
+        });
+        $('#rowCount').text(faNum(visible) + ' رکورد');
+    }
+
+    $('#filterForm').on('submit', function (e) {
+        e.preventDefault();
+        loadReport();
+    });
+
+    $('#btnSearch').on('click', function (e) {
+        e.preventDefault();
+        loadReport();
+    }
+
+    function loadReport() {
+        const from = $.trim($('#fromDate').val());
+        const to = $.trim($('#toDate').val());
+        // ✅ FIX: خواندن مقدار از radio انتخاب شده، نه hidden input
+        const mode = $('input[name="modeRadio"]:checked').val();
+
+        if (from && to && from > to) {
+            showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error');
+            return;
+        }
+
+        let qs = '?mode=' + mode;
+        if (from) qs += '&from=' + encodeURIComponent(from);
+        if (to) qs += '&to=' + encodeURIComponent(to);
+
+        $('#btnSearch').prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>در حال بارگذاری...');
+
+        apiCall('/api/Admin/RegisterReport' + qs, 'GET', null, function (res) {
+            $('#btnSearch').prop('disabled', false).html('<svg class="bi me-1" width="16" height="16"><use href="#search"/></svg>نمایش گزارش');
+
+            if (res.success) {
+                renderTable(res.data || [], res.summary);
+            } else {
+                showToast(res.message || 'خطا در دریافت گزارش', 'error');
+                $('#tbodyRegister').html('<tr><td colspan="12" class="text-center text-danger py-4">خطا در بارگذاری داده‌ها</td></tr>');
+            }
+        });
+    }
+
     function renderTable(rows, summary) {
-        // نمایش خلاصه گزارش
+        // Summary cards
         if (summary) {
             $('#summaryTotal').text(faNum(summary.totalCount));
             $('#summaryRegister').text(faNum(summary.registerCount));
             $('#summaryRenewal').text(faNum(summary.renewalCount));
             $('#summaryAmount').text(summary.totalAmountDisplay);
-            $('#summaryCards').show();
+            $('#summaryCards').fadeIn(200);
         } else {
             $('#summaryCards').hide();
         }
 
-        if (rows.length === 0) {
-            $('#tbodyRegister').html('<tr><td colspan="12" class="text-center text-muted p-4">رکوردی در این بازه یافت نشد.</td></tr>');
-            updateRowCount(0);
+        if (!rows || rows.length === 0) {
+            $('#tbodyRegister').html('<tr><td colspan="12" class="text-center text-muted py-5"><svg class="bi fs-1 d-block mb-2" width="32" height="32"><use href="#inbox"/></svg>رکوردی یافت نشد</td></tr>');
+            $('#rowCount').text('۰ رکورد');
             return;
         }
-        var html = '';
-        $.each(rows, function (i, r) {
-            var typeBadge = r.isRevival
-                ? '<span class="badge bg-warning text-dark">تمدید</span>'
-                : '<span class="badge bg-success">ثبت‌نام</span>';
-            html += '<tr data-index="' + i + '">' +
-                '<td class="row-number">' + faNum(i + 1) + '</td>' +
-                '<td>' + esc(r.personName || '-') + '</td>' +
-                '<td>' + esc(r.memberCode || '-') + '</td>' +
-                '<td>' + esc(r.sportName || '-') + '</td>' +
-                '<td>' + esc(r.sanseName || '-') + '</td>' +
-                '<td>' + esc(r.coachName || '-') + '</td>' +
-                '<td>' + typeBadge + '</td>' +
-                '<td>' + esc(r.periodDesc || '-') + '</td>' +
-                '<td class="text-nowrap">' + esc(r.finalPaymentDisplay || '-') + '</td>' +
-                '<td>' + esc(r.startDate || '-') + '</td>' +
-                '<td>' + esc(r.endDate || '-') + '</td>' +
-                '<td>' + esc(r.creationDate || '-') + (r.creationTime ? ' ' + esc(r.creationTime) : '') + '</td>' +
-                '</tr>';
+
+        let html = '';
+        rows.forEach(function (r, i) {
+            const isRevival = r.isRevival === true;
+            const typeBadge = isRevival
+                ? '<span class="badge bg-warning text-dark px-3 py-2"><svg class="bi me-1" width="14" height="14"><use href="#arrow-repeat"/></svg>تمدید</span>'
+                : '<span class="badge bg-success px-3 py-2"><svg class="bi me-1" width="14" height="14"><use href="#plus-circle"/></svg>ثبت‌نام</span>';
+
+            html += '<tr>' +
+                '<td class="fw-medium text-muted">' + faNum(i + 1) + '</td>' +
+                '<td>' + esc(r.personName || '—') + '</td>' +
+                '<td><code class="text-primary">' + esc(r.memberCode || '—') + '</code></td>' +
+                '<td>' + esc(r.sportName || '—') + '</td>' +
+                '<td>' + esc(r.sanseName || '—') + '</td>' +
+                '<td>' + esc(r.coachName || '—') + '</td>' +
+                '<td class="text-center">' + typeBadge + '</td>' +
+                '<td>' + esc(r.periodDesc || '—') + '</td>' +
+                '<td class="text-end fw-bold text-primary">' + esc(r.finalPaymentDisplay || '—') + '</td>' +
+                '<td>' + esc(r.startDate || '—') + '</td>' +
+                '<td>' + esc(r.endDate || '—') + '</td>' +
+                '<td class="text-nowrap small">' + esc(r.creationDate || '—') + (r.creationTime ? ' <span class="text-muted">' + esc(r.creationTime) + '</span>' : '') + '</td>' +
+            '</tr>';
         });
+
         $('#tbodyRegister').html(html);
-        initTableSearch();
+        $('#rowCount').text(faNum(rows.length) + ' رکورد');
     }
 
-    // جستجوی ساده در جدول + آپدیت شماره ردیف و شمارش
-    function initTableSearch() {
-        $('#searchInput').off('keyup').on('keyup', function () {
-            var value = $(this).val().toLowerCase();
-            var visibleCount = 0;
-            $('#tblRegister tbody tr').each(function () {
-                var text = $(this).text().toLowerCase();
-                var match = text.indexOf(value) > -1;
-                $(this).toggle(match);
-                if (match) {
-                    visibleCount++;
-                    $(this).find('td.row-number').text(faNum(visibleCount));
-                }
-            });
-            updateRowCount(visibleCount);
+    // Debounced table search
+    let searchTimer;
+    $('#searchInput').on('input', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(filterTable, 150);
+    });
+
+    function filterTable() {
+        const value = $('#searchInput').val().toLowerCase().trim();
+        let visible = 0;
+
+        $('#tblRegister tbody tr').each(function () {
+            const $row = $(this);
+            const text = $row.text().toLowerCase();
+            const match = text.indexOf(value) > -1;
+            $row.toggle(match);
+            if (match) {
+                visible++;
+                $row.find('td:first').text(faNum(visible));
+            }
         });
-    }
-
-    function updateRowCount(count) {
-        $('#rowCount').text(faNum(count) + ' رکورد');
+        $('#rowCount').text(faNum(visible) + ' رکورد');
     }
 
     function exportTableToCSV(tableId, fileName) {
-        var rows = document.querySelectorAll('#' + tableId + ' tr');
+        const rows = document.querySelectorAll('#' + tableId + ' tr');
         if (rows.length <= 1) { showToast('ابتدا گزارش را نمایش دهید', 'warning'); return; }
-        var csv = [];
-        for (var i = 0; i < rows.length; i++) {
-            var cols = rows[i].querySelectorAll('td, th');
-            var line = [];
-            for (var j = 0; j < cols.length; j++) line.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
+        const csv = [];
+        for (let i = 0; i < rows.length; i++) {
+            const cols = rows[i].querySelectorAll('td, th');
+            const line = [];
+            for (let j = 0; j < cols.length; j++) line.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
             csv.push(line.join(','));
         }
-        var blob = new Blob(['\uFEFF' + csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
-        var link = document.createElement('a');
+        const blob = new Blob(['\uFEFF' + csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = fileName + '.csv';
         link.click();
