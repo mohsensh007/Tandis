@@ -112,15 +112,17 @@ builder.Services.AddScoped<AdminReportService>();
 builder.Services.AddHttpContextAccessor();
 
 // ============================================================
-// 4) CORS - برای دسترسی موبایل اپ
+// 4) CORS - برای دسترسی موبایل اپ + وب‌اپ (با پشتیبانی کوکی/Authentication)
 // ============================================================
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.AllowAnyOrigin()
+        // برای credentials (HttpOnly cookies) باید origin مشخص شود
+        policy.WithOrigins("http://localhost:5500", "http://localhost:5104", "http://localhost:5200", "http://localhost:5300", "http://localhost:5400", "http://localhost:5501")
               .AllowAnyMethod()
-              .AllowAnyHeader();
+              .AllowAnyHeader()
+              .AllowCredentials();
     });
 });
 

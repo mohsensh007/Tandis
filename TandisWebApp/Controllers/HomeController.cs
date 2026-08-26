@@ -1,14 +1,16 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TandisWebApp.Attributes;
 using TandisWebApp.Models;
 
 namespace TandisWebApp.Controllers;
 
+[MemberAuthorize]
 public class HomeController : Controller
 {
     /// <summary>داشبورد اصلی</summary>
-    [Authorize]
+    [HttpGet]
     public IActionResult Index()
     {
         return View();

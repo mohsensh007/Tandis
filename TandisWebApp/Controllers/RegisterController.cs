@@ -1,12 +1,13 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TandisWebApp.Attributes;
 using TandisWebApp.DTOs;
 using TandisWebApp.Services;
 
 namespace TandisWebApp.Controllers
 {
-    [Authorize]
+    [MemberAuthorize]
     public class RegisterController : Controller
     {
         private readonly RegisterService _register;

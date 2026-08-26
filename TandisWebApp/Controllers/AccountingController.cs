@@ -1,12 +1,13 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TandisWebApp.Attributes;
 using TandisWebApp.DTOs;
 using TandisWebApp.Services;
 
 namespace TandisWebApp.Controllers
 {
-    [Authorize]
+    [MemberAuthorize]
     public class AccountingController : Controller
     {
         private readonly AccountingService _accounting;
@@ -31,7 +32,7 @@ namespace TandisWebApp.Controllers
         [Route("api/Accounting/FinanceSummary")]
         public async Task<IActionResult> FinanceSummary()
         {
-            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
+            var memberID = User.GetMemberID();
             var data = await _accounting.GetFinanceSummaryAsync(memberID);
             return Ok(new { success = true, data });
         }
@@ -40,7 +41,7 @@ namespace TandisWebApp.Controllers
         [Route("api/Accounting/FinanceDocs")]
         public async Task<IActionResult> FinanceDocs()
         {
-            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
+            var memberID = User.GetMemberID();
             var list = await _accounting.GetFinanceDocsAsync(memberID);
             return Ok(new { success = true, data = list });
         }
@@ -49,7 +50,7 @@ namespace TandisWebApp.Controllers
         [Route("api/Accounting/TrafficReport")]
         public async Task<IActionResult> TrafficReport()
         {
-            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
+            var memberID = User.GetMemberID();
             var list = await _accounting.GetTrafficReportAsync(memberID);
             return Ok(new { success = true, data = list });
         }
@@ -58,8 +59,8 @@ namespace TandisWebApp.Controllers
         [Route("api/Accounting/AddMoney")]
         public async Task<IActionResult> AddMoneyApi([FromBody] AddMoneyRequest req)
         {
-            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
-            var shiftID = short.Parse(User.FindFirstValue("ShiftID") ?? "1");
+            var memberID = User.GetMemberID();
+            var shiftID = User.GetShiftID();
             var result = await _accounting.AddMoneyAsync(memberID, req, shiftID);
             if (!result.Success)
                 return BadRequest(result);

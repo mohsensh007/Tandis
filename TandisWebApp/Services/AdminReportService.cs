@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using TandisWebApp.Data;
 using TandisWebApp.DTOs;
@@ -39,26 +40,25 @@ namespace TandisWebApp.Services
             // Join با Gen_Members و Gen_Persons برای دریافت نام کامل و کد عضویت
             // ابتدا داده‌های خام را می‌گیریم، بعد در حافظه فرمت می‌کنیم
             var rawRows = await (
-                from t in query
-                join m in _db.Gen_Members on t.MemberID equals m.MemberID into memJoin
-                from m in memJoin.DefaultIfEmpty()
-                join p in _db.Gen_Persons on m.PersonID equals p.PersonID into personJoin
-                from p in personJoin.DefaultIfEmpty()
-                orderby t.TrafficID descending
-                select new
-                {
-                    t.TrafficID,
-                    t.PersonName,
-                    t.EntryDate,
-                    t.EntryTime,
-                    t.ExitDate,
-                    t.ExitTime,
-                    t.EntryDesc,
-                    t.IsGuest,
-                    MemberFullName = p.FullName,
-                    MemberID = m.MemberID
-                }
-            ).ToListAsync();
+                 from t in query
+                 join m in _db.Gen_Members on t.MemberID equals m.MemberID into memJoin
+                 from m in memJoin.DefaultIfEmpty()
+                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID into personJoin
+                 from p in personJoin.DefaultIfEmpty()
+                 orderby t.TrafficID descending
+                 select new
+                 {
+                     t.TrafficID,
+                     t.PersonName,
+                     t.EntryDate,
+                     t.EntryTime,
+                     t.ExitDate,
+                     t.ExitTime,
+                     t.EntryDesc,
+                     t.IsGuest,
+                     MemberFullName = p != null ? p.FullName : string.Empty,
+                     MemberID = m != null ? m.MemberID : 0
+                 }).ToListAsync();
 
             var rows = rawRows.Select(x => new AdminTrafficRowDto
             {
@@ -116,6 +116,24 @@ namespace TandisWebApp.Services
                 select new { ms, sanse = ms.Gen_SportSanse }
             ).ToListAsync();
 
+            // بهینه‌سازی N+1 Query: همه MemberIDها را یک‌جا بگیریم
+            var memberIDs = rows
+                .Where(x => x.ms.MemberID.HasValue && x.ms.MemberID.Value > 0)
+                .Select(x => x.ms.MemberID.GetValueOrDefault())
+                .Distinct()
+                .ToList();
+
+            var memberInfos = new Dictionary<int, string>();
+            if (memberIDs.Count > 0)
+            {
+                memberInfos = await (
+                    from m in _db.Gen_Members
+                    join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                    where memberIDs.Contains(m.MemberID)
+                    select new { m.MemberID, p.FullName }
+                ).ToDictionaryAsync(x => x.MemberID, x => x.FullName ?? "");
+            }
+
             var result = new List<AdminRegisterRowDto>();
             long totalAmount = 0;
             int registerCount = 0;
@@ -127,21 +145,11 @@ namespace TandisWebApp.Services
                 var personName = "";
                 string? memberCode = null;
 
-                // نام و کد عضو
-                if (item.ms.MemberID > 0)
+                // نام و کد عضو - از Dictionary به جای کوئری جداگانه
+                if (item.ms.MemberID > 0 && memberInfos.TryGetValue(item.ms.MemberID.Value, out var fullName))
                 {
-                    var info = await (
-                        from m in _db.Gen_Members
-                        join p in _db.Gen_Persons on m.PersonID equals p.PersonID
-                        where m.MemberID == item.ms.MemberID
-                        select new { p.FullName, m.MemberID }
-                    ).FirstOrDefaultAsync();
-
-                    if (info != null)
-                    {
-                        personName = info.FullName ?? "";
-                        memberCode = _helper.SetSeprator(info.MemberID);
-                    }
+                    personName = fullName;
+                    memberCode = _helper.SetSeprator(item.ms.MemberID.Value);
                 }
 
                 bool isRevival = item.ms.IsRevival ?? false;

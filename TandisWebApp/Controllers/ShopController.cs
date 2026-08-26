@@ -1,12 +1,13 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TandisWebApp.Attributes;
 using TandisWebApp.DTOs;
 using TandisWebApp.Services;
 
 namespace TandisWebApp.Controllers
 {
-    [Authorize]
+    [MemberAuthorize]
     public class ShopController : Controller
     {
         private readonly ShopService _shop;
@@ -36,7 +37,7 @@ namespace TandisWebApp.Controllers
         [Route("api/Shop/Stuffs")]
         public async Task<IActionResult> Stuffs(bool isBuffet = false, int? categoryID = null)
         {
-            var shiftID = short.Parse(User.FindFirstValue("ShiftID") ?? "1");
+            var shiftID = User.GetShiftID();
             var list = await _shop.GetStuffsAsync(isBuffet, shiftID, categoryID);
             return Ok(new { success = true, data = list });
         }
@@ -45,8 +46,8 @@ namespace TandisWebApp.Controllers
         [Route("api/Shop/Buy")]
         public async Task<IActionResult> Buy([FromBody] ShopBuyRequest req)
         {
-            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
-            var shiftID = short.Parse(User.FindFirstValue("ShiftID") ?? "1");
+            var memberID = User.GetMemberID();
+            var shiftID = User.GetShiftID();
             var result = await _shop.BuyAsync(memberID, req, shiftID);
             if (!result.Success)
                 return BadRequest(result);

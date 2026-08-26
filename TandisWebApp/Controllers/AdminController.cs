@@ -7,7 +7,6 @@ using TandisWebApp.Services;
 
 namespace TandisWebApp.Controllers
 {
-    [AdminAuthorize]
     public class AdminController : Controller
     {
         private readonly AdminAuthService _auth;
@@ -22,33 +21,38 @@ namespace TandisWebApp.Controllers
         private short AdminShiftID => User.GetAdminShiftID();
 
         // ============================================================
-        //  Views
+        //  Views - need admin auth
         // ============================================================
 
+        [AdminAuthorize]
         [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
+        [AdminAuthorize]
         [HttpGet]
         public IActionResult TrafficReport()
         {
             return View();
         }
 
+        [AdminAuthorize]
         [HttpGet]
         public IActionResult RegisterReport()
         {
             return View();
         }
 
+        [AdminAuthorize]
         [HttpGet]
         public IActionResult OneSessionReport()
         {
             return View();
         }
 
+        [AdminAuthorize]
         [HttpGet]
         public IActionResult FinanceReport()
         {
@@ -88,6 +92,7 @@ namespace TandisWebApp.Controllers
         //  API — گزارش‌ها
         // ============================================================
 
+        [AdminAuthorize]
         [HttpGet]
         [Route("api/Admin/TrafficReport")]
         public async Task<IActionResult> TrafficReportApi(string? from, string? to)
@@ -96,6 +101,7 @@ namespace TandisWebApp.Controllers
             return Ok(new { success = true, data = response.Data, summary = response.Summary });
         }
 
+        [AdminAuthorize]
         [HttpGet]
         [Route("api/Admin/RegisterReport")]
         public async Task<IActionResult> RegisterReportApi(string? from, string? to, string mode = "both")
@@ -104,6 +110,7 @@ namespace TandisWebApp.Controllers
             return Ok(new { success = true, data = response.Data, summary = response.Summary });
         }
 
+        [AdminAuthorize]
         [HttpGet]
         [Route("api/Admin/OneSessionReport")]
         public async Task<IActionResult> OneSessionReportApi(string? from, string? to)
@@ -112,6 +119,7 @@ namespace TandisWebApp.Controllers
             return Ok(new { success = true, data = response.Data, summary = response.Summary });
         }
 
+        [AdminAuthorize]
         [HttpGet]
         [Route("api/Admin/FinanceReport")]
         public async Task<IActionResult> FinanceReportApi(string? from, string? to)
@@ -124,6 +132,7 @@ namespace TandisWebApp.Controllers
         //  خروج مدیر
         // ============================================================
 
+        [AdminAuthorize]
         [HttpGet]
         [Route("Admin/Logout")]
         public IActionResult Logout()

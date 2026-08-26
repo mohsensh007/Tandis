@@ -83,8 +83,13 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- اول jalali-calendar.js -->
     <script src="~/js/jalali-calendar.js"></script>
-    <script src="~/js/site.js"></script>
+
+    <!-- بعد site.js (ولی site.js رو دیگه ازش استفاده نکن) -->
+    <!-- <script src="~/js/site.js?v=3"></script> -->
+    <!-- به جای site.js از یه فایل جدا برای توابع دیگه استفاده کن -->
+    <script src="~/js/site-functions.js?v=3"></script>
     <script>
         // === تقویم جلالی مشترک برای صفحات گزارش ===
         // رویداد ناوبری ماه که در همه گزارش‌ها یکسان است.
