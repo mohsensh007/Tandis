@@ -78,6 +78,7 @@ namespace TandisWebApp.DTOs
         public string? ExitTime { get; set; }
         public string? EntryDesc { get; set; }
         public bool? IsGuest { get; set; }
+        public int? BoxID { get; set; }
     }
 
     // ============================================================

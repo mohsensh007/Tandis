@@ -56,6 +56,7 @@ namespace TandisWebApp.Services
                      t.ExitTime,
                      t.EntryDesc,
                      t.IsGuest,
+                     t.BoxID,
                      MemberFullName = p != null ? p.FullName : string.Empty,
                      MemberID = m != null ? m.MemberID : 0
                  }).ToListAsync();
@@ -70,7 +71,9 @@ namespace TandisWebApp.Services
                 ExitDate = x.ExitDate,
                 ExitTime = x.ExitTime,
                 EntryDesc = x.EntryDesc,
-                IsGuest = x.IsGuest
+                IsGuest = x.IsGuest,
+                BoxID = x.BoxID,
+                
             }).ToList();
 
             // محاسبه خلاصه

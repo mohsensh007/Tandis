@@ -92,11 +92,12 @@
                         <th>تاریخ خروج</th>
                         <th>ساعت خروج</th>
                         <th>توضیحات</th>
+                        <th>کمد</th>
                         <th>نوع عضویت</th>
                     </tr>
                 </thead>
                 <tbody id="tbodyTraffic">
-                    <tr><td colspan="9" class="text-center text-muted p-4">برای نمایش گزارش، فیلتر را تنظیم کرده و دکمه «نمایش گزارش» را بزنید.</td></tr>
+                    <tr><td colspan="10" class="text-center text-muted p-4">برای نمایش گزارش، فیلتر را تنظیم کرده و دکمه «نمایش گزارش» را بزنید.</td></tr>
                 </tbody>
             </table>
         </div>
@@ -133,7 +134,7 @@
         }
 
         if (rows.length === 0) {
-            $('#tbodyTraffic').html('<tr><td colspan="9" class="text-center text-muted p-4">ترددی در این بازه یافت نشد.</td></tr>');
+            $('#tbodyTraffic').html('<tr><td colspan="10" class="text-center text-muted p-4">ترددی در این بازه یافت نشد.</td></tr>');
             return;
         }
         var html = '';
@@ -150,6 +151,7 @@
                 '<td>' + esc(r.exitDate || '-') + '</td>' +
                 '<td>' + esc(r.exitTime || '-') + '</td>' +
                 '<td>' + esc(r.entryDesc || '-') + '</td>' +
+                '<td>' + esc(r.BoxID || '-') + '</td>' +
                 '<td>' + typeBadge + '</td>' +
                 '</tr>';
         });

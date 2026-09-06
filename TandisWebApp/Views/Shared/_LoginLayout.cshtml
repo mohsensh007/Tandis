@@ -6,15 +6,24 @@
     <title>@ViewData["Title"] - تندیس</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/login-style.css" />
 </head>
 <body>
-    <div class="login-container">
-        <div class="card login-card">
-            <div class="card-header d-flex flex-column align-items-center gap-2">
-                <img src="~/images/logo2.png" alt="تندیس" height="50" />
-                <span>سیستم مدیریت باشگاه تندیس</span>
+    <div class="login-fullscreen">
+        <!-- عکس پس‌زمینه -->
+        <div class="login-background">
+            <img src="~/images/gym-login-bg.png" alt="ورزش" class="bg-image" />
+            <div class="bg-overlay"></div>
+        </div>
+
+        <!-- فرم لاگین شیشه‌ای -->
+        <div class="login-glass-card">
+            <div class="logo-section text-center mb-4">
+                <img src="~/images/logo2.png" alt="ایمن تردد" class="main-logo" />
+                <h2 class="brand-text mt-3">ایمن تردد تندیس</h2>
             </div>
-            <div class="card-body p-4">
+
+            <div class="form-container">
                 @RenderBody()
             </div>
         </div>
