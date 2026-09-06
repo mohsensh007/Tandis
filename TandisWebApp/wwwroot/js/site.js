@@ -67,22 +67,26 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     }
 
     function showLoading() {
-        var overlay = document.getElementById('spinnerOverlay');
-        if (!overlay) {
-            overlay = document.createElement('div');
-            overlay.id = 'spinnerOverlay';
-            overlay.className = 'spinner-overlay';
-            overlay.innerHTML = '<div class="spinner-border text-primary" role="status"></div>';
-            document.body.appendChild(overlay);
-        }
-        overlay.style.display = 'flex';
+        // اول هر loading قدیمی رو کامل حذف کن
+        hideLoading();
+
+        var overlay = document.createElement('div');
+        overlay.id = 'spinnerOverlay';
+        overlay.className = 'spinner-overlay';
+        overlay.innerHTML = '<div class="spinner-border text-primary" role="status"></div>';
+        document.body.appendChild(overlay);
     }
 
     function hideLoading() {
-        var overlay = document.getElementById('spinnerOverlay');
-        if (overlay) {
-            overlay.style.display = 'none';
-        }
+        // پیدا کردن تمام المان‌های لودینگ
+        var overlays = document.querySelectorAll('#spinnerOverlay, .spinner-overlay');
+
+        // حذف کامل از DOM (نه فقط مخفی کردن)
+        overlays.forEach(function (overlay) {
+            if (overlay && overlay.parentNode) {
+                overlay.parentNode.removeChild(overlay);
+            }
+        });
     }
 
     // ============================================================
@@ -90,7 +94,7 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     // ============================================================
     function apiCall(url, method, data, onSuccess, onFail) {
         showLoading();
-        console.log('📡 API Call:', url);
+        console.log(' API Call:', url);
 
         var token = localStorage.getItem('token') || sessionStorage.getItem('token');
         var headers = { 'Content-Type': 'application/json' };
@@ -116,21 +120,62 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
                 if (response.ok) {
                     if (onSuccess) onSuccess(res);
                 } else {
-                    throw res;
+                    // ✅ اصلاح: throw کردن یک Error object به جای res خالی
+                    var err = new Error(res.message || res.Message || 'خطا در عملیات');
+                    err.response = res;
+                    throw err;
                 }
             })
             .catch(function (error) {
-                hideLoading();
-                console.error('❌ API Error:', error);
-                var msg = error.message || 'خطا در ارتباط با سرور';
-                showToast(msg, 'error');
-                if (onFail) onFail(error);
+                // ✅ اول لودینگ رو مخفی کن (مهم!)
+                try {
+                    hideLoading();
+                } catch (e) {
+                    console.error('hideLoading error:', e);
+                }
+
+                console.error(' API Error:', error);
+
+                // ✅ استخراج پیام از حالت‌های مختلف
+                var msg = 'خطا در ارتباط با سرور';
+                if (error && error.message) {
+                    msg = error.message;
+                } else if (error && error.response) {
+                    msg = error.response.message || error.response.Message || msg;
+                }
+
+                console.log('📢 نمایش پیام به کاربر:', msg);
+
+                // ✅ فقط یک بار پیام نشون بده (نه alert، نه showToast تکراری)
+                if (typeof showToast === 'function') {
+                    showToast(msg, 'error');
+                }
+
+                // ✅ اجرای onFail اگر تعریف شده باشد
+                if (typeof onFail === 'function') {
+                    onFail(error);
+                }
             });
     }
 
     function loadUserProfile() {
-        console.log('👤 Loading user profile...');
+        console.log(' Loading user profile...');
+
+        // فقط اگر در صفحه لاگین یا ثبت‌نام نیستیم
+        if (window.location.pathname.includes('login') ||
+            window.location.pathname.includes('register')) {
+            return;
+        }
+
+        // چک کن که آیا API وجود داره یا نه
+        var token = localStorage.getItem('token') || sessionStorage.getItem('token');
+        if (!token) {
+            console.log('ℹ️ No token, skipping profile load');
+            return;
+        }
+
         showLoading();
+
         apiCall('/api/user/profile', 'GET', null,
             function (data) {
                 console.log('✅ Profile loaded:', data);
@@ -139,12 +184,15 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
             },
             function (error) {
                 console.error('❌ Profile load failed:', error);
+                // ✅ حتماً hideLoading رو صدا بزن حتی اگر API خطا داد
                 hideLoading();
-                showToast('خطا در دریافت اطلاعات کاربر', 'error');
+                // فقط اگر خطای 404 بود، showToast نده (یعنی API وجود نداره)
+                if (error.response && error.response.status !== 404) {
+                    showToast('خطا در دریافت اطلاعات کاربر', 'error');
+                }
             }
         );
     }
-
     function displayUserData(data) {
         console.log('👤 Displaying user data:', data);
         try {
@@ -221,6 +269,9 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     // --- Auto-run ---
     document.addEventListener('DOMContentLoaded', function () {
         console.log('🚀 Site JS loaded v3.1');
+        // ✅ حذف هرگونه loading باقی‌مانده از صفحه قبل
+        hideLoading();
+
         if (!window.location.pathname.includes('login') &&
             !window.location.pathname.includes('register')) {
             checkAuthStatus();

@@ -449,3 +449,337 @@ body {
     font-size: .95rem;
     transition: all .2s;
 }
+/* استایل‌های Toast Notification */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+    padding: 16px 20px;
+    min-width: 300px;
+    max-width: 400px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    pointer-events: auto;
+    animation: slideIn 0.3s ease;
+    border-right: 4px solid;
+}
+
+    .toast.success {
+        border-right-color: #00b296;
+    }
+
+    .toast.error {
+        border-right-color: #da1e28;
+    }
+
+    .toast.warning {
+        border-right-color: #e6ac00;
+    }
+
+    .toast.info {
+        border-right-color: #0062ff;
+    }
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-message {
+    color: #161616;
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #525252;
+    transition: color 0.2s;
+}
+
+    .toast-close:hover {
+        color: #161616;
+    }
+
+.toast-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Spinner Overlay */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+
+.spinner-border {
+    width: 3rem;
+    height: 3rem;
+    border-width: 0.25em;
+}
+/* =========================================
+   استایل‌های ضروری برای نمایش Toast و Loading
+   ========================================= */
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    background: #ffffff;
+    color: #161616;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    padding: 16px 20px;
+    min-width: 300px;
+    max-width: 400px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    pointer-events: auto;
+    animation: slideDown 0.3s ease;
+    border-right: 4px solid #da1e28; /* پیش‌فرض قرمز برای خطا */
+}
+
+    .toast.success {
+        border-right-color: #00b296;
+    }
+
+    .toast.error {
+        border-right-color: #da1e28;
+    }
+
+    .toast.warning {
+        border-right-color: #e6ac00;
+    }
+
+    .toast.info {
+        border-right-color: #0062ff;
+    }
+
+.toast-message {
+    font-size: 14px;
+    font-weight: 500;
+    flex: 1;
+    line-height: 1.5;
+}
+
+.toast-close {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    color: #525252;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .toast-close:hover {
+        color: #161616;
+    }
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* استایل اسپینر لودینگ */
+.spinner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+/* =========================================
+   استایل‌های ضروری برای نمایش Toast (نامرئی نبودن)
+   ========================================= */
+.toast-container {
+    position: fixed !important;
+    top: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    pointer-events: none !important;
+}
+
+.toast {
+    background: #ffffff !important;
+    color: #161616 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    padding: 16px 20px !important;
+    min-width: 300px !important;
+    max-width: 400px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    pointer-events: auto !important;
+    animation: slideDown 0.3s ease !important;
+    border-right: 4px solid #da1e28 !important;
+}
+
+.toast-message {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    flex: 1 !important;
+    line-height: 1.5 !important;
+}
+
+.toast-close {
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 4px !important;
+    color: #525252 !important;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* استایل اسپینر لودینگ */
+.spinner-overlay {
+    position: fixed !important;
+    top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 999999 !important;
+}
+/* =========================================
+   استایل‌های ضروری برای نمایش Toast (نامرئی نبودن)
+   ========================================= */
+.toast-container {
+    position: fixed !important;
+    top: 20px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 999999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    pointer-events: none !important;
+}
+
+.toast {
+    background: #ffffff !important;
+    color: #161616 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
+    padding: 16px 20px !important;
+    min-width: 300px !important;
+    max-width: 400px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    pointer-events: auto !important;
+    animation: slideDown 0.3s ease !important;
+    border-right: 4px solid #da1e28 !important;
+}
+
+.toast-message {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    flex: 1 !important;
+    line-height: 1.5 !important;
+}
+
+.toast-close {
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer !important;
+    padding: 4px !important;
+    color: #525252 !important;
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* استایل اسپینر لودینگ */
+.spinner-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 999999 !important;
+}

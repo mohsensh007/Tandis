@@ -68,20 +68,28 @@
 
         // مسیر ورود عضو - returnUrl رو در query string می‌فرستیم
         apiCall('/api/Account/Login?returnUrl=' + encodeURIComponent(returnUrl), 'POST', { nationalCode: nc, password: pw }, function (res) {
-            if (res.success) {
-                memberName = res.data.fullName;
-                if (res.data.mustChangePassword) {
-                    $('#loginForm').hide();
-                    $('#changePassForm').show();
-                    showToast('لطفاً رمز عبور خود را تغییر دهید', 'warning');
-                } else {
-                    showToast('ورود موفقیت‌آمیز', 'success');
-                    var redirectUrl = res.data.returnUrl || '/Home';
-                    setTimeout(function () { window.location.href = redirectUrl; }, 800);
-                }
-            } else {
-                showToast(res.message, 'error');
+                    if (res.success) {
+            memberName = res.data.fullName;
+
+            // ✅ اول از همه لودینگ رو ببند (خیلی مهم)
+            if (typeof hideLoading === 'function') {
+                hideLoading();
             }
+
+            if (res.data.mustChangePassword) {
+                $('#loginForm').hide();
+                $('#changePassForm').show();
+                if (typeof showToast === 'function') showToast('لطفاً رمز عبور خود را تغییر دهید', 'warning');
+            } else {
+                if (typeof showToast === 'function') showToast('ورود موفقیت‌آمیز', 'success');
+                var redirectUrl = res.data.returnUrl || '/Home';
+
+                // تغییر صفحه با کمی تاخیر برای دیده شدن پیام موفقیت
+                setTimeout(function () {
+                    window.location.href = redirectUrl;
+                }, 800);
+            }
+        }
         });
     });
 

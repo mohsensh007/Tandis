@@ -32,10 +32,15 @@ function showLoading() {
 }
 
 function hideLoading() {
-    var overlay = document.getElementById('spinnerOverlay');
-    if (overlay) {
-        overlay.style.display = 'none';
-    }
+    // پیدا کردن تمام المان‌های لودینگ
+    var overlays = document.querySelectorAll('#spinnerOverlay, .spinner-overlay');
+
+    // حذف کامل از DOM (نه فقط مخفی کردن)
+    overlays.forEach(function (overlay) {
+        if (overlay && overlay.parentNode) {
+            overlay.parentNode.removeChild(overlay);
+        }
+    });
 }
 
 function apiCall(url, method, data, onSuccess, onFail) {

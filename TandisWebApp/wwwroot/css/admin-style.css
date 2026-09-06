@@ -4,7 +4,7 @@
 
 /* ۱. پس‌زمینه کل صفحه ادمین */
 body.admin-glass-body {
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 60, 114, 0.85)), url('../images/gym-login-bg.jpg') no-repeat center center fixed;
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 60, 114, 0.85)), url('../images/gym-login-bg.png') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh;
     color: #e2e8f0; /* رنگ پیش‌فرض متن‌ها روشن می‌شود */
@@ -282,4 +282,12 @@ body.admin-glass-body {
     body.admin-glass-body .table tbody td.text-center {
         color: rgba(255, 255, 255, 0.8) !important;
         font-size: 15px;
+    }
+    body.admin-glass-body code.text-primary {
+        color: #ffffff !important;
+        background: rgba(13, 110, 253, 0.3) !important;
+        border: 1px solid rgba(13, 110, 253, 0.5);
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-weight: 600;
     }

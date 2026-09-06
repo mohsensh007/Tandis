@@ -177,11 +177,16 @@
         loadReport();
     });
 
+
     $('#btnSearch').on('click', function (e) {
         console.log('btnSearch clicked');
         e.preventDefault();
         loadReport();
     });
+            // وقتی کاربر نوع گزارش رو تغییر میده، خودکار فیلتر اعمال بشه
+        $('input[name="modeRadio"]').on('change', function () {
+            loadReport();
+        });
 
     function loadReport() {
         console.log('=== loadReport called ===');
