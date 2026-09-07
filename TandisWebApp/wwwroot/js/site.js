@@ -245,23 +245,7 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
         console.log('ℹ️ Cookie-based auth, skipping profile load');
     }
 
-    // --- Calendar Helpers ---
-    var calendarDate = { y: 1403, m: 1, d: 1 };
-    var calendarCallback = null;
-
-    function initCalendar(inputId, initialDate, allowPast) {
-        calendarCallback = inputId;
-    }
-
-    function renderCalendar() {
-        console.log('📅 Calendar rendered');
-    }
-
-    function openCalendar(inputId, title, allowPast) {
-        $('#calendarTitle').text(title || 'Select Date');
-        initCalendar(inputId, null, allowPast || false);
-        new bootstrap.Modal('#datePickerModal').show();
-    }
+    
 
     // --- Auto-run ---
     document.addEventListener('DOMContentLoaded', function () {

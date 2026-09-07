@@ -61,7 +61,27 @@
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/js/jalali-calendar.js"></script>
         <script src="~/js/site.js?v=3.2"></script>
+        <script>
 
+            // ✅ ناوبری ماه‌های تقویم (کپی از پنل ادمین)
+            $('#prevMonth').click(function () {
+                calendarDate.m++;
+                if (calendarDate.m > 12) { calendarDate.m = 1; calendarDate.y++; }
+                renderCalendar();
+            });
+            $('#nextMonth').click(function () {
+                calendarDate.m--;
+                if (calendarDate.m < 1) { calendarDate.m = 12; calendarDate.y--; }
+                renderCalendar();
+            });
+
+            // ✅ تابع باز کردن تقویم (نسخه واقعی)
+            function openCalendar(inputId, title, allowPast) {
+                $('#calendarTitle').text(title || 'انتخاب تاریخ');
+                initCalendar(inputId, null, allowPast || false);
+                new bootstrap.Modal('#datePickerModal').show();
+            }
+        </script>
         <!-- ✅ اضافه شد -->
         @await RenderSectionAsync("Scripts", required: false)
     }

@@ -1,0 +1,11 @@
+[33mcommit eaecd7ff8e14aa66ca641521781bb479798da356[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m
+Author: mohsensh007 <mohsen00711@example.com>
+Date:   Mon Sep 7 12:44:52 2026 +0330
+
+    fix some issue
+
+ TandisWebApp/Views/Account/Login.cshtml   | 37 [32m+++++++++++++[m[31m------------------[m
+ TandisWebApp/Views/Shared/_Layout.cshtml  |  7 [32m+++[m[31m---[m
+ TandisWebApp/wwwroot/js/site-functions.js |  1 [31m-[m
+ TandisWebApp/wwwroot/js/site.js           | 13 [32m++++[m[31m-------[m
+ 4 files changed, 24 insertions(+), 34 deletions(-)
