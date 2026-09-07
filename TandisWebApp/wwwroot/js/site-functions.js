@@ -35,7 +35,6 @@ if (typeof window.__SITE_FUNCTIONS_LOADED__ === 'undefined') {
     }
 
     function hideLoading() {
-        // ✅ پیدا کردن و حذف کامل تمام overlay‌ها از DOM
         var overlays = document.querySelectorAll('#spinnerOverlay, .spinner-overlay');
         overlays.forEach(function (overlay) {
             if (overlay && overlay.parentNode) {

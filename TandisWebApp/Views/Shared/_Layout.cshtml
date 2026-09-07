@@ -16,7 +16,6 @@
     @if (!isAuthenticated)
     {
         <script>
-            // اگر کاربر احراز هویت نشده، به لاگین ریدایرکت کن
             var returnUrl = encodeURIComponent(window.location.pathname + window.location.search);
             window.location.href = '/Account/Login?returnUrl=' + returnUrl;
         </script>
@@ -61,7 +60,9 @@
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/js/jalali-calendar.js"></script>
-        <script src="~/js/site.js?v=3"></script>
+        <script src="~/js/site.js?v=3.2"></script>
+
+        <!-- ✅ اضافه شد -->
         @await RenderSectionAsync("Scripts", required: false)
     }
 </body>

@@ -7,7 +7,7 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     window.__SITE_JS_VERSION__ = "3.1.0";
 
     // --- همه متغیرها با var (نه const) ---
-    /*var FaDigits = ['\u06F0', '\u06F1', '\u06F2', '\u06F3', '\u06F4', '\u06F5', '\u06F6', '\u06F7', '\u06F8', '\u06F9'];*/
+    var FaDigits = ['\u06F0', '\u06F1', '\u06F2', '\u06F3', '\u06F4', '\u06F5', '\u06F6', '\u06F7', '\u06F8', '\u06F9'];
 
     function toFa(n) {
         return String(n).replace(/[0-9]/g, function (d) { return FaDigits[d]; });
@@ -84,8 +84,8 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
         overlay.style.display = 'flex';
     }
 
+    
     function hideLoading() {
-        // پیدا کردن و حذف کامل همه المان‌های لودینگ
         var overlays = document.querySelectorAll('#spinnerOverlay, .spinner-overlay');
         overlays.forEach(function (overlay) {
             if (overlay && overlay.parentNode) {
@@ -241,13 +241,8 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
 
     function checkAuthStatus() {
         console.log('🔍 Checking auth status...');
-        var token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (token) {
-            console.log('✅ Token found, loading profile...');
-            loadUserProfile();
-        } else {
-            console.log('ℹ️ No token found');
-        }
+        // پروژه از کوکی استفاده می‌کنه، نیازی به چک localStorage نیست
+        console.log('ℹ️ Cookie-based auth, skipping profile load');
     }
 
     // --- Calendar Helpers ---
