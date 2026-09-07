@@ -66,22 +66,27 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
         setTimeout(function () { if (toast.parentNode) toast.remove(); }, 200);
     }
 
+   
+    // ============================
+    // توابع Loading (نسخه کارا)
+    // ============================
     function showLoading() {
-        // اول هر loading قدیمی رو کامل حذف کن
-        hideLoading();
-
-        var overlay = document.createElement('div');
-        overlay.id = 'spinnerOverlay';
-        overlay.className = 'spinner-overlay';
-        overlay.innerHTML = '<div class="spinner-border text-primary" role="status"></div>';
-        document.body.appendChild(overlay);
+        // فقط اگر overlay وجود نداشت، بساز
+        var overlay = document.getElementById('spinnerOverlay');
+        if (!overlay) {
+            overlay = document.createElement('div');
+            overlay.id = 'spinnerOverlay';
+            overlay.className = 'spinner-overlay';
+            overlay.innerHTML = '<div class="spinner-border text-primary" role="status"></div>';
+            document.body.appendChild(overlay);
+        }
+        // نمایش بده
+        overlay.style.display = 'flex';
     }
 
     function hideLoading() {
-        // پیدا کردن تمام المان‌های لودینگ
+        // پیدا کردن و حذف کامل همه المان‌های لودینگ
         var overlays = document.querySelectorAll('#spinnerOverlay, .spinner-overlay');
-
-        // حذف کامل از DOM (نه فقط مخفی کردن)
         overlays.forEach(function (overlay) {
             if (overlay && overlay.parentNode) {
                 overlay.parentNode.removeChild(overlay);
@@ -89,12 +94,24 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
         });
     }
 
+    // تابع کمکی برای مواقع ضروری
+    function forceHideLoading() {
+        hideLoading(); // همین کار رو میکنه
+    }
+
+    // Export
+    window.showLoading = showLoading;
+    window.hideLoading = hideLoading;
+    window.forceHideLoading = forceHideLoading;
+
     // ============================================================
     // API CALL
     // ============================================================
     function apiCall(url, method, data, onSuccess, onFail) {
+        forceHideLoading();
+        // نمایش لودینگ
         showLoading();
-        console.log(' API Call:', url);
+        console.log('📡 API Call:', url);
 
         var token = localStorage.getItem('token') || sessionStorage.getItem('token');
         var headers = { 'Content-Type': 'application/json' };
@@ -116,42 +133,21 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
                 } catch (e) {
                     res = { message: text || 'Invalid response' };
                 }
+
+                // ✅ همیشه hideLoading رو صدا بزن
                 hideLoading();
                 if (response.ok) {
                     if (onSuccess) onSuccess(res);
                 } else {
-                    // ✅ اصلاح: throw کردن یک Error object به جای res خالی
                     var err = new Error(res.message || res.Message || 'خطا در عملیات');
                     err.response = res;
                     throw err;
                 }
             })
             .catch(function (error) {
-                // ✅ اول لودینگ رو مخفی کن (مهم!)
-                try {
-                    hideLoading();
-                } catch (e) {
-                    console.error('hideLoading error:', e);
-                }
-
-                console.error(' API Error:', error);
-
-                // ✅ استخراج پیام از حالت‌های مختلف
-                var msg = 'خطا در ارتباط با سرور';
-                if (error && error.message) {
-                    msg = error.message;
-                } else if (error && error.response) {
-                    msg = error.response.message || error.response.Message || msg;
-                }
-
-                console.log('📢 نمایش پیام به کاربر:', msg);
-
-                // ✅ فقط یک بار پیام نشون بده (نه alert، نه showToast تکراری)
-                if (typeof showToast === 'function') {
-                    showToast(msg, 'error');
-                }
-
-                // ✅ اجرای onFail اگر تعریف شده باشد
+                hideLoading();
+                var msg = error.message || 'خطا در ارتباط با سرور';
+                showToast(msg, 'error');
                 if (typeof onFail === 'function') {
                     onFail(error);
                 }
@@ -159,34 +155,40 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     }
 
     function loadUserProfile() {
-        console.log(' Loading user profile...');
+        console.log('🔄 loadUserProfile called');
 
-        // فقط اگر در صفحه لاگین یا ثبت‌نام نیستیم
+        // چک کن که آیا در صفحه لاگین هستیم
         if (window.location.pathname.includes('login') ||
             window.location.pathname.includes('register')) {
+            console.log('⏭️ Skipping: on login page');
             return;
         }
 
-        // چک کن که آیا API وجود داره یا نه
         var token = localStorage.getItem('token') || sessionStorage.getItem('token');
         if (!token) {
-            console.log('ℹ️ No token, skipping profile load');
+            console.log('⏭️ Skipping: no token found');
             return;
         }
 
-        showLoading();
+        console.log('✅ Token found, calling API...');
 
+        // ✅ مستقیماً apiCall رو صدا بزن
         apiCall('/api/user/profile', 'GET', null,
             function (data) {
-                console.log('✅ Profile loaded:', data);
+                console.log('✅ Profile data received:', data);
+                // بعد از دریافت داده، لودینگ رو مخفی کن
                 hideLoading();
                 displayUserData(data);
+                // یه fallback برای اطمینان
+                setTimeout(function () {
+                    forceHideLoading();
+                    console.log('🧹 Fallback: force hide loading');
+                }, 500);
             },
             function (error) {
                 console.error('❌ Profile load failed:', error);
-                // ✅ حتماً hideLoading رو صدا بزن حتی اگر API خطا داد
                 hideLoading();
-                // فقط اگر خطای 404 بود، showToast نده (یعنی API وجود نداره)
+                forceHideLoading(); // اضافه شد برای اطمینان
                 if (error.response && error.response.status !== 404) {
                     showToast('خطا در دریافت اطلاعات کاربر', 'error');
                 }
@@ -212,7 +214,7 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
 
     function handleLogin(username, password) {
         console.log('🔐 Login started');
-        showLoading();
+       
         apiCall('/api/login', 'POST', { username: username, password: password },
             function (response) {
                 console.log('✅ Login success:', response);
