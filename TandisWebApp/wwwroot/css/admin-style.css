@@ -291,3 +291,87 @@ body.admin-glass-body {
         border-radius: 6px;
         font-weight: 600;
     }
+    /* =========================================
+   فیکس پنل اعضا: متن مبالغ + دکمه‌های سریع
+   ========================================= */
+
+    /* ۱) خوانا کردن مبالغ و متن‌های تیره داخل کارت‌ها */
+    body.admin-glass-body .card h1,
+    body.admin-glass-body .card h2,
+    body.admin-glass-body .card h3,
+    body.admin-glass-body .card h4,
+    body.admin-glass-body .card h5,
+    body.admin-glass-body .card h6,
+    body.admin-glass-body .card .fw-bold,
+    body.admin-glass-body .card strong,
+    body.admin-glass-body .card b,
+    body.admin-glass-body .text-dark,
+    body.admin-glass-body .text-body,
+    body.admin-glass-body .text-black {
+        color: #ffffff !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    /* ۲) شیشه‌ای کردن دکمه‌های دسترسی سریع (سفیدها) */
+    body.admin-glass-body .bg-white,
+    body.admin-glass-body .bg-light,
+    body.admin-glass-body .btn-light,
+    body.admin-glass-body .quick-box,
+    body.admin-glass-body .quick-card,
+    body.admin-glass-body .quick-link,
+    body.admin-glass-body .menu-box,
+    body.admin-glass-body .menu-card {
+        background: rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        color: #ffffff !important;
+        border-radius: 14px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+        /* هاور دکمه‌های سریع */
+        body.admin-glass-body .bg-white:hover,
+        body.admin-glass-body .bg-light:hover,
+        body.admin-glass-body .btn-light:hover,
+        body.admin-glass-body .quick-box:hover,
+        body.admin-glass-body .quick-card:hover,
+        body.admin-glass-body .quick-link:hover,
+        body.admin-glass-body .menu-box:hover,
+        body.admin-glass-body .menu-card:hover {
+            background: rgba(255, 255, 255, 0.22) !important;
+            transform: translateY(-3px);
+            color: #ffffff !important;
+        }
+
+        /* متن و آیکون‌های داخل دکمه‌های سریع */
+        body.admin-glass-body .bg-white *,
+        body.admin-glass-body .bg-light *,
+        body.admin-glass-body .btn-light *,
+        body.admin-glass-body .quick-box *,
+        body.admin-glass-body .quick-card *,
+        body.admin-glass-body .quick-link *,
+        body.admin-glass-body .menu-box *,
+        body.admin-glass-body .menu-card * {
+            color: #ffffff !important;
+        }
+    /* =========================================
+   فیکس مبالغ کارت‌های آمار (stat-value)
+   ========================================= */
+    body.admin-glass-body .stat-value,
+    body.admin-glass-body .stat-label,
+    body.admin-glass-body .stat-title,
+    body.admin-glass-body .stat-desc {
+        color: #ffffff !important;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    /* اگر خود کارت آمار هم پس‌زمینه سفید داشت، شیشه‌ای بشه */
+    body.admin-glass-body .stat-card,
+    body.admin-glass-body .stat-box {
+        background: rgba(255, 255, 255, 0.1) !important;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
