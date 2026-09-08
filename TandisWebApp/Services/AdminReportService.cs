@@ -358,5 +358,118 @@ namespace TandisWebApp.Services
                 _ => $"نوع {typeId}"
             };
         }
+        // ============================================================
+        //  آمار داشبورد مدیریت
+        // ============================================================
+
+        public async Task<DashboardStatsResult> GetDashboardStatsAsync(short shiftID, string period)
+        {
+            var pc = new System.Globalization.PersianCalendar();
+            string ToShamsi(DateTime d) => $"{pc.GetYear(d):0000}/{pc.GetMonth(d):00}/{pc.GetDayOfMonth(d):00}";
+
+            var today = DateTime.Now.Date;
+            DateTime curFrom, curTo, prevFrom, prevTo;
+            string curLabel, prevLabel;
+
+            if (period == "week")
+            {
+                curFrom = today.AddDays(-6); curTo = today;
+                prevFrom = today.AddDays(-13); prevTo = today.AddDays(-7);
+                curLabel = "۷ روز اخیر"; prevLabel = "۷ روز قبل‌تر";
+            }
+            else if (period == "month")
+            {
+                curFrom = today.AddDays(-29); curTo = today;
+                prevFrom = today.AddDays(-59); prevTo = today.AddDays(-30);
+                curLabel = "۳۰ روز اخیر"; prevLabel = "۳۰ روز قبل‌تر";
+            }
+            else
+            {
+                curFrom = today; curTo = today;
+                prevFrom = today.AddDays(-1); prevTo = today.AddDays(-1);
+                curLabel = "امروز"; prevLabel = "دیروز";
+            }
+
+            var cur = await CountRegisters(shiftID, ToShamsi(curFrom), ToShamsi(curTo));
+            var prev = await CountRegisters(shiftID, ToShamsi(prevFrom), ToShamsi(prevTo));
+
+            // ✅ افراد حاضر: ورود ثبت شده و خروج هنوز ثبت نشده (TrafficStatus = 1 یا 100)
+            var todayS = ToShamsi(today);
+            var insideRows = await _db.ACC_Traffics
+                .Where(t => t.ShiftID == shiftID && t.EntryDate == todayS
+                          && (t.TrafficStatus == 1 || t.TrafficStatus == 100))
+                .Select(t => t.MemberID)
+                .ToListAsync();
+
+            var insideCount = insideRows.Count(m => m == null)
+                            + insideRows.Where(m => m != null).Distinct().Count();
+
+            return new DashboardStatsResult
+            {
+                InsideCount = insideCount,
+                CurrentRegister = cur.Item1,
+                CurrentRenew = cur.Item2,
+                PreviousRegister = prev.Item1,
+                PreviousRenew = prev.Item2,
+                CurrentLabel = curLabel,
+                PreviousLabel = prevLabel
+            };
+        }
+
+        private async Task<(int, int)> CountRegisters(short shiftID, string from, string to)
+        {
+            var flags = await _db.Acc_MemberSports
+                .Where(ms => ms.Gen_SportSanse != null && ms.Gen_SportSanse.ShiftID == shiftID
+                          && ms.CreationDate != null
+                          && ms.CreationDate.CompareTo(from) >= 0
+                          && ms.CreationDate.CompareTo(to) <= 0)
+                .Select(ms => ms.IsRevival)
+                .ToListAsync();
+
+            var renew = flags.Count(f => f == true);
+            return (flags.Count - renew, renew);
+        }
+
+        public async Task<List<AdminInsideRowDto>> GetInsideListAsync(short shiftID)
+        {
+            var pc = new System.Globalization.PersianCalendar();
+            var now = DateTime.Now;
+            var todayS = $"{pc.GetYear(now):0000}/{pc.GetMonth(now):00}/{pc.GetDayOfMonth(now):00}";
+
+            var raw = await (
+                from t in _db.ACC_Traffics
+                where t.ShiftID == shiftID && t.EntryDate == todayS
+                   && (t.TrafficStatus == 1 || t.TrafficStatus == 100)
+                join m in _db.Gen_Members on t.MemberID equals m.MemberID into memJoin
+                from m in memJoin.DefaultIfEmpty()
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID into personJoin
+                from p in personJoin.DefaultIfEmpty()
+                join ms in _db.Acc_MemberSports on t.SportMemberID equals ms.SportMemberID into msJoin
+                from ms in msJoin.DefaultIfEmpty()
+                orderby t.EntryDateTime descending
+                select new
+                {
+                    t.TrafficID,
+                    t.MemberID,
+                    t.PersonName,
+                    t.EntryTime,
+                    t.IsGuest,
+                    FullName = p != null ? p.FullName : "",
+                    SportName = ms != null && ms.Gen_SportSanse != null
+                                ? (ms.Gen_SportSanse.Gen_Sport_Category != null ? ms.Gen_SportSanse.Gen_Sport_Category.SportName + " " : "") + (ms.Gen_SportSanse.SanseName ?? "")
+                                : ""
+                }).ToListAsync();
+
+            return raw.Select(x => new AdminInsideRowDto
+            {
+                TrafficID = x.TrafficID,
+                PersonName = x.MemberID != null ? (string.IsNullOrEmpty(x.FullName) ? "-" : x.FullName)
+                                                : (string.IsNullOrEmpty(x.PersonName) ? "مهمان" : x.PersonName),
+                MemberCode = x.MemberID != null && x.MemberID > 0 ? _helper.SetSeprator(x.MemberID.Value) : null,
+                EntryTime = (x.EntryTime ?? "").Trim(),
+                SportName = string.IsNullOrEmpty(x.SportName) ? "-" : x.SportName,
+                IsGuest = x.MemberID == null || x.IsGuest == true
+            }).ToList();
+        }
     }
 }

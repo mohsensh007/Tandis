@@ -148,4 +148,31 @@ namespace TandisWebApp.DTOs
         public List<TRow> Data { get; set; } = new();
         public TSummary Summary { get; set; } = default!;
     }
+
+
+    // ============================================================
+    //  داشبورد مدیریت
+    // ============================================================
+
+    public class DashboardStatsResult
+    {
+        public int InsideCount { get; set; }
+        public int CurrentRegister { get; set; }
+        public int CurrentRenew { get; set; }
+        public int PreviousRegister { get; set; }
+        public int PreviousRenew { get; set; }
+        public string CurrentLabel { get; set; } = string.Empty;
+        public string PreviousLabel { get; set; } = string.Empty;
+    }
+
+    public class AdminInsideRowDto
+    {
+        public long TrafficID { get; set; }
+        public string PersonName { get; set; } = string.Empty;
+        public string? MemberCode { get; set; }
+        public string EntryTime { get; set; } = string.Empty;
+        public string SportName { get; set; } = string.Empty;
+        public bool IsGuest { get; set; }
+    }
 }
+

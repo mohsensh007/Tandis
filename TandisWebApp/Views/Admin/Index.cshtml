@@ -2,7 +2,102 @@
     ViewData["Title"] = "داشبورد مدیر";
     Layout = "_AdminLayout";
 }
+<!-- ========== داشبورد مدیریت ========== -->
+<div class="row g-3 mb-4">
+    <!-- کارت افراد حاضر -->
+    <div class="col-12 col-md-4">
+        <div class="card h-100">
+            <div class="card-body text-center d-flex flex-column justify-content-between">
+                <div>
+                    <div class="text-muted mb-1">🏋️ افراد حاضر در باشگاه</div>
+                    <div id="insideCount" style="font-size:44px;font-weight:800;line-height:1.2;">-</div>
+                    <div class="text-muted small">نفر</div>
+                </div>
+                <div class="d-flex gap-2 mt-3">
+                    <button class="btn btn-outline-primary w-100" id="btnInsideList">
+                        <i class="bi bi-people-fill me-1"></i> مشاهده لیست
+                    </button>
+                    <button class="btn btn-outline-secondary" id="btnRefreshInside" title="به‌روزرسانی">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <!-- کارت ثبت‌نام/تمدید + نمودار -->
+    <div class="col-12 col-md-8">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                    <div class="fw-bold">📊 ثبت‌نام و تمدید</div>
+                    <span id="deltaBadge" class="badge bg-success">-</span>
+                </div>
+
+                <div class="btn-group w-100 mb-3" role="group">
+                    <input type="radio" class="btn-check" name="periodRadio" id="pDay" value="day" checked autocomplete="off">
+                    <label class="btn btn-outline-primary" for="pDay">روز</label>
+                    <input type="radio" class="btn-check" name="periodRadio" id="pWeek" value="week" autocomplete="off">
+                    <label class="btn btn-outline-success" for="pWeek">هفته</label>
+                    <input type="radio" class="btn-check" name="periodRadio" id="pMonth" value="month" autocomplete="off">
+                    <label class="btn btn-outline-warning" for="pMonth">ماه</label>
+                </div>
+
+                <div class="row text-center g-2">
+                    <div class="col-6">
+                        <div class="donut-wrap">
+                            <svg viewBox="0 0 42 42" class="donut" id="donutCur">
+                                <circle cx="21" cy="21" r="15.9155" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="5"></circle>
+                                <circle class="seg-reg" cx="21" cy="21" r="15.9155" fill="none" stroke="#4a90e2" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                                <circle class="seg-ren" cx="21" cy="21" r="15.9155" fill="none" stroke="#2ecc71" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                                <text class="donut-center" x="21" y="23.5" text-anchor="middle" fill="#ffffff" font-size="7.5" font-weight="700">0</text>
+                            </svg>
+                        </div>
+                        <div class="text-muted small mt-1" id="curLabel">دوره جاری</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="donut-wrap">
+                            <svg viewBox="0 0 42 42" class="donut" id="donutPrev">
+                                <circle cx="21" cy="21" r="15.9155" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="5"></circle>
+                                <circle class="seg-reg" cx="21" cy="21" r="15.9155" fill="none" stroke="#4a90e2" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                                <circle class="seg-ren" cx="21" cy="21" r="15.9155" fill="none" stroke="#2ecc71" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                                <text class="donut-center" x="21" y="23.5" text-anchor="middle" fill="#ffffff" font-size="7.5" font-weight="700">0</text>
+                            </svg>
+                        </div>
+                        <div class="text-muted small mt-1" id="prevLabel">دوره قبل</div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center gap-4 mt-3 small">
+                    <span><span style="color:#4a90e2;">●</span> ثبت‌نام: <b id="curReg">0</b></span>
+                    <span><span style="color:#2ecc71;">●</span> تمدید: <b id="curRen">0</b></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- مودال لیست افراد حاضر -->
+<div class="modal fade" id="insideModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"> افراد حاضر در باشگاه</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr><th>نام</th><th>کد عضویت</th><th>ورزش</th><th>ساعت ورود</th><th>وضعیت</th></tr>
+                        </thead>
+                        <tbody id="tbodyInside"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row g-3">
     <div class="col-12">
         <div class="card">
@@ -58,3 +153,78 @@
         </a>
     </div>
 </div>
+@section Scripts {
+    <script>
+        function renderDonut(sel, reg, ren, center) {
+            var total = reg + ren;
+            var pReg = total ? Math.round(reg * 100 / total) : 0;
+            var svg = $(sel);
+            if (!total) {
+                svg.find('.seg-reg').attr('stroke-dasharray', '0 100').attr('stroke-dashoffset', 25);
+                svg.find('.seg-ren').attr('stroke-dasharray', '0 100').attr('stroke-dashoffset', 25);
+            } else {
+                svg.find('.seg-reg').attr('stroke-dasharray', pReg + ' ' + (100 - pReg)).attr('stroke-dashoffset', 25);
+                svg.find('.seg-ren').attr('stroke-dasharray', (100 - pReg) + ' ' + pReg).attr('stroke-dashoffset', 25 - pReg);
+            }
+            svg.find('.donut-center').text(center);
+        }
+
+        function loadDashboard(period) {
+            apiCall('/api/Admin/DashboardStats?period=' + period, 'GET', null, function (res) {
+                if (!res.success) return;
+                var d = res.data;
+                $('#insideCount').text(faNum(d.insideCount));
+                $('#curLabel').text(d.currentLabel);
+                $('#prevLabel').text(d.previousLabel);
+                $('#curReg').text(faNum(d.currentRegister));
+                $('#curRen').text(faNum(d.currentRenew));
+                renderDonut('#donutCur',  d.currentRegister,  d.currentRenew,  faNum(d.currentRegister  + d.currentRenew));
+                renderDonut('#donutPrev', d.previousRegister, d.previousRenew, faNum(d.previousRegister + d.previousRenew));
+
+                var curT  = d.currentRegister  + d.currentRenew;
+                var prevT = d.previousRegister + d.previousRenew;
+                var delta = prevT === 0 ? (curT > 0 ? 100 : 0) : Math.round((curT - prevT) * 100 / prevT);
+                $('#deltaBadge').removeClass('bg-success bg-danger')
+                    .addClass(delta >= 0 ? 'bg-success' : 'bg-danger')
+                    .text((delta >= 0 ? '▲ ' : '▼ ') + faNum(Math.abs(delta)) + '٪ نسبت به دوره قبل');
+            });
+        }
+
+        function loadInsideList() {
+            apiCall('/api/Admin/InsideList', 'GET', null, function (res) {
+                if (!res.success) return;
+                var rows = res.data || [];
+                if (!rows.length) {
+                    $('#tbodyInside').html('<tr><td colspan="5" class="text-center py-3">در حال حاضر کسی داخل باشگاه نیست.</td></tr>');
+                } else {
+                    var html = '';
+                    rows.forEach(function (r) {
+                        html += '<tr>' +
+                            '<td>' + esc(r.personName) + '</td>' +
+                            '<td>' + (r.memberCode ? esc(r.memberCode) : '-') + '</td>' +
+                            '<td>' + esc(r.sportName) + '</td>' +
+                            '<td>' + esc(r.entryTime || '-') + '</td>' +
+                            '<td>' + (r.isGuest ? '<span class="badge bg-warning">مهمان</span>' : '<span class="badge bg-success">عضو</span>') + '</td>' +
+                        '</tr>';
+                    });
+                    $('#tbodyInside').html(html);
+                }
+                new bootstrap.Modal('#insideModal').show();
+            });
+        }
+
+        // ✅ فقط وقتی همه‌چیز (jQuery + DOM) آماده شد اجرا کن
+        $(function () {
+            $('input[name="periodRadio"]').on('change', function () {
+                loadDashboard($(this).val());
+            });
+            $('#btnInsideList').on('click', loadInsideList);
+            $('#btnRefreshInside').on('click', function () {
+                loadDashboard($('input[name="periodRadio"]:checked').val());
+            });
+
+            // بارگذاری اولیه
+            loadDashboard('day');
+        });
+    </script>
+}

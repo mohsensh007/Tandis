@@ -375,3 +375,13 @@ body.admin-glass-body {
         -webkit-backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
     }
+/* دونات داشبورد */
+.donut-wrap {
+    max-width: 150px;
+    margin: 0 auto;
+}
+
+.donut {
+    width: 100%;
+    height: auto;
+}

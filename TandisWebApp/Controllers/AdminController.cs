@@ -142,5 +142,22 @@ namespace TandisWebApp.Controllers
             Response.Cookies.Delete("X-Access-Token");
             return RedirectToAction("Login", "Account");
         }
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/DashboardStats")]
+        public async Task<IActionResult> DashboardStatsApi(string period = "day")
+        {
+            var stats = await _reports.GetDashboardStatsAsync(AdminShiftID, period);
+            return Ok(new { success = true, data = stats });
+        }
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/InsideList")]
+        public async Task<IActionResult> InsideListApi()
+        {
+            var list = await _reports.GetInsideListAsync(AdminShiftID);
+            return Ok(new { success = true, data = list });
+        }
     }
 }
