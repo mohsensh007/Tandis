@@ -21,6 +21,7 @@ namespace TandisWebApp.Services
     /// <summary>مدل اطلاعات یک مدیر (از منبع داده خوانده می‌شود).</summary>
     public sealed class AdminUserInfo
     {
+        public short UserID { get; set; }
         public string Username { get; set; } = string.Empty;
         public string DisplayName { get; set; } = string.Empty;
         public short ShiftID { get; set; }
@@ -34,10 +35,10 @@ namespace TandisWebApp.Services
     {
         // لیست ثابت مدیران — در آینده از جدول Sec_Users یا مشابه آن خوانده می‌شود.
         private static readonly AdminUserInfo[] _admins =
-        {
-            new() { Username = "admin",  DisplayName = "مدیر شیفت ۱ (آقایان)", ShiftID = 1 },
-            new() { Username = "adminb", DisplayName = "مدیر شیفت ۲ (بانوان)",  ShiftID = 2 }
-        };
+          {
+               new() { UserID = 1, Username = "admin",  DisplayName = "مدیر شیفت ۱ (آقایان)", ShiftID = 1 },
+               new() { UserID = 2, Username = "adminb", DisplayName = "مدیر شیفت ۲ (بانوان)",  ShiftID = 2 }
+          };
 
         // رمز عبور فعلی ثابت — بعداً از دیتابیس خوانده می‌شود.
         private const string DefaultPassword = "admin";
@@ -94,7 +95,7 @@ namespace TandisWebApp.Services
                     };
                 }
 
-                var token = _jwt.GenerateAdminToken(admin.Username, admin.DisplayName, admin.ShiftID);
+                var token = _jwt.GenerateAdminToken(admin.UserID, admin.Username, admin.DisplayName, admin.ShiftID);
 
                 return new ApiResponse<AdminLoginResponse>
                 {

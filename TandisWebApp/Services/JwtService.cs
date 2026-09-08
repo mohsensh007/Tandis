@@ -55,7 +55,7 @@ namespace TandisWebApp.Services
         /// <param name="username">نام کاربری مدیر</param>
         /// <param name="displayName">نام نمایشی مدیر</param>
         /// <param name="shiftID">شماره شیفت مجاز (۱=آقایان، ۲=بانوان)</param>
-        public string GenerateAdminToken(string username, string displayName, short shiftID)
+        public string GenerateAdminToken(short userID, string username, string displayName, short shiftID)
         {
             var jwtSettings = _config.GetSection("JwtSettings");
             var secretKey = jwtSettings["SecretKey"]!;
@@ -67,14 +67,15 @@ namespace TandisWebApp.Services
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, username),
-                new Claim(ClaimTypes.Name, displayName),
-                new Claim("IsAdmin", "true"),
-                new Claim("AdminUsername", username),
-                new Claim("AdminShiftID", shiftID.ToString()),
-                new Claim("FullName", displayName)
-            };
+    {
+        new Claim(ClaimTypes.NameIdentifier, username),
+        new Claim(ClaimTypes.Name, displayName),
+        new Claim("IsAdmin", "true"),
+        new Claim("AdminUsername", username),
+        new Claim("AdminShiftID", shiftID.ToString()),
+        new Claim("FullName", displayName),
+        new Claim("UserID", userID.ToString())   // ✅ جدید
+    };
 
             var token = new JwtSecurityToken(
                 issuer: issuer,

@@ -61,7 +61,10 @@ namespace TandisWebApp.Data
         public DbSet<CmbDay> CmbDays { get; set; } = null!;
         public DbSet<CmbMonth> CmbMonths { get; set; } = null!;
         public DbSet<CmbYear> CmbYears { get; set; } = null!;
+        // ==================== Messages ====================
 
+        public DbSet<Msg_Message> MsgMessages { get; set; }
+        public DbSet<Msg_Read> MsgReads { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

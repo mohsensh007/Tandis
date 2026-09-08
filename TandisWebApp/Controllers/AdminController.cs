@@ -11,11 +11,23 @@ namespace TandisWebApp.Controllers
     {
         private readonly AdminAuthService _auth;
         private readonly AdminReportService _reports;
+        private readonly MessageService _messages;
 
-        public AdminController(AdminAuthService auth, AdminReportService reports)
+        private short? CurrentAdminUserID
+        {
+            get
+            {
+                var value = User.FindFirst("UserID")?.Value
+                         ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                return short.TryParse(value, out var id) ? id : (short?)null;
+            }
+        }
+
+        public AdminController(AdminAuthService auth, AdminReportService reports , MessageService message)
         {
             _auth = auth;
             _reports = reports;
+            _messages = message;
         }
 
         private short AdminShiftID => User.GetAdminShiftID();
@@ -158,6 +170,48 @@ namespace TandisWebApp.Controllers
         {
             var list = await _reports.GetInsideListAsync(AdminShiftID);
             return Ok(new { success = true, data = list });
+        }
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/Messages/Inbox")]
+        public async Task<IActionResult> MessagesInboxApi()
+    => Ok(new { success = true, data = await _messages.GetAdminInboxAsync(AdminShiftID) });
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/Messages/UnreadCount")]
+        public async Task<IActionResult> MessagesUnreadApi()
+            => Ok(new { success = true, count = await _messages.GetAdminUnreadCountAsync(AdminShiftID) });
+
+        [AdminAuthorize]
+        [HttpPost]
+        [Route("api/Admin/Messages/Send")]
+        public async Task<IActionResult> MessagesSendApi([FromBody] SendMessageRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.Body))
+                return Ok(new { success = false, message = "متن پیام خالی است" });
+            await _messages.SendFromAdminAsync(CurrentAdminUserID, req);
+            return Ok(new { success = true, message = "پیام با موفقیت ارسال شد" });
+        }
+
+        [AdminAuthorize]
+        [HttpPost]
+        [Route("api/Admin/Messages/Reply")]
+        public async Task<IActionResult> MessagesReplyApi([FromBody] ReplyMessageRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.Body))
+                return Ok(new { success = false, message = "متن پاسخ خالی است" });
+            await _messages.ReplyAsync(CurrentAdminUserID, req);
+            return Ok(new { success = true, message = "پاسخ ارسال شد" });
+        }
+
+        [AdminAuthorize]
+        [HttpPost]
+        [Route("api/Admin/Messages/MarkSeen")]
+        public async Task<IActionResult> MessagesMarkSeenApi([FromBody] long messageID)
+        {
+            await _messages.MarkSeenAsync(messageID);
+            return Ok(new { success = true });
         }
     }
 }

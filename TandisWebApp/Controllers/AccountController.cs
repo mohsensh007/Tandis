@@ -12,11 +12,16 @@ namespace TandisWebApp.Controllers
     {
         private readonly MemberAuthService _auth;
         private readonly CommonHelperService _helper;
+        private readonly MessageService _messages;
 
-        public AccountController(MemberAuthService auth, CommonHelperService helper)
+        
+
+
+        public AccountController(MemberAuthService auth, CommonHelperService helper ,MessageService messages)
         {
             _auth = auth;
             _helper = helper;
+            _messages = messages;
         }
 
         // ============================================================
@@ -85,6 +90,56 @@ namespace TandisWebApp.Controllers
             if (!result.Success)
                 return BadRequest(result);
             return Ok(result);
+        }
+        private Task<(int memberID, int roleID)> GetCurrentMemberAsync()
+        => _messages.ResolveCurrentMemberAsync(
+        User.FindFirst("MemberID")?.Value
+            ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
+        User.Identity?.Name);
+
+
+        [Authorize]
+        [HttpGet]
+        [Route("api/Account/Messages")]
+        public async Task<IActionResult> MyMessagesApi()
+        {
+            var (memberID, roleID) = await GetCurrentMemberAsync();
+            if (memberID == 0) return Ok(new { success = false, message = "عضو پیدا نشد" });
+            return Ok(new { success = true, data = await _messages.GetMemberMessagesAsync(memberID, roleID) });
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("api/Account/Messages/UnreadCount")]
+        public async Task<IActionResult> MyUnreadApi()
+        {
+            var (memberID, roleID) = await GetCurrentMemberAsync();
+            if (memberID == 0) return Ok(new { success = true, count = 0 });
+            return Ok(new { success = true, count = await _messages.GetMemberUnreadCountAsync(memberID, roleID) });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("api/Account/Messages/Read")]
+        public async Task<IActionResult> MarkReadApi([FromBody] long messageID)
+        {
+            var (memberID, _) = await GetCurrentMemberAsync();
+            if (memberID == 0) return Ok(new { success = false });
+            await _messages.MarkReadAsync(messageID, memberID);
+            return Ok(new { success = true });
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("api/Account/Messages/Send")]
+        public async Task<IActionResult> SendToAdminApi([FromBody] SendMessageRequest req)
+        {
+            var (memberID, _) = await GetCurrentMemberAsync();
+            if (memberID == 0) return Ok(new { success = false, message = "عضو پیدا نشد" });
+            if (string.IsNullOrWhiteSpace(req.Body))
+                return Ok(new { success = false, message = "متن پیام خالی است" });
+            await _messages.SendFromMemberAsync(memberID, req.Title, req.Body);
+            return Ok(new { success = true, message = "پیام شما برای مدیریت ارسال شد" });
         }
     }
 }

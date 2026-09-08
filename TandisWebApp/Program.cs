@@ -107,6 +107,8 @@ builder.Services.AddScoped<CommonHelperService>();
 builder.Services.AddSingleton<IAdminUserProvider, HardcodedAdminUserProvider>();
 builder.Services.AddScoped<AdminAuthService>();
 builder.Services.AddScoped<AdminReportService>();
+//messages
+builder.Services.AddScoped<MessageService>();
 
 // HttpContextAccessor برای استفاده در Service‌ها
 builder.Services.AddHttpContextAccessor();
