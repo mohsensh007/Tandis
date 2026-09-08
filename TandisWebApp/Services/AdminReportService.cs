@@ -369,38 +369,57 @@ namespace TandisWebApp.Services
 
             var today = DateTime.Now.Date;
             DateTime curFrom, curTo, prevFrom, prevTo;
-            string curLabel, prevLabel;
+            string curTitle, prevTitle;
 
             if (period == "week")
             {
                 curFrom = today.AddDays(-6); curTo = today;
                 prevFrom = today.AddDays(-13); prevTo = today.AddDays(-7);
-                curLabel = "۷ روز اخیر"; prevLabel = "۷ روز قبل‌تر";
+                curTitle = "هفته جاری"; prevTitle = "هفته قبل";
             }
             else if (period == "month")
             {
                 curFrom = today.AddDays(-29); curTo = today;
                 prevFrom = today.AddDays(-59); prevTo = today.AddDays(-30);
-                curLabel = "۳۰ روز اخیر"; prevLabel = "۳۰ روز قبل‌تر";
+                curTitle = "ماه جاری"; prevTitle = "ماه قبل";
             }
             else
             {
                 curFrom = today; curTo = today;
                 prevFrom = today.AddDays(-1); prevTo = today.AddDays(-1);
-                curLabel = "امروز"; prevLabel = "دیروز";
+                curTitle = "امروز"; prevTitle = "دیروز";
             }
 
-            var cur = await CountRegisters(shiftID, ToShamsi(curFrom), ToShamsi(curTo));
-            var prev = await CountRegisters(shiftID, ToShamsi(prevFrom), ToShamsi(prevTo));
+            var curFromS = ToShamsi(curFrom);
+            var curToS = ToShamsi(curTo);
+            var prevFromS = ToShamsi(prevFrom);
+            var prevToS = ToShamsi(prevTo);
 
-            // ✅ افراد حاضر: ورود ثبت شده و خروج هنوز ثبت نشده (TrafficStatus = 1 یا 100)
+            // ✅ لیبل‌ها با تاریخ دقیق شمسی
+            string curLabel, prevLabel;
+            if (period == "day")
+            {
+                curLabel = $"{curTitle}: {curFromS}";
+                prevLabel = $"{prevTitle}: {prevFromS}";
+            }
+            else
+            {
+                curLabel = $"{curTitle}: از {curFromS} تا {curToS}";
+                prevLabel = $"{prevTitle}: از {prevFromS} تا {prevToS}";
+            }
+
+            var cur = await CountRegisters(shiftID, curFromS, curToS);
+            var prev = await CountRegisters(shiftID, prevFromS, prevToS);
+
+            var curCredit = await SumCredits(shiftID, curFromS, curToS);
+            var prevCredit = await SumCredits(shiftID, prevFromS, prevToS);
+
             var todayS = ToShamsi(today);
             var insideRows = await _db.ACC_Traffics
                 .Where(t => t.ShiftID == shiftID && t.EntryDate == todayS
                           && (t.TrafficStatus == 1 || t.TrafficStatus == 100))
                 .Select(t => t.MemberID)
                 .ToListAsync();
-
             var insideCount = insideRows.Count(m => m == null)
                             + insideRows.Where(m => m != null).Distinct().Count();
 
@@ -411,9 +430,33 @@ namespace TandisWebApp.Services
                 CurrentRenew = cur.Item2,
                 PreviousRegister = prev.Item1,
                 PreviousRenew = prev.Item2,
+                CurrentCredit = curCredit.sum,
+                CurrentCreditCount = curCredit.count,
+                PreviousCredit = prevCredit.sum,
+                PreviousCreditCount = prevCredit.count,
                 CurrentLabel = curLabel,
                 PreviousLabel = prevLabel
             };
+        }
+
+        // ✅ جمع مبالغ دریافتی دوره (Cash_CreditStatment) با فیلتر شیفت
+        private async Task<(long sum, int count)> SumCredits(short shiftID, string fromDate, string toDate)
+        {
+            var amounts = await (
+                from c in _db.Cash_CreditStatments
+                where c.CreationDate != null
+                   && c.CreationDate.CompareTo(fromDate) >= 0
+                   && c.CreationDate.CompareTo(toDate) <= 0
+                join m in _db.Gen_Members on c.MemberID equals m.MemberID into mj
+                from m in mj.DefaultIfEmpty()
+                join t in _db.ACC_Traffics on c.TrafficID equals t.TrafficID into tj
+                from t in tj.DefaultIfEmpty()
+                where m.ShiftID == shiftID || t.ShiftID == shiftID
+                select c.Amount).ToListAsync();
+
+            // ✅ فیلتر + تبدیل امن به long معمولی (غیر nullable)
+            var filtered = amounts.Where(a => a.HasValue).Select(a => a!.Value).ToList();
+            return (filtered.Sum(), filtered.Count);
         }
 
         private async Task<(int, int)> CountRegisters(short shiftID, string from, string to)

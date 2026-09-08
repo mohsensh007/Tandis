@@ -8,11 +8,17 @@
     <div class="col-12 col-md-4">
         <div class="card h-100">
             <div class="card-body text-center d-flex flex-column justify-content-between">
+                <!-- بلوک عدد -->
                 <div>
                     <div class="text-muted mb-1">🏋️ افراد حاضر در باشگاه</div>
-                    <div id="insideCount" style="font-size:44px;font-weight:800;line-height:1.2;">-</div>
+                    <div id="insideCount" style="font-size:36px;font-weight:800;line-height:1.2;">-</div>
                     <div class="text-muted small">نفر</div>
                 </div>
+
+                <!-- ✅ پیش‌نمایش زنده: دقیقاً اینجا، بین عدد و دکمه‌ها -->
+                <div id="insidePreview" class="inside-preview mt-3 text-start"></div>
+
+                <!-- بلوک دکمه‌ها -->
                 <div class="d-flex gap-2 mt-3">
                     <button class="btn btn-outline-primary w-100" id="btnInsideList">
                         <i class="bi bi-people-fill me-1"></i> مشاهده لیست
@@ -24,7 +30,6 @@
             </div>
         </div>
     </div>
-
     <!-- کارت ثبت‌نام/تمدید + نمودار -->
     <div class="col-12 col-md-8">
         <div class="card h-100">
@@ -98,6 +103,35 @@
         </div>
     </div>
 </div>
+<!-- کارت مبالغ دریافتی -->
+<div class="row g-3 mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+                    <div class="fw-bold">💰 مبالغ دریافتی</div>
+                    <span id="creditDeltaBadge" class="badge bg-success">-</span>
+                </div>
+                <div class="row text-center g-3">
+                    <div class="col-6 col-md-5 offset-md-1">
+                        <div class="text-muted small" id="creditCurLabel">دوره جاری</div>
+                        <div class="fs-5 fw-bold text-success mt-1">
+                            <span id="curCredit">0</span> <small class="text-muted">ریال</small>
+                        </div>
+                        <div class="text-muted small"><span id="curCreditCount">0</span> سند دریافتی</div>
+                    </div>
+                    <div class="col-6 col-md-5">
+                        <div class="text-muted small" id="creditPrevLabel">دوره قبل</div>
+                        <div class="fs-5 fw-bold mt-1">
+                            <span id="prevCredit">0</span> <small class="text-muted">ریال</small>
+                        </div>
+                        <div class="text-muted small"><span id="prevCreditCount">0</span> سند دریافتی</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="row g-3">
     <div class="col-12">
         <div class="card">
@@ -155,6 +189,44 @@
 </div>
 @section Scripts {
     <script>
+                // ✅ پیش‌نمایش زنده افراد حاضر (پر کردن فضای خالی کارت)
+        function loadInsidePreview() {
+            apiCall('/api/Admin/InsideList', 'GET', null, function (res) {
+                if (!res.success) return;
+                var rows = res.data || [];
+                var box = $('#insidePreview');
+                box.empty();
+
+                if (!rows.length) {
+                    box.html('<div class="text-muted small text-center py-2">در حال حاضر کسی داخل باشگاه نیست</div>');
+                    return;
+                }
+
+                var max = 4;
+                rows.slice(0, max).forEach(function (r) {
+                    box.append(
+                        '<div class="inside-row d-flex justify-content-between align-items-center gap-2">' +
+                            '<span class="text-truncate">' + esc(r.personName) +
+                                (r.isGuest ? ' <span class="badge bg-warning" style="font-size:10px;">مهمان</span>' : '') +
+                            '</span>' +
+                            '<span class="text-muted small" style="direction:ltr;">' + esc(r.entryTime || '') + '</span>' +
+                        '</div>'
+                    );
+                });
+
+                if (rows.length > max) {
+                    box.append('<div class="text-center small mt-1">' +
+                        '<a href="#" id="lnkMoreInside" class="link-light text-decoration-none">+ ' +
+                        faNum(rows.length - max) + ' نفر دیگر…</a></div>');
+                }
+            });
+        }
+
+        // کلیک روی «+N نفر دیگر» → باز کردن مودال لیست کامل
+        $(document).on('click', '#lnkMoreInside', function (e) {
+            e.preventDefault();
+            loadInsideList();
+        });
         function renderDonut(sel, reg, ren, center) {
             var total = reg + ren;
             var pReg = total ? Math.round(reg * 100 / total) : 0;
@@ -187,6 +259,19 @@
                 $('#deltaBadge').removeClass('bg-success bg-danger')
                     .addClass(delta >= 0 ? 'bg-success' : 'bg-danger')
                     .text((delta >= 0 ? '▲ ' : '▼ ') + faNum(Math.abs(delta)) + '٪ نسبت به دوره قبل');
+                            // ✅ کارت مبالغ دریافتی
+        $('#creditCurLabel').text(d.currentLabel);
+        $('#creditPrevLabel').text(d.previousLabel);
+        $('#curCredit').text(faNum(d.currentCredit));
+        $('#prevCredit').text(faNum(d.previousCredit));
+        $('#curCreditCount').text(faNum(d.currentCreditCount));
+        $('#prevCreditCount').text(faNum(d.previousCreditCount));
+
+        var cd = d.previousCredit === 0 ? (d.currentCredit > 0 ? 100 : 0)
+                 : Math.round((d.currentCredit - d.previousCredit) * 100 / d.previousCredit);
+        $('#creditDeltaBadge').removeClass('bg-success bg-danger')
+            .addClass(cd >= 0 ? 'bg-success' : 'bg-danger')
+            .text((cd >= 0 ? '▲ ' : '▼ ') + faNum(Math.abs(cd)) + '٪ نسبت به دوره قبل');
             });
         }
 
@@ -220,11 +305,13 @@
             });
             $('#btnInsideList').on('click', loadInsideList);
             $('#btnRefreshInside').on('click', function () {
-                loadDashboard($('input[name="periodRadio"]:checked').val());
+            loadDashboard($('input[name="periodRadio"]:checked').val());
+            loadInsidePreview();   // ✅ جدید
             });
 
             // بارگذاری اولیه
             loadDashboard('day');
+            loadInsidePreview();   // ✅ جدید
         });
     </script>
 }

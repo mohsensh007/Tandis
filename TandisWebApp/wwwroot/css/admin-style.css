@@ -385,3 +385,20 @@ body.admin-glass-body {
     width: 100%;
     height: auto;
 }
+/* پیش‌نمایش زنده افراد حاضر در کارت داشبورد */
+.inside-preview {
+    max-height: 160px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.inside-row {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    padding: 6px 10px;
+    font-size: 13px;
+    color: #ffffff;
+}

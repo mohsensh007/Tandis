@@ -163,6 +163,10 @@ namespace TandisWebApp.DTOs
         public int PreviousRenew { get; set; }
         public string CurrentLabel { get; set; } = string.Empty;
         public string PreviousLabel { get; set; } = string.Empty;
+        public long CurrentCredit { get; set; }
+        public int CurrentCreditCount { get; set; }
+        public long PreviousCredit { get; set; }
+        public int PreviousCreditCount { get; set; }
     }
 
     public class AdminInsideRowDto
