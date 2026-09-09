@@ -117,6 +117,7 @@ namespace TandisWebApp.Services
                     gm.MemberID,
                     FullName = gp != null ? gp.FullName : "",
                     gp.Mobile,
+                    gm.PersonID,          // ✅
                     m.Title,
                     m.Body,
                     m.CreationDate,
@@ -126,6 +127,7 @@ namespace TandisWebApp.Services
 
             return rows.Select(x => new AdminInboxRowDto
             {
+                PersonID = x.PersonID ?? 0,
                 MessageID = x.MessageID,
                 SenderName = string.IsNullOrEmpty(x.FullName) ? "-" : x.FullName,
                 MemberCode = x.MemberID.ToString("##,###,###").Replace(',', '،'),
@@ -275,6 +277,7 @@ namespace TandisWebApp.Services
                 {
                     m.MessageID,
                     gm.MemberID,
+                    gm.PersonID,
                     FullName = gp != null ? gp.FullName : "",
                     gp.Mobile,
                     m.Title,
@@ -288,6 +291,7 @@ namespace TandisWebApp.Services
 
             return new AdminInboxRowDto
             {
+                PersonID = x.PersonID ?? 0,
                 MessageID = x.MessageID,
                 SenderName = string.IsNullOrEmpty(x.FullName) ? "-" : x.FullName,
                 MemberCode = x.MemberID.ToString("##,###,###").Replace(',', '،'),
@@ -296,7 +300,8 @@ namespace TandisWebApp.Services
                 Body = x.Body,
                 CreationDate = x.CreationDate,
                 CreationTime = x.CreationTime,
-                IsSeen = x.IsSeen
+                IsSeen = x.IsSeen,
+                
             };
         }
     }

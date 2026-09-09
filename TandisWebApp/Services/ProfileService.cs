@@ -132,5 +132,45 @@ namespace TandisWebApp.Services
                 return new SimpleResponse { Success = false, Message = "خطا در ذخیره اطلاعات" };
             }
         }
+        // ========== تصویر چهره عضو ==========
+        public async Task<byte[]?> GetMemberFaceAsync(int memberID)
+        {
+            return await (
+                from m in _db.Gen_Members
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                where m.MemberID == memberID
+                select p.ThumbnailImage
+            ).FirstOrDefaultAsync();
+        }
+
+        // ========== تصویر چهره هر شخص (برای ادمین) ==========
+        public async Task<byte[]?> GetPersonFaceAsync(int personID)
+        {
+            return await _db.Gen_Persons
+                .Where(p => p.PersonID == personID)
+                .Select(p => p.ThumbnailImage)
+                .FirstOrDefaultAsync();
+        }
+
+        // ========== تشخیص نوع تصویر از روی بایت‌های اول ==========
+        public static string DetectImageType(byte[] b)
+        {
+            if (b.Length > 3 && b[0] == 0xFF && b[1] == 0xD8 && b[2] == 0xFF) return "image/jpeg";
+            if (b.Length > 7 && b[0] == 0x89 && b[1] == 0x50 && b[2] == 0x4E && b[3] == 0x47) return "image/png";
+            if (b.Length > 1 && b[0] == 0x42 && b[1] == 0x4D) return "image/bmp";
+            return "image/jpeg";
+        }
+        // ========== آیا عضو عکس چهره دارد؟ ==========
+        public async Task<bool> HasMemberFaceAsync(int memberID)
+        {
+            var bytes = await (
+                from m in _db.Gen_Members
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                where m.MemberID == memberID
+                select p.ThumbnailImage
+            ).FirstOrDefaultAsync();
+
+            return bytes != null && bytes.Length > 0;
+        }
     }
 }

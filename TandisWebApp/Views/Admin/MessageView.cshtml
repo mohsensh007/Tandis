@@ -5,7 +5,6 @@
 
 <div class="row justify-content-center">
     <div class="col-12 col-lg-8">
-        <!-- کارت اطلاعات پیام -->
         <div class="card mb-3">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">📨 جزئیات پیام</h5>
@@ -14,6 +13,15 @@
                 </a>
             </div>
             <div class="card-body">
+                <!-- ✅ چهره فرستنده (نسخه ادمین) -->
+                <div class="text-center mb-3">
+                    <img src="/Admin/Face/@Model.PersonID"
+                         alt="چهره فرستنده"
+                         class="rounded-circle border border-light"
+                         style="width:96px;height:96px;object-fit:cover;"
+                         onerror="this.style.display='none';" />
+                </div>
+
                 <div class="row g-3 mb-3 small">
                     <div class="col-6 col-md-3">
                         <span class="text-muted">فرستنده</span><br>
@@ -40,20 +48,17 @@
                     <h4 class="mb-3 fw-bold">@Model.Title</h4>
                 }
 
-                <!-- ✅ متن کامل با شکستن خودکار کلمات (بدون اسکرول افقی) -->
                 <div class="msg-body-box p-3">@Model.Body</div>
             </div>
         </div>
 
-        <!-- کارت پاسخ سریع -->
         <div class="card">
             <div class="card-header">
                 <h6 class="mb-0">✏️ پاسخ به این پیام</h6>
             </div>
             <div class="card-body">
                 <textarea class="form-control mb-2" id="txtReplyBody" rows="4" placeholder="متن پاسخ..."></textarea>
-                <button class="btn btn-primary" id="btnSendReply"
-                        data-id="@Model.MessageID">
+                <button class="btn btn-primary" id="btnSendReply" data-id="@Model.MessageID">
                     <i class="bi bi-reply-fill me-1"></i> ارسال پاسخ
                 </button>
             </div>

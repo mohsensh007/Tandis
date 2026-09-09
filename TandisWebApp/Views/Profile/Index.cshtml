@@ -7,7 +7,18 @@
         <div class="card text-center">
             <div class="card-header">تصویر پروفایل</div>
             <div class="card-body">
-                <div id="avatar" class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width:120px;height:120px;font-size:2.5rem">👤</div>
+                @if (ViewData["HasFace"] as bool? == true)
+                {
+                    <!-- فقط وقتی عکس چهره وجود داره -->
+                    <img src="/Profile/MyFace" alt="تصویر چهره"
+                         class="rounded-circle border border-light"
+                         style="width:120px;height:120px;object-fit:cover;" />
+                }
+                else
+                {
+                    <!-- فقط وقتی عکس چهره نیست -->
+                    <div id="avatar" class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width:120px;height:120px;font-size:2.5rem">👤</div>
+                }
             </div>
         </div>
     </div>
@@ -71,7 +82,8 @@
             <div class="fw-bold text-danger fs-5" id="totalDebit">-</div>
         </div>
     </div>
-</div>
+</div> 
+
 
 @section Scripts {
 <script>

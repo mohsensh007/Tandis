@@ -5,6 +5,7 @@ namespace TandisWebApp.DTOs
     public class AdminInboxRowDto
     {
         public long MessageID { get; set; }
+        public int PersonID { get; set; }
         public string SenderName { get; set; } = string.Empty;
         public string? MemberCode { get; set; }
         public string? Mobile { get; set; }

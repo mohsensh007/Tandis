@@ -12,6 +12,7 @@ namespace TandisWebApp.Controllers
         private readonly AdminAuthService _auth;
         private readonly AdminReportService _reports;
         private readonly MessageService _messages;
+        private readonly ProfileService _profile;
 
         private short? CurrentAdminUserID
         {
@@ -23,11 +24,12 @@ namespace TandisWebApp.Controllers
             }
         }
 
-        public AdminController(AdminAuthService auth, AdminReportService reports, MessageService message)
+        public AdminController(AdminAuthService auth, AdminReportService reports, MessageService message , ProfileService profile)
         {
             _auth = auth;
             _reports = reports;
             _messages = message;
+            _profile = profile;
         }
 
         private short AdminShiftID => User.GetAdminShiftID();
@@ -248,6 +250,18 @@ namespace TandisWebApp.Controllers
             var msg = await _messages.GetMessageDetailAsync(messageID);
             if (msg == null) return RedirectToAction("Messages");
             return View(msg);
+        }
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("Admin/Face/{personID:int}")]
+        public async Task<IActionResult> Face(int personID)
+        {
+            var bytes = await _profile.GetPersonFaceAsync(personID);
+            if (bytes == null || bytes.Length == 0)
+                return NotFound();
+
+            Response.Headers["Cache-Control"] = "public, max-age=86400";
+            return File(bytes, ProfileService.DetectImageType(bytes));
         }
     }
 }

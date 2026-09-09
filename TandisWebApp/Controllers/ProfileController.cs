@@ -19,7 +19,16 @@ namespace TandisWebApp.Controllers
 
         // ---------- Views ----------
         [HttpGet]
-        public IActionResult Index() => View();
+        public async Task<IActionResult> Index()
+        {
+            var hasFace = false;
+            if (int.TryParse(User.FindFirst("MemberID")?.Value, out var memberID) && memberID > 0)
+            {
+                hasFace = await _profile.HasMemberFaceAsync(memberID);
+            }
+            ViewData["HasFace"] = hasFace;
+            return View();
+        }
 
         [HttpGet]
         public IActionResult ChangePassword() => View();
@@ -56,6 +65,22 @@ namespace TandisWebApp.Controllers
             if (!result.Success)
                 return BadRequest(result);
             return Ok(result);
+        }
+        [Authorize]
+        [HttpGet]
+        [Route("Profile/MyFace")]
+        public async Task<IActionResult> MyFace()
+        {
+            // ✅ خواندن MemberID مستقیم از کلیم توکن عضو
+            if (!int.TryParse(User.FindFirst("MemberID")?.Value, out var memberID) || memberID <= 0)
+                return Unauthorized();
+
+            var bytes = await _profile.GetMemberFaceAsync(memberID);
+            if (bytes == null || bytes.Length == 0)
+                return NotFound();
+
+            Response.Headers["Cache-Control"] = "public, max-age=86400";
+            return File(bytes, ProfileService.DetectImageType(bytes));
         }
     }
 }
