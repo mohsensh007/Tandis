@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "پیام‌ها";
+}
+
+<div class="row g-3">
+    <!-- ستون لیست پیام‌ها -->
+    <div class="col-12 col-lg-7">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">📨 اینباکس پیام‌ها</h5>
+                <button class="btn btn-sm btn-outline-light" id="btnRefreshInbox">
+                    <i class="bi bi-arrow-repeat"></i>
+                </button>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>عضو</th>
+                                <th>موبایل</th>
+                                <th>پیام</th>
+                                <th>تاریخ</th>
+                                <th>عملیات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyInbox">
+                            <tr><td colspan="5" class="text-center py-3">در حال بارگذاری...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ستون ارسال پیام گروهی -->
+    <div class="col-12 col-lg-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">📢 ارسال پیام گروهی</h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label">مخاطب</label>
+                    <select class="form-select" id="selTargetType">
+                        <option value="1">همه اعضا</option>
+                        <option value="2">یک نقش خاص</option>
+                        <option value="3">اعضای یک رشته خاص</option>
+                        <option value="4">یک عضو خاص</option>
+                    </select>
+                </div>
+
+                <div id="divRole" class="mb-3" style="display:none;">
+                    <label class="form-label">نقش</label>
+                    <select class="form-select" id="selRole">
+                        <option value="">در حال بارگذاری...</option>
+                    </select>
+                </div>
+
+                <div id="divSport" class="mb-3" style="display:none;">
+                    <label class="form-label">رشته ورزشی</label>
+                    <select class="form-select" id="selSport">
+                        <option value="">در حال بارگذاری...</option>
+                    </select>
+                </div>
+
+                <div id="divMember" class="mb-3" style="display:none;">
+                    <label class="form-label">کد عضویت یا نام</label>
+                    <input type="text" class="form-control" id="txtMemberSearch" placeholder="جستجو...">
+                    <select class="form-select mt-2" id="selMember" style="display:none;"></select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">عنوان (اختیاری)</label>
+                    <input type="text" class="form-control" id="txtTitle" maxlength="200">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">متن پیام</label>
+                    <textarea class="form-control" id="txtBody" rows="5"></textarea>
+                </div>
+
+                <button class="btn btn-primary w-100" id="btnSendBroadcast">
+                    <i class="bi bi-send-fill"></i> ارسال پیام
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- مودال پاسخ به پیام -->
+<div class="modal fade" id="replyModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">پاسخ به <span id="replyTo"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-light small" id="origBody"></div>
+                <div class="mb-3">
+                    <label class="form-label">متن پاسخ</label>
+                    <textarea class="form-control" id="txtReplyBody" rows="4"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                <button type="button" class="btn btn-primary" id="btnSendReply">ارسال پاسخ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/admin-messages.js?v=1"></script>
+}

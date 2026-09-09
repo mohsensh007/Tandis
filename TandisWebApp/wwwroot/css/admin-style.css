@@ -283,6 +283,7 @@ body.admin-glass-body {
         color: rgba(255, 255, 255, 0.8) !important;
         font-size: 15px;
     }
+
     body.admin-glass-body code.text-primary {
         color: #ffffff !important;
         background: rgba(13, 110, 253, 0.3) !important;
@@ -401,4 +402,102 @@ body.admin-glass-body {
     padding: 6px 10px;
     font-size: 13px;
     color: #ffffff;
+}
+/* ✅ فیکس: منوی زنگوله بالای کارت‌ها باز بشه */
+body.admin-glass-body .navbar {
+    z-index: 1040;
+}
+/* =========================================
+   فیکس dropdown ها و select ها در تم شیشه‌ای
+   ========================================= */
+
+/* ۱) منوی dropdown (زنگوله و بقیه) شیشه‌ای تیره */
+body.admin-glass-body .dropdown-menu {
+    background: rgba(15, 23, 42, 0.94) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+    padding: 6px;
+}
+
+body.admin-glass-body .dropdown-item {
+    color: #e2e8f0;
+    border-radius: 8px;
+}
+
+    body.admin-glass-body .dropdown-item:hover,
+    body.admin-glass-body .dropdown-item:focus {
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+    }
+
+body.admin-glass-body .dropdown-header {
+    color: #94a3b8;
+}
+
+body.admin-glass-body .dropdown-divider {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* ۲) لیست بازشونده select ها (مخاطب، نقش، رشته، عضو) */
+body.admin-glass-body select.form-select option,
+body.admin-glass-body select.form-control option {
+    background-color: #0f172a; /* پس‌زمینه تیره برای لیست */
+    color: #ffffff; /* متن سفید خوانا */
+}
+
+    body.admin-glass-body select.form-select option:checked,
+    body.admin-glass-body select.form-select option:hover {
+        background-color: #1e293b;
+        color: #ffffff;
+    }
+/* کارت‌های پیام مودال عضو */
+.msg-card {
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+}
+
+.msg-in {
+    background: rgba(74, 144, 226, 0.15);
+}
+
+.msg-out {
+    background: rgba(46, 204, 113, 0.12);
+}
+/* باکس متن پیام در صفحه جزئیات: شکستن کلمات + اسکرول فقط عمودی */
+.msg-body-box {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 14px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-height: 50vh;
+    overflow-y: auto;
+    color: #ffffff;
+}
+
+/* جلوگیری از اسکرول افقی در جدول اینباکس */
+#tbodyInbox td {
+    word-break: break-word;
+}
+/* کارت پیام عضو: ضد سرریز در موبایل */
+.msg-card {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.msg-body {
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.msg-toggle {
+    color: #7ab8ff;
+    font-size: 12px;
+    text-decoration: none;
 }

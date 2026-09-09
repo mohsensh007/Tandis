@@ -42,4 +42,22 @@ namespace TandisWebApp.DTOs
         public string? Title { get; set; }
         public string Body { get; set; } = string.Empty;
     }
+    public class RoleOptionDto
+    {
+        public int RoleID { get; set; }
+        public string RoleDesc { get; set; } = string.Empty;
+    }
+
+    public class SportOptionDto
+    {
+        public int SportCatID { get; set; }
+        public string SportName { get; set; } = string.Empty;
+    }
+
+    public class MemberOptionDto
+    {
+        public int MemberID { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string MemberCode { get; set; } = string.Empty;
+    }
 }

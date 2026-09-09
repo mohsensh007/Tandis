@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Timers;
 using TandisWebApp.Data;
 using TandisWebApp.DTOs;
 using TandisWebApp.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TandisWebApp.Services
 {
@@ -70,19 +72,29 @@ namespace TandisWebApp.Services
             var exists = await _db.MsgReads.AnyAsync(r => r.MessageID == messageID && r.MemberID == memberID);
             if (!exists)
             {
-                _db.MsgReads.Add(new Msg_Read { MessageID = messageID, MemberID = memberID });
+                _db.MsgReads.Add(new Msg_Read
+                {
+                    MessageID = messageID,
+                    MemberID = memberID,
+                    ReadDateTime = DateTime.Now
+                });
                 await _db.SaveChangesAsync();
             }
         }
 
         public async Task SendFromMemberAsync(int memberID, string? title, string body)
         {
+            var (now, date, time) = NowShamsi();
             _db.MsgMessages.Add(new Msg_Message
             {
                 Title = title,
                 Body = body,
                 TargetType = 0,
-                SenderMemberID = memberID
+                SenderMemberID = memberID,
+                IsActive = true,
+                CreationDateTime = now,
+                CreationDate = date,       // ✅ تاریخ شمسی
+                CreationTime = time        // ✅ ساعت
             });
             await _db.SaveChangesAsync();
         }
@@ -143,6 +155,7 @@ namespace TandisWebApp.Services
 
         public async Task SendFromAdminAsync(short? userID, SendMessageRequest req)
         {
+            var (now, date, time) = NowShamsi();
             _db.MsgMessages.Add(new Msg_Message
             {
                 Title = req.Title,
@@ -151,7 +164,11 @@ namespace TandisWebApp.Services
                 TargetRoleID = req.TargetType == 2 ? req.TargetRoleID : null,
                 TargetSportCatID = req.TargetType == 3 ? req.TargetSportCatID : null,
                 TargetMemberID = req.TargetType == 4 ? req.TargetMemberID : null,
-                SenderUserID = userID
+                SenderUserID = userID,
+                IsActive = true,
+                CreationDateTime = now,    // ✅ فیکس خطا
+                CreationDate = date,       // ✅ تاریخ شمسی
+                CreationTime = time        // ✅ ساعت
             });
             await _db.SaveChangesAsync();
         }
@@ -161,13 +178,18 @@ namespace TandisWebApp.Services
             var orig = await _db.MsgMessages.FindAsync(req.ReplyToMessageID);
             if (orig == null || orig.SenderMemberID == null) return;
 
+            var (now, date, time) = NowShamsi();
             _db.MsgMessages.Add(new Msg_Message
             {
                 Title = req.Title ?? "پاسخ پیام شما",
                 Body = req.Body,
                 TargetType = 4,
                 TargetMemberID = orig.SenderMemberID,
-                SenderUserID = userID
+                SenderUserID = userID,
+                IsActive = true,
+                CreationDateTime = now,    // ✅
+                CreationDate = date,       // ✅
+                CreationTime = time        // ✅
             });
             orig.IsSeen = true;
             await _db.SaveChangesAsync();
@@ -192,6 +214,90 @@ namespace TandisWebApp.Services
                            .FirstOrDefaultAsync();
 
             return m2 != null ? (m2.MemberID, m2.RoleID ?? 1) : (0, 1);
+        }
+        // ========== گزینه‌های فرم ارسال پیام ==========
+        public async Task<List<RoleOptionDto>> GetRoleOptionsAsync()
+            => await _db.Set<Gen_PersonRole>().AsNoTracking()
+                .OrderBy(r => r.RoleID)
+                .Select(r => new RoleOptionDto { RoleID = r.RoleID, RoleDesc = r.RoleDesc ?? "" })
+                .ToListAsync();
+
+        public async Task<List<SportOptionDto>> GetSportOptionsAsync()
+            => await _db.Set<Gen_Sport_Category>().AsNoTracking()
+                .Where(s => s.IsActive == true)
+                .OrderBy(s => s.SportCatID)
+                .Select(s => new SportOptionDto { SportCatID = s.SportCatID, SportName = s.SportName ?? "" })
+                .ToListAsync();
+
+        public async Task<List<MemberOptionDto>> SearchMembersAsync(short shiftID, string q)
+        {
+            if (string.IsNullOrWhiteSpace(q) || q.Trim().Length < 2)
+                return new List<MemberOptionDto>();
+
+            var key = q.Trim();
+            return await (
+                from gm in _db.Gen_Members
+                join gp in _db.Gen_Persons on gm.PersonID equals gp.PersonID
+                where gm.ShiftID == shiftID
+                   && ((gp.FullName ?? "").Contains(key)
+                       || (gp.NationalCode ?? "").Contains(key)
+                       || (gm.CardNo != null && gm.CardNo.Contains(key)))
+                orderby gp.FullName
+                select new MemberOptionDto
+                {
+                    MemberID = gm.MemberID,
+                    FullName = gp.FullName ?? "-",
+                    MemberCode = gm.MemberID.ToString()
+                }
+            ).Take(10).ToListAsync();
+        }
+        // ========== کمکی: تاریخ شمسی + ساعت + زمان جاری ==========
+        private static (DateTime now, string date, string time) NowShamsi()
+        {
+            var pc = new System.Globalization.PersianCalendar();
+            var now = DateTime.Now;
+            return (
+                now,
+                $"{pc.GetYear(now):0000}/{pc.GetMonth(now):00}/{pc.GetDayOfMonth(now):00}",
+                now.ToString("HH:mm:ss")
+            );
+        }
+        // ========== جزئیات یک پیام (برای صفحه نمایش کامل) ==========
+        public async Task<AdminInboxRowDto?> GetMessageDetailAsync(long messageID)
+        {
+            var x = await (
+                from m in _db.MsgMessages
+                where m.MessageID == messageID && m.TargetType == 0 && m.SenderMemberID != null
+                join gm in _db.Gen_Members on m.SenderMemberID equals gm.MemberID
+                join gp in _db.Gen_Persons on gm.PersonID equals gp.PersonID into pj
+                from gp in pj.DefaultIfEmpty()
+                select new
+                {
+                    m.MessageID,
+                    gm.MemberID,
+                    FullName = gp != null ? gp.FullName : "",
+                    gp.Mobile,
+                    m.Title,
+                    m.Body,
+                    m.CreationDate,
+                    m.CreationTime,
+                    m.IsSeen
+                }).FirstOrDefaultAsync();
+
+            if (x == null) return null;
+
+            return new AdminInboxRowDto
+            {
+                MessageID = x.MessageID,
+                SenderName = string.IsNullOrEmpty(x.FullName) ? "-" : x.FullName,
+                MemberCode = x.MemberID.ToString("##,###,###").Replace(',', '،'),
+                Mobile = x.Mobile,
+                Title = x.Title,
+                Body = x.Body,
+                CreationDate = x.CreationDate,
+                CreationTime = x.CreationTime,
+                IsSeen = x.IsSeen
+            };
         }
     }
 }

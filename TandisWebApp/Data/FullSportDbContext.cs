@@ -17,6 +17,7 @@ namespace TandisWebApp.Data
         // ==================== Gen - جداول اصلی ====================
         public DbSet<Gen_Person> Gen_Persons { get; set; } = null!;
         public DbSet<Gen_Member> Gen_Members { get; set; } = null!;
+        public DbSet<Gen_PersonRole> Gen_PersonRoles { get; set; }
         public DbSet<Gen_Sport_Category> Gen_Sport_Categories { get; set; } = null!;
         public DbSet<Gen_SportSanse> Gen_SportSanses { get; set; } = null!;
         public DbSet<Gen_SportSanseDetail> Gen_SportSanseDetails { get; set; } = null!;
@@ -89,6 +90,14 @@ namespace TandisWebApp.Data
             // دقت برای مبلغ ترافیک
             modelBuilder.Entity<ACC_Traffic>()
                 .Property(p => p.Amount).HasColumnType("decimal(18,0)");
+            //Message DateTime
+            modelBuilder.Entity<Msg_Read>()
+               .Property(r => r.ReadDateTime)
+               .HasDefaultValueSql("getdate()");
+
+            modelBuilder.Entity<Msg_Message>()
+                .Property(m => m.CreationDateTime)
+                .HasDefaultValueSql("getdate()");
         }
     }
 }

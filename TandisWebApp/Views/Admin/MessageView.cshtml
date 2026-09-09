@@ -1,0 +1,83 @@
+﻿@model TandisWebApp.DTOs.AdminInboxRowDto
+@{
+    ViewData["Title"] = "جزئیات پیام";
+}
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+        <!-- کارت اطلاعات پیام -->
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">📨 جزئیات پیام</h5>
+                <a href="/Admin/Messages" class="btn btn-sm btn-outline-light">
+                    <i class="bi bi-arrow-right me-1"></i> بازگشت به اینباکس
+                </a>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 mb-3 small">
+                    <div class="col-6 col-md-3">
+                        <span class="text-muted">فرستنده</span><br>
+                        <strong>@Model.SenderName</strong>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <span class="text-muted">کد عضویت</span><br>
+                        @(Model.MemberCode ?? "-")
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <span class="text-muted">موبایل</span><br>
+                        @(Model.Mobile ?? "-")
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <span class="text-muted">تاریخ</span><br>
+                        @Model.CreationDate @Model.CreationTime
+                    </div>
+                </div>
+
+                <hr class="mb-3" style="border-color: rgba(255,255,255,0.15);">
+
+                @if (!string.IsNullOrEmpty(Model.Title))
+                {
+                    <h4 class="mb-3 fw-bold">@Model.Title</h4>
+                }
+
+                <!-- ✅ متن کامل با شکستن خودکار کلمات (بدون اسکرول افقی) -->
+                <div class="msg-body-box p-3">@Model.Body</div>
+            </div>
+        </div>
+
+        <!-- کارت پاسخ سریع -->
+        <div class="card">
+            <div class="card-header">
+                <h6 class="mb-0">✏️ پاسخ به این پیام</h6>
+            </div>
+            <div class="card-body">
+                <textarea class="form-control mb-2" id="txtReplyBody" rows="4" placeholder="متن پاسخ..."></textarea>
+                <button class="btn btn-primary" id="btnSendReply"
+                        data-id="@Model.MessageID">
+                    <i class="bi bi-reply-fill me-1"></i> ارسال پاسخ
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $('#btnSendReply').on('click', function () {
+            var body = $('#txtReplyBody').val().trim();
+            if (!body) { showToast('متن پاسخ خالی است', 'warning'); return; }
+
+            apiCall('/api/Admin/Messages/Reply', 'POST', {
+                replyToMessageID: parseInt($(this).data('id')),
+                body: body
+            }, function (res) {
+                if (res.success) {
+                    showToast('پاسخ ارسال شد', 'success');
+                    $('#txtReplyBody').val('');
+                } else {
+                    showToast(res.message || 'خطا', 'error');
+                }
+            });
+        });
+    </script>
+}

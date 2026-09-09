@@ -1,6 +1,27 @@
+@inject TandisWebApp.Services.MessageService MessageService
 @{
     var fullName = HttpContextAccessor.HttpContext?.User?.FindFirst("FullName")?.Value ?? "کاربر";
     var isAuthenticated = HttpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true;
+
+    var unreadCount = 0;
+    var msgPreview = new List<TandisWebApp.DTOs.MemberMessageRowDto>();
+    if (isAuthenticated)
+    {
+        try
+        {
+            var (mid, rid) = await MessageService.ResolveCurrentMemberAsync(
+                User.FindFirst("MemberID")?.Value
+                    ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
+                User.Identity?.Name);
+            if (mid > 0)
+            {
+                unreadCount = await MessageService.GetMemberUnreadCountAsync(mid, rid);
+                msgPreview = (await MessageService.GetMemberMessagesAsync(mid, rid))
+                    .Where(x => x.Direction == "in").Take(4).ToList();
+            }
+        }
+        catch { }
+    }
 }
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -35,6 +56,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarMain">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                       
                         <li class="nav-item"><a class="nav-link" href="/Home"><i class="bi bi-house"></i> داشبورد</a></li>
                         <li class="nav-item"><a class="nav-link" href="/Register/Renew"><i class="bi bi-arrow-repeat"></i> تمدید</a></li>
                         <li class="nav-item"><a class="nav-link" href="/Ticket"><i class="bi bi-ticket-perforated"></i> بلیت</a></li>
@@ -44,6 +66,49 @@
                         <li class="nav-item"><a class="nav-link" href="/Profile"><i class="bi bi-person-circle"></i> پروفایل</a></li>
                     </ul>
                     <ul class="navbar-nav">
+                        @if (isAuthenticated)
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link position-relative" href="#" id="memberBell" role="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-bell-fill" style="font-size:20px;"></i>
+                                    @if (unreadCount > 0)
+                                    {
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:10px;">@unreadCount</span>
+                                    }
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" style="min-width:300px;max-height:380px;overflow-y:auto;">
+                                    <li class="dropdown-header fw-bold">پیام‌های شما</li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    @if (msgPreview.Count == 0)
+                                    {
+                                        <li><span class="dropdown-item text-muted small">پیامی ندارید</span></li>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var pm in msgPreview)
+                                        {
+                                            var label = string.IsNullOrEmpty(pm.Title)
+                                            ? (pm.Body.Length > 40 ? pm.Body.Substring(0, 40) + "…" : pm.Body)
+                                            : pm.Title;
+                                            <li>
+                                                <a class="dropdown-item small py-2 lnk-open-msgs" href="#">
+                                                    <div class="d-flex justify-content-between align-items-center gap-2">
+                                                        <span class="text-truncate">@label</span>
+                                                        @if (!pm.IsRead)
+                                                        {
+                                                            <span class="badge bg-danger" style="font-size:10px;">جدید</span>
+                                                        }
+                                                    </div>
+                                                    <div class="text-muted" style="font-size:11px;">@pm.CreationDate @pm.CreationTime</div>
+                                                </a>
+                                            </li>
+                                        }
+                                    }
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item text-center text-primary fw-bold lnk-open-msgs" href="#">مشاهده همه پیام‌ها</a></li>
+                                </ul>
+                            </li>
+                        }
                         <li class="nav-item"><span class="nav-link text-light"><i class="bi bi-person"></i> @fullName</span></li>
                         <li class="nav-item"><a class="nav-link" href="/Account/Logout"><i class="bi bi-box-arrow-left"></i> خروج</a></li>
                     </ul>
@@ -59,10 +124,61 @@
             <small class="text-muted">سیستم مدیریت باشگاه تندیس &copy; @DateTime.Now.Year</small>
         </footer>
 
+        <!-- مودال لیست پیام‌های عضو -->
+        <div class="modal fade" id="memberMessagesModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">📨 پیام‌های من</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="messagesList" class="d-flex flex-column gap-2">
+                            <div class="text-center text-muted py-4">در حال بارگذاری...</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer d-flex justify-content-between">
+                        <button class="btn btn-outline-success" id="btnMarkAllRead">
+                            <i class="bi bi-check2-all me-1"></i> خواندن همه
+                        </button>
+                        <button class="btn btn-primary" id="btnOpenSend">
+                            <i class="bi bi-send-fill me-1"></i> پیام به مدیریت
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- مودال ارسال پیام به مدیریت -->
+        <div class="modal fade" id="sendToAdminModal" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">✉️ پیام به مدیریت</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">عنوان (اختیاری)</label>
+                            <input type="text" class="form-control" id="txtMemberMsgTitle" maxlength="200">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">متن پیام</label>
+                            <textarea class="form-control" id="txtMemberMsgBody" rows="4"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                        <button type="button" class="btn btn-primary" id="btnSendToAdmin">ارسال</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/js/jalali-calendar.js"></script>
         <script src="~/js/site.js?v=3.2"></script>
+        <script src="~/js/member-messages.js" asp-append-version="true"></script>
         <script>
 
             // ✅ ناوبری ماه‌های تقویم (کپی از پنل ادمین)

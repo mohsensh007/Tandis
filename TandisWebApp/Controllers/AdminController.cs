@@ -23,7 +23,7 @@ namespace TandisWebApp.Controllers
             }
         }
 
-        public AdminController(AdminAuthService auth, AdminReportService reports , MessageService message)
+        public AdminController(AdminAuthService auth, AdminReportService reports, MessageService message)
         {
             _auth = auth;
             _reports = reports;
@@ -212,6 +212,42 @@ namespace TandisWebApp.Controllers
         {
             await _messages.MarkSeenAsync(messageID);
             return Ok(new { success = true });
+        }
+
+        // Messages Controller
+        [AdminAuthorize]
+        [Route("Admin/Messages")]
+        public IActionResult Messages()
+        {
+            ViewData["Title"] = "پیام‌ها";
+            return View();
+        }
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/Roles")]
+        public async Task<IActionResult> RolesApi()
+         => Ok(new { success = true, data = await _messages.GetRoleOptionsAsync() });
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/SportCategories")]
+        public async Task<IActionResult> AdminSportCategoriesApi()
+            => Ok(new { success = true, data = await _messages.GetSportOptionsAsync() });
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/SearchMember")]
+        public async Task<IActionResult> SearchMemberApi(string q)
+            => Ok(new { success = true, data = await _messages.SearchMembersAsync(AdminShiftID, q) });
+
+        [AdminAuthorize]
+        [Route("Admin/Messages/View/{messageID:long}")]
+        public async Task<IActionResult> MessageView(long messageID)
+        {
+            await _messages.MarkSeenAsync(messageID);   // دیدن = دیده شدن
+            var msg = await _messages.GetMessageDetailAsync(messageID);
+            if (msg == null) return RedirectToAction("Messages");
+            return View(msg);
         }
     }
 }
