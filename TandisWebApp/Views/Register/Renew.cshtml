@@ -91,106 +91,113 @@
 </div>
 
 @section Scripts {
-<script>
-    var selectedSanse = null;
-    var todayPersian = todayJalaliStr();
+    <script>
+        var selectedSanse = null;
+        var todayPersian = todayJalaliStr();
 
-    function loadCategories() {
-        apiCall('/api/Register/SportCategories', 'GET', null, function (res) {
-            var html = '<li class="list-group-item list-group-item-action active" data-id="0" onclick="filterSanses(0)"><i class="bi bi-grid"></i> همه</li>';
-            $.each(res.data, function (i, c) {
-                html += '<li class="list-group-item list-group-item-action" data-id="' + c.sportCatID + '" onclick="filterSanses(' + c.sportCatID + ')">' + esc(c.sportName) + '</li>';
-            });
-            $('#categoryList').html(html);
-        });
-    }
-
-    function filterSanses(catId) {
-        $('#categoryList li').removeClass('active');
-        $('#categoryList li[data-id="' + catId + '"]').addClass('active');
-        var url = '/api/Register/SansesForRenew' + (catId > 0 ? '?sportCatID=' + catId : '');
-        apiCall(url, 'GET', null, function (res) {
-            var html = '';
-            if (!res.data || res.data.length === 0) {
-                html = '<div class="empty-state"><div class="empty-icon">🔍</div>سانسی یافت نشد</div>';
-            } else {
-                $.each(res.data, function (i, s) {
-                    html += '<div class="sanse-card" data-id="' + s.sportSanseID + '" data-name="' + esc(s.sportName + ' - ' + s.sanseName) + '" data-amount="' + esc(s.totalAmountDisplay) + '">' +
-                        '<div class="sanse-top">' +
-                            '<div class="sanse-sport"><i class="bi bi-trophy"></i> ' + esc(s.sportName) + '</div>' +
-                            '<div class="sanse-name">' + esc(s.sanseName) + '</div>' +
-                        '</div>' +
-                        '<div class="sanse-body">' +
-                            '<div class="sanse-info">' +
-                                '<span class="sanse-badge"><i class="bi bi-person"></i> ' + esc(s.coachName || 'بدون مربی') + '</span>' +
-                                '<span class="sanse-badge"><i class="bi bi-tag"></i> ' + esc(s.membershipTypeDesc || '-') + '</span>' +
-                                '<span class="sanse-badge"><i class="bi bi-clock-history"></i> ' + esc(s.periodDesc || '-') + '</span>' +
-                            '</div>' +
-                            '<div class="sanse-price">' + esc(s.totalAmountDisplay) + '</div>' +
-                            '<button class="btn btn-primary sanse-btn renew-btn"><i class="bi bi-arrow-repeat"></i> تمدید دوره</button>' +
-                        '</div>' +
-                    '</div>';
+        function loadCategories() {
+            apiCall('/api/Register/SportCategories', 'GET', null, function (res) {
+                var html = '<li class="list-group-item list-group-item-action active" data-id="0" onclick="filterSanses(0)"><i class="bi bi-grid"></i> همه</li>';
+                $.each(res.data, function (i, c) {
+                    html += '<li class="list-group-item list-group-item-action" data-id="' + c.sportCatID + '" onclick="filterSanses(' + c.sportCatID + ')">' + esc(c.sportName) + '</li>';
                 });
-            }
-            $('#sanseList').html(html);
-
-            // event delegation
-            $('.renew-btn').off('click').on('click', function () {
-                var card = $(this).closest('.sanse-card');
-                var id = card.data('id');
-                var name = card.data('name');
-                var amount = card.data('amount');
-                openRenew(id, name, amount);
+                $('#categoryList').html(html);
             });
+        }
+
+        function filterSanses(catId) {
+            $('#categoryList li').removeClass('active');
+            $('#categoryList li[data-id="' + catId + '"]').addClass('active');
+            var url = '/api/Register/SansesForRenew' + (catId > 0 ? '?sportCatID=' + catId : '');
+            apiCall(url, 'GET', null, function (res) {
+                var html = '';
+                if (!res.data || res.data.length === 0) {
+                    html = '<div class="empty-state"><div class="empty-icon">🔍</div>سانسی یافت نشد</div>';
+                } else {
+                    $.each(res.data, function (i, s) {
+                        html += '<div class="sanse-card" data-id="' + s.sportSanseID + '" data-name="' + esc(s.sportName + ' - ' + s.sanseName) + '" data-amount="' + esc(s.totalAmountDisplay) + '">' +
+                            '<div class="sanse-top">' +
+                                '<div class="sanse-sport"><i class="bi bi-trophy"></i> ' + esc(s.sportName) + '</div>' +
+                                '<div class="sanse-name">' + esc(s.sanseName) + '</div>' +
+                            '</div>' +
+                            '<div class="sanse-body">' +
+                                '<div class="sanse-info">' +
+                                    '<span class="sanse-badge"><i class="bi bi-person"></i> ' + esc(s.coachName || 'بدون مربی') + '</span>' +
+                                    '<span class="sanse-badge"><i class="bi bi-tag"></i> ' + esc(s.membershipTypeDesc || '-') + '</span>' +
+                                    '<span class="sanse-badge"><i class="bi bi-clock-history"></i> ' + esc(s.periodDesc || '-') + '</span>' +
+                                '</div>' +
+                                '<div class="sanse-price">' + esc(s.totalAmountDisplay) + '</div>' +
+                                '<button class="btn btn-primary sanse-btn renew-btn"><i class="bi bi-arrow-repeat"></i> تمدید دوره</button>' +
+                            '</div>' +
+                        '</div>';
+                    });
+                }
+                $('#sanseList').html(html);
+
+                // event delegation
+                $('.renew-btn').off('click').on('click', function () {
+                    var card = $(this).closest('.sanse-card');
+                    var id = card.data('id');
+                    var name = card.data('name');
+                    var amount = card.data('amount');
+                    openRenew(id, name, amount);
+                });
+            });
+        }
+
+        function openRenew(id, name, display) {
+            selectedSanse = id;
+            $('#renewInfo').html(
+                '<div class="alert alert-light border">' +
+                    '<strong>ورزش:</strong> ' + name + '<br/>' +
+                    '<strong>مبلغ:</strong> <span class="text-primary">' + display + '</span>' +
+                '</div>'
+            );
+            $('#renewStartDate').val(todayPersian);
+            new bootstrap.Modal('#renewModal').show();
+        }
+
+        $('#btnOpenCalendar').click(function () {
+            bootstrap.Modal.getInstance('#renewModal').hide();
+            initCalendar('renewStartDate', '#renewModal');
+            new bootstrap.Modal('#datePickerModal').show();
         });
-    }
-
-    function openRenew(id, name, display) {
-        selectedSanse = id;
-        $('#renewInfo').html(
-            '<div class="alert alert-light border">' +
-                '<strong>ورزش:</strong> ' + name + '<br/>' +
-                '<strong>مبلغ:</strong> <span class="text-primary">' + display + '</span>' +
-            '</div>'
-        );
-        $('#renewStartDate').val(todayPersian);
-        new bootstrap.Modal('#renewModal').show();
-    }
-
-    $('#btnOpenCalendar').click(function () {
-        bootstrap.Modal.getInstance('#renewModal').hide();
-        initCalendar('renewStartDate', '#renewModal');
-        new bootstrap.Modal('#datePickerModal').show();
-    });
-    $('#prevMonth').click(function () {
-        calendarDate.m++;
-        if (calendarDate.m > 12) { calendarDate.m = 1; calendarDate.y++; }
-        renderCalendar();
-    });
-    $('#nextMonth').click(function () {
-        calendarDate.m--;
-        if (calendarDate.m < 1) { calendarDate.m = 12; calendarDate.y--; }
-        renderCalendar();
-    });
-
-    $('#btnConfirmRenew').click(function () {
-        var date = $.trim($('#renewStartDate').val());
-        if (!date) { showToast('تاریخ شروع را انتخاب کنید', 'error'); return; }
-        apiCall('/api/Register/Renew', 'POST', { sportSanseID: selectedSanse, startDate: date }, function (res) {
-            if (res.success) {
-                showToast(res.message, 'success');
-                bootstrap.Modal.getInstance('#renewModal').hide();
-                filterSanses($('#categoryList li.active').data('id') || 0);
-                refreshDashboardCredits();
-            } else { showToast(res.message, 'error'); }
+        $('#prevMonth').click(function () {
+            calendarDate.m++;
+            if (calendarDate.m > 12) { calendarDate.m = 1; calendarDate.y++; }
+            renderCalendar();
         });
-    });
+        $('#nextMonth').click(function () {
+            calendarDate.m--;
+            if (calendarDate.m < 1) { calendarDate.m = 12; calendarDate.y--; }
+            renderCalendar();
+        });
 
-    function esc(str) {
-        if (str === null || str === undefined) return '';
-        return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-    }
+                $('#btnConfirmRenew').click(function () {
+                var date = $.trim($('#renewStartDate').val());
+                if (!date) { showToast('تاریخ شروع را انتخاب کنید', 'error'); return; }
 
-    $(function () { loadCategories(); filterSanses(0); });
-</script>
+                apiCall('/api/Register/Renew', 'POST', { sportSanseID: selectedSanse, startDate: date }, function (res) {
+                    if (res.success) {
+                        showToast(res.message, 'success');
+                        bootstrap.Modal.getInstance('#renewModal').hide();
+                        filterSanses($('#categoryList li.active').data('id') || 0);
+
+                        // ✅ رفرش داشبورد + بازگشت به صفحه اصلی بعد از ۱.۵ ثانیه
+                        setTimeout(function () {
+                            window.location.href = '/Home';
+                        }, 1500);
+                    } else {
+                        showToast(res.message, 'error');
+                    }
+                });
+            });
+
+        function esc(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+        }
+
+        $(function () { loadCategories(); filterSanses(0); });
+    </script>
 }

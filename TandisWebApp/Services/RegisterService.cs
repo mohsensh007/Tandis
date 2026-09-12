@@ -282,9 +282,14 @@ namespace TandisWebApp.Services
         /// تمدید ثبت‌نام (غیرفعال کردن ثبت‌نام قبلی + ثبت جدید)
         /// منطق معادل RenewRegister در UscRenewRegister
         /// </summary>
+        /// <summary>
+        /// تمدید ثبت‌نام (غیرفعال کردن ثبت‌نام قبلی + ثبت جدید)
+        /// منطق معادل RenewRegister در UscRenewRegister
+        /// </summary>
         public async Task<ApiResponse<RegisterResponse>> RenewRegisterAsync(int memberID, RegisterRequest req, short shiftID)
         {
             using var tx = await _db.Database.BeginTransactionAsync();
+
             try
             {
                 var sanse = await _db.Gen_SportSanses
@@ -297,9 +302,22 @@ namespace TandisWebApp.Services
                 // تخفیف مدیریتی
                 var member = await _db.Gen_Members.FirstOrDefaultAsync(m => m.MemberID == memberID);
                 byte regDiscount = member?.RegDiscount ?? 0;
+
                 long finalPayment = sanse.TotalAmount ?? 0;
+
                 if (regDiscount > 0)
                     finalPayment = finalPayment - (finalPayment * regDiscount / 100);
+
+                // ✅ بررسی اعتبار ورزشی قبل از تمدید
+                var sportCredit = await _helper.GetSportCreditAmountAsync(memberID);
+                if (sportCredit < finalPayment)
+                {
+                    return new ApiResponse<RegisterResponse>
+                    {
+                        Success = false,
+                        Message = $"اعتبار ورزشی کافی نیست.\nاعتبار فعلی: {sportCredit} ریال\nمبلغ مورد نیاز: {finalPayment} ریال\n\nلطفاً ابتدا حساب خود را شارژ کنید."
+                    };
+                }
 
                 // محاسبه تاریخ پایان
                 int dayCount = sanse.Gen_Period?.DayCount ?? 30;
@@ -360,15 +378,15 @@ namespace TandisWebApp.Services
                 // (EF Core به‌طور پیش‌فرض از OUTPUT INSERTED استفاده می‌کنه که با trigger سازگار نیست)
                 // نکته: RegDiscountPercent و RegDiscountAmount باید 0 باشند (نه NULL) تا Trigger درست کار کنه
                 await _db.Database.ExecuteSqlInterpolatedAsync($@"
-                    INSERT INTO Acc_MemberSports (MemberID, SportSanseID, MembershipTypeID, ContractID, SessionCount,
-                        Amount, Tax, DiscountAmount, RegDiscountPercent, RegDiscountAmount, FinalPayment,
-                        CoachPercent, CoachAmount, CoachPercentForRevival, CoachRevivalAmount,
-                        PeriodID, StartDate, EndDate, IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
-                    VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.ContractID}, {rec.SessionCount},
-                        {rec.Amount}, {rec.Tax}, {rec.DiscountAmount}, {rec.RegDiscountPercent ?? 0}, {rec.RegDiscountAmount ?? 0},
-                        {rec.FinalPayment}, {rec.CoachPercent}, {rec.CoachAmount},
-                        {rec.CoachPercentForRevival}, {rec.CoachRevivalAmount}, {rec.PeriodID}, {rec.StartDate}, {rec.EndDate},
-                        {rec.IsActive}, {rec.IsRevival}, {rec.CommentText}, {rec.UserID}, {rec.CreationDate}, {rec.CreationTime})");
+INSERT INTO Acc_MemberSports (MemberID, SportSanseID, MembershipTypeID, ContractID, SessionCount,
+Amount, Tax, DiscountAmount, RegDiscountPercent, RegDiscountAmount, FinalPayment,
+CoachPercent, CoachAmount, CoachPercentForRevival, CoachRevivalAmount,
+PeriodID, StartDate, EndDate, IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
+VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.ContractID}, {rec.SessionCount},
+{rec.Amount}, {rec.Tax}, {rec.DiscountAmount}, {rec.RegDiscountPercent ?? 0}, {rec.RegDiscountAmount ?? 0},
+{rec.FinalPayment}, {rec.CoachPercent}, {rec.CoachAmount},
+{rec.CoachPercentForRevival}, {rec.CoachRevivalAmount}, {rec.PeriodID}, {rec.StartDate}, {rec.EndDate},
+{rec.IsActive}, {rec.IsRevival}, {rec.CommentText}, {rec.UserID}, {rec.CreationDate}, {rec.CreationTime})");
 
                 // خواندن ID رکورد درج شده (داخل تراکنش، قبل از commit)
                 var insertedId = await _db.Acc_MemberSports

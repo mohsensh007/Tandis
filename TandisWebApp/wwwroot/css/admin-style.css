@@ -524,3 +524,64 @@ body.admin-glass-body .card.bg-info {
         color: rgba(255, 255, 255, 0.9) !important;
         font-size: 0.9rem;
     }
+/* =========================================
+   منوی ناوبری کارت‌دار پنل عضو
+   ========================================= */
+.nav-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 8px;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 14px;
+    color: #e2e8f0;
+    text-decoration: none;
+    transition: all 0.25s ease;
+    min-height: 80px;
+}
+
+    .nav-card:hover {
+        background: rgba(74, 144, 226, 0.25);
+        border-color: rgba(74, 144, 226, 0.5);
+        transform: translateY(-3px);
+        color: #ffffff;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+    }
+
+    .nav-card.active {
+        background: rgba(74, 144, 226, 0.35);
+        border-color: #4a90e2;
+        color: #ffffff;
+    }
+
+.nav-icon {
+    font-size: 1.6rem;
+    margin-bottom: 4px;
+    line-height: 1;
+}
+
+.nav-title {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* در موبایل فشرده‌تر */
+@media (max-width: 576px) {
+    .nav-card {
+        padding: 10px 4px;
+        min-height: 65px;
+    }
+
+    .nav-icon {
+        font-size: 1.3rem;
+    }
+
+    .nav-title {
+        font-size: 0.7rem;
+    }
+}

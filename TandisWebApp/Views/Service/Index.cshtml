@@ -3,7 +3,7 @@
 }
 
 <div class="card">
-    <div class="card-header">💁 خرید سرویس <small class="text-light">(اعتبار سرویس کسر می‌شود)</small></div>
+    <div class="card-header">💁 خرید سرویس <small class="text-light">(اعتبار خدمات کسر می‌شود)</small></div>
     <div class="card-body">
         <div id="serviceList"><div class="text-center text-muted p-3">در حال بارگذاری...</div></div>
     </div>
@@ -32,7 +32,7 @@
     });
 
     function buyService(id) {
-        if (!confirm('آیا مطمئن هستید؟ مبلغ از اعتبار سرویس شما کسر خواهد شد.')) return;
+        if (!confirm('آیا مطمئن هستید؟ مبلغ از اعتبار خدمات شما کسر خواهد شد.')) return;
         apiCall('/api/Service/Buy', 'POST', { serviceID: id }, function (res) {
             if (res.success) { showToast(res.message, 'success'); refreshDashboardCredits(); }
             else { showToast(res.message, 'error'); }
