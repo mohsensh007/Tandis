@@ -103,6 +103,7 @@ builder.Services.AddScoped<ServicePurchaseService>();
 builder.Services.AddScoped<AccountingService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<CommonHelperService>();
+builder.Services.AddScoped<TandisWebApp.Services.QrService>();
 // سرویس‌های ادمین — IAdminUserProvider فعلاً hardcoded است و در آینده با DbAdminUserProvider جایگزین می‌شود
 builder.Services.AddSingleton<IAdminUserProvider, HardcodedAdminUserProvider>();
 builder.Services.AddScoped<AdminAuthService>();

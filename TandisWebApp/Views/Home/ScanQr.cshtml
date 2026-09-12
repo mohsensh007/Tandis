@@ -1,0 +1,123 @@
+﻿@{
+    ViewData["Title"] = "اسکن QR Code ورود";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">📱 اسکن QR Code ورود</h5>
+            </div>
+            <div class="card-body text-center">
+                <div id="reader" style="max-width: 400px; margin: 0 auto;"></div>
+
+                <div id="result" class="mt-3" style="display:none">
+                    <div class="alert" id="resultAlert"></div>
+                </div>
+
+                <button class="btn btn-primary mt-3" id="startScan" onclick="startScanner()">
+                    <i class="bi bi-camera"></i> شروع اسکن
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- کتابخانه html5-qrcode -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <script>
+        var html5QrcodeScanner;
+        var isScanning = false;
+
+        function startScanner() {
+            if (isScanning) return;
+            isScanning = true;
+
+            html5QrcodeScanner = new Html5Qrcode("reader");
+
+            html5QrcodeScanner.start(
+                { facingMode: "environment" }, // دوربین پشت
+                {
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 }
+                },
+                onScanSuccess,
+                onScanFailure
+            ).catch(err => {
+                console.error("خطا در شروع اسکنر:", err);
+                showToast('خطا در دسترسی به دوربین', 'error');
+                isScanning = false;
+            });
+
+            $('#startScan').html('<i class="bi bi-camera-video"></i> در حال اسکن...');
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            // توقف اسکنر
+            html5QrcodeScanner.stop();
+            isScanning = false;
+            $('#startScan').html('<i class="bi bi-camera"></i> شروع اسکن');
+
+            // ارسال QR به سرور برای اعتبارسنجی
+            validateQrCode(decodedText);
+        }
+
+        function onScanFailure(error) {
+            // این تابع در هر فریم صدا زده می‌شه اگه QR پیدا نشه
+            // console.warn(`Code scan error = ${error}`);
+        }
+
+        function validateQrCode(qrData) {
+            showLoading();
+
+            fetch('/api/Security/ValidateAndEnter', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ qrData: qrData })
+            })
+            .then(response => response.json())
+            .then(res => {
+                hideLoading();
+                showResult(res.success, res.message);
+            })
+            .catch(err => {
+                hideLoading();
+                console.error(err);
+                showToast('خطا در ارتباط با سرور', 'error');
+            });
+        }
+
+        function showResult(success, message) {
+            var alert = document.getElementById('resultAlert');
+            var resultDiv = document.getElementById('result');
+
+            resultDiv.style.display = 'block';
+            alert.className = 'alert ' + (success ? 'alert-success' : 'alert-danger');
+            alert.textContent = message;
+
+            if (success) {
+                // ریدایرکت به داشبورد بعد از ۲ ثانیه
+                setTimeout(function() {
+                    window.location.href = '/Home';
+                }, 2000);
+            } else {
+                // امکان اسکن مجدد
+                setTimeout(function() {
+                    resultDiv.style.display = 'none';
+                    startScanner();
+                }, 3000);
+            }
+        }
+
+        // پاکسازی هنگام خروج از صفحه
+        $(window).on('beforeunload', function() {
+            if (html5QrcodeScanner && isScanning) {
+                html5QrcodeScanner.stop();
+            }
+        });
+    </script>
+}

@@ -1,0 +1,133 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Code ورود - باشگاه</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e3a8a);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        .qr-container {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(16px);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            max-width: 500px;
+        }
+
+        #qrImage {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            display: inline-block;
+            min-height: 300px;
+            min-width: 300px;
+        }
+
+            #qrImage img {
+                max-width: 350px;
+                width: 100%;
+            }
+
+        .countdown {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #4a90e2;
+        }
+
+        h2 {
+            margin-bottom: 30px;
+        }
+
+        .loading {
+            color: #666;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="qr-container">
+        <h2> QR Code ورود به باشگاه</h2>
+        <div id="qrImage">
+            <div class="loading">در حال بارگذاری QR Code...</div>
+        </div>
+        <div class="countdown" id="countdown">05:00</div>
+        <p class="text-muted">این QR Code هر ۵ دقیقه به‌روزرسانی می‌شود</p>
+    </div>
+
+    <script>
+        var countdownSeconds = 300; // 5 دقیقه = 300 ثانیه
+        var countdownInterval;
+        var qrRefreshInterval;
+
+        function startCountdown() {
+            countdownSeconds = 300;
+            updateCountdownDisplay();
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(function() {
+                countdownSeconds--;
+                updateCountdownDisplay();
+
+                if (countdownSeconds <= 0) {
+                    refreshQr();
+                }
+            }, 1000);
+        }
+
+        function updateCountdownDisplay() {
+            var minutes = Math.floor(countdownSeconds / 60);
+            var seconds = countdownSeconds % 60;
+            document.getElementById('countdown').textContent =
+                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+        }
+
+        function refreshQr() {
+            var timestamp = new Date().getTime();
+            var imgElement = document.querySelector('#qrImage img');
+
+            if (!imgElement) {
+                // اگه img وجود نداره، بساز
+                var container = document.getElementById('qrImage');
+                container.innerHTML = '<img src="/api/Security/QrCode?shiftID=1&t=' + timestamp + '" alt="QR Code" />';
+            } else {
+                // اگه هست، src رو عوض کن
+                imgElement.src = '/api/Security/QrCode?shiftID=1&t=' + timestamp;
+            }
+
+            startCountdown();
+        }
+
+        // وقتی صفحه لود شد
+        window.onload = function() {
+            // اولین بار QR رو لود کن
+            refreshQr();
+
+            // هر 5 دقیقه خودکار رفرش بشه
+            qrRefreshInterval = setInterval(refreshQr, 300000);
+        };
+
+        // پاکسازی هنگام بستن صفحه
+        window.onbeforeunload = function() {
+            clearInterval(countdownInterval);
+            clearInterval(qrRefreshInterval);
+        };
+    </script>
+</body>
+</html>

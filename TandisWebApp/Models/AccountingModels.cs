@@ -250,7 +250,7 @@ namespace TandisWebApp.Models
         [MaxLength(100)]
         public string? ClubName { get; set; }
 
-        public int? SystemCode { get; set; }
+        public string? SystemCode { get; set; }
 
         [MaxLength(50)]
         public string? ActiveCardCode { get; set; }
