@@ -501,3 +501,26 @@ body.admin-glass-body select.form-control option {
     font-size: 12px;
     text-decoration: none;
 }
+/* =========================================
+   ✅ کارت خلاصه bg-info (مجموع دریافتی) — هم‌استایل با بقیه کارت‌ها
+   ========================================= */
+body.admin-glass-body .card.bg-info {
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 4px solid #17a2b8 !important; /* خط فیروزه‌ای */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+    body.admin-glass-body .card.bg-info h5 {
+        color: #ffffff !important;
+        font-size: 2rem;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    body.admin-glass-body .card.bg-info small {
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-size: 0.9rem;
+    }
