@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using TandisWebApp.Data;
 
 namespace TandisWebApp.Services
@@ -10,74 +11,78 @@ namespace TandisWebApp.Services
     {
         private readonly FullSportDbContext _db;
         private readonly string _secretKey;
+        private readonly IMemoryCache _cache;
+        private const string CACHE_PREFIX = "QR_TOKEN_";
 
-        public QrService(FullSportDbContext db, IConfiguration config)
+        public QrService(FullSportDbContext db, IConfiguration config, IMemoryCache cache)
         {
             _db = db;
             _secretKey = config["AppSettings:QrSecretKey"] ?? "DEFAULT_SECRET_KEY_CHANGE_THIS";
+            _cache = cache;
         }
 
-        public async Task<string> GenerateQrPayloadAsync(short shiftID)
+        /// <summary>
+        /// تولید توکن QR — محتوای QR فقط همین توکن کوتاهه (QR کم‌تراکم و خوانا)
+        /// </summary>
+        public async Task<string> GenerateQrTokenAsync(short shiftID)
         {
             var system = await _db.Sec_Systems.FirstOrDefaultAsync();
             var systemCode = system?.SystemCode ?? "UNKNOWN";
 
             var now = DateTime.Now;
-            var expireTime = now.AddMinutes(5);
-
             var payload = new QrPayload
             {
                 SystemCode = systemCode,
                 ShiftID = shiftID,
                 IssuedAt = now.ToString("yyyy-MM-dd HH:mm:ss"),
-                ExpiresAt = expireTime.ToString("yyyy-MM-dd HH:mm:ss"),
-                Timestamp = now.Ticks
+                ExpiresAt = now.AddMinutes(5).ToString("yyyy-MM-dd HH:mm:ss"),
+                Timestamp = now.Ticks,
+                Signature = ""
             };
 
             var json = JsonSerializer.Serialize(payload);
             payload.Signature = ComputeHMAC(json);
 
-            return JsonSerializer.Serialize(payload);
+            // توکن ۱۶ کاراکتری → QR نسخه ~۲ (۲۵×۲۵) به جای نسخه ۱۰+ (۵۷×۵۷)
+            var token = Guid.NewGuid().ToString("N").Substring(0, 16).ToUpper();
+
+            // payload کامل در حافظه سرور، با انقضای ۵ دقیقه
+            _cache.Set(CACHE_PREFIX + token, payload, TimeSpan.FromMinutes(5));
+
+            return token;
         }
 
-        public async Task<(bool isValid, string message)> ValidateQrPayloadAsync(string qrData)
+        /// <summary>
+        /// اعتبارسنجی توکن اسکن‌شده
+        /// </summary>
+        public Task<(bool isValid, string message)> ValidateTokenAsync(string token)
         {
-            try
+            if (string.IsNullOrWhiteSpace(token))
+                return Task.FromResult((false, "فرمت QR نامعتبر است"));
+
+            var key = CACHE_PREFIX + token.Trim().ToUpper();
+
+            // ✅ نسخه ژنریک:
+            if (!_cache.TryGetValue<QrPayload>(key, out var payload) || payload == null)
+                return Task.FromResult((false, "QR Code منقضی شده است. لطفاً QR جدید روی صفحه باشگاه را اسکن کنید."));
+
+            var jsonWithoutSig = JsonSerializer.Serialize(new QrPayload
             {
-                var payload = JsonSerializer.Deserialize<QrPayload>(qrData);
-                if (payload == null)
-                    return (false, "فرمت QR نامعتبر است");
+                SystemCode = payload.SystemCode,
+                ShiftID = payload.ShiftID,
+                IssuedAt = payload.IssuedAt,
+                ExpiresAt = payload.ExpiresAt,
+                Timestamp = payload.Timestamp,
+                Signature = ""
+            });
 
-                var jsonWithoutSig = JsonSerializer.Serialize(new QrPayload
-                {
-                    SystemCode = payload.SystemCode,
-                    ShiftID = payload.ShiftID,
-                    IssuedAt = payload.IssuedAt,
-                    ExpiresAt = payload.ExpiresAt,
-                    Timestamp = payload.Timestamp,
-                    Signature = ""
-                });
+            if (payload.Signature != ComputeHMAC(jsonWithoutSig))
+                return Task.FromResult((false, "امضای QR نامعتبر است"));
 
-                var expectedSig = ComputeHMAC(jsonWithoutSig);
-                if (payload.Signature != expectedSig)
-                    return (false, "امضای QR نامعتبر است");
+            if (DateTime.TryParse(payload.ExpiresAt, out var expireTime) && DateTime.Now > expireTime)
+                return Task.FromResult((false, "QR Code منقضی شده است."));
 
-                if (DateTime.TryParse(payload.ExpiresAt, out var expireTime))
-                {
-                    if (DateTime.Now > expireTime)
-                        return (false, "QR Code منقضی شده است");
-                }
-
-                var system = await _db.Sec_Systems.FirstOrDefaultAsync();
-                if (system?.SystemCode != payload.SystemCode)
-                    return (false, "SystemCode نامعتبر است");
-
-                return (true, "QR Code معتبر است");
-            }
-            catch (Exception ex)
-            {
-                return (false, $"خطا در اعتبارسنجی: {ex.Message}");
-            }
+            return Task.FromResult((true, "QR Code معتبر است"));
         }
 
         private string ComputeHMAC(string data)

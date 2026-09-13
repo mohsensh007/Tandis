@@ -138,7 +138,7 @@ builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(optio
 {
     options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10MB برای آپلود عکس
 });
-
+builder.Services.AddMemoryCache();
 var app = builder.Build();
 
 // ============================================================
