@@ -239,4 +239,97 @@ namespace TandisWebApp.Models
         [MaxLength(50)]
         public string? LatinName { get; set; }
     }
+    /// <summary>
+    /// کمدهای رختکن (باکس‌ها)
+    /// معادل جدول dbo.Gen_Box
+    /// </summary>
+    [Table("Gen_Box")]
+    public class Gen_Box
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public short BoxID { get; set; }
+
+        public short LockerRoomID { get; set; }
+
+        public short? BoxNo { get; set; }
+
+        public byte? RadifNo { get; set; }
+
+        public bool? IsActive { get; set; }
+
+        public short? UserID { get; set; }
+
+        public int? BoardID { get; set; }
+
+        public int? RelayID { get; set; }
+
+        public int? DelayTime { get; set; }
+
+        [MaxLength(10)]
+        public string? CreationDate { get; set; }
+
+        [MaxLength(8)]
+        public string? CreationTime { get; set; }
+
+        public short? Modifier { get; set; }
+
+        public DateTime? ModificationTime { get; set; }
+
+        [ForeignKey(nameof(LockerRoomID))]
+        public virtual Gen_LockerRoom? Gen_LockerRoom { get; set; }
+    }
+
+    /// <summary>
+    /// رختکن‌ها (اتاق کمد‌ها)
+    /// معادل جدول dbo.Gen_LockerRoom
+    /// </summary>
+    [Table("Gen_LockerRoom")]
+    public class Gen_LockerRoom
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.None)] // ⚠️ IDENTITY نیست!
+        public short LockerRoomID { get; set; }
+
+        [MaxLength(50)]
+        public string? LockerRoomName { get; set; }
+
+        public byte? ControllerIndex { get; set; }
+
+        public short? ControllerID { get; set; }
+
+        public bool? IsOnline { get; set; }
+
+        [MaxLength(1)]
+        public string? AliasName { get; set; }
+
+        [MaxLength(50)]
+        public string? IpAddress { get; set; }
+
+        public short? NetPort { get; set; }
+
+        [MaxLength(50)]
+        public string? ServerIP { get; set; }
+
+        [MaxLength(50)]
+        public string? CrComPort { get; set; }
+
+        [MaxLength(50)]
+        public string? CntrollerComPort { get; set; }
+
+        public byte? Version { get; set; }
+
+        public short? OrderFrom { get; set; }
+
+        public short? OrderTo { get; set; }
+
+        [MaxLength(1)]
+        public string? ControllerPart { get; set; }
+
+        public byte? BoardCount { get; set; }
+
+        public bool? Display { get; set; }
+
+        public bool? CardReaderPlus { get; set; }
+    }
 }

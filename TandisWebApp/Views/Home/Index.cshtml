@@ -52,6 +52,12 @@
             <div class="nav-title">پروفایل</div>
         </a>
     </div>
+    <div class="col-4 col-md-2">
+        <a href="/Home/ScanQr" class="nav-card">
+            <div class="nav-icon">🚪</div>
+            <div class="nav-title">ورود / خروج</div>
+        </a>
+    </div>
 </div>
 
 <!-- ========== نوار اطلاعات کاربر ========== -->
@@ -239,12 +245,16 @@
                     $('#statDebit').text(fmtNum(d.totalDebit) + ' ریال');
                     $('#statDebit').removeClass('text-success').addClass('text-danger');
                     $('#debitLabel').text('بدهی');
+                    $('#statDebit').closest('.stat-card').find('.stat-icon')
+                       .removeClass('bg-gradient-success').addClass('bg-gradient-danger');
                 } else if (d.totalDebit < 0) {
                     $('#statDebit').text(fmtNum(Math.abs(d.totalDebit)) + ' ریال');
                     $('#statDebit').removeClass('text-danger').addClass('text-success');
                     $('#debitLabel').text('بستانکار');
+                     $('#statDebit').closest('.stat-card').find('.stat-icon')
+                       .removeClass('bg-gradient-danger').addClass('bg-gradient-success');
                 } else {
-                    $('#statDebit').text(' ریال');
+                    $('#statDebit').text('۰ ریال');   
                     $('#debitLabel').text('بدهی');
                 }
 

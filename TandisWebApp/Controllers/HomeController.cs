@@ -16,6 +16,14 @@ public class HomeController : Controller
         return View();
     }
 
+    /// <summary>صفحه اسکن QR Code ورود</summary>
+    [HttpGet]
+    public IActionResult ScanQr()
+    {
+        ViewData["Title"] = "اسکن QR Code ورود";
+        return View();
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
