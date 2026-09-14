@@ -56,13 +56,14 @@ namespace TandisWebApp.Services
                 // آیا قبلاً رمز را تغییر داده است؟
                 bool hasChangedPass = await _db.Kiosk_ChangePassLogs
                     .AnyAsync(x => x.MemberID == member.m.MemberID);
-
+                var roleID = (int?)member.m.RoleID ?? 1;
                 // تولید توکن JWT
                 var token = _jwt.GenerateToken(
                     member.m.MemberID,
                     member.p.FullName ?? $"{member.p.FirstName} {member.p.LastName}",
                     member.p.Mobile,
-                    member.m.ShiftID
+                    member.m.ShiftID,
+                    roleID
                 );
 
                 return new ApiResponse<LoginResponse>
@@ -76,6 +77,7 @@ namespace TandisWebApp.Services
                         FullName = member.p.FullName ?? $"{member.p.FirstName} {member.p.LastName}",
                         Mobile = member.p.Mobile,
                         ShiftID = member.m.ShiftID ?? 1,
+                        RoleID = roleID,
                         MustChangePassword = !hasChangedPass
                     }
                 };

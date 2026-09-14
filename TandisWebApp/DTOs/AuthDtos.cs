@@ -25,6 +25,7 @@ namespace TandisWebApp.DTOs
         public short ShiftID { get; set; }
         public bool MustChangePassword { get; set; }
         public string ReturnUrl { get; set; } = "/Home";
+        public int RoleID { get; set; } = 1;   // ✅ جدید: 1=ورزشکار 2=مربی
     }
 
     public class ChangePasswordRequest

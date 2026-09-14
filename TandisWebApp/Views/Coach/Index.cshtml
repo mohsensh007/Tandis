@@ -1,5 +1,102 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model TandisWebApp.DTOs.CoachDashboardDto
 @{
+    ViewData["Title"] = "پنل مربی";
+    var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
 }
+
+<!-- نوار خوش‌آمد -->
+<div class="card mb-3">
+    <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+            <h5 class="mb-0">🏋️ پنل مربی</h5>
+            <div class="text-muted small">خوش آمدید، @Model.CoachName</div>
+        </div>
+        <span class="badge bg-success fs-6">@Model.TodayClasses.Count.ToString(fa) کلاس امروز</span>
+    </div>
+</div>
+
+<!-- کارت‌های آمار -->
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-gradient-success">👥</div>
+                <div>
+                    <div class="stat-label">شاگردان فعال</div>
+                    <div class="stat-value">@Model.ActiveStudents.ToString(fa)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-gradient-info">📚</div>
+                <div>
+                    <div class="stat-label">کلاس‌های من</div>
+                    <div class="stat-value">@Model.MyClassCount.ToString(fa)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4">
+        <div class="card stat-card h-100">
+            <div class="card-body d-flex align-items-center gap-3">
+                <div class="stat-icon bg-gradient-warning">🚪</div>
+                <div>
+                    <div class="stat-label">حضور امروز</div>
+                    <div class="stat-value">@Model.TodayAttendance.ToString(fa)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- کلاس‌های امروز -->
+<div class="card">
+    <a href="/Home" class="btn btn-outline-primary btn-sm">🏠 پنل عضو</a>
+    <div class="card-header">📅 کلاس‌های امروز</div>
+    <div class="card-body">
+        @if (Model.TodayClasses.Count == 0)
+        {
+            <div class="empty-state">
+                <div class="empty-icon">📅</div>
+                امروز کلاسی ندارید
+            </div>
+        }
+        else
+        {
+            <div class="row g-3">
+                @foreach (var c in Model.TodayClasses)
+                {
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <div class="fw-bold">@c.SportName - @c.SanseName</div>
+                                        <div class="text-muted small mt-1">
+                                            🕐 @c.StartTime?.ToString(@"hh\:mm", fa) تا @c.EndTime?.ToString(@"hh\:mm", fa)
+                                        </div>
+                                    </div>
+                                    <span class="badge @(c.Status == "ongoing" ? "bg-success" : c.Status == "upcoming" ? "bg-warning text-dark" : "bg-secondary")">
+                                        @c.StatusDesc
+                                    </span>
+                                </div>
+                                <div class="d-flex flex-wrap gap-3 mt-3 small">
+                                    <span>👥 ثبت‌نام: @c.RegCount.ToString(fa)</span>
+                                    @if (c.ClassCapacity != null)
+                                    {
+                                        <span>💺 ظرفیت: @c.ClassCapacity.Value.ToString(fa)</span>
+                                        <span>✅ جای خالی: @c.FreeNow.Value.ToString(fa)</span>
+                                    }
+                                    <span>🚪 حضور امروز: @c.TodayAttendance.ToString(fa)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

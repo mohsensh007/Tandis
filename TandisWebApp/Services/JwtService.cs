@@ -18,7 +18,7 @@ namespace TandisWebApp.Services
         }
 
         /// <summary>ساخت توکن JWT برای یک عضو</summary>
-        public string GenerateToken(int memberID, string fullName, string? mobile, short? shiftID)
+        public string GenerateToken(int memberID, string fullName, string? mobile, short? shiftID,int roleID =1)
         {
             var jwtSettings = _config.GetSection("JwtSettings");
             var secretKey = jwtSettings["SecretKey"]!;
@@ -35,7 +35,8 @@ namespace TandisWebApp.Services
                 new Claim(ClaimTypes.Name, fullName),
                 new Claim("MemberID", memberID.ToString()),
                 new Claim("ShiftID", (shiftID ?? 1).ToString()),
-                new Claim("FullName", fullName)
+                new Claim("FullName", fullName),
+                new Claim("RoleID", roleID.ToString())
             };
             if (!string.IsNullOrEmpty(mobile))
                 claims.Add(new Claim(ClaimTypes.MobilePhone, mobile));

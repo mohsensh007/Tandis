@@ -73,9 +73,12 @@ namespace TandisWebApp.Controllers
                 Expires = DateTimeOffset.UtcNow.AddHours(24)
             });
 
-            // returnUrl برای ریدایرکت در فرانت‌اند
-            result.Data.ReturnUrl = string.IsNullOrEmpty(returnUrl) ? "/Home" : returnUrl;
-
+            // ✅ ریدایرکت پیش‌فرض بر اساس نقش: مربی → پنل مربی، بقیه → پنل عضو
+            // (returnUrl واقعی مثل لینک QR یا صفحه محافظت‌شده، اولویت داره)
+            var defaultUrl = result.Data!.RoleID == 2 ? "/Coach" : "/Home";
+            result.Data.ReturnUrl = string.IsNullOrEmpty(returnUrl) || returnUrl == "/Home"
+                ? defaultUrl
+                : returnUrl;
             return Ok(result);
         }
 

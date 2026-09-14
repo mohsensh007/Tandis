@@ -110,6 +110,8 @@ builder.Services.AddScoped<AdminAuthService>();
 builder.Services.AddScoped<AdminReportService>();
 //messages
 builder.Services.AddScoped<MessageService>();
+//Coach
+builder.Services.AddScoped<CoachService>();
 
 // HttpContextAccessor برای استفاده در Service‌ها
 builder.Services.AddHttpContextAccessor();
