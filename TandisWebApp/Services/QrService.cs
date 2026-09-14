@@ -55,16 +55,15 @@ namespace TandisWebApp.Services
         /// <summary>
         /// اعتبارسنجی توکن اسکن‌شده
         /// </summary>
-        public Task<(bool isValid, string message)> ValidateTokenAsync(string token)
+        public async Task<(bool isValid, string message)> ValidateTokenAsync(string token)
         {
             if (string.IsNullOrWhiteSpace(token))
-                return Task.FromResult((false, "فرمت QR نامعتبر است"));
+                return (false, "فرمت QR نامعتبر است");
 
             var key = CACHE_PREFIX + token.Trim().ToUpper();
 
-            // ✅ نسخه ژنریک:
             if (!_cache.TryGetValue<QrPayload>(key, out var payload) || payload == null)
-                return Task.FromResult((false, "QR Code منقضی شده است. لطفاً QR جدید روی صفحه باشگاه را اسکن کنید."));
+                return (false, "QR Code منقضی شده است. لطفاً QR جدید روی صفحه باشگاه را اسکن کنید.");
 
             var jsonWithoutSig = JsonSerializer.Serialize(new QrPayload
             {
@@ -77,12 +76,17 @@ namespace TandisWebApp.Services
             });
 
             if (payload.Signature != ComputeHMAC(jsonWithoutSig))
-                return Task.FromResult((false, "امضای QR نامعتبر است"));
+                return (false, "امضای QR نامعتبر است");
 
             if (DateTime.TryParse(payload.ExpiresAt, out var expireTime) && DateTime.Now > expireTime)
-                return Task.FromResult((false, "QR Code منقضی شده است."));
+                return (false, "QR Code منقضی شده است.");
 
-            return Task.FromResult((true, "QR Code معتبر است"));
+            // ✅ چک SystemCode با دیتابیس
+            var system = await _db.Sec_Systems.FirstOrDefaultAsync();
+            if (system?.SystemCode != payload.SystemCode)
+                return (false, "SystemCode نامعتبر است. لطفاً QR Code از صفحه رسمی باشگاه را اسکن کنید.");
+
+            return (true, "QR Code معتبر است");
         }
 
         private string ComputeHMAC(string data)

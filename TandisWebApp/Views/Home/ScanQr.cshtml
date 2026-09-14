@@ -2,6 +2,14 @@
     ViewData["Title"] = "ورود و خروج";
 }
 
+<!-- ✅ محافظ از له شدن صفحه در موبایل -->
+<style>
+    #reader img, #reader canvas, #reader video {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+</style>
+
 <div class="row justify-content-center">
     <div class="col-md-6">
         <div class="card">
@@ -77,10 +85,47 @@
 
 @section Scripts {
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>  <!-- ✅ جدید -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
     <script>
         var html5QrcodeScanner;
         var isScanning = false;
+
+        // ========== ✅ اسکن زنده (دوربین داخل مرورگر) ==========
+        function startScanner() {
+            if (isScanning) return;
+
+            if (typeof Html5Qrcode === 'undefined') {
+                showToast('کتابخانه اسکنر لود نشده. صفحه رو رفرش کن.', 'error');
+                return;
+            }
+
+            isScanning = true;
+            html5QrcodeScanner = new Html5Qrcode("reader");
+
+            Html5Qrcode.getCameras().then(function (devices) {
+                if (devices && devices.length) {
+                    html5QrcodeScanner.start(
+                        devices[0].id,
+                        { fps: 10, qrbox: { width: 250, height: 250 } },
+                        onScanSuccess,
+                        function (error) { }
+                    ).catch(function (err) {
+                        console.error("خطا در شروع اسکنر:", err);
+                        showToast('خطا در دسترسی به دوربین. از گزینه عکس استفاده کنید.', 'warning');
+                        isScanning = false;
+                    });
+                } else {
+                    showToast('دوربینی یافت نشد. از گزینه عکس استفاده کنید.', 'warning');
+                    isScanning = false;
+                }
+            }).catch(function (err) {
+                console.error("خطا در دریافت لیست دوربین‌ها:", err);
+                showToast('دسترسی به دوربین ممکن نیست. از گزینه عکس استفاده کنید.', 'warning');
+                isScanning = false;
+            });
+
+            $('#startScan').html('<i class="bi bi-camera-video"></i> در حال اسکن...');
+        }
 
         // ========== ✅ بارگذاری وضعیت فعلی (داخل/خارج) ==========
         function loadStatus() {
@@ -125,7 +170,7 @@
             .then(function (res) {
                 hideLoading();
                 showToast(res.message, res.success ? 'success' : 'error');
-                loadStatus(); // ✅ رفرش وضعیت
+                loadStatus();
             })
             .catch(function () {
                 hideLoading();
@@ -133,9 +178,7 @@
             });
         });
 
-       
-               
-                // ========== ✅ تشخیص QR از عکس — چند مرحله‌ای، روی خود گوشی ==========
+        // ========== ✅ تشخیص QR از عکس — چند مرحله‌ای ==========
         var decodeAttempts = [
             { type: 'full', max: 2000 },
             { type: 'full', max: 1200 },
@@ -152,6 +195,9 @@
                 event.target.value = '';
                 return;
             }
+
+            // ✅ پاک کردن هر اثر قبلی
+            document.getElementById('reader').innerHTML = '';
 
             showLoading();
             var url = URL.createObjectURL(file);
@@ -206,35 +252,12 @@
             }
         }
 
-        function scanFromImage(event) {
-            var file = event.target.files[0];
-            if (!file) return;
-
-            showLoading();
-            var scanner = new Html5Qrcode("reader");
-            scanner.scanFile(file, true)
-                .then(function (decodedText) {
-                    hideLoading();
-                    showToast('QR Code شناسایی شد', 'success');
-                    validateQrCode(decodedText);
-                })
-                .catch(function (err) {
-                    hideLoading();
-                    console.error("خطا در خواندن عکس:", err);
-                    showToast('QR Code معتبری در عکس یافت نشد. لطفاً عکس واضح‌تری بگیرید.', 'error');
-                });
-
-            event.target.value = '';
-        }
-
         function onScanSuccess(decodedText, decodedResult) {
-            html5QrcodeScanner.stop();
+            if (html5QrcodeScanner) html5QrcodeScanner.stop();
             isScanning = false;
-            $('#startScan').html('<i class="bi bi-camera"></i> شروع اسکن');
+            $('#startScan').html('<i class="bi bi-camera-video"></i> اسکن زنده');
             validateQrCode(decodedText);
         }
-
-        function onScanFailure(error) { }
 
         function validateQrCode(qrData) {
             showLoading();
@@ -248,7 +271,7 @@
             .then(function (res) {
                 hideLoading();
                 showResult(res.success, res.message);
-                loadStatus(); // ✅ رفرش وضعیت بعد از ورود
+                loadStatus();
             })
             .catch(function (err) {
                 hideLoading();
