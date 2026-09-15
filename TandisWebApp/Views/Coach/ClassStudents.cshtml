@@ -1,0 +1,79 @@
+﻿@model List<TandisWebApp.DTOs.CoachStudentDto>
+@{
+    ViewData["Title"] = ViewBag.ClassName;
+    var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
+}
+
+<!-- هدر -->
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <div>
+        <h5 class="mb-0">👥 شاگردان</h5>
+        <div class="text-muted small">@ViewBag.ClassName</div>
+    </div>
+    <div class="d-flex gap-2 align-items-center">
+        <span class="badge bg-primary fs-6">@Model.Count.ToString(fa) نفر</span>
+        <a href="/Coach/Classes" class="btn btn-outline-secondary btn-sm">🔙 کلاس‌ها</a>
+    </div>
+</div>
+
+<!-- جدول شاگردان -->
+@if (Model.Count == 0)
+{
+    <div class="empty-state">
+        <div class="empty-icon">👥</div>
+        هنوز هیچ شاگردی در این کلاس ثبت‌نام نکرده
+    </div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table mb-0 align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>نام</th>
+                        <th class="d-none d-md-table-cell">موبایل</th>
+                        <th class="d-none d-md-table-cell">پایان دوره</th>
+                        <th class="text-center">جلسات</th>
+                        <th class="text-center">وضعیت</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var st in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">
+                                <a href="/Coach/StudentDetails/@st.SportMemberID" class="text-decoration-none">
+                                    @st.FullName
+                                </a>
+                            </td>
+                            <td class="d-none d-md-table-cell">
+                                @if (!string.IsNullOrEmpty(st.Mobile))
+                                {
+                                    <a href="tel:@st.Mobile" dir="ltr" class="text-decoration-none">@st.Mobile</a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">-</span>
+                                }
+                            </td>
+                            <td class="d-none d-md-table-cell">@(st.EndDate ?? "-")</td>
+                            <td class="text-center">
+                                <span class="fw-bold">@st.RemainingSessions.ToString(fa)</span>
+                                <small class="text-muted">/ @st.TotalSessions.ToString(fa)</small>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-@st.StatusClass">@st.StatusLabel</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- راهنما -->
+    <div class="text-muted small mt-2">
+        💡 روی نام هر شاگرد کلیک کنید تا کارت کامل و تاریخچه حضورش باز شود.
+    </div>
+}

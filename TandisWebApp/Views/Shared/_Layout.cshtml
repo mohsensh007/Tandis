@@ -1,10 +1,13 @@
 @inject TandisWebApp.Services.MessageService MessageService
 @{
+   
     var fullName = HttpContextAccessor.HttpContext?.User?.FindFirst("FullName")?.Value ?? "کاربر";
     var isAuthenticated = HttpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true;
+    var isCoach = HttpContextAccessor.HttpContext?.User?.FindFirst("RoleID")?.Value == "2";   // ✅ جدید
 
-    var unreadCount = 0;
-    var msgPreview = new List<TandisWebApp.DTOs.MemberMessageRowDto>();
+    var unreadCount = 0;                       // ✅ برگشت
+    var msgPreview = new List<TandisWebApp.DTOs.MemberMessageRowDto>();   // ✅ برگشت
+
     if (isAuthenticated)
     {
         try
@@ -59,7 +62,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid px-3">
                 <!-- لوگو -->
-                <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/Home">
+                    <a class="navbar-brand" href="@(isCoach ? "/Coach" : "/Home")">
                     <img src="~/images/logo2.png" alt="تندیس" height="36" />
                     <span class="d-none d-md-inline">تندیس</span>
                 </a>

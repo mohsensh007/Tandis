@@ -16,9 +16,7 @@ namespace TandisWebApp.Services
             _helper = helper;
         }
 
-        /// <summary>
-        /// داشبورد مربی: آمار + کلاس‌های امروز
-        /// </summary>
+        // ========== داشبورد مربی ==========
         public async Task<CoachDashboardDto> GetDashboardAsync(int coachMemberID)
         {
             var model = new CoachDashboardDto();
@@ -39,18 +37,18 @@ namespace TandisWebApp.Services
 
             model.MyClassCount = mySanse.Count;
 
-            // شاگردان فعال (بدون تکرار)
+            var todayStr = _helper.GetToday();
+            var todayLatin = DateTime.Now.DayOfWeek.ToString();
+            var nowTime = DateTime.Now.TimeOfDay;
+
+            // ✅ فیکس CS1503: فیلتر null + .Value
             model.ActiveStudents = mySanse.Count == 0 ? 0 : await _db.Acc_MemberSports
-                .Where(a => mySanse.Contains(a.SportSanseID) && a.IsActive == true)
+                .Where(a => a.SportSanseID != null && mySanse.Contains(a.SportSanseID.Value) && a.IsActive == true)
                 .Select(a => a.MemberID)
                 .Distinct()
                 .CountAsync();
 
-            // ========== کلاس‌های امروز (برنامه هفتگی) ==========
-            var todayLatin = DateTime.Now.DayOfWeek.ToString();
-            var todayStr = _helper.GetToday();
-            var nowTime = DateTime.Now.TimeOfDay;
-
+            // کلاس‌های امروز
             var classes = await (
                 from s in _db.Gen_SportSanses
                 join d in _db.Set<Gen_SportSanseDetail>() on s.SportSanseID equals d.SportSanseID
@@ -70,11 +68,12 @@ namespace TandisWebApp.Services
                     EndTime = d.EndTime,
                     ClassCapacity = s.ClassCapacity,
                     RegCount = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID && a.IsActive == true),
-                    RegValidCount = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID && a.IsActive == true && a.EndDate >= todayStr)
+                    // ✅ فیکس CS0019: مقایسه رشته شمسی با string.Compare
+                    RegValidCount = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID && a.IsActive == true && string.Compare(a.EndDate, todayStr) >= 0)
                 }
             ).ToListAsync();
 
-            // ========== حضور امروز هر کلاس ==========
+            // حضور امروز هر کلاس
             var sanseIds = classes.Select(c => c.SportSanseID).Distinct().ToList();
             var today = DateTime.Now.Date;
             var attendanceMap = new Dictionary<int, int>();
@@ -84,15 +83,15 @@ namespace TandisWebApp.Services
                 attendanceMap = await (
                     from t in _db.ACC_Traffics
                     join a in _db.Acc_MemberSports on t.SportMemberID equals a.SportMemberID
-                    where sanseIds.Contains(a.SportSanseID)
+                    where a.SportSanseID != null && sanseIds.Contains(a.SportSanseID.Value)
                           && t.EntryDateTime != null
                           && t.EntryDateTime.Value.Date == today
-                    group t by a.SportSanseID into g
+                    group t by (a.SportSanseID ?? 0) into g   // ✅ فیکس Warning CS8714
                     select new { SanseID = g.Key, Cnt = g.Count() }
                 ).ToDictionaryAsync(x => x.SanseID, x => x.Cnt);
             }
 
-            // ========== وضعیت هر کلاس ==========
+            // وضعیت هر کلاس
             foreach (var c in classes)
             {
                 c.TodayAttendance = attendanceMap.TryGetValue(c.SportSanseID, out var cnt) ? cnt : 0;
@@ -126,9 +125,121 @@ namespace TandisWebApp.Services
             return model;
         }
 
-        /// <summary>
-        /// چک می‌کنه آیا عضو مربی هست یا نه
-        /// </summary>
+        // ========== لیست همه کلاس‌های مربی ==========
+        public async Task<List<CoachClassListDto>> GetMyClassesAsync(int coachMemberID)
+        {
+            var todayStr = _helper.GetToday();
+
+            var classes = await (
+                from s in _db.Gen_SportSanses
+                where s.CoachMemberID == coachMemberID && s.IsActive == true
+                orderby s.Gen_Sport_Category.SportName, s.SanseName
+                select new CoachClassListDto
+                {
+                    SportSanseID = s.SportSanseID,
+                    SportName = s.Gen_Sport_Category.SportName,
+                    SanseName = s.SanseName,
+                    ClassCapacity = s.ClassCapacity,
+                    TotalStudents = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID),
+                    // ✅ فیکس CS0019
+                    ActiveStudents = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID && a.IsActive == true && string.Compare(a.EndDate, todayStr) >= 0)
+                }
+            ).ToListAsync();
+
+            // برنامه هفتگی همه کلاس‌ها (یک کوئری جدا)
+            var classIds = classes.Select(c => c.SportSanseID).ToList();
+            var details = classIds.Count == 0
+                ? new List<CoachSchedulePartDto>()
+                : await (
+                    from d in _db.Set<Gen_SportSanseDetail>()
+                    join w in _db.Set<Gen_DayOfWeek>() on d.DayID equals w.DayID
+                    where d.SportSanseID != null && classIds.Contains(d.SportSanseID.Value)
+                          && (d.IsActive == true || d.IsActive == null)
+                    orderby d.DayID, d.StartTime
+                    select new CoachSchedulePartDto
+                    {
+                        SportSanseID = d.SportSanseID ?? 0,
+                        DayName = w.DayName,
+                        StartTime = d.StartTime,
+                        EndTime = d.EndTime
+                    }
+                ).ToListAsync();
+
+            foreach (var c in classes)
+            {
+                c.ScheduleSummary = BuildScheduleSummary(details.Where(d => d.SportSanseID == c.SportSanseID).ToList());
+                c.FreeNow = c.ClassCapacity.HasValue ? c.ClassCapacity.Value - c.ActiveStudents : (int?)null;
+            }
+
+            return classes;
+        }
+
+        // ========== شاگردان یک کلاس ==========
+        public async Task<(string ClassName, List<CoachStudentDto> Students)> GetClassStudentsAsync(int coachMemberID, int sportSanseID)
+        {
+            // چک مالکیت: سانس باید مال همین مربی باشه
+            var sanse = await _db.Gen_SportSanses
+                .Where(s => s.SportSanseID == sportSanseID && s.CoachMemberID == coachMemberID && s.IsActive == true)
+                .Select(s => new { SportName = s.Gen_Sport_Category.SportName, s.SanseName })
+                .FirstOrDefaultAsync();
+
+            if (sanse == null)
+                return ("", new List<CoachStudentDto>());
+
+            var todayStr = _helper.GetToday();
+
+            var students = await (
+                from a in _db.Acc_MemberSports
+                where a.SportSanseID == sportSanseID && a.MemberID != null
+                join m in _db.Gen_Members on a.MemberID.Value equals m.MemberID
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                orderby p.FullName
+                select new CoachStudentDto
+                {
+                    SportMemberID = a.SportMemberID,
+                    MemberID = m.MemberID,
+                    FullName = p.FullName ?? "",
+                    Mobile = p.Mobile,
+                    StartDate = a.StartDate,
+                    EndDate = a.EndDate,
+                    // ✅ فیکس CS1061: اسم درست ستون = SessionCount
+                    TotalSessions = (int)(a.SessionCount ?? 0),
+                    // ✅ فیکس CS1061: جلسات مصرف‌شده = تعداد ترددهای همین ثبت‌نام
+                    UsedSessions = _db.ACC_Traffics.Count(t => t.SportMemberID == a.SportMemberID),
+                    IsActive = a.IsActive == true
+                }
+            ).ToListAsync();
+
+            foreach (var st in students)
+            {
+                st.RemainingSessions = Math.Max(0, st.TotalSessions - st.UsedSessions);
+
+                if (st.IsActive && st.EndDate != null && string.Compare(st.EndDate, todayStr) >= 0 && st.RemainingSessions > 0)
+                {
+                    st.StatusLabel = "فعال";
+                    st.StatusClass = "success";
+                }
+                else if (st.EndDate != null && string.Compare(st.EndDate, todayStr) < 0)
+                {
+                    st.StatusLabel = "منقضی";
+                    st.StatusClass = "danger";
+                }
+                else if (st.RemainingSessions == 0)
+                {
+                    st.StatusLabel = "جلسات تمام";
+                    st.StatusClass = "warning";
+                }
+                else
+                {
+                    st.StatusLabel = "غیرفعال";
+                    st.StatusClass = "secondary";
+                }
+            }
+
+            return ($"{sanse.SportName} - {sanse.SanseName}", students);
+        }
+
+        // ========== چک نقش مربی ==========
         public async Task<bool> IsCoachAsync(int memberID)
         {
             if (memberID == 0) return false;
@@ -139,6 +250,165 @@ namespace TandisWebApp.Services
                 .FirstOrDefaultAsync();
 
             return roleID == 2;
+        }
+
+        // ========== خلاصه برنامه هفتگی ==========
+        private static string BuildScheduleSummary(List<CoachSchedulePartDto> details)
+        {
+            if (details == null || details.Count == 0)
+                return "بدون برنامه";
+
+            var dayShort = new Dictionary<string, string>
+            {
+                ["شنبه"] = "ش",
+                ["یک‌شنبه"] = "ی",
+                ["دوشنبه"] = "د",
+                ["سه‌شنبه"] = "س",
+                ["چهارشنبه"] = "چ",
+                ["پنج‌شنبه"] = "پ",
+                ["جمعه"] = "ج"
+            };
+
+            var parts = details
+                .GroupBy(d => $"{d.StartTime:hh\\:mm} تا {d.EndTime:hh\\:mm}")
+                .Select(g => string.Join(" و ", g.Select(x =>
+                    dayShort.TryGetValue(x.DayName ?? "", out var s) ? s : x.DayName)) + " " + g.Key)
+                .ToList();
+
+            return string.Join(" | ", parts);
+        }
+        /// <summary>
+        /// کارت کامل شاگرد: اطلاعات دوره + تاریخچه حضور
+        /// </summary>
+        public async Task<CoachStudentDetailsDto?> GetStudentDetailsAsync(int coachMemberID, long sportMemberID)
+        {
+            // چک مالکیت: ثبت‌نام باید مال یکی از کلاس‌های همین مربی باشه
+            var reg = await (
+                from a in _db.Acc_MemberSports
+                join s in _db.Gen_SportSanses on a.SportSanseID equals s.SportSanseID
+                where a.SportMemberID == sportMemberID && s.CoachMemberID == coachMemberID
+                select new
+                {
+                    a.MemberID,
+                    a.StartDate,
+                    a.EndDate,
+                    a.IsActive,
+                    TotalSessions = (int)(a.SessionCount ?? 0),
+                    ClassName = s.Gen_Sport_Category.SportName + " - " + s.SanseName
+                }
+            ).FirstOrDefaultAsync();
+
+            if (reg == null || reg.MemberID == null)
+                return null;
+
+            var info = await (
+                from m in _db.Gen_Members
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                where m.MemberID == reg.MemberID
+                select new { p.FullName, p.Mobile }
+            ).FirstOrDefaultAsync();
+
+            var todayStr = _helper.GetToday();
+            var used = await _db.ACC_Traffics.CountAsync(t => t.SportMemberID == sportMemberID);
+
+            var dto = new CoachStudentDetailsDto
+            {
+                ClassName = reg.ClassName,
+                MemberID = reg.MemberID.Value,
+                FullName = info?.FullName ?? "",
+                Mobile = info?.Mobile,
+                StartDate = reg.StartDate,
+                EndDate = reg.EndDate,
+                TotalSessions = reg.TotalSessions,
+                UsedSessions = used,
+                RemainingSessions = Math.Max(0, reg.TotalSessions - used),
+                IsActive = reg.IsActive == true
+            };
+
+            // وضعیت دوره
+            if (dto.IsActive && dto.EndDate != null && string.Compare(dto.EndDate, todayStr) >= 0 && dto.RemainingSessions > 0)
+            { dto.StatusLabel = "فعال"; dto.StatusClass = "success"; }
+            else if (dto.EndDate != null && string.Compare(dto.EndDate, todayStr) < 0)
+            { dto.StatusLabel = "منقضی"; dto.StatusClass = "danger"; }
+            else if (dto.RemainingSessions == 0)
+            { dto.StatusLabel = "جلسات تمام"; dto.StatusClass = "warning"; }
+            else
+            { dto.StatusLabel = "غیرفعال"; dto.StatusClass = "secondary"; }
+
+            // تاریخچه حضور
+            dto.Attendances = await _db.ACC_Traffics
+                .Where(t => t.SportMemberID == sportMemberID)
+                .OrderByDescending(t => t.TrafficID)
+                .Select(t => new CoachAttendanceDto
+                {
+                    TrafficID = t.TrafficID,
+                    EntryDate = t.EntryDate,
+                    EntryTime = t.EntryTime,
+                    ExitDate = t.ExitDate,
+                    ExitTime = t.ExitTime,
+                    IsOpen = t.ExitDate == null && t.ExitDateTime == null
+                })
+                .ToListAsync();
+
+            return dto;
+        }
+        /// <summary>
+        /// گزارش پورسانت مربی (با فیلتر بازه زمانی)
+        /// </summary>
+        public async Task<CoachCommissionSummaryDto> GetCommissionReportAsync(int coachMemberID, string? fromDate = null, string? toDate = null)
+        {
+            var todayStr = _helper.GetToday();
+
+            // پیش‌فرض: ماه جاری (۳۰ روز اخیر)
+            // ✅ درست: تبدیل مستقیم با PersianCalendar
+            if (string.IsNullOrEmpty(fromDate))
+            {
+                var pc = new System.Globalization.PersianCalendar();
+                var d = DateTime.Now.AddDays(-30);
+                fromDate = $"{pc.GetYear(d):D4}/{pc.GetMonth(d):D2}/{pc.GetDayOfMonth(d):D2}";
+            }
+            if (string.IsNullOrEmpty(toDate))
+                toDate = todayStr;
+
+            var rows = await (
+                from a in _db.Acc_MemberSports
+                join s in _db.Gen_SportSanses on a.SportSanseID equals s.SportSanseID
+                join m in _db.Gen_Members on a.MemberID equals m.MemberID
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                where s.CoachMemberID == coachMemberID
+                      && a.CreationDate != null
+                      && string.Compare(a.CreationDate, fromDate) >= 0
+                      && string.Compare(a.CreationDate, toDate) <= 0
+                orderby a.CreationDate descending
+                select new CoachCommissionRowDto
+                {
+                    SportMemberID = a.SportMemberID,
+                    StudentName = p.FullName ?? "",
+                    Mobile = p.Mobile,
+                    SportName = s.Gen_Sport_Category.SportName,
+                    SanseName = s.SanseName,
+                    StartDate = a.StartDate,
+                    Amount = a.FinalPayment ?? 0,
+                    CoachAmount = a.CoachAmount ?? 0,
+                    CoachRevivalAmount = a.CoachRevivalAmount ?? 0,
+                    IsRevival = a.IsRevival == true
+                }
+            ).ToListAsync();
+
+            // محاسبه ماه جاری (همین ماه شمسی)
+            var thisMonthPrefix = todayStr.Substring(0, 7); // "1405/06"
+            var thisMonthRows = rows.Where(r => r.StartDate != null && r.StartDate.StartsWith(thisMonthPrefix)).ToList();
+
+            return new CoachCommissionSummaryDto
+            {
+                FromDate = fromDate,     
+                ToDate = toDate,
+                ThisMonthAmount = thisMonthRows.Sum(r => r.TotalCommission),
+                ThisMonthCount = thisMonthRows.Count,
+                TotalAmount = rows.Sum(r => r.TotalCommission),
+                TotalCount = rows.Count,
+                Rows = rows
+            };
         }
     }
 }

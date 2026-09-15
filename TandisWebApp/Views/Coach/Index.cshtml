@@ -11,7 +11,11 @@
             <h5 class="mb-0">🏋️ پنل مربی</h5>
             <div class="text-muted small">خوش آمدید، @Model.CoachName</div>
         </div>
-        <span class="badge bg-success fs-6">@Model.TodayClasses.Count.ToString(fa) کلاس امروز</span>
+        <div class="d-flex gap-2 align-items-center flex-wrap">
+            <a href="/Coach/Classes" class="btn btn-primary btn-sm">📚 کلاس‌های من</a>
+            <a href="/Coach/Commission" class="btn btn-success btn-sm">💰 پورسانت</a>
+            <span class="badge bg-success fs-6">@Model.TodayClasses.Count.ToString(fa) کلاس امروز</span>
+        </div>
     </div>
 </div>
 
@@ -29,15 +33,17 @@
         </div>
     </div>
     <div class="col-6 col-md-4">
-        <div class="card stat-card h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon bg-gradient-info">📚</div>
-                <div>
-                    <div class="stat-label">کلاس‌های من</div>
-                    <div class="stat-value">@Model.MyClassCount.ToString(fa)</div>
+        <a href="/Coach/Classes" class="text-decoration-none">
+            <div class="card stat-card h-100 hover-card">
+                <div class="card-body d-flex align-items-center gap-3">
+                    <div class="stat-icon bg-gradient-info">📚</div>
+                    <div>
+                        <div class="stat-label">کلاس‌های من</div>
+                        <div class="stat-value">@Model.MyClassCount.ToString(fa)</div>
+                    </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-6 col-md-4">
         <div class="card stat-card h-100">
@@ -54,7 +60,6 @@
 
 <!-- کلاس‌های امروز -->
 <div class="card">
-    <a href="/Home" class="btn btn-outline-primary btn-sm">🏠 پنل عضو</a>
     <div class="card-header">📅 کلاس‌های امروز</div>
     <div class="card-body">
         @if (Model.TodayClasses.Count == 0)
@@ -92,6 +97,11 @@
                                     }
                                     <span>🚪 حضور امروز: @c.TodayAttendance.ToString(fa)</span>
                                 </div>
+                                <div class="mt-3">
+                                    <a href="/Coach/ClassStudents/@c.SportSanseID" class="btn btn-outline-primary btn-sm">
+                                        👥 مشاهده شاگردان
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -100,3 +110,14 @@
         }
     </div>
 </div>
+
+<style>
+    .hover-card {
+        transition: all .2s;
+    }
+
+        .hover-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 20px rgba(0,0,0,.1) !important;
+        }
+</style>

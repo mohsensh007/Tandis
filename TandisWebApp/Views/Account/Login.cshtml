@@ -100,7 +100,7 @@
                 if (res.success) {
                   showToast(res.message, 'success');
                   setTimeout(function () {
-                  window.location.href = (memberRole == 2 ? '/Coach' : '/Home/Index');  // ✅
+                  window.location.href = (memberRole == 2 ? '/Coach' : '/Home');  // ✅
                   }, 800);
             } else {
                 showToast(res.message, 'error');

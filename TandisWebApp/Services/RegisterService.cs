@@ -277,15 +277,8 @@ namespace TandisWebApp.Services
                 };
             }
         }
-
-        /// <summary>
         /// تمدید ثبت‌نام (غیرفعال کردن ثبت‌نام قبلی + ثبت جدید)
-        /// منطق معادل RenewRegister در UscRenewRegister
-        /// </summary>
-        /// <summary>
-        /// تمدید ثبت‌نام (غیرفعال کردن ثبت‌نام قبلی + ثبت جدید)
-        /// منطق معادل RenewRegister در UscRenewRegister
-        /// </summary>
+        /// منطق معادل RenewRegister در UscRenewRegister    
         public async Task<ApiResponse<RegisterResponse>> RenewRegisterAsync(int memberID, RegisterRequest req, short shiftID)
         {
             using var tx = await _db.Database.BeginTransactionAsync();
@@ -333,7 +326,6 @@ namespace TandisWebApp.Services
 
                 if (isRevival)
                 {
-                    // UPDATE با SQL پارامتری (برای هماهنگی با تراکنش)
                     foreach (var prevId in prevActiveIds)
                     {
                         await _db.Database.ExecuteSqlInterpolatedAsync(
@@ -362,21 +354,26 @@ namespace TandisWebApp.Services
                     UserID = WEB_USER_ID,
                     CreationDate = _helper.GetToday(),
                     CreationTime = _helper.GetThisTime(),
-                    CommentText = "تمدید با وب‌اپ"
+                    CommentText = "تمدید با وب‌اپ",
+
+                    // ✅ مقداردهی اولیه با 0 (وقتی سانس مربی نداره، همین‌ها ثبت می‌شن)
+                    CoachPercent = 0,
+                    CoachAmount = 0,
+                    CoachPercentForRevival = 0,
+                    CoachRevivalAmount = 0
                 };
 
                 if (sanse.CoachMemberID != null)
                 {
-                    rec.CoachPercent = sanse.CoachMoneyPercent;
+                    // ✅ استفاده از ?? 0 برای جلوگیری از null شدن این چهار فیلد
+                    rec.CoachPercent = sanse.CoachMoneyPercent ?? 0;
                     long baseAmount = finalPayment - (sanse.GeneralAmount ?? 0);
                     rec.CoachAmount = baseAmount * (sanse.CoachMoneyPercent ?? 0) / 100;
-                    rec.CoachPercentForRevival = sanse.CoachPercentForRevival;
+                    rec.CoachPercentForRevival = sanse.CoachPercentForRevival ?? 0;
                     rec.CoachRevivalAmount = baseAmount * (sanse.CoachPercentForRevival ?? 0) / 100;
                 }
 
-                // بدلیل وجود Trigger روی جدول Acc_MemberSports، از ExecuteSqlInterpolated استفاده می‌کنیم
-                // (EF Core به‌طور پیش‌فرض از OUTPUT INSERTED استفاده می‌کنه که با trigger سازگار نیست)
-                // نکته: RegDiscountPercent و RegDiscountAmount باید 0 باشند (نه NULL) تا Trigger درست کار کنه
+                // ✅ در SQL هم ?? 0 گذاشتیم تا حتی اگه به هر دلیلی null موند، صفر insert بشه
                 await _db.Database.ExecuteSqlInterpolatedAsync($@"
 INSERT INTO Acc_MemberSports (MemberID, SportSanseID, MembershipTypeID, ContractID, SessionCount,
 Amount, Tax, DiscountAmount, RegDiscountPercent, RegDiscountAmount, FinalPayment,
@@ -384,11 +381,10 @@ CoachPercent, CoachAmount, CoachPercentForRevival, CoachRevivalAmount,
 PeriodID, StartDate, EndDate, IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
 VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.ContractID}, {rec.SessionCount},
 {rec.Amount}, {rec.Tax}, {rec.DiscountAmount}, {rec.RegDiscountPercent ?? 0}, {rec.RegDiscountAmount ?? 0},
-{rec.FinalPayment}, {rec.CoachPercent}, {rec.CoachAmount},
-{rec.CoachPercentForRevival}, {rec.CoachRevivalAmount}, {rec.PeriodID}, {rec.StartDate}, {rec.EndDate},
+{rec.FinalPayment}, {rec.CoachPercent ?? 0}, {rec.CoachAmount ?? 0},
+{rec.CoachPercentForRevival ?? 0}, {rec.CoachRevivalAmount ?? 0}, {rec.PeriodID}, {rec.StartDate}, {rec.EndDate},
 {rec.IsActive}, {rec.IsRevival}, {rec.CommentText}, {rec.UserID}, {rec.CreationDate}, {rec.CreationTime})");
 
-                // خواندن ID رکورد درج شده (داخل تراکنش، قبل از commit)
                 var insertedId = await _db.Acc_MemberSports
                     .AsNoTracking()
                     .Where(x => x.MemberID == memberID && x.StartDate == req.StartDate && x.CommentText == "تمدید با وب‌اپ")
