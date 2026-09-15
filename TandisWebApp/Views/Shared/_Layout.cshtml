@@ -1,12 +1,11 @@
 @inject TandisWebApp.Services.MessageService MessageService
 @{
-   
     var fullName = HttpContextAccessor.HttpContext?.User?.FindFirst("FullName")?.Value ?? "کاربر";
     var isAuthenticated = HttpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true;
-    var isCoach = HttpContextAccessor.HttpContext?.User?.FindFirst("RoleID")?.Value == "2";   // ✅ جدید
+    var isCoach = HttpContextAccessor.HttpContext?.User?.FindFirst("RoleID")?.Value == "2";
 
-    var unreadCount = 0;                       // ✅ برگشت
-    var msgPreview = new List<TandisWebApp.DTOs.MemberMessageRowDto>();   // ✅ برگشت
+    var unreadCount = 0;
+    var msgPreview = new List<TandisWebApp.DTOs.MemberMessageRowDto>();
 
     if (isAuthenticated)
     {
@@ -20,7 +19,9 @@
             {
                 unreadCount = await MessageService.GetMemberUnreadCountAsync(mid, rid);
                 msgPreview = (await MessageService.GetMemberMessagesAsync(mid, rid))
-                    .Where(x => x.Direction == "in").Take(4).ToList();
+                    .Where(x => x.Direction == "in" && !x.IsRead)   // ✅ فقط جدیدها
+                    .Take(3)                                         // ✅ حداکثر ۳ تا
+                     .ToList();
             }
         }
         catch { }
@@ -38,7 +39,6 @@
     <meta name="apple-mobile-web-app-title" content="تندیس" />
     <link rel="apple-touch-icon" href="/images/app-icon.png" />
 
-    <!-- جلوگیری از ذخیره‌سازی در کش برای آپدیت‌های سریع‌تر -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -46,8 +46,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
-    <link rel="stylesheet" href="~/css/admin-style.css?v=4" />   <!-- ✅ جدید -->
+    <link rel="stylesheet" href="~/css/admin-style.css?v=4" />
 </head>
 <body class="admin-glass-body">
     @if (!isAuthenticated)
@@ -62,7 +61,7 @@
         <nav class="navbar navbar-expand-lg navbar-dark">
             <div class="container-fluid px-3">
                 <!-- لوگو -->
-                    <a class="navbar-brand" href="@(isCoach ? "/Coach" : "/Home")">
+                <a class="navbar-brand" href="@(isCoach ? "/Coach" : "/Home")">
                     <img src="~/images/logo2.png" alt="تندیس" height="36" />
                     <span class="d-none d-md-inline">تندیس</span>
                 </a>
@@ -73,10 +72,8 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarMain">
-                    <!-- فضای خالی وسط -->
                     <div class="flex-grow-1"></div>
 
-                    <!-- سمت چپ: زنگوله + نام + خروج -->
                     <ul class="navbar-nav align-items-center gap-2">
                         @if (isAuthenticated)
                         {
@@ -89,12 +86,13 @@
                                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:10px;">@unreadCount</span>
                                     }
                                 </a>
-                                <ul class="dropdown-menu dropdown-menu-end" style="min-width:300px;max-height:380px;overflow-y:auto;">
-                                    <li class="dropdown-header fw-bold">پیام‌های شما</li>
+                                <ul class="dropdown-menu dropdown-menu-end" style="min-width:300px;">
+                                    <li class="dropdown-header fw-bold">🔔 پیام‌های جدید</li>
                                     <li><hr class="dropdown-divider"></li>
+
                                     @if (msgPreview.Count == 0)
                                     {
-                                        <li><span class="dropdown-item text-muted small">پیامی ندارید</span></li>
+                                        <li><span class="dropdown-item text-muted small">پیام جدیدی ندارید ✅</span></li>
                                     }
                                     else
                                     {
@@ -103,25 +101,38 @@
                                             var label = string.IsNullOrEmpty(pm.Title)
                                             ? (pm.Body.Length > 40 ? pm.Body.Substring(0, 40) + "…" : pm.Body)
                                             : pm.Title;
+
+                                            var href = pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0
+                                            ? Url.Action("Messages", "Profile", new { coachID = pm.PeerMemberID.Value })
+                                            : "#";
+                                            var extraClass = pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0 ? "" : "lnk-open-msgs";
+
                                             <li>
-                                                <a class="dropdown-item small py-2 lnk-open-msgs" href="#">
-                                                    <div class="d-flex justify-content-between align-items-center gap-2">
-                                                        <span class="text-truncate">@label</span>
-                                                        @if (!pm.IsRead)
+                                                <a class="dropdown-item small py-2 @extraClass" href="@href">
+                                                    <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
+                                                        @if (pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0)
                                                         {
-                                                            <span class="badge bg-danger" style="font-size:10px;">جدید</span>
+                                                            <span class="badge bg-success small">🏋️ از @pm.PeerName</span>
                                                         }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-primary small">📢 از مدیریت</span>
+                                                        }
+                                                        <span class="badge bg-danger" style="font-size:10px;">جدید</span>
                                                     </div>
+                                                    <div class="fw-bold text-truncate">@label</div>
                                                     <div class="text-muted" style="font-size:11px;">@pm.CreationDate @pm.CreationTime</div>
                                                 </a>
                                             </li>
                                         }
                                     }
                                     <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a href="/Profile/Messages" class="dropdown-item text-center small">💬 مشاهده گفتگوهای مربی</a>
+                                    </li>
                                     <li><a class="dropdown-item text-center text-primary fw-bold lnk-open-msgs" href="#">مشاهده همه پیام‌ها</a></li>
                                 </ul>
                             </li>
-
                             <!-- نام کاربر -->
                             <li class="nav-item">
                                 <span class="nav-link d-flex align-items-center gap-2">
@@ -153,7 +164,7 @@
         </div>
 
         <footer class="border-top text-center py-2 mt-4">
-            <small class="text-muted">سیستم مدیریت باشگاه تندیس &copy; @DateTime.Now.Year</small>
+            <small class="text-muted">سیستم مدیریت باشگاه  &copy; @DateTime.Now.Year</small>
         </footer>
 
         <!-- مودال لیست پیام‌های عضو -->
@@ -206,14 +217,13 @@
                 </div>
             </div>
         </div>
+
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/js/jalali-calendar.js"></script>
         <script src="~/js/site.js?v=3.2"></script>
         <script src="~/js/member-messages.js" asp-append-version="true"></script>
         <script>
-
-            // ✅ ناوبری ماه‌های تقویم (کپی از پنل ادمین)
             $('#prevMonth').click(function () {
                 calendarDate.m++;
                 if (calendarDate.m > 12) { calendarDate.m = 1; calendarDate.y++; }
@@ -225,14 +235,12 @@
                 renderCalendar();
             });
 
-            // ✅ تابع باز کردن تقویم (نسخه واقعی)
             function openCalendar(inputId, title, allowPast) {
                 $('#calendarTitle').text(title || 'انتخاب تاریخ');
                 initCalendar(inputId, null, allowPast || false);
                 new bootstrap.Modal('#datePickerModal').show();
             }
         </script>
-        <!-- ✅ اضافه شد -->
         @await RenderSectionAsync("Scripts", required: false)
     }
 </body>

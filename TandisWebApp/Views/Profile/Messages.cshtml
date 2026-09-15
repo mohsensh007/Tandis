@@ -1,0 +1,141 @@
+﻿@{
+    ViewData["Title"] = "پیام‌های مربی";
+    var coaches = ViewBag.Coaches as List<TandisWebApp.DTOs.MemberCoachDto> ?? new List<TandisWebApp.DTOs.MemberCoachDto>();
+    var chat = ViewBag.Chat as TandisWebApp.DTOs.CoachChatDto;
+    var currentCoachID = (int)(ViewBag.CurrentCoachID ?? 0);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">💬 پیام‌های مربی</h5>
+    <a href="/Home" class="btn btn-outline-secondary btn-sm">🔙 داشبورد</a>
+</div>
+
+<div class="row g-3">
+    <!-- لیست مربی‌ها -->
+    <div class="col-md-4">
+        <div class="card coach-list-card">
+            <div class="card-header coach-list-header">🏋️ مربی‌های من</div>
+            <div class="card-body p-2">
+                @if (coaches.Count == 0)
+                {
+                    <div class="text-center text-muted py-4">مربی‌ای ندارید</div>
+                }
+                @foreach (var c in coaches)
+                {
+                    <a href="/Profile/Messages?coachID=@c.CoachMemberID"
+                       class="d-block text-decoration-none coach-item @(c.CoachMemberID == currentCoachID ? "coach-item-active" : "")">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div style="min-width:0">
+                                <div class="fw-bold coach-item-name">@c.CoachName</div>
+                                @if (!string.IsNullOrEmpty(c.LastMessage))
+                                {
+                                    <div class="small coach-item-preview text-truncate" style="max-width:170px">@c.LastMessage</div>
+                                }
+                            </div>
+                            @if (c.UnreadCount > 0)
+                            {
+                                <span class="badge bg-danger rounded-pill">@c.UnreadCount</span>
+                            }
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- گفتگو -->
+    <div class="col-md-8">
+        @if (chat == null)
+        {
+            <div class="card coach-list-card">
+                <div class="card-body text-center text-muted py-5">
+                    <div style="font-size:3rem">💬</div>
+                    از ستون سمت راست یک مربی را انتخاب کنید
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="card coach-list-card mb-3">
+                <div class="card-header coach-list-header">گفتگو با @chat.StudentName</div>
+                <div class="card-body" style="max-height:400px; overflow-y:auto;">
+                    @if (chat.Messages.Count == 0)
+                    {
+                        <div class="text-center text-muted">هنوز پیامی رد و بدل نشده</div>
+                    }
+                    @foreach (var msg in chat.Messages)
+                    {
+                        <div class="mb-2 @(msg.IsFromMe ? "text-end" : "text-start")">
+                            <div class="d-inline-block p-2 rounded msg-bubble @(msg.IsFromMe ? "me" : "other")">
+                                <div>@msg.Body</div>
+                                <div class="small mt-1 opacity-75">@msg.CreationDate - @msg.CreationTime</div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="card coach-list-card">
+                <div class="card-body">
+                    <form method="post" asp-action="SendToCoach" asp-controller="Profile">
+                        <input type="hidden" name="coachID" value="@currentCoachID" />
+                        <textarea name="body" rows="2" class="form-control mb-2" placeholder="پیام خود را بنویسید..." required></textarea>
+                        <button type="submit" class="btn btn-primary btn-sm">📤 ارسال</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<style>
+    .coach-list-card {
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.12);
+    }
+
+    .coach-list-header {
+        background: linear-gradient(135deg,#6f42c1,#0d6efd);
+        color: #fff;
+        font-weight: 700;
+    }
+
+    .coach-item {
+        padding: .6rem .7rem;
+        border-radius: 10px;
+        margin-bottom: .4rem;
+        background: rgba(255,255,255,.06);
+        color: #e9ecef !important;
+    }
+
+        .coach-item:hover {
+            background: rgba(255,255,255,.12);
+        }
+
+    .coach-item-active {
+        background: rgba(13,110,253,.35);
+        outline: 1px solid rgba(13,110,253,.6);
+    }
+
+    .coach-item-name {
+        color: #fff;
+    }
+
+    .coach-item-preview {
+        color: #adb5bd;
+    }
+
+    .msg-bubble {
+        max-width: 75%;
+        text-align: right;
+    }
+
+        .msg-bubble.me {
+            background: #0d6efd;
+            color: #fff;
+        }
+
+        .msg-bubble.other {
+            background: rgba(255,255,255,.12);
+            color: #e9ecef;
+        }
+</style>

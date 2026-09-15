@@ -1,0 +1,53 @@
+﻿@model TandisWebApp.DTOs.CoachChatDto
+@{
+    ViewData["Title"] = Model.StudentName;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h5 class="mb-0">💬 @Model.StudentName</h5>
+    </div>
+    <a href="/Coach/Messages" class="btn btn-outline-secondary btn-sm">🔙 پیام‌ها</a>
+</div>
+
+<div class="card mb-3" style="max-height:500px; overflow-y:auto;">
+    <div class="card-body">
+        @if (Model.Messages.Count == 0)
+        {
+            <div class="text-center text-muted">
+                هنوز پیامی رد و بدل نشده
+            </div>
+        }
+        else
+        {
+            @foreach (var msg in Model.Messages)
+            {
+                <div class="mb-3 @(msg.IsFromMe ? "text-end" : "text-start")">
+                    <div class="d-inline-block p-2 rounded @(msg.IsFromMe ? "bg-primary text-white" : "bg-light")" style="max-width:70%;">
+                        @if (!string.IsNullOrEmpty(msg.Title))
+                        {
+                            <div class="fw-bold">@msg.Title</div>
+                        }
+                        <div>@msg.Body</div>
+                        <small class="@(msg.IsFromMe ? "text-white-50" : "text-muted")">@msg.CreationDate @msg.CreationTime</small>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" asp-action="SendMessage">
+            <input type="hidden" name="studentID" value="@Model.StudentMemberID" />
+            <div class="mb-2">
+                <input type="text" name="title" class="form-control" placeholder="عنوان (اختیاری)" />
+            </div>
+            <div class="mb-2">
+                <textarea name="body" class="form-control" rows="3" placeholder="متن پیام..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">📤 ارسال</button>
+        </form>
+    </div>
+</div>

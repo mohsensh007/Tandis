@@ -263,5 +263,30 @@ namespace TandisWebApp.Controllers
             Response.Headers["Cache-Control"] = "public, max-age=86400";
             return File(bytes, ProfileService.DetectImageType(bytes));
         }
+        [HttpGet]
+        public async Task<IActionResult> CoachMessages(string? from, string? to)
+        {
+            var shiftID = User.GetShiftID();
+           
+            if (string.IsNullOrEmpty(from))
+            {
+                var pc = new System.Globalization.PersianCalendar();
+                var thirtyDaysAgo = DateTime.Now.AddDays(-30);
+                from = $"{pc.GetYear(thirtyDaysAgo):0000}/{pc.GetMonth(thirtyDaysAgo):00}/{pc.GetDayOfMonth(thirtyDaysAgo):00}";
+            }
+            if (string.IsNullOrEmpty(to))
+            {
+                var pc = new System.Globalization.PersianCalendar();
+                var now = DateTime.Now;
+                to = $"{pc.GetYear(now):0000}/{pc.GetMonth(now):00}/{pc.GetDayOfMonth(now):00}";
+            }
+
+            ViewBag.FromDate = from;
+            ViewBag.ToDate = to;
+
+            var model = await _reports.GetCoachStudentMessagesReportAsync(shiftID, from, to);
+            return View(model);
+        }
+
     }
 }

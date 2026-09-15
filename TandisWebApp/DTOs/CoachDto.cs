@@ -119,4 +119,55 @@
         public long TotalCommission => CoachAmount + CoachRevivalAmount;
         public bool IsRevival { get; set; }
     }
+    /// <summary>لیست پیام‌های مربی با شاگردان</summary>
+    public class CoachMessageSummaryDto
+    {
+        public int StudentMemberID { get; set; }
+        public string StudentName { get; set; } = "";
+        public string? Mobile { get; set; }
+        public string? LastMessage { get; set; }
+        public string? LastMessageDate { get; set; }
+        public string? LastMessageTime { get; set; }
+        public int UnreadCount { get; set; }
+    }
+
+    /// <summary>چت با یک شاگرد</summary>
+    public class CoachChatDto
+    {
+        public int StudentMemberID { get; set; }
+        public string StudentName { get; set; } = "";
+        public List<CoachMessageItemDto> Messages { get; set; } = new();
+    }
+
+    public class CoachMessageItemDto
+    {
+        public long MessageID { get; set; }
+        public bool IsFromMe { get; set; }
+        public string Title { get; set; } = "";
+        public string Body { get; set; } = "";
+        public string CreationDate { get; set; } = "";
+        public string CreationTime { get; set; } = "";
+    }
+
+    /// <summary>گزارش پیام‌های مربی-شاگرد برای ادمین</summary>
+    public class AdminCoachMessageRowDto
+    {
+        public long MessageID { get; set; }
+        public string CoachName { get; set; } = "";
+        public string StudentName { get; set; } = "";
+        public string? Title { get; set; }
+        public string Body { get; set; } = "";
+        public string CreationDate { get; set; } = "";
+        public string CreationTime { get; set; } = "";
+    }
+    /// <summary>لیست مربی‌های عضو برای چت</summary>
+    public class MemberCoachDto
+    {
+        public int CoachMemberID { get; set; }
+        public string CoachName { get; set; } = "";
+        public string? LastMessage { get; set; }
+        public string? LastMessageDate { get; set; }
+        public string? LastMessageTime { get; set; }
+        public int UnreadCount { get; set; }
+    }
 }

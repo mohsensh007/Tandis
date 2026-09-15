@@ -410,5 +410,189 @@ namespace TandisWebApp.Services
                 Rows = rows
             };
         }
+        /// <summary>
+        /// لیست شاگردان با آخرین پیام‌ها (برای مربی)
+        /// </summary>
+        public async Task<List<CoachMessageSummaryDto>> GetMessageSummariesAsync(int coachMemberID)
+        {
+            // شاگردان فعلی مربی
+            var mySanseIds = await _db.Gen_SportSanses
+                .Where(s => s.CoachMemberID == coachMemberID && s.IsActive == true)
+                .Select(s => s.SportSanseID)
+                .ToListAsync();
+
+            if (mySanseIds.Count == 0)
+                return new List<CoachMessageSummaryDto>();
+
+            var students = await (
+                from a in _db.Acc_MemberSports             
+                where a.SportSanseID != null && mySanseIds.Contains(a.SportSanseID.Value) && a.IsActive == true && a.MemberID != null
+                join m in _db.Gen_Members on a.MemberID.Value equals m.MemberID
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                group m by new { m.MemberID, p.FullName, p.Mobile } into g
+                select new
+                {
+                    g.Key.MemberID,
+                    g.Key.FullName,
+                    g.Key.Mobile
+                }
+            ).ToListAsync();
+
+            var result = new List<CoachMessageSummaryDto>();
+
+            foreach (var st in students)
+            {
+                // پیام‌های بین مربی و این شاگرد
+                var messages = await _db.MsgMessages
+                    .Where(m => m.IsActive &&
+                                ((m.SenderMemberID == coachMemberID && m.TargetMemberID == st.MemberID) ||
+                                 (m.SenderMemberID == st.MemberID && m.TargetMemberID == coachMemberID)))
+                    .OrderByDescending(m => m.CreationDateTime)
+                    .FirstOrDefaultAsync();
+
+                // تعداد خوانده‌نشده (پیام‌های شاگرد به مربی)
+                var unread = await _db.MsgMessages
+                    .CountAsync(m => m.IsActive &&
+                                     m.SenderMemberID == st.MemberID &&
+                                     m.TargetMemberID == coachMemberID &&
+                                     !_db.MsgReads.Any(r => r.MessageID == m.MessageID && r.MemberID == coachMemberID));
+
+                result.Add(new CoachMessageSummaryDto
+                {
+                    StudentMemberID = st.MemberID,
+                    StudentName = st.FullName ?? "",
+                    Mobile = st.Mobile,
+                    LastMessage = messages?.Body,
+                    LastMessageDate = messages?.CreationDate,
+                    LastMessageTime = messages?.CreationTime,
+                    UnreadCount = unread
+                });
+            }
+
+            return result.OrderByDescending(r => r.LastMessageDate).ThenByDescending(r => r.LastMessageTime).ToList();
+        }
+
+        /// <summary>
+        /// چت با یک شاگرد
+        /// </summary>
+        public async Task<CoachChatDto?> GetChatAsync(int coachMemberID, int studentMemberID)
+        {
+            // چک مالکیت: شاگرد باید در یکی از کلاس‌های مربی باشه
+            var mySanseIds = await _db.Gen_SportSanses
+                .Where(s => s.CoachMemberID == coachMemberID && s.IsActive == true)
+                .Select(s => s.SportSanseID)
+                .ToListAsync();
+
+            var isValidStudent = await _db.Acc_MemberSports
+                .AnyAsync(a => a.SportSanseID !=null && mySanseIds.Contains(a.SportSanseID.Value) && a.MemberID == studentMemberID && a.IsActive == true);
+
+            if (!isValidStudent)
+                return null;
+
+            var studentName = await (
+                from m in _db.Gen_Members
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                where m.MemberID == studentMemberID
+                select p.FullName
+            ).FirstOrDefaultAsync() ?? "";
+
+            var messages = await _db.MsgMessages
+                .Where(m => m.IsActive &&
+                            ((m.SenderMemberID == coachMemberID && m.TargetMemberID == studentMemberID) ||
+                             (m.SenderMemberID == studentMemberID && m.TargetMemberID == coachMemberID)))
+                .OrderBy(m => m.CreationDateTime)
+                .Select(m => new CoachMessageItemDto
+                {
+                    MessageID = m.MessageID,
+                    IsFromMe = m.SenderMemberID == coachMemberID,
+                    Title = m.Title ?? "",
+                    Body = m.Body,
+                    CreationDate = m.CreationDate ?? "",
+                    CreationTime = m.CreationTime ?? ""
+                })
+                .ToListAsync();
+
+            // علامت‌گذاری پیام‌های خوانده‌نشده به عنوان خوانده‌شده
+            var unreadIds = await _db.MsgMessages
+                .Where(m => m.IsActive &&
+                            m.SenderMemberID == studentMemberID &&
+                            m.TargetMemberID == coachMemberID &&
+                            !_db.MsgReads.Any(r => r.MessageID == m.MessageID && r.MemberID == coachMemberID))
+                .Select(m => m.MessageID)
+                .ToListAsync();
+
+            if (unreadIds.Count > 0)
+            {
+                foreach (var id in unreadIds)
+                {
+                    _db.MsgReads.Add(new Msg_Read
+                    {
+                        MessageID = id,
+                        MemberID = coachMemberID,
+                        ReadDateTime = DateTime.Now
+                    });
+                }
+                await _db.SaveChangesAsync();
+            }
+
+            return new CoachChatDto
+            {
+                StudentMemberID = studentMemberID,
+                StudentName = studentName,
+                Messages = messages
+            };
+        }
+
+        /// <summary>
+        /// ارسال پیام از مربی به شاگرد
+        /// </summary>
+        public async Task<bool> SendMessageToStudentAsync(int coachMemberID, int studentMemberID, string? title, string body)
+        {
+            // چک مالکیت
+            var mySanseIds = await _db.Gen_SportSanses
+                .Where(s => s.CoachMemberID == coachMemberID && s.IsActive == true)
+                .Select(s => s.SportSanseID)
+                .ToListAsync();
+
+            var isValid = await _db.Acc_MemberSports
+                .AnyAsync(a => a.SportSanseID !=null && mySanseIds.Contains(a.SportSanseID.Value) && a.MemberID == studentMemberID);
+
+            if (!isValid)
+                return false;
+
+            var pc = new System.Globalization.PersianCalendar();
+            var now = DateTime.Now;
+            var date = $"{pc.GetYear(now):0000}/{pc.GetMonth(now):00}/{pc.GetDayOfMonth(now):00}";
+            var time = now.ToString("HH:mm:ss");
+
+            _db.MsgMessages.Add(new Msg_Message
+            {
+                Title = title,
+                Body = body,
+                TargetType = 4,  // پیام به عضو خاص
+                TargetMemberID = studentMemberID,
+                SenderMemberID = coachMemberID,
+                IsActive = true,
+                CreationDateTime = now,
+                CreationDate = date,
+                CreationTime = time
+            });
+
+            await _db.SaveChangesAsync();
+            return true;
+        }
+        /// <summary>
+        /// تعداد پیام‌های خوانده‌نشده مربی (پیام‌های شاگردان به مربی)
+        /// </summary>
+        public async Task<int> GetCoachUnreadCountAsync(int coachMemberID)
+        {
+            return await _db.MsgMessages
+                .Where(m => m.IsActive &&
+                            m.TargetType == 4 &&
+                            m.TargetMemberID == coachMemberID &&
+                            m.SenderMemberID != null &&
+                            !_db.MsgReads.Any(r => r.MessageID == m.MessageID && r.MemberID == coachMemberID))
+                .CountAsync();
+        }
     }
 }

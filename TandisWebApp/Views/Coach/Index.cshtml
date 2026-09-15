@@ -14,6 +14,15 @@
         <div class="d-flex gap-2 align-items-center flex-wrap">
             <a href="/Coach/Classes" class="btn btn-primary btn-sm">📚 کلاس‌های من</a>
             <a href="/Coach/Commission" class="btn btn-success btn-sm">💰 پورسانت</a>
+            <a href="/Coach/Messages" class="btn btn-info btn-sm position-relative">
+                💬 پیام‌ها
+                @if ((ViewBag.UnreadMessages ?? 0) > 0)
+                {
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        @ViewBag.UnreadMessages
+                    </span>
+                }
+            </a>
             <span class="badge bg-success fs-6">@Model.TodayClasses.Count.ToString(fa) کلاس امروز</span>
         </div>
     </div>

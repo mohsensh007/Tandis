@@ -30,27 +30,54 @@ namespace TandisWebApp.Services
         {
             var mySports = await GetMemberSportCatsAsync(memberID);
             var readIds = await _db.MsgReads.Where(r => r.MemberID == memberID)
-                                            .Select(r => r.MessageID).ToListAsync();
+                .Select(r => r.MessageID).ToListAsync();
 
             var msgs = await _db.MsgMessages
                 .Where(m => m.IsActive && (
-                    (m.TargetType == 0 && m.SenderMemberID == memberID) ||
+                    (m.TargetType == 0 && m.SenderMemberID == memberID) ||        // ارسالی به مدیریت
                     m.TargetType == 1 ||
                     (m.TargetType == 2 && m.TargetRoleID == roleID) ||
                     (m.TargetType == 3 && m.TargetSportCatID != null && mySports.Contains(m.TargetSportCatID.Value)) ||
-                    (m.TargetType == 4 && m.TargetMemberID == memberID)))
+                    (m.TargetType == 4 && m.TargetMemberID == memberID) ||        // دریافتی (از مدیر یا مربی)
+                    (m.TargetType == 4 && m.SenderMemberID == memberID)))         // ✅ جدید: ارسالی به مربی
                 .OrderByDescending(m => m.CreationDateTime)
                 .ToListAsync();
 
-            return msgs.Select(m => new MemberMessageRowDto
+            // ✅ نام طرف مقابل (مربی) برای پیام‌های گفتگوی خصوصی
+            var peerIds = msgs
+                .Where(m => m.TargetType == 4)
+                .Select(m => m.SenderMemberID == memberID ? m.TargetMemberID : m.SenderMemberID)
+                .Where(x => x != null)
+                .Select(x => x!.Value)
+                .Distinct().ToList();
+
+            var peerNames = peerIds.Count == 0
+                ? new Dictionary<int, string>()
+                : await (from gm in _db.Gen_Members
+                         join gp in _db.Gen_Persons on gm.PersonID equals gp.PersonID
+                         where peerIds.Contains(gm.MemberID)
+                         select new { gm.MemberID, gp.FullName })
+                    .ToDictionaryAsync(x => x.MemberID, x => x.FullName ?? "");
+
+            return msgs.Select(m =>
             {
-                MessageID = m.MessageID,
-                Direction = m.TargetType == 0 ? "out" : "in",
-                Title = m.Title,
-                Body = m.Body,
-                CreationDate = m.CreationDate,
-                CreationTime = m.CreationTime,
-                IsRead = m.TargetType == 0 ? true : readIds.Contains(m.MessageID)
+                var isOut = m.TargetType == 0 || m.SenderMemberID == memberID;
+                int? peerId = m.TargetType == 4
+                    ? (m.SenderMemberID == memberID ? m.TargetMemberID : m.SenderMemberID)
+                    : null;
+
+                return new MemberMessageRowDto
+                {
+                    MessageID = m.MessageID,
+                    Direction = isOut ? "out" : "in",
+                    Title = m.Title,
+                    Body = m.Body,
+                    CreationDate = m.CreationDate,
+                    CreationTime = m.CreationTime,
+                    IsRead = isOut ? true : readIds.Contains(m.MessageID),
+                    PeerMemberID = peerId,
+                    PeerName = peerId != null && peerNames.TryGetValue(peerId.Value, out var pn) ? pn : null
+                };
             }).ToList();
         }
 
@@ -303,6 +330,119 @@ namespace TandisWebApp.Services
                 IsSeen = x.IsSeen,
                 
             };
+        }
+        // ========== سمت عضو: چت با مربی ==========
+
+        /// <summary>لیست مربی‌های عضو (از ثبت‌نام‌های فعال)</summary>
+        public async Task<List<MemberCoachDto>> GetMemberCoachesAsync(int memberID)
+        {
+            var coaches = await (
+                from a in _db.Acc_MemberSports
+                where a.MemberID == memberID && a.IsActive == true
+                      && a.Gen_SportSanse != null && a.Gen_SportSanse.CoachMemberID != null
+                join cm in _db.Gen_Members on a.Gen_SportSanse.CoachMemberID equals cm.MemberID
+                join cp in _db.Gen_Persons on cm.PersonID equals cp.PersonID
+                select new { cm.MemberID, cp.FullName }
+            ).Distinct().ToListAsync();
+
+            var result = new List<MemberCoachDto>();
+            foreach (var c in coaches)
+            {
+                var last = await _db.MsgMessages
+                    .Where(m => m.IsActive && m.TargetType == 4 &&
+                                ((m.SenderMemberID == c.MemberID && m.TargetMemberID == memberID) ||
+                                 (m.SenderMemberID == memberID && m.TargetMemberID == c.MemberID)))
+                    .OrderByDescending(m => m.CreationDateTime)
+                    .Select(m => new { m.Body, m.CreationDate, m.CreationTime })
+                    .FirstOrDefaultAsync();
+
+                var unread = await _db.MsgMessages
+                    .CountAsync(m => m.IsActive && m.TargetType == 4 &&
+                                     m.SenderMemberID == c.MemberID && m.TargetMemberID == memberID &&
+                                     !_db.MsgReads.Any(r => r.MessageID == m.MessageID && r.MemberID == memberID));
+
+                result.Add(new MemberCoachDto
+                {
+                    CoachMemberID = c.MemberID,
+                    CoachName = c.FullName ?? "",
+                    LastMessage = last?.Body,
+                    LastMessageDate = last?.CreationDate,
+                    LastMessageTime = last?.CreationTime,
+                    UnreadCount = unread
+                });
+            }
+            return result.OrderByDescending(r => r.LastMessageDate).ToList();
+        }
+
+        /// <summary>متن گفتگوی عضو با یک مربی + علامت‌گذاری خوانده</summary>
+        public async Task<CoachChatDto?> GetMemberCoachChatAsync(int memberID, int coachMemberID)
+        {
+            var related = await _db.Acc_MemberSports
+                .AnyAsync(a => a.MemberID == memberID && a.Gen_SportSanse != null && a.Gen_SportSanse.CoachMemberID == coachMemberID);
+            if (!related) return null;
+
+            var coachName = await (
+                from cm in _db.Gen_Members
+                join cp in _db.Gen_Persons on cm.PersonID equals cp.PersonID
+                where cm.MemberID == coachMemberID
+                select cp.FullName
+            ).FirstOrDefaultAsync() ?? "";
+
+            var messages = await _db.MsgMessages
+                .Where(m => m.IsActive && m.TargetType == 4 &&
+                            ((m.SenderMemberID == coachMemberID && m.TargetMemberID == memberID) ||
+                             (m.SenderMemberID == memberID && m.TargetMemberID == coachMemberID)))
+                .OrderBy(m => m.CreationDateTime)
+                .Select(m => new CoachMessageItemDto
+                {
+                    MessageID = m.MessageID,
+                    IsFromMe = m.SenderMemberID == memberID,
+                    Title = m.Title ?? "",
+                    Body = m.Body,
+                    CreationDate = m.CreationDate ?? "",
+                    CreationTime = m.CreationTime ?? ""
+                }).ToListAsync();
+
+            var unreadIds = await _db.MsgMessages
+                .Where(m => m.IsActive && m.TargetType == 4 &&
+                            m.SenderMemberID == coachMemberID && m.TargetMemberID == memberID &&
+                            !_db.MsgReads.Any(r => r.MessageID == m.MessageID && r.MemberID == memberID))
+                .Select(m => m.MessageID).ToListAsync();
+
+            if (unreadIds.Count > 0)
+            {
+                foreach (var id in unreadIds)
+                    _db.MsgReads.Add(new Msg_Read { MessageID = id, MemberID = memberID, ReadDateTime = DateTime.Now });
+                await _db.SaveChangesAsync();
+            }
+
+            return new CoachChatDto { StudentMemberID = coachMemberID, StudentName = coachName, Messages = messages };
+        }
+
+        /// <summary>ارسال پیام از عضو به مربی</summary>
+        public async Task<bool> SendToCoachAsync(int memberID, int coachMemberID, string? title, string body)
+        {
+            var related = await _db.Acc_MemberSports
+                .AnyAsync(a => a.MemberID == memberID && a.Gen_SportSanse != null && a.Gen_SportSanse.CoachMemberID == coachMemberID);
+            if (!related) return false;
+
+            var pc = new System.Globalization.PersianCalendar();
+            var now = DateTime.Now;
+
+            _db.MsgMessages.Add(new Msg_Message
+            {
+                Title = title,
+                Body = body,
+                TargetType = 4,
+                TargetMemberID = coachMemberID,
+                SenderMemberID = memberID,
+                IsActive = true,
+                CreationDateTime = now,
+                CreationDate = $"{pc.GetYear(now):0000}/{pc.GetMonth(now):00}/{pc.GetDayOfMonth(now):00}",
+                CreationTime = now.ToString("HH:mm:ss")
+            });
+            await _db.SaveChangesAsync();
+            return true;
         }
     }
 }

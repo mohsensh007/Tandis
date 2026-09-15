@@ -514,5 +514,47 @@ namespace TandisWebApp.Services
                 IsGuest = x.MemberID == null || x.IsGuest == true
             }).ToList();
         }
+       
+        /// <summary>گزارش نظارت: پیام‌های بین مربی و شاگرد</summary>
+        public async Task<List<AdminCoachMessageRowDto>> GetCoachStudentMessagesReportAsync(short shiftID, string? from, string? to, int? coachMemberID = null)
+        {
+            var query = _db.MsgMessages
+                .Where(m => m.IsActive && m.TargetType == 4 && m.SenderMemberID != null && m.TargetMemberID != null);
+
+            if (!string.IsNullOrWhiteSpace(from))
+                query = query.Where(m => m.CreationDate != null && m.CreationDate.CompareTo(from) >= 0);
+
+            if (!string.IsNullOrWhiteSpace(to))
+                query = query.Where(m => m.CreationDate != null && m.CreationDate.CompareTo(to) <= 0);
+
+            // ✅ فیلتر صحیح روی مربی خاص — سمت SQL (نه در حافظه)
+            if (coachMemberID.HasValue && coachMemberID.Value > 0)
+            {
+                var cid = coachMemberID.Value;
+                query = query.Where(m => m.SenderMemberID == cid || m.TargetMemberID == cid);
+            }
+
+            // ✅ همه‌چیز در یک کوئری SQL — بدون materialize اضافی
+            return await (
+                from m in query
+                join sm in _db.Gen_Members on m.SenderMemberID equals sm.MemberID
+                join tm in _db.Gen_Members on m.TargetMemberID equals tm.MemberID
+                join sp in _db.Gen_Persons on sm.PersonID equals sp.PersonID
+                join tp in _db.Gen_Persons on tm.PersonID equals tp.PersonID
+                where (sm.RoleID == 2 || tm.RoleID == 2)
+                      && (sm.ShiftID == shiftID || tm.ShiftID == shiftID)
+                orderby m.CreationDateTime descending
+                select new AdminCoachMessageRowDto
+                {
+                    MessageID = m.MessageID,
+                    CoachName = sm.RoleID == 2 ? (sp.FullName ?? "-") : (tp.FullName ?? "-"),
+                    StudentName = sm.RoleID == 2 ? (tp.FullName ?? "-") : (sp.FullName ?? "-"),
+                    Title = m.Title,
+                    Body = m.Body,
+                    CreationDate = m.CreationDate ?? "",
+                    CreationTime = m.CreationTime ?? ""
+                }
+            ).ToListAsync();
+        }
     }
 }

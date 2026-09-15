@@ -1,0 +1,58 @@
+﻿@model List<TandisWebApp.DTOs.AdminCoachMessageRowDto>
+@{
+    ViewData["Title"] = "نظارت پیام‌های مربی-شاگرد";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h4 class="mb-0">🕵️ نظارت پیام‌های مربی ↔ شاگرد</h4>
+    <a href="/Admin/Messages" class="btn btn-outline-secondary btn-sm">🔙 پیام‌های اعضا</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-auto">
+        <input type="text" name="from" value="@ViewBag.FromDate" class="form-control" placeholder="از تاریخ" />
+    </div>
+    <div class="col-auto">
+        <input type="text" name="to" value="@ViewBag.ToDate" class="form-control" placeholder="تا تاریخ" />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-primary">🔍 فیلتر</button>
+    </div>
+</form>
+
+@if (Model.Count == 0)
+{
+    <div class="alert alert-info">در این بازه پیامی بین مربی‌ها و شاگردان رد و بدل نشده.</div>
+}
+else
+{
+    <div class="card">
+        <div class="table-responsive">
+            <table class="table table-striped mb-0 align-middle">
+                <thead>
+                    <tr>
+                        <th>تاریخ</th>
+                        <th>ساعت</th>
+                        <th>مربی</th>
+                        <th>شاگرد</th>
+                        <th>عنوان</th>
+                        <th>متن پیام</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var msg in Model)
+                    {
+                        <tr>
+                            <td>@msg.CreationDate</td>
+                            <td>@msg.CreationTime</td>
+                            <td class="fw-bold text-primary">@msg.CoachName</td>
+                            <td>@msg.StudentName</td>
+                            <td>@(msg.Title ?? "-")</td>
+                            <td style="max-width:400px">@msg.Body</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}

@@ -11,10 +11,12 @@ namespace TandisWebApp.Controllers
     public class ProfileController : Controller
     {
         private readonly ProfileService _profile;
+        private readonly MessageService _messages;
 
-        public ProfileController(ProfileService profile)
+        public ProfileController(ProfileService profile , MessageService message)
         {
             _profile = profile;
+            _messages = message;
         }
 
         // ---------- Views ----------
@@ -81,6 +83,29 @@ namespace TandisWebApp.Controllers
 
             Response.Headers["Cache-Control"] = "public, max-age=86400";
             return File(bytes, ProfileService.DetectImageType(bytes));
+        }
+        
+
+        /// <summary>پیام‌های عضو با مربی‌ها</summary>
+        [HttpGet]
+        public async Task<IActionResult> Messages(int? coachID)
+        {
+            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
+            ViewBag.Coaches = await _messages.GetMemberCoachesAsync(memberID);
+            ViewBag.CurrentCoachID = coachID ?? 0;
+            ViewBag.Chat = (coachID.HasValue && coachID.Value > 0)
+                ? await _messages.GetMemberCoachChatAsync(memberID, coachID.Value)
+                : null;
+            return View();
+        }
+
+        /// <summary>ارسال پیام عضو به مربی</summary>
+        [HttpPost]
+        public async Task<IActionResult> SendToCoach(int coachID, string? title, string body)
+        {
+            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
+            await _messages.SendToCoachAsync(memberID, coachID, title, body);
+            return RedirectToAction("Messages", new { coachID });
         }
     }
 }

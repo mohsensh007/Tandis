@@ -25,6 +25,8 @@ namespace TandisWebApp.DTOs
         public string? CreationDate { get; set; }
         public string? CreationTime { get; set; }
         public bool IsRead { get; set; }
+        public int? PeerMemberID { get; set; }   // ✅ طرف مقابل گفتگو (مربی) — null یعنی پیام سیستمی/مدیریت
+        public string? PeerName { get; set; }    // ✅ نام مربی
     }
 
     public class SendMessageRequest

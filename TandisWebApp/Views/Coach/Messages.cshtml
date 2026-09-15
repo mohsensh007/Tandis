@@ -1,0 +1,92 @@
+﻿@model List<TandisWebApp.DTOs.CoachMessageSummaryDto>
+@{
+    ViewData["Title"] = "پیام‌ها";
+    var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">💬 پیام‌های شاگردان</h5>
+    <a href="/Coach" class="btn btn-outline-secondary btn-sm">🔙 داشبورد</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="card">
+        <div class="card-body text-center text-muted py-5">
+            <div style="font-size:3rem">💬</div>
+            هنوز گفتگویی با شاگردان ندارید
+        </div>
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var st in Model)
+        {
+            <div class="col-md-6">
+                <a href="/Coach/Chat?studentID=@st.StudentMemberID" class="text-decoration-none">
+                    <div class="card h-100 chat-card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="chat-avatar">👤</div>
+                                    <div>
+                                        <div class="fw-bold">@st.StudentName</div>
+                                        <div class="small text-muted">@st.Mobile</div>
+                                    </div>
+                                </div>
+                                @if (st.UnreadCount > 0)
+                                {
+                                    <span class="badge bg-danger rounded-pill">@st.UnreadCount.ToString(fa)</span>
+                                }
+                            </div>
+
+                            @if (!string.IsNullOrEmpty(st.LastMessage))
+                            {
+                                <div class="chat-preview mt-2">@st.LastMessage</div>
+                                <div class="small text-muted mt-1">@st.LastMessageDate - @st.LastMessageTime</div>
+                            }
+                            else
+                            {
+                                <div class="chat-preview mt-2 text-muted">هنوز پیامی رد و بدل نشده</div>
+                            }
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .chat-card {
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.12);
+        color: #e9ecef;
+        transition: all .2s;
+    }
+
+        .chat-card:hover {
+            transform: translateY(-3px);
+            background: rgba(255,255,255,.1);
+        }
+
+    .chat-avatar {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        background: linear-gradient(135deg,#6f42c1,#0d6efd);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+    }
+
+    .chat-preview {
+        color: #cbd3da;
+        font-size: .9rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>

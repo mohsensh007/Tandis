@@ -22,6 +22,7 @@ namespace TandisWebApp.Controllers
         {
             var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
             var model = await _coach.GetDashboardAsync(memberID);
+            ViewBag.UnreadMessages = await _coach.GetCoachUnreadCountAsync(memberID);  // ✅ جدید
             return View(model);
         }
         /// <summary>لیست همه کلاس‌های مربی</summary>
@@ -66,6 +67,36 @@ namespace TandisWebApp.Controllers
             var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
             var model = await _coach.GetCommissionReportAsync(memberID, fromDate, toDate);
             return View(model);
+        }
+        /// <summary>لیست پیام‌ها با شاگردان</summary>
+        [HttpGet]
+        public async Task<IActionResult> Messages()
+        {
+            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
+            var model = await _coach.GetMessageSummariesAsync(memberID);
+            return View(model);
+        }
+
+        /// <summary>چت با یک شاگرد</summary>
+        [HttpGet]
+        public async Task<IActionResult> Chat(int studentID)
+        {
+            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
+            var model = await _coach.GetChatAsync(memberID, studentID);
+            if (model == null)
+                return NotFound();
+            return View(model);
+        }
+
+        /// <summary>ارسال پیام به شاگرد</summary>
+        [HttpPost]
+        public async Task<IActionResult> SendMessage(int studentID, string? title, string body)
+        {
+            var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
+            var success = await _coach.SendMessageToStudentAsync(memberID, studentID, title, body);
+            if (success)
+                return RedirectToAction("Chat", new { studentID });
+            return BadRequest();
         }
     }
 

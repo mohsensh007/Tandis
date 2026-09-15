@@ -5,7 +5,6 @@ function loadMemberMessages(showModal) {
         if (!res.success) return;
         var rows = res.data || [];
         var box = $('#messagesList');
-
         if (!rows.length) {
             box.html('<div class="text-center text-muted py-4">پیامی وجود ندارد</div>');
         } else {
@@ -15,9 +14,17 @@ function loadMemberMessages(showModal) {
                 var needToggle = m.body.length > 120;
                 var shortText = needToggle ? m.body.substring(0, 120) + '…' : m.body;
 
+                // ✅ برچسب هوشمند: مربی یا مدیریت
+                var label;
+                if (isIn) {
+                    label = m.peerMemberID ? ('🏋️ از مربی: ' + esc(m.peerName || '')) : '📥 از مدیریت';
+                } else {
+                    label = m.peerMemberID ? ('📤 به مربی: ' + esc(m.peerName || '')) : '📤 به مدیریت';
+                }
+
                 html += '<div class="msg-card p-3 ' + (isIn ? 'msg-in' : 'msg-out') + '">' +
                     '<div class="d-flex justify-content-between align-items-center mb-1">' +
-                    '<strong class="small">' + (isIn ? '📥 از مدیریت' : '📤 به مدیریت') + '</strong>' +
+                    '<strong class="small">' + label + '</strong>' +
                     '<span class="text-muted" style="font-size:11px;">' + esc(m.creationDate || '') + ' ' + esc(m.creationTime || '') + '</span>' +
                     '</div>' +
                     (m.title ? '<div class="fw-bold mb-1">' + esc(m.title) + '</div>' : '') +
@@ -28,12 +35,14 @@ function loadMemberMessages(showModal) {
                         '<a href="#" class="msg-toggle d-block mt-1">مشاهده بیشتر ▼</a>'
                         : '') +
                     '</div>' +
+                    (isIn && m.peerMemberID
+                        ? '<a href="/Profile/Messages?coachID=' + m.peerMemberID + '" class="btn btn-sm btn-outline-success mt-2">💬 مشاهده گفتگو</a>'
+                        : '') +
                     (isIn && !m.isRead ? '<span class="badge bg-danger mt-2">خوانده نشده</span>' : '') +
                     '</div>';
             });
             box.html(html);
         }
-
         if (showModal) {
             bootstrap.Modal.getOrCreateInstance(document.getElementById('memberMessagesModal')).show();
         }
