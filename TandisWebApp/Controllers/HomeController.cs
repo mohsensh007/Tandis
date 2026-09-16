@@ -29,4 +29,10 @@ public class HomeController : Controller
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
+    /// <summary>صفحه گزارش‌ها (مالی + تردد)</summary>
+    [HttpGet]
+    public IActionResult Reports()
+    {
+        return View();
+    }
 }

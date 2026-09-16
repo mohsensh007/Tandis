@@ -18,10 +18,12 @@
             if (mid > 0)
             {
                 unreadCount = await MessageService.GetMemberUnreadCountAsync(mid, rid);
+
+                // ✅ فقط پیام‌های خوانده‌نشده، حداکثر ۳ تا (بدون اسکرول)
                 msgPreview = (await MessageService.GetMemberMessagesAsync(mid, rid))
-                    .Where(x => x.Direction == "in" && !x.IsRead)   // ✅ فقط جدیدها
-                    .Take(3)                                         // ✅ حداکثر ۳ تا
-                     .ToList();
+                    .Where(x => x.Direction == "in" && !x.IsRead)
+                    .Take(3)
+                    .ToList();
             }
         }
         catch { }
@@ -39,6 +41,7 @@
     <meta name="apple-mobile-web-app-title" content="تندیس" />
     <link rel="apple-touch-icon" href="/images/app-icon.png" />
 
+    <!-- جلوگیری از ذخیره‌سازی در کش برای آپدیت‌های سریع‌تر -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -47,6 +50,103 @@
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <link rel="stylesheet" href="~/css/admin-style.css?v=4" />
+
+    <style>
+        /* ===== نوار پایین شناور (فقط موبایل) ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 12px;
+            left: 14px;
+            right: 14px;
+            z-index: 1030;
+            display: flex;
+            justify-content: space-around;
+            align-items: stretch;
+            background: rgba(16, 20, 36, .82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 22px;
+            box-shadow: 0 12px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
+            padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+        }
+
+        .bn-item {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            color: #8a93a6;
+            text-decoration: none;
+            font-size: .66rem;
+            font-weight: 600;
+            padding: 8px 0 5px;
+            transition: color .3s, transform .15s;
+        }
+
+            .bn-item img {
+                width: 26px;
+                height: 26px;
+                object-fit: contain;
+                opacity: .7;
+                filter: grayscale(40%);
+                transition: all .35s cubic-bezier(.22,.9,.35,1.2);
+            }
+
+            .bn-item:active {
+                transform: scale(.92);
+            }
+
+            .bn-item.bn-active {
+                color: #fff;
+            }
+
+                .bn-item.bn-active img {
+                    opacity: 1;
+                    filter: none;
+                    transform: translateY(-2px) scale(1.1);
+                }
+
+        /* ===== نشانگر نورانی سُر‌خور ===== */
+        .bn-glow {
+            position: absolute;
+            top: 5px;
+            left: 0;
+            width: 34px;
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #0d6efd, #6f42c1);
+            box-shadow: 0 0 14px rgba(13,110,253,.9);
+            transform: translateX(-200px) translateX(-50%);
+            transition: transform .5s cubic-bezier(.22,.9,.35,1.15), opacity .3s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+            .bn-glow.show {
+                opacity: 1;
+            }
+
+        /* ===== مودال تأیید خروج ===== */
+        .logout-modal {
+            background: rgba(16, 20, 36, .96);
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 18px;
+            color: #fff;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 20px 50px rgba(0,0,0,.5);
+        }
+
+        /* فاصله محتوا از بار شناور تا چیزی زیرش قایم نشه */
+        @@media (max-width: 767.98px) {
+            body {
+                padding-bottom: 96px;
+            }
+        }
+    </style>
 </head>
 <body class="admin-glass-body">
     @if (!isAuthenticated)
@@ -58,102 +158,93 @@
     }
     else
     {
-        <nav class="navbar navbar-expand-lg navbar-dark">
+        <nav class="navbar navbar-expand-md navbar-dark">
             <div class="container-fluid px-3">
-                <!-- لوگو -->
+                <!-- لوگو: مربی → پنل مربی | بقیه → پنل عضو -->
                 <a class="navbar-brand" href="@(isCoach ? "/Coach" : "/Home")">
                     <img src="~/images/logo2.png" alt="تندیس" height="36" />
                     <span class="d-none d-md-inline">تندیس</span>
                 </a>
 
-                <!-- دکمه همبرگری موبایل -->
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
+                <!-- ✅ دکمه همبرگری حذف شد -->
 
                 <div class="collapse navbar-collapse" id="navbarMain">
+                    <!-- فضای خالی وسط -->
                     <div class="flex-grow-1"></div>
 
+                    <!-- سمت چپ: زنگوله + نام + خروج (فقط از عرض md به بالا) -->
                     <ul class="navbar-nav align-items-center gap-2">
-                        @if (isAuthenticated)
-                        {
-                            <!-- زنگوله -->
-                            <li class="nav-item dropdown">
-                                <a class="nav-link position-relative px-2" href="#" id="memberBell" role="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-bell-fill" style="font-size:20px;"></i>
-                                    @if (unreadCount > 0)
+                        <!-- زنگوله -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link position-relative px-2" href="#" id="memberBell" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-bell-fill" style="font-size:20px;"></i>
+                                @if (unreadCount > 0)
+                                {
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:10px;">@unreadCount</span>
+                                }
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" style="min-width:300px;">
+                                <li class="dropdown-header fw-bold">🔔 پیام‌های جدید</li>
+                                <li><hr class="dropdown-divider"></li>
+
+                                @if (msgPreview.Count == 0)
+                                {
+                                    <li><span class="dropdown-item text-muted small">پیام جدیدی ندارید ✅</span></li>
+                                }
+                                else
+                                {
+                                    @foreach (var pm in msgPreview)
                                     {
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:10px;">@unreadCount</span>
+                                        var label = string.IsNullOrEmpty(pm.Title)
+                                        ? (pm.Body.Length > 40 ? pm.Body.Substring(0, 40) + "…" : pm.Body)
+                                        : pm.Title;
+
+                                        var href = pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0
+                                        ? Url.Action("Messages", "Profile", new { coachID = pm.PeerMemberID.Value })
+                                        : "#";
+                                        var extraClass = pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0 ? "" : "lnk-open-msgs";
+
+                                        <li>
+                                            <a class="dropdown-item small py-2 @extraClass" href="@href">
+                                                <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
+                                                    @if (pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0)
+                                                    {
+                                                        <span class="badge bg-success small">🏋️ از @pm.PeerName</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="badge bg-primary small">📢 از مدیریت</span>
+                                                    }
+                                                    <span class="badge bg-danger" style="font-size:10px;">جدید</span>
+                                                </div>
+                                                <div class="fw-bold text-truncate">@label</div>
+                                                <div class="text-muted" style="font-size:11px;">@pm.CreationDate @pm.CreationTime</div>
+                                            </a>
+                                        </li>
                                     }
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end" style="min-width:300px;">
-                                    <li class="dropdown-header fw-bold">🔔 پیام‌های جدید</li>
-                                    <li><hr class="dropdown-divider"></li>
+                                }
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a href="/Profile/Messages" class="dropdown-item text-center small">💬 مشاهده گفتگوهای مربی</a>
+                                </li>
+                                <li><a class="dropdown-item text-center text-primary fw-bold lnk-open-msgs" href="#">مشاهده همه پیام‌ها</a></li>
+                            </ul>
+                        </li>
 
-                                    @if (msgPreview.Count == 0)
-                                    {
-                                        <li><span class="dropdown-item text-muted small">پیام جدیدی ندارید ✅</span></li>
-                                    }
-                                    else
-                                    {
-                                        @foreach (var pm in msgPreview)
-                                        {
-                                            var label = string.IsNullOrEmpty(pm.Title)
-                                            ? (pm.Body.Length > 40 ? pm.Body.Substring(0, 40) + "…" : pm.Body)
-                                            : pm.Title;
+                        <!-- نام کاربر -->
+                        <li class="nav-item">
+                            <span class="nav-link d-flex align-items-center gap-2">
+                                <i class="bi bi-person-circle"></i>
+                                <span class="d-none d-md-inline">@fullName</span>
+                            </span>
+                        </li>
 
-                                            var href = pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0
-                                            ? Url.Action("Messages", "Profile", new { coachID = pm.PeerMemberID.Value })
-                                            : "#";
-                                            var extraClass = pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0 ? "" : "lnk-open-msgs";
-
-                                            <li>
-                                                <a class="dropdown-item small py-2 @extraClass" href="@href">
-                                                    <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
-                                                        @if (pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0)
-                                                        {
-                                                            <span class="badge bg-success small">🏋️ از @pm.PeerName</span>
-                                                        }
-                                                        else
-                                                        {
-                                                            <span class="badge bg-primary small">📢 از مدیریت</span>
-                                                        }
-                                                        <span class="badge bg-danger" style="font-size:10px;">جدید</span>
-                                                    </div>
-                                                    <div class="fw-bold text-truncate">@label</div>
-                                                    <div class="text-muted" style="font-size:11px;">@pm.CreationDate @pm.CreationTime</div>
-                                                </a>
-                                            </li>
-                                        }
-                                    }
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li>
-                                        <a href="/Profile/Messages" class="dropdown-item text-center small">💬 مشاهده گفتگوهای مربی</a>
-                                    </li>
-                                    <li><a class="dropdown-item text-center text-primary fw-bold lnk-open-msgs" href="#">مشاهده همه پیام‌ها</a></li>
-                                </ul>
-                            </li>
-                            <!-- نام کاربر -->
-                            <li class="nav-item">
-                                <span class="nav-link d-flex align-items-center gap-2">
-                                    <i class="bi bi-person-circle"></i>
-                                    <span class="d-none d-md-inline">@fullName</span>
-                                </span>
-                            </li>
-
-                            <!-- خروج -->
-                            <li class="nav-item">
-                                <a class="nav-link text-danger" href="/Account/Logout" title="خروج">
-                                    <i class="bi bi-box-arrow-right"></i>
-                                </a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="btn btn-outline-light btn-sm" href="/Account/Login">ورود</a>
-                            </li>
-                        }
+                        <!-- خروج (با تأیید) -->
+                        <li class="nav-item">
+                            <a class="nav-link text-danger js-logout" href="/Account/Logout" title="خروج">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -163,9 +254,38 @@
             @RenderBody()
         </div>
 
-        <footer class="border-top text-center py-2 mt-4">
-            <small class="text-muted">سیستم مدیریت باشگاه  &copy; @DateTime.Now.Year</small>
-        </footer>
+        <!-- ✅ فوتر حذف شد -->
+        <!-- ========== نوار پایین شناور (فقط موبایل) ========== -->
+        <nav class="bottom-nav d-md-none" id="bottomNav">
+            <span class="bn-glow" id="bnGlow"></span>
+
+            <a href="@(isCoach ? "/Coach" : "/Home")" class="bn-item" data-key="home">
+                <img src="~/images/Home.webp" alt="خانه" />
+                <span>خانه</span>
+            </a>
+            <a href="/Profile/Messages" class="bn-item" data-key="messages">
+                <span class="position-relative d-inline-block">
+                    <img src="~/images/Notification.webp" alt="پیام‌ها" />
+                    @if (unreadCount > 0)
+                    {
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px;">@unreadCount</span>
+                    }
+                </span>
+                <span>پیام‌ها</span>
+            </a>
+            <a href="/Home/Reports" class="bn-item" data-key="reports">
+                <img src="~/images/Reports.webp" alt="گزارش‌ها" />
+                <span>گزارش‌ها</span>
+            </a>
+            <a href="/Profile" class="bn-item" data-key="profile">
+                <img src="~/images/Profile.webp" alt="پروفایل" />
+                <span>پروفایل</span>
+            </a>
+            <a href="/Account/Logout" class="bn-item js-logout" data-key="exit">
+                <img src="~/images/Exit.webp" alt="خروج" />
+                <span>خروج</span>
+            </a>
+        </nav>
 
         <!-- مودال لیست پیام‌های عضو -->
         <div class="modal fade" id="memberMessagesModal" tabindex="-1">
@@ -218,12 +338,106 @@
             </div>
         </div>
 
+        <!-- مودال تأیید خروج -->
+        <div class="modal fade" id="logoutConfirmModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
+                <div class="modal-content logout-modal">
+                    <div class="modal-body text-center p-4">
+                        <div style="font-size:3rem">🚪</div>
+                        <h6 class="mt-2 mb-1">خروج از حساب</h6>
+                        <p class="small text-muted mb-3">آیا مطمئن هستید که می‌خواهید خارج شوید؟</p>
+                        <div class="d-flex gap-2">
+                            <a href="/Account/Logout" class="btn btn-danger btn-sm flex-fill">بله، خارج شو</a>
+                            <button type="button" class="btn btn-secondary btn-sm flex-fill" data-bs-dismiss="modal">انصراف</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script src="~/lib/jquery/dist/jquery.min.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
         <script src="~/js/jalali-calendar.js"></script>
         <script src="~/js/site.js?v=3.2"></script>
         <script src="~/js/member-messages.js" asp-append-version="true"></script>
+
+        <!-- ✅ نشانگر سُر‌خور نوار پایین -->
         <script>
+            (function () {
+                var bar = document.getElementById('bottomNav');
+                if (!bar) return;
+                var glow = document.getElementById('bnGlow');
+                var items = Array.prototype.slice.call(bar.querySelectorAll('.bn-item'));
+                if (!glow || !items.length) return;
+
+                // --- تشخیص بخش فعلی از روی URL ---
+                var path = window.location.pathname.toLowerCase();
+                var currentKey = 'home';
+                if (path.indexOf('/home/reports') === 0) {
+                    currentKey = 'reports';
+                } else if (path.indexOf('/profile/messages') === 0 || path.indexOf('/coach/messages') === 0 || path.indexOf('/coach/chat') === 0) {
+                    currentKey = 'messages';
+                } else if (path.indexOf('/profile') === 0) {
+                    currentKey = 'profile';
+                }
+
+                function findItem(key) {
+                    for (var i = 0; i < items.length; i++) {
+                        if (items[i].getAttribute('data-key') === key) return items[i];
+                    }
+                    return null;
+                }
+
+                var current = findItem(currentKey);
+                var lastKey = sessionStorage.getItem('bnLastKey');
+                var lastItem = lastKey ? findItem(lastKey) : null;
+
+                function centerOf(item) {
+                    return item.offsetLeft + item.offsetWidth / 2;
+                }
+
+                function placeAt(item, animate) {
+                    if (!item) return;
+                    if (!animate) glow.style.transition = 'none';
+                    glow.style.transform = 'translateX(' + centerOf(item) + 'px) translateX(-50%)';
+                    if (!animate) {
+                        void glow.offsetWidth;          // force reflow
+                        glow.style.transition = '';
+                    }
+                    glow.classList.add('show');
+                }
+
+                // --- علامت‌گذاری آیتم فعال ---
+                items.forEach(function (i) { i.classList.toggle('bn-active', i === current); });
+
+                if (current) {
+                    if (lastItem && lastItem !== current) {
+                        // ✅ افکت: از روی آیتم صفحه قبلی سُر می‌خوره به آیتم فعلی
+                        placeAt(lastItem, false);
+                        requestAnimationFrame(function () {
+                            requestAnimationFrame(function () { placeAt(current, true); });
+                        });
+                    } else {
+                        placeAt(current, false);
+                    }
+                }
+
+                sessionStorage.setItem('bnLastKey', currentKey);
+
+                window.addEventListener('resize', function () { placeAt(current, false); });
+            })();
+        </script>
+
+        <!-- ✅ تأیید خروج: به جای خروج مستقیم، مودال سؤال می‌پرسه -->
+        <script>
+            $(document).on('click', '.js-logout', function (e) {
+                e.preventDefault();
+                new bootstrap.Modal(document.getElementById('logoutConfirmModal')).show();
+            });
+        </script>
+
+        <script>
+            // ✅ ناوبری ماه‌های تقویم (کپی از پنل ادمین)
             $('#prevMonth').click(function () {
                 calendarDate.m++;
                 if (calendarDate.m > 12) { calendarDate.m = 1; calendarDate.y++; }
@@ -235,12 +449,15 @@
                 renderCalendar();
             });
 
+            // ✅ تابع باز کردن تقویم (نسخه واقعی)
             function openCalendar(inputId, title, allowPast) {
                 $('#calendarTitle').text(title || 'انتخاب تاریخ');
                 initCalendar(inputId, null, allowPast || false);
                 new bootstrap.Modal('#datePickerModal').show();
             }
         </script>
+
+        <!-- ✅ اضافه شد -->
         @await RenderSectionAsync("Scripts", required: false)
     }
 </body>

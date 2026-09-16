@@ -783,3 +783,21 @@ body {
     justify-content: center !important;
     z-index: 999999 !important;
 }
+.bn-item img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+    opacity: .7;
+    filter: grayscale(40%);
+    transition: all .35s cubic-bezier(.22,.9,.35,1.2);
+    /* ✅ جدید: حذف هرگونه پس‌زمینه سفید */
+    background: transparent;
+    mix-blend-mode: normal;
+}
+
+.bn-item.bn-active img {
+    opacity: 1;
+    filter: none;
+    transform: translateY(-2px) scale(1.1);
+}
+

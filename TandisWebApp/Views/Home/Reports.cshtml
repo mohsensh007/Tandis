@@ -1,0 +1,259 @@
+﻿@{
+    ViewData["Title"] = "گزارش‌ها";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">📊 گزارش‌های من</h5>
+    <a href="/Home" class="btn btn-outline-secondary btn-sm">🔙 خانه</a>
+</div>
+
+<div class="card">
+    <div class="card-header coach-list-header">📊 گزارش‌ها</div>
+    <div class="card-body">
+        <ul class="nav nav-tabs nav-tabs-custom mb-3" id="reportTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="finance-tab" data-bs-toggle="tab" data-bs-target="#financePane" type="button" role="tab">💰 گزارش مالی</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="traffic-tab" data-bs-toggle="tab" data-bs-target="#trafficPane" type="button" role="tab">🚪 گزارش تردد</button>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <!-- ========== تب مالی (بدون تغییر) ========== -->
+            <div class="tab-pane fade show active" id="financePane" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table report-table">
+                        <thead>
+                            <tr>
+                                <th>تاریخ</th>
+                                <th>نوع</th>
+                                <th>شرح</th>
+                                <th class="text-end">مبلغ</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financeRows">
+                            <tr><td colspan="4" class="empty-state">⏳ در حال بارگذاری...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ========== تب تردد: لیست سلولی بازشو ========== -->
+            <div class="tab-pane fade" id="trafficPane" role="tabpanel">
+                <div id="trafficRows">
+                    <div class="text-center text-muted py-4">⏳ در حال بارگذاری...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .coach-list-header {
+        background: linear-gradient(135deg, #6f42c1, #0d6efd);
+        color: #fff;
+        font-weight: 800;
+    }
+
+    /* ===== کارت‌های سلولی تردد ===== */
+    .trf-card {
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 14px;
+        margin-bottom: 10px;
+        overflow: hidden;
+    }
+
+    .trf-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        cursor: pointer;
+    }
+
+    .trf-num {
+        flex: 0 0 auto;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6f42c1, #0d6efd);
+        color: #fff;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .78rem;
+        box-shadow: 0 4px 10px rgba(30,111,217,.35);
+    }
+
+    .trf-mid {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .trf-line {
+        font-size: .8rem;
+        color: #cbd3da;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+        .trf-line b {
+            color: #fff;
+        }
+
+    .trf-toggle {
+        flex: 0 0 auto;
+        background: rgba(255,255,255,.08);
+        border: none;
+        color: #9bd7f7;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        transition: transform .25s, background .25s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .trf-card.open .trf-toggle {
+        transform: rotate(-90deg); /* فلش می‌چرخه پایین */
+        background: rgba(13,110,253,.35);
+        color: #fff;
+    }
+
+    .trf-details {
+        display: none;
+        padding: 10px 12px 12px;
+        border-top: 1px dashed rgba(255,255,255,.15);
+        background: rgba(0,0,0,.15);
+    }
+
+    .trf-drow {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: .78rem;
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+        .trf-drow:last-child {
+            border-bottom: none;
+        }
+
+        .trf-drow span {
+            color: #8a93a6;
+        }
+
+        .trf-drow b {
+            color: #e9ecef;
+            font-weight: 700;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        var faDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+        function toFa(n) { return String(n).replace(/[0-9]/g, function(d){ return faDigits[d]; }); }
+        function fmtNum(n) { return Number(n || 0).toLocaleString('fa-IR'); }
+
+        function esc(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // ========== گزارش مالی ==========
+        function loadFinance() {
+            apiCall('/api/Accounting/FinanceDocs', 'GET', null, function (res) {
+                var $rows = $('#financeRows');
+                if (!res.success || !res.data || res.data.length === 0) {
+                    $rows.html('<tr><td colspan="4" class="empty-state"><div class="empty-icon">💰</div>هیچ تراکنشی یافت نشد</td></tr>');
+                    return;
+                }
+                var html = '';
+                $.each(res.data, function (i, d) {
+                    var isCredit = d.docType === 'بستانکار';
+                    var sign = isCredit ? '+' : '-';
+                    var colorClass = isCredit ? 'text-success' : 'text-danger';
+                    var badge = isCredit ? 'badge-credit' : 'badge-debit';
+                    var dateStr = d.creationDateDisplay || '-';
+                    html += '<tr>' +
+                        '<td>' + esc(dateStr) + '</td>' +
+                        '<td><span class="' + badge + '">' + esc(d.docType) + '</span></td>' +
+                        '<td>' + esc(d.docDesc || '-') + '</td>' +
+                        '<td class="text-end fw-bold ' + colorClass + '">' + sign + ' ' + fmtNum(d.amount) + ' ریال</td>' +
+                        '</tr>';
+                });
+                $rows.html(html);
+            });
+        }
+        loadFinance();
+
+        // ========== محاسبه مدت حضور ==========
+        function calcDuration(inT, outT) {
+            if (!inT || !outT) return '';
+            function toMin(s) {
+                var p = String(s).split(':');
+                return (+p[0]) * 60 + (+p[1]);
+            }
+            var d = toMin(outT) - toMin(inT);
+            if (d < 0 || isNaN(d)) return '';
+            var h = Math.floor(d / 60), m = d % 60;
+            return (h ? toFa(h) + ' ساعت و ' : '') + toFa(m) + ' دقیقه';
+        }
+
+        
+                // ========== گزارش تردد: کارت‌های سلولی ==========
+        function loadTraffic() {
+            apiCall('/api/Accounting/TrafficReport', 'GET', null, function (res) {
+                var $box = $('#trafficRows');
+                if (!res.success || !res.data || res.data.length === 0) {
+                    $box.html('<div class="text-center text-muted py-4"><div style="font-size:2.5rem">🚪</div>هیچ ترددی ثبت نشده</div>');
+                    return;
+                }
+                var html = '';
+                $.each(res.data, function (i, t) {
+                    var rowNo = toFa(i + 1);   // ✅ شماره ردیف ترتیبی (۱، ۲، ۳ ...)
+                    var dur = calcDuration(t.entryTime, t.exitTime);
+                    html +=
+                    '<div class="trf-card">' +
+                        '<div class="trf-head">' +
+                            '<div class="trf-num">' + rowNo + '</div>' +   // ✅ دایره = ردیف ترتیبی
+                            '<div class="trf-mid">' +
+                                '<div class="trf-line">📥 ورود: ' + esc(t.entryDate || '-') + ' <b>' + esc(t.entryTime || '-') + '</b></div>' +
+                                '<div class="trf-line">📤 خروج: ' + esc(t.exitDate || '-') + ' <b>' + esc(t.exitTime || '-') + '</b></div>' +
+                            '</div>' +
+                            '<button type="button" class="trf-toggle"><i class="bi bi-chevron-left"></i></button>' +
+                        '</div>' +
+                        '<div class="trf-details">' +
+                            '<div class="trf-drow"><span>🗄️ شماره کمد</span><b>' + (t.boxID != null ? toFa(t.boxID) : 'بدون کمد') + '</b></div>' +  // ✅ جزئیات = کمد
+                            '<div class="trf-drow"><span>تاریخ ورود</span><b>' + esc(t.entryDate || '-') + '</b></div>' +
+                            '<div class="trf-drow"><span>ساعت ورود</span><b>' + esc(t.entryTime || '-') + '</b></div>' +
+                            '<div class="trf-drow"><span>تاریخ خروج</span><b>' + esc(t.exitDate || '-') + '</b></div>' +
+                            '<div class="trf-drow"><span>ساعت خروج</span><b>' + esc(t.exitTime || '-') + '</b></div>' +
+                            (dur ? '<div class="trf-drow"><span>⏱️ مدت حضور</span><b>' + dur + '</b></div>' : '') +
+                        '</div>' +
+                    '</div>';
+                });
+                $box.html(html);
+            });
+        }
+ 
+        loadTraffic();
+
+        // ========== باز/بسته کردن جزئیات با کلیک روی کارت یا فلش ==========
+        $(function () {
+            $('#trafficRows').off('click', '.trf-head').on('click', '.trf-head', function () {
+                var $card = $(this).closest('.trf-card');
+                $card.toggleClass('open');
+                $card.find('.trf-details').slideToggle(200);
+            });
+        });
+    </script>
+}

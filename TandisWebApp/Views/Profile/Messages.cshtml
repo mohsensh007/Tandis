@@ -1,18 +1,34 @@
 ﻿@{
-    ViewData["Title"] = "پیام‌های مربی";
+    ViewData["Title"] = "پیام‌های من";
     var coaches = ViewBag.Coaches as List<TandisWebApp.DTOs.MemberCoachDto> ?? new List<TandisWebApp.DTOs.MemberCoachDto>();
     var chat = ViewBag.Chat as TandisWebApp.DTOs.CoachChatDto;
     var currentCoachID = (int)(ViewBag.CurrentCoachID ?? 0);
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0">💬 پیام‌های مربی</h5>
+    <h5 class="mb-0">💬 پیام‌های من</h5>
     <a href="/Home" class="btn btn-outline-secondary btn-sm">🔙 داشبورد</a>
 </div>
 
 <div class="row g-3">
-    <!-- لیست مربی‌ها -->
+    <!-- ========== ستون راست ========== -->
     <div class="col-md-4">
+
+        <!-- ✅ کارت ارسال پیام به مدیریت — بالای همه تا همیشه دیده بشه -->
+        <div class="card coach-list-card mb-3">
+            <div class="card-header coach-list-header">✉️ پیام به مدیریت</div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <input type="text" id="txtAdminTitle" class="form-control" placeholder="عنوان (اختیاری)" maxlength="200" />
+                </div>
+                <div class="mb-2">
+                    <textarea id="txtAdminBody" class="form-control" rows="3" placeholder="متن پیام..."></textarea>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm w-100" id="btnSendAdmin">📤 ارسال به مدیریت</button>
+            </div>
+        </div>
+
+        <!-- لیست مربی‌ها -->
         <div class="card coach-list-card">
             <div class="card-header coach-list-header">🏋️ مربی‌های من</div>
             <div class="card-body p-2">
@@ -43,21 +59,16 @@
         </div>
     </div>
 
-    <!-- گفتگو -->
+    <!-- ========== ستون چپ ========== -->
     <div class="col-md-8">
-        @if (chat == null)
+        @if (chat != null)
         {
-            <div class="card coach-list-card">
-                <div class="card-body text-center text-muted py-5">
-                    <div style="font-size:3rem">💬</div>
-                    از ستون سمت راست یک مربی را انتخاب کنید
-                </div>
-            </div>
-        }
-        else
-        {
+            <!-- گفتگو با مربی -->
             <div class="card coach-list-card mb-3">
-                <div class="card-header coach-list-header">گفتگو با @chat.StudentName</div>
+                <div class="card-header coach-list-header d-flex justify-content-between align-items-center">
+                    <span>گفتگو با @chat.StudentName</span>
+                    <a href="/Profile/Messages" class="btn btn-sm btn-outline-light">📢 پیام‌های مدیریت</a>
+                </div>
                 <div class="card-body" style="max-height:400px; overflow-y:auto;">
                     @if (chat.Messages.Count == 0)
                     {
@@ -79,8 +90,21 @@
                     <form method="post" asp-action="SendToCoach" asp-controller="Profile">
                         <input type="hidden" name="coachID" value="@currentCoachID" />
                         <textarea name="body" rows="2" class="form-control mb-2" placeholder="پیام خود را بنویسید..." required></textarea>
-                        <button type="submit" class="btn btn-primary btn-sm">📤 ارسال</button>
+                        <button type="submit" class="btn btn-primary btn-sm">📤 ارسال به مربی</button>
                     </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- پیام‌های مدیریت -->
+            <div class="card coach-list-card">
+                <div class="card-header coach-list-header d-flex justify-content-between align-items-center">
+                    <span>📢 پیام‌های مدیریت</span>
+                    <button type="button" class="btn btn-sm btn-outline-light" id="btnMarkAll">✅ خواندن همه</button>
+                </div>
+                <div class="card-body" style="max-height:520px; overflow-y:auto;">
+                    <div id="adminMsgsList" class="text-center text-muted py-4">در حال بارگذاری...</div>
                 </div>
             </div>
         }
@@ -138,4 +162,99 @@
             background: rgba(255,255,255,.12);
             color: #e9ecef;
         }
+
+    .admin-msg {
+        border-radius: 12px;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.10);
+    }
+
+        .admin-msg.msg-out {
+            background: rgba(13,110,253,.10);
+            border-color: rgba(13,110,253,.25);
+        }
 </style>
+
+@section Scripts {
+    <script>
+        function esc(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // ========== بارگذاری پیام‌های مدیریت ==========
+        function loadAdminMsgs() {
+            apiCall('/api/Account/Messages', 'GET', null, function (res) {
+                var $box = $('#adminMsgsList');
+                if (!$box.length) return;
+                if (!res.success) { $box.html('<div class="text-center text-muted py-4">خطا در بارگذاری پیام‌ها</div>'); return; }
+
+                // فقط پیام‌های سیستمی/مدیریت (بدون گفتگوی مربی)
+                var rows = (res.data || []).filter(function (m) { return !m.peerMemberID; });
+
+                if (!rows.length) {
+                    $box.html('<div class="text-center text-muted py-4">پیامی وجود ندارد</div>');
+                    return;
+                }
+
+                var html = '';
+                rows.forEach(function (m) {
+                    var isIn = m.direction === 'in';
+                    html += '<div class="admin-msg p-3 mb-2 ' + (isIn ? '' : 'msg-out') + '">' +
+                        '<div class="d-flex justify-content-between align-items-center mb-1">' +
+                            '<strong class="small">' + (isIn ? '📥 از مدیریت' : '📤 به مدیریت') + '</strong>' +
+                            '<span class="text-muted" style="font-size:11px;">' + esc(m.creationDate || '') + ' ' + esc(m.creationTime || '') + '</span>' +
+                        '</div>' +
+                        (m.title ? '<div class="fw-bold mb-1">' + esc(m.title) + '</div>' : '') +
+                        '<div class="small">' + esc(m.body) + '</div>' +
+                        (isIn && !m.isRead ? '<span class="badge bg-danger mt-2">خوانده نشده</span>' : '') +
+                    '</div>';
+                });
+                $box.html(html);
+            });
+        }
+
+        $(function () {
+            // بارگذاری پیام‌های مدیریت (اگه بخشش توی صفحه هست)
+            loadAdminMsgs();
+
+            // ========== ✅ ارسال پیام به مدیریت ==========
+            $('#btnSendAdmin').off('click').on('click', function () {
+                var title = $('#txtAdminTitle').val();
+                var body = $('#txtAdminBody').val();
+                if (!body || !body.trim()) { showToast('متن پیام را وارد کنید', 'error'); return; }
+
+                apiCall('/api/Account/Messages/Send', 'POST', { title: title, body: body }, function (res) {
+                    if (res.success) {
+                        showToast(res.message || 'پیام شما برای مدیریت ارسال شد', 'success');
+                        $('#txtAdminTitle').val('');
+                        $('#txtAdminBody').val('');
+                        loadAdminMsgs();
+                    } else {
+                        showToast(res.message || 'خطا در ارسال پیام', 'error');
+                    }
+                });
+            });
+
+            // ========== ✅ خواندن همه پیام‌ها ==========
+            $('#btnMarkAll').off('click').on('click', function () {
+                apiCall('/api/Account/Messages', 'GET', null, function (res) {
+                    if (!res.success) return;
+                    var unread = (res.data || []).filter(function (m) { return m.direction === 'in' && !m.isRead; });
+                    if (!unread.length) { showToast('پیام خوانده‌نشده‌ای ندارید', 'info'); return; }
+
+                    var done = 0;
+                    unread.forEach(function (m) {
+                        apiCall('/api/Account/Messages/Read', 'POST', m.messageID, function () {
+                            done++;
+                            if (done === unread.length) {
+                                showToast('همه پیام‌ها خوانده شد', 'success');
+                                loadAdminMsgs();
+                            }
+                        });
+                    });
+                });
+            });
+        });
+    </script>
+}
