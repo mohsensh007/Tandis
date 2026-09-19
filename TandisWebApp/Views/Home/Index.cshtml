@@ -92,6 +92,26 @@
     <div id="cfLabel" class="fw-bold text-center mt-2"></div>
     <div id="cfDots" class="d-flex justify-content-center gap-1 mt-2"></div>
 </div>
+<!-- ✅ دکمه نمایش همه (فقط موبایل) -->
+<div class="text-center mt-2 mb-3 d-md-none">
+    <button type="button" class="btn btn-sm btn-all-menu" id="btnAllMenu">
+        <i class="bi bi-grid-3x3-gap-fill me-1"></i> نمایش همه
+    </button>
+</div>
+
+<!-- ========== منوی همه بخش‌ها (اورلی تمام‌صفحه) ========== -->
+<div class="allmenu-overlay" id="allMenuOverlay">
+    <div class="allmenu-backdrop"></div>
+    <div class="allmenu-panel">
+        <div class="allmenu-header">
+            <span class="fw-bold">همه بخش‌ها</span>
+            <button type="button" class="allmenu-close" id="btnCloseMenu" title="بستن">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+        <div class="allmenu-grid" id="allMenuGrid"></div>
+    </div>
+</div>
 
 <style>
     /* ===== هدر پروفایل ===== */
@@ -312,13 +332,223 @@
         .credit-amount.is-credit .credit-unit {
             color: #9ed4b4;
         }
+    /* ===== دکمه نمایش همه ===== */
+    .btn-all-menu {
+        background: rgba(255,255,255,.10);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 6px 18px;
+        font-weight: 700;
+        backdrop-filter: blur(8px);
+    }
+
+        .btn-all-menu:active {
+            transform: scale(.95);
+        }
+
+    /* ===== بلور کل صفحه وقتی منو بازه ===== */
+    body > * {
+        transition: filter .35s ease;
+    }
+
+    body.menu-open {
+        overflow: hidden;
+    }
+
+        body.menu-open > *:not(#allMenuOverlay) {
+            filter: blur(10px) saturate(.85);
+            pointer-events: none;
+        }
+
+    /* ===== اورلی منوی همه بخش‌ها ===== */
+    .allmenu-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1055;
+        display: none;
+    }
+
+    .allmenu-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(8,12,24,.45);
+        opacity: 0;
+        transition: opacity .3s;
+    }
+
+    .allmenu-overlay.open .allmenu-backdrop {
+        opacity: 1;
+    }
+
+    .allmenu-panel {
+        position: absolute;
+        inset: 0;
+        padding: 18px 16px calc(24px + env(safe-area-inset-bottom));
+        overflow-y: auto;
+    }
+
+    .allmenu-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #fff;
+        font-size: 1rem;
+        margin-bottom: 16px;
+    }
+
+    .allmenu-close {
+        background: rgba(255,255,255,.12);
+        border: none;
+        color: #fff;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+    }
+
+    .allmenu-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    @@media (min-width: 576px) {
+        .allmenu-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
+
+    /* آیتم‌ها: خط‌به‌خط از پایین میان بالا */
+    .allmenu-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 16px 6px;
+        border-radius: 16px;
+        background: rgba(255,255,255,.09);
+        border: 1px solid rgba(255,255,255,.14);
+        color: #e9ecef;
+        text-decoration: none;
+        font-size: .78rem;
+        font-weight: 600;
+        backdrop-filter: blur(6px);
+        opacity: 0;
+        transform: translateY(28px) scale(.95);
+        transition: opacity .4s ease, transform .45s cubic-bezier(.22,.9,.35,1.15);
+    }
+
+    .allmenu-overlay.open .allmenu-item {
+        opacity: 1;
+        transform: none;
+    }
+
+    .allmenu-item .am-icon {
+        font-size: 1.9rem;
+        line-height: 1;
+    }
+
+    .allmenu-item:active {
+        transform: scale(.94);
+    }
+    /* ===== استیکرها: تک‌رنگ آبی ===== */
+    .am-icon, .cf-icon, .nav-icon {
+        filter: grayscale(1) sepia(1) hue-rotate(190deg) saturate(4) brightness(1.05);
+    }
+    /* ===== کارت سانس فعال (طراحی جدید) ===== */
+    .sans-card {
+        position: relative;
+        border-radius: 20px;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        padding: 16px;
+        overflow: hidden;
+    }
+
+        .sans-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: -40px;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(46,134,222,.30), transparent 70%);
+            pointer-events: none;
+        }
+
+    .sans-name {
+        font-weight: 800;
+        font-size: 1.02rem;
+        color: #fff;
+    }
+
+    .sans-coach {
+        font-size: .8rem;
+        color: #9fb3c8;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 4px;
+    }
+
+        .sans-coach i {
+            color: #66d3e8;
+        }
+
+    .sans-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(13,110,253,.14);
+        border: 1px solid rgba(13,110,253,.30);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+        .sans-pill i {
+            color: #66d3e8;
+            font-size: .85rem;
+        }
+
+    .sans-meta {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        font-size: .78rem;
+        color: #9fb3c8;
+    }
+
+        .sans-meta i {
+            color: #66d3e8;
+            margin-left: 4px;
+        }
+
+    .sans-remain {
+        font-weight: 800;
+        color: #fff;
+    }
+    /* ===== آیکن و بج هدر سانس‌ها: آبی یکدست ===== */
+    .hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
+        font-size: 1rem;
+    }
+
+    .hd-badge {
+        background: rgba(13,110,253,.25);
+        border: 1px solid rgba(102,211,232,.45);
+        color: #dce9ff;
+        font-weight: 700;
+    }
 </style>
 
 <!-- ========== سانس‌های فعال ========== -->
 <div class="card mb-3">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <span>🎟️ سانس‌های فعال شما</span>
-        <span class="badge bg-light text-dark" id="activeSansesCount">۰</span>
+        <span><i class="bi bi-ticket-perforated-fill hd-icon"></i> سانس‌های فعال شما</span>
+        <span class="badge hd-badge" id="activeSansesCount">۰</span>
     </div>
     <div class="card-body">
         <div id="activeSanses" class="row g-3">
@@ -396,23 +626,62 @@
         function toFa(n) { return String(n).replace(/[0-9]/g, function(d){ return faDigits[d]; }); }
         function fmtNum(n) { return Number(n || 0).toLocaleString('fa-IR'); }
 
+                // ========== منوی «نمایش همه» ==========
+        (function () {
+            var overlay = document.getElementById('allMenuOverlay');
+            if (!overlay) return;
+
+            // ✅ منتقل کن به body تا خودش بلور نشه
+            document.body.appendChild(overlay);
+
+            // ساخت آیتم‌ها از روی همون منوی اصلی (بدون تکرار markup)
+            var $grid = $('#allMenuGrid');
+            $('#navMenu .nav-card').each(function (i) {
+                var href = $(this).attr('href');
+                var icon = $(this).find('.nav-icon').html();
+                var title = $(this).find('.nav-title').text();
+                $grid.append(
+                    '<a class="allmenu-item" style="transition-delay:' + (i * 50) + 'ms" href="' + href + '">' +
+                        '<span class="am-icon">' + icon + '</span>' +
+                        '<span>' + title + '</span>' +
+                    '</a>'
+                );
+            });
+
+            function openMenu() {
+                document.body.classList.add('menu-open');
+                overlay.style.display = 'block';
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () { overlay.classList.add('open'); });
+                });
+            }
+
+            function closeMenu() {
+                overlay.classList.remove('open');
+                document.body.classList.remove('menu-open');
+                setTimeout(function () { overlay.style.display = 'none'; }, 350);
+            }
+
+            $('#btnAllMenu').on('click', openMenu);
+            $('#btnCloseMenu').on('click', closeMenu);
+            $('.allmenu-backdrop').on('click', closeMenu);
+            $(document).on('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+        })();
         // --- ساخت دایره درصدی SVG ---
-        function buildCircle(pct, used, total, remaining) {
-            var r = 36, cx = 40, cy = 40;
+          function buildCircle(pct, used, total, remaining) {
+            var r = 30, cx = 36, cy = 36;
             var c = 2 * Math.PI * r;
             var offset = c - (pct / 100) * c;
-            var color = pct >= 90 ? '#cb356b' : pct >= 70 ? '#f7971e' : '#11998e';
-            return '<div class="d-flex flex-column align-items-center gap-2" style="min-width:110px">' +
-                '<svg viewBox="0 0 80 80" width="90" height="90">' +
-                '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#e9ecef" stroke-width="7"/>' +
+            var color = pct >= 90 ? '#ff6b81' : pct >= 70 ? '#ffa94d' : '#38d9a9';
+            return '<div class="d-flex flex-column align-items-center" style="min-width:86px">' +
+                '<svg viewBox="0 0 72 72" width="84" height="84">' +
+                '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="7"/>' +
                 '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="7" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 ' + cx + ' ' + cy + ')" style="transition:stroke-dashoffset 1s ease"/>' +
-                '<text x="' + cx + '" y="' + (cy - 4) + '" text-anchor="middle" dominant-baseline="middle" fill="#2c3e50" font-size="16" font-weight="700" font-family="Tahoma">' + toFa(pct) + '٪</text>' +
-                '<text x="' + cx + '" y="' + (cy + 14) + '" text-anchor="middle" fill="#6c757d" font-size="8" font-family="Tahoma">مصرف شده</text>' +
+                '<text x="' + cx + '" y="' + (cy - 2) + '" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-size="15" font-weight="800" font-family="Tahoma">' + toFa(pct) + '٪</text>' +
+                '<text x="' + cx + '" y="' + (cy + 13) + '" text-anchor="middle" fill="#9fb3c8" font-size="7" font-family="Tahoma">مصرف شده</text>' +
                 '</svg>' +
-                '<div class="text-center">' +
-                '<div class="fw-bold" style="color:' + color + ' ;font-size:1.1rem;">' + toFa(remaining) + ' جلسه باقی‌مانده</div>' +
-                '<div class="text-muted small">مصرف: ' + toFa(used) + ' از ' + toFa(total) + '</div>' +
-                '</div>' +
+                '<div class="sans-remain mt-1" style="font-size:.8rem;">' + toFa(remaining) + ' جلسه مانده</div>' +
+                '<div style="font-size:.68rem; color:#9fb3c8;">مصرف: ' + toFa(used) + ' از ' + toFa(total) + '</div>' +
                 '</div>';
         }
 
@@ -465,7 +734,7 @@
         loadDashboardCredits();
 
         // ✅ اگه عدد بلند بود، فونت رو خودکار کوچیک می‌کنه تا هرگز نشکنه
-        function fitCreditValues() {
+                function fitCreditValues() {
             document.querySelectorAll('.credit-value').forEach(function (el) {
                 el.style.fontSize = '';
                 var size = 1.05;
@@ -478,7 +747,7 @@
         window.addEventListener('resize', fitCreditValues);
         loadDashboardCredits();
 
-        // --- بارگذاری سانس‌های فعال ---
+        // --- بارگذاری سانس‌های فعال (طراحی جدید: کارت شیشه‌ای + pills آبی + آیکن تقویم) ---
         apiCall('/api/Register/ActiveSanses', 'GET', null, function (res) {
             var $box = $('#activeSanses');
             if (!res.success || !res.data || res.data.length === 0) {
@@ -494,29 +763,24 @@
                 var remaining = Number(s.remainingSessions || 0);
                 var pct = total > 0 ? Math.round((used / total) * 100) : 0;
                 html += '<div class="col-lg-6">' +
-                    '<div class="card session-card h-100">' +
-                    '<div class="session-bg"></div>' +
-                    '<div class="card-body position-relative">' +
-                    '<div class="row align-items-center g-3">' +
-                    '<div class="col-12 col-md-7">' +
-                    '<div class="session-name">' + esc(s.sportName) + ' - ' + esc(s.sanseName) + '</div>' +
-                    '<div class="session-coach mt-1">👤 مربی: ' + esc(s.coachName || '-') + '</div>' +
-                    '<div class="d-flex flex-wrap gap-2 mt-2">' +
-                    (s.startDate ? '<span class="session-end-badge"> شروع: ' + esc(s.startDate) + '</span>' : '') +
-                    '<span class="session-end-badge">📅 پایان: ' + esc(s.endDate || '-') + '</span>' +
+                    '<div class="sans-card h-100">' +
+                        '<div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">' +
+                            '<div style="min-width:0">' +
+                                '<div class="sans-name">' + esc(s.sportName) + ' - ' + esc(s.sanseName) + '</div>' +
+                                '<div class="sans-coach"><i class="bi bi-person-fill"></i> مربی: ' + esc(s.coachName || '-') + '</div>' +
+                            '</div>' +
+                            '<div class="flex-shrink-0">' + buildCircle(pct, used, total, remaining) + '</div>' +
+                        '</div>' +
+                        '<div class="d-flex flex-wrap gap-2 mt-3">' +
+                            (s.startDate ? '<span class="sans-pill"><i class="bi bi-calendar3"></i> شروع: ' + esc(s.startDate) + '</span>' : '') +
+                            '<span class="sans-pill"><i class="bi bi-calendar3"></i> پایان: ' + esc(s.endDate || '-') + '</span>' +
+                        '</div>' +
+                        '<div class="sans-meta mt-2">' +
+                            (s.membershipTypeDesc ? '<span><i class="bi bi-tag-fill"></i>' + esc(s.membershipTypeDesc) + '</span>' : '') +
+                            (s.periodDesc ? '<span><i class="bi bi-stopwatch-fill"></i>' + esc(s.periodDesc) + '</span>' : '') +
+                        '</div>' +
                     '</div>' +
-                    '<div class="mt-2 small" style="opacity:.85">' +
-                    (s.membershipTypeDesc ? '🏷️ ' + esc(s.membershipTypeDesc) : '') +
-                    (s.periodDesc ? ' &nbsp; ⏱️ ' + esc(s.periodDesc) : '') +
-                    '</div>' +
-                    '</div>' +
-                    '<div class="col-12 col-md-5 d-flex justify-content-center">' +
-                    buildCircle(pct, used, total, remaining) +
-                    '</div>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>' +
-                    '</div>';
+                '</div>';
             });
             $box.html(html);
         });

@@ -6,8 +6,8 @@
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0">💬 پیام‌های من</h5>
-    <a href="/Home" class="btn btn-outline-secondary btn-sm">🔙 داشبورد</a>
+    <h5 class="mb-0"><i class="bi bi-chat-dots-fill hd-icon"></i>پیام‌های من</h5>
+    <a href="/Home" class="btn-back-glass"><i class="bi bi-arrow-right"></i> داشبورد</a>
 </div>
 
 <div class="row g-3">
@@ -101,7 +101,7 @@
             <div class="card coach-list-card">
                 <div class="card-header coach-list-header d-flex justify-content-between align-items-center">
                     <span>📢 پیام‌های مدیریت</span>
-                    <button type="button" class="btn btn-sm btn-outline-light" id="btnMarkAll">✅ خواندن همه</button>
+                    <button type="button" class="btn btn-sm btn-outline-light btn-back-glass" id="btnMarkAll">✅ خواندن همه</button>
                 </div>
                 <div class="card-body" style="max-height:520px; overflow-y:auto;">
                     <div id="adminMsgsList" class="text-center text-muted py-4">در حال بارگذاری...</div>
@@ -172,6 +172,47 @@
         .admin-msg.msg-out {
             background: rgba(13,110,253,.10);
             border-color: rgba(13,110,253,.25);
+        }
+
+    .hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
+        font-size: 1.05rem;
+    }
+    /* ===== دکمه بازگشت شیشه‌ای ===== */
+    .btn-back-glass {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 7px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+
+        .btn-back-glass i {
+            color: #66d3e8;
+            transition: transform .25s;
+        }
+
+        .btn-back-glass:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+            border-color: rgba(102,211,232,.45);
+        }
+
+            .btn-back-glass:hover i {
+                transform: translateX(3px);
+            }
+        /* ✅ فلش موقع hover تکون می‌خوره */
+        .btn-back-glass:active {
+            transform: scale(.95);
         }
 </style>
 

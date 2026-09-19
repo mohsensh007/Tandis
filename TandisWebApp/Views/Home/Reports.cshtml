@@ -3,19 +3,19 @@
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0">📊 گزارش‌های من</h5>
-    <a href="/Home" class="btn btn-outline-secondary btn-sm">🔙 خانه</a>
+    <h5 class="mb-0"><i class="bi bi-bar-chart-fill hd-icon "></i> گزارش‌های من</h5>
+    <a href="/Home" class="btn btn-outline-secondary btn-sm btn-back-glass"><i class="bi bi-arrow-bar-right hd-icon"></i>داشبور</a>
 </div>
 
 <div class="card">
-    <div class="card-header coach-list-header">📊 گزارش‌ها</div>
+    <div class="card-header coach-list-header"><i class="bi bi-bar-chart-fill hd-icon"></i> گزارش‌ها</div>
     <div class="card-body">
         <ul class="nav nav-tabs nav-tabs-custom mb-3" id="reportTabs" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="finance-tab" data-bs-toggle="tab" data-bs-target="#financePane" type="button" role="tab">💰 گزارش مالی</button>
+                <button class="nav-link active" id="finance-tab" data-bs-toggle="tab" data-bs-target="#financePane" type="button" role="tab"><i class="bi bi-cash-coin hd-icon"></i>گزارش مالی</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="traffic-tab" data-bs-toggle="tab" data-bs-target="#trafficPane" type="button" role="tab">🚪 گزارش تردد</button>
+                <button class="nav-link" id="traffic-tab" data-bs-toggle="tab" data-bs-target="#trafficPane" type="button" role="tab"><i class="bi bi-door-closed-fill hd-icon"></i>گزارش تردد</button>
             </li>
         </ul>
         <div class="tab-content">
@@ -50,9 +50,11 @@
 
 <style>
     .coach-list-header {
-        background: linear-gradient(135deg, #6f42c1, #0d6efd);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
         color: #fff;
         font-weight: 800;
+        font-size: 1rem;
+        padding: 13px 20px;  
     }
 
     /* ===== کارت‌های سلولی تردد ===== */
@@ -77,7 +79,7 @@
         width: 34px;
         height: 34px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #6f42c1, #0d6efd);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: #fff;
         font-weight: 800;
         display: flex;
@@ -154,6 +156,54 @@
         .trf-drow b {
             color: #e9ecef;
             font-weight: 700;
+        }
+
+    .hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
+        font-size: 1rem;
+    }
+
+    .hd-badge {
+        background: rgba(13,110,253,.25);
+        border: 1px solid rgba(102,211,232,.45);
+        color: #dce9ff;
+        font-weight: 700;
+    }
+
+    .btn-back-glass {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 7px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+
+        .btn-back-glass i {
+            color: #66d3e8;
+            transition: transform .25s;
+        }
+
+        .btn-back-glass:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+            border-color: rgba(102,211,232,.45);
+        }
+
+            .btn-back-glass:hover i {
+                transform: translateX(3px);
+            }
+        /* ✅ فلش موقع hover تکون می‌خوره */
+        .btn-back-glass:active {
+            transform: scale(.95);
         }
 </style>
 
