@@ -1,101 +1,164 @@
+using System.Collections.Concurrent;
+using Microsoft.EntityFrameworkCore;
+using TandisWebApp.Data;
 using TandisWebApp.DTOs;
+using TandisWebApp.Helpers;
 
 namespace TandisWebApp.Services
 {
     // ============================================================
-    //  لایه ارائه‌دهنده مدیران — قابل تعویض با دیتابیس در آینده
+    //  لایه ارائه‌دهنده مدیران
     // ============================================================
 
-    /// <summary>
-    /// ارائه‌دهنده مدیران سیستم.
-    /// فعلاً پیاده‌سازی hardcoded دارد اما رابط ثابت است؛
-    /// در آینده فقط کافی است یک پیاده‌سازی جدید (مثلاً DbAdminUserProvider)
-    /// در DI ثبت شود و این پیاده‌سازی حذف گردد.
-    /// </summary>
     public interface IAdminUserProvider
     {
-        /// <summary>جستجوی مدیر بر اساس نام کاربری و رمز عبور. null = یافت نشد.</summary>
         Task<AdminUserInfo?> FindAsync(string username, string password);
     }
 
-    /// <summary>مدل اطلاعات یک مدیر (از منبع داده خوانده می‌شود).</summary>
     public sealed class AdminUserInfo
     {
-        public short UserID { get; set; }
+        public int UserID { get; set; }
         public string Username { get; set; } = string.Empty;
         public string DisplayName { get; set; } = string.Empty;
         public short ShiftID { get; set; }
+        public bool IsValid { get; set; }
+        public bool MustChangePassword { get; set; }
     }
 
-    /// <summary>
-    /// پیاده‌سازی ثابت (hardcoded) مدیران.
-    /// بعداً با یک پیاده‌سازی مبتنی بر دیتابیس جایگزین می‌شود.
-    /// </summary>
-    public class HardcodedAdminUserProvider : IAdminUserProvider
+    // ============================================================
+    //  پیاده‌سازی مبتنی بر دیتابیس (Sec_Users)
+    // ============================================================
+    public class DbAdminUserProvider : IAdminUserProvider
     {
-        // لیست ثابت مدیران — در آینده از جدول Sec_Users یا مشابه آن خوانده می‌شود.
-        private static readonly AdminUserInfo[] _admins =
-          {
-               new() { UserID = 1, Username = "admin",  DisplayName = "مدیر شیفت ۱ (آقایان)", ShiftID = 1 },
-               new() { UserID = 2, Username = "adminb", DisplayName = "مدیر شیفت ۲ (بانوان)",  ShiftID = 2 }
-          };
+        private readonly FullSportDbContext _db;
+        public DbAdminUserProvider(FullSportDbContext db) { _db = db; }
 
-        // رمز عبور فعلی ثابت — بعداً از دیتابیس خوانده می‌شود.
-        private const string DefaultPassword = "admin";
-
-        public Task<AdminUserInfo?> FindAsync(string username, string password)
+        public async Task<AdminUserInfo?> FindAsync(string username, string password)
         {
-            if (string.IsNullOrWhiteSpace(username) || password == null)
-                return Task.FromResult<AdminUserInfo?>(null);
+            if (string.IsNullOrWhiteSpace(username)) return null;
+            username = username.Trim();
 
-            var match = _admins.FirstOrDefault(a =>
-                string.Equals(a.Username, username.Trim(), StringComparison.OrdinalIgnoreCase)
-                && password == DefaultPassword);
+            var user = await _db.Sec_Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.UserName == username);
+            if (user == null) return null;
 
-            return Task.FromResult(match);
+            var passOk = SecurityHelper.VerifyPassword(password, user.UPassword);
+
+            var mustChange = passOk
+                             && username.Equals("admin", StringComparison.OrdinalIgnoreCase)
+                             && password == "admin";
+
+            return new AdminUserInfo
+            {
+                UserID = user.UserID,
+                Username = user.UserName ?? "",
+                DisplayName = user.UserName ?? "",
+                ShiftID = user.ShiftID ?? 0,
+                IsValid = passOk && user.IsActive == true && user.IsAdmin == true,
+                MustChangePassword = mustChange
+            };
         }
     }
+
+    
 
     // ============================================================
     //  سرویس احراز هویت مدیر
     // ============================================================
 
-    /// <summary>
-    /// احراز هویت مدیران و صدور توکن JWT مجزا از توکن اعضا.
-    /// توکن ادمین دارای Claim های IsAdmin و AdminShiftID است.
-    /// </summary>
+    public class AdminLoginResponse
+    {
+        public string Token { get; set; } = "";
+        public string Username { get; set; } = "";
+        public string DisplayName { get; set; } = "";
+        public short ShiftID { get; set; }
+        public bool MustChangePassword { get; set; }
+    }
+
     public class AdminAuthService
     {
         private readonly IAdminUserProvider _provider;
         private readonly JwtService _jwt;
         private readonly ILogger<AdminAuthService> _logger;
+        private readonly FullSportDbContext _db;   // ✅ جدید: برای ChangePassword
+
+        // ===== قفل پس از تلاش ناموفق =====
+        private static readonly ConcurrentDictionary<string, (int Count, DateTime Last)> _fails = new();
+        public const int MaxFails = 5;
+        public static readonly TimeSpan LockDuration = TimeSpan.FromMinutes(10);
 
         public AdminAuthService(
             IAdminUserProvider provider,
             JwtService jwt,
-            ILogger<AdminAuthService> logger)
+            ILogger<AdminAuthService> logger,
+            FullSportDbContext db)   // ✅ جدید
         {
             _provider = provider;
             _jwt = jwt;
             _logger = logger;
+            _db = db;
         }
 
-        /// <summary>ورود مدیر و تولید توکن JWT.</summary>
-        public async Task<ApiResponse<AdminLoginResponse>> LoginAsync(AdminLoginRequest req)
+        private static string FailKey(string user, string ip) => (user + "|" + ip).ToLower();
+
+        private static bool IsLocked(string user, string ip)
+        {
+            if (!_fails.TryGetValue(FailKey(user, ip), out var f)) return false;
+            if (DateTime.Now - f.Last > LockDuration) { _fails.TryRemove(FailKey(user, ip), out _); return false; }
+            return f.Count >= MaxFails;
+        }
+
+        private static void RecordFail(string user, string ip) =>
+            _fails.AddOrUpdate(FailKey(user, ip), (1, DateTime.Now), (_, old) => (old.Count + 1, DateTime.Now));
+
+        private static void ClearFails(string user, string ip) => _fails.TryRemove(FailKey(user, ip), out _);
+
+        private static int RemainingMinutes(string user, string ip)
+        {
+            if (!_fails.TryGetValue(FailKey(user, ip), out var f)) return 0;
+            var left = LockDuration - (DateTime.Now - f.Last);
+            return left > TimeSpan.Zero ? (int)Math.Ceiling(left.TotalMinutes) : 0;
+        }
+
+        /// <summary>ورود مدیر و تولید توکن JWT (با قفل + پیام عمومی)</summary>
+        public async Task<ApiResponse<AdminLoginResponse>> LoginAsync(AdminLoginRequest req, string ip = "")
         {
             try
             {
-                var admin = await _provider.FindAsync(req.Username, req.Password);
-                if (admin == null)
+                if (string.IsNullOrWhiteSpace(req.Username) || string.IsNullOrEmpty(req.Password))
                 {
                     return new ApiResponse<AdminLoginResponse>
                     {
                         Success = false,
-                        Message = "نام کاربری یا رمز عبور مدیر صحیح نیست"
+                        Message = "نام کاربری و رمز عبور را وارد کنید."
                     };
                 }
 
-                var token = _jwt.GenerateAdminToken(admin.UserID, admin.Username, admin.DisplayName, admin.ShiftID);
+                if (IsLocked(req.Username, ip))
+                {
+                    return new ApiResponse<AdminLoginResponse>
+                    {
+                        Success = false,
+                        Message = $"به دلیل تلاش‌های ناموفق متعدد، حساب به مدت {RemainingMinutes(req.Username, ip)} دقیقه قفل است."
+                    };
+                }
+
+                var admin = await _provider.FindAsync(req.Username, req.Password);
+
+                if (admin == null || !admin.IsValid)
+                {
+                    RecordFail(req.Username, ip);
+                    return new ApiResponse<AdminLoginResponse>
+                    {
+                        Success = false,
+                        Message = "نام کاربری یا رمز عبور اشتباه است."
+                    };
+                }
+
+                ClearFails(req.Username, ip);
+
+                // ✅ فیکس CS1503: cast به short
+                var token = _jwt.GenerateAdminToken((short)admin.UserID, admin.Username, admin.DisplayName, admin.ShiftID);
 
                 return new ApiResponse<AdminLoginResponse>
                 {
@@ -106,7 +169,8 @@ namespace TandisWebApp.Services
                         Token = token,
                         Username = admin.Username,
                         DisplayName = admin.DisplayName,
-                        ShiftID = admin.ShiftID
+                        ShiftID = admin.ShiftID,
+                        MustChangePassword = admin.MustChangePassword
                     }
                 };
             }
@@ -119,6 +183,26 @@ namespace TandisWebApp.Services
                     Message = "خطا در پردازش درخواست"
                 };
             }
+        }
+
+        /// <summary>✅ جدید: تغییر رمز عبور مدیر (فیکس CS1061 + CS8130)</summary>
+        public async Task<(bool ok, string msg)> ChangePasswordAsync(int userID, string oldPass, string newPass, string confirmPass)
+        {
+            if (string.IsNullOrWhiteSpace(newPass) || newPass.Length < 8)
+                return (false, "رمز جدید باید حداقل ۸ کاراکتر باشد.");
+            if (newPass == oldPass)
+                return (false, "رمز جدید نباید با رمز فعلی یکسان باشد.");
+            if (newPass != confirmPass)
+                return (false, "رمز جدید و تکرار آن یکسان نیست.");
+
+            var user = await _db.Sec_Users.FirstOrDefaultAsync(u => u.UserID == userID);
+            if (user == null) return (false, "کاربر یافت نشد.");
+            if (!SecurityHelper.VerifyPassword(oldPass, user.UPassword))
+                return (false, "رمز فعلی اشتباه است.");
+
+            user.UPassword = SecurityHelper.Encrypt(newPass);
+            await _db.SaveChangesAsync();
+            return (true, "رمز عبور با موفقیت تغییر کرد.");
         }
     }
 }

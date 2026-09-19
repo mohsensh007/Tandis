@@ -24,7 +24,7 @@ namespace TandisWebApp.Controllers
             }
         }
 
-        public AdminController(AdminAuthService auth, AdminReportService reports, MessageService message , ProfileService profile)
+        public AdminController(AdminAuthService auth, AdminReportService reports, MessageService message, ProfileService profile)
         {
             _auth = auth;
             _reports = reports;
@@ -40,41 +40,26 @@ namespace TandisWebApp.Controllers
 
         [AdminAuthorize]
         [HttpGet]
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public IActionResult Index() => View();
 
         [AdminAuthorize]
         [HttpGet]
-        public IActionResult TrafficReport()
-        {
-            return View();
-        }
+        public IActionResult TrafficReport() => View();
 
         [AdminAuthorize]
         [HttpGet]
-        public IActionResult RegisterReport()
-        {
-            return View();
-        }
+        public IActionResult RegisterReport() => View();
 
         [AdminAuthorize]
         [HttpGet]
-        public IActionResult OneSessionReport()
-        {
-            return View();
-        }
+        public IActionResult OneSessionReport() => View();
 
         [AdminAuthorize]
         [HttpGet]
-        public IActionResult FinanceReport()
-        {
-            return View();
-        }
+        public IActionResult FinanceReport() => View();
 
         // ============================================================
-        //  API — احراز هویت مدیر
+        //  API — احراز هویت مدیر (با قفل + پیام عمومی)
         // ============================================================
 
         [HttpPost]
@@ -82,15 +67,14 @@ namespace TandisWebApp.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> LoginApi([FromBody] AdminLoginRequest req)
         {
-            var result = await _auth.LoginAsync(req);
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "";
+            var result = await _auth.LoginAsync(req, ip);
+
             if (!result.Success)
                 return Ok(result);
 
-            // حذف کوکی عضو (اگر قبلاً با کد ملی وارد شده بوده)
-            // تا توکن ادمین اولویت پیدا کند و session عضو با مدیر تداخل نکند.
             Response.Cookies.Delete("X-Access-Token");
 
-            // ذخیره توکن ادمین در کوکی جدا
             Response.Cookies.Append("X-Admin-Token", result.Data!.Token, new CookieOptions
             {
                 HttpOnly = true,
@@ -100,6 +84,58 @@ namespace TandisWebApp.Controllers
             });
 
             return Ok(result);
+        }
+
+        // ============================================================
+        //  تغییر رمز عبور ادمین (با DTO خودت: OldPassword + ConfirmPassword)
+        // ============================================================
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("Admin/ChangePassword")]
+        public IActionResult ChangePassword()
+        {
+            ViewData["Title"] = "تغییر رمز عبور";
+            return View();
+        }
+
+        [AdminAuthorize]
+        [HttpPost]
+        [Route("api/Admin/ChangePassword")]
+        public async Task<IActionResult> ChangePasswordApi([FromBody] ChangePasswordRequest req)
+        {
+            if (req == null || string.IsNullOrWhiteSpace(req.OldPassword) ||
+                string.IsNullOrWhiteSpace(req.NewPassword))
+            {
+                return Ok(new { success = false, message = "رمز قدیم و جدید را وارد کنید." });
+            }
+
+            // ✅ چک کردن مطابقت رمز جدید و تکرار (علاوه بر [Compare] که روی ModelState کار می‌کنه)
+            if (req.NewPassword != req.ConfirmPassword)
+            {
+                return Ok(new { success = false, message = "رمز جدید و تکرار آن مطابقت ندارد." });
+            }
+
+            var uid = CurrentAdminUserID;
+            if (uid == null)
+                return Ok(new { success = false, message = "شناسه کاربر یافت نشد." });
+
+            var (ok, msg) = await _auth.ChangePasswordAsync(uid.Value, req.OldPassword, req.NewPassword, req.ConfirmPassword);
+            return Ok(new { success = ok, message = msg });
+        }
+
+        // ============================================================
+        //  خروج مدیر
+        // ============================================================
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("Admin/Logout")]
+        public IActionResult Logout()
+        {
+            Response.Cookies.Delete("X-Admin-Token");
+            Response.Cookies.Delete("X-Access-Token");
+            return RedirectToAction("Login", "Account");
         }
 
         // ============================================================
@@ -142,20 +178,6 @@ namespace TandisWebApp.Controllers
             return Ok(new { success = true, data = response.Data, summary = response.Summary });
         }
 
-        // ============================================================
-        //  خروج مدیر
-        // ============================================================
-
-        [AdminAuthorize]
-        [HttpGet]
-        [Route("Admin/Logout")]
-        public IActionResult Logout()
-        {
-            // حذف هر دو کوکی تا session کاملاً پاک شود
-            Response.Cookies.Delete("X-Admin-Token");
-            Response.Cookies.Delete("X-Access-Token");
-            return RedirectToAction("Login", "Account");
-        }
         [AdminAuthorize]
         [HttpGet]
         [Route("api/Admin/DashboardStats")]
@@ -173,11 +195,16 @@ namespace TandisWebApp.Controllers
             var list = await _reports.GetInsideListAsync(AdminShiftID);
             return Ok(new { success = true, data = list });
         }
+
+        // ============================================================
+        //  API — پیام‌ها
+        // ============================================================
+
         [AdminAuthorize]
         [HttpGet]
         [Route("api/Admin/Messages/Inbox")]
         public async Task<IActionResult> MessagesInboxApi()
-    => Ok(new { success = true, data = await _messages.GetAdminInboxAsync(AdminShiftID) });
+            => Ok(new { success = true, data = await _messages.GetAdminInboxAsync(AdminShiftID) });
 
         [AdminAuthorize]
         [HttpGet]
@@ -216,7 +243,6 @@ namespace TandisWebApp.Controllers
             return Ok(new { success = true });
         }
 
-        // Messages Controller
         [AdminAuthorize]
         [Route("Admin/Messages")]
         public IActionResult Messages()
@@ -224,11 +250,12 @@ namespace TandisWebApp.Controllers
             ViewData["Title"] = "پیام‌ها";
             return View();
         }
+
         [AdminAuthorize]
         [HttpGet]
         [Route("api/Admin/Roles")]
         public async Task<IActionResult> RolesApi()
-         => Ok(new { success = true, data = await _messages.GetRoleOptionsAsync() });
+            => Ok(new { success = true, data = await _messages.GetRoleOptionsAsync() });
 
         [AdminAuthorize]
         [HttpGet]
@@ -246,11 +273,12 @@ namespace TandisWebApp.Controllers
         [Route("Admin/Messages/View/{messageID:long}")]
         public async Task<IActionResult> MessageView(long messageID)
         {
-            await _messages.MarkSeenAsync(messageID);   // دیدن = دیده شدن
+            await _messages.MarkSeenAsync(messageID);
             var msg = await _messages.GetMessageDetailAsync(messageID);
             if (msg == null) return RedirectToAction("Messages");
             return View(msg);
         }
+
         [AdminAuthorize]
         [HttpGet]
         [Route("Admin/Face/{personID:int}")]
@@ -263,11 +291,12 @@ namespace TandisWebApp.Controllers
             Response.Headers["Cache-Control"] = "public, max-age=86400";
             return File(bytes, ProfileService.DetectImageType(bytes));
         }
+
         [HttpGet]
         public async Task<IActionResult> CoachMessages(string? from, string? to)
         {
             var shiftID = User.GetShiftID();
-           
+
             if (string.IsNullOrEmpty(from))
             {
                 var pc = new System.Globalization.PersianCalendar();
@@ -287,6 +316,5 @@ namespace TandisWebApp.Controllers
             var model = await _reports.GetCoachStudentMessagesReportAsync(shiftID, from, to);
             return View(model);
         }
-
     }
 }

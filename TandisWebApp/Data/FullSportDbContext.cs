@@ -59,6 +59,7 @@ namespace TandisWebApp.Data
         public DbSet<Sec_Systems> Sec_Systems { get; set; } = null!;
         public DbSet<Kiosk_ChangePassLog> Kiosk_ChangePassLogs { get; set; } = null!;
         public DbSet<DiscountCardType> DiscountCardTypes { get; set; } = null!;
+        public DbSet<Sec_User> Sec_Users { get; set; }
 
         // ==================== Cmb - کمبوباکس‌های تاریخ ====================
         public DbSet<CmbDay> CmbDays { get; set; } = null!;

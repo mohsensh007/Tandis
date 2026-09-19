@@ -178,5 +178,6 @@ namespace TandisWebApp.DTOs
         public string SportName { get; set; } = string.Empty;
         public bool IsGuest { get; set; }
     }
+   
 }
 
