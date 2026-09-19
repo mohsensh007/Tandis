@@ -90,14 +90,7 @@ namespace TandisWebApp.Controllers
         //  تغییر رمز عبور ادمین (با DTO خودت: OldPassword + ConfirmPassword)
         // ============================================================
 
-        [AdminAuthorize]
-        [HttpGet]
-        [Route("Admin/ChangePassword")]
-        public IActionResult ChangePassword()
-        {
-            ViewData["Title"] = "تغییر رمز عبور";
-            return View();
-        }
+      
 
         [AdminAuthorize]
         [HttpPost]
@@ -292,10 +285,11 @@ namespace TandisWebApp.Controllers
             return File(bytes, ProfileService.DetectImageType(bytes));
         }
 
+        [AdminAuthorize]
         [HttpGet]
         public async Task<IActionResult> CoachMessages(string? from, string? to)
         {
-            var shiftID = User.GetShiftID();
+            var shiftID = AdminShiftID;
 
             if (string.IsNullOrEmpty(from))
             {

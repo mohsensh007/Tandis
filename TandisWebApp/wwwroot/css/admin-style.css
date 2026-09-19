@@ -4,11 +4,20 @@
 
 /* ۱. پس‌زمینه کل صفحه ادمین */
 body.admin-glass-body {
-    background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 60, 114, 0.85)), url('../images/gym-login-bg.webp') no-repeat center center fixed;
-    background-size: cover;
+    background-color: #0f172a;
     min-height: 100vh;
-    color: #e2e8f0; /* رنگ پیش‌فرض متن‌ها روشن می‌شود */
+    color: #e2e8f0;
 }
+
+    body.admin-glass-body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(135deg, rgba(15,23,42,.85), rgba(30,60,114,.85)), url('../images/gym-login-bg.webp') no-repeat center center / cover;
+        transform: translateZ(0);
+        pointer-events: none;
+    }
 
     /* ۲. نوبار (Navbar) شیشه‌ای - با !important برای غلبه بر استایل inline قدیمی */
     body.admin-glass-body .navbar {

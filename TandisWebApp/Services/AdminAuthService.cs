@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using Microsoft.EntityFrameworkCore;
 using TandisWebApp.Data;
 using TandisWebApp.DTOs;
@@ -44,6 +43,7 @@ namespace TandisWebApp.Services
 
             var passOk = SecurityHelper.VerifyPassword(password, user.UPassword);
 
+            // اجبار تغییر رمز برای admin/admin (پیش‌فرض ناامن)
             var mustChange = passOk
                              && username.Equals("admin", StringComparison.OrdinalIgnoreCase)
                              && password == "admin";
@@ -59,8 +59,6 @@ namespace TandisWebApp.Services
             };
         }
     }
-
-    
 
     // ============================================================
     //  سرویس احراز هویت مدیر
@@ -80,44 +78,18 @@ namespace TandisWebApp.Services
         private readonly IAdminUserProvider _provider;
         private readonly JwtService _jwt;
         private readonly ILogger<AdminAuthService> _logger;
-        private readonly FullSportDbContext _db;   // ✅ جدید: برای ChangePassword
-
-        // ===== قفل پس از تلاش ناموفق =====
-        private static readonly ConcurrentDictionary<string, (int Count, DateTime Last)> _fails = new();
-        public const int MaxFails = 5;
-        public static readonly TimeSpan LockDuration = TimeSpan.FromMinutes(10);
+        private readonly FullSportDbContext _db;
 
         public AdminAuthService(
             IAdminUserProvider provider,
             JwtService jwt,
             ILogger<AdminAuthService> logger,
-            FullSportDbContext db)   // ✅ جدید
+            FullSportDbContext db)
         {
             _provider = provider;
             _jwt = jwt;
             _logger = logger;
             _db = db;
-        }
-
-        private static string FailKey(string user, string ip) => (user + "|" + ip).ToLower();
-
-        private static bool IsLocked(string user, string ip)
-        {
-            if (!_fails.TryGetValue(FailKey(user, ip), out var f)) return false;
-            if (DateTime.Now - f.Last > LockDuration) { _fails.TryRemove(FailKey(user, ip), out _); return false; }
-            return f.Count >= MaxFails;
-        }
-
-        private static void RecordFail(string user, string ip) =>
-            _fails.AddOrUpdate(FailKey(user, ip), (1, DateTime.Now), (_, old) => (old.Count + 1, DateTime.Now));
-
-        private static void ClearFails(string user, string ip) => _fails.TryRemove(FailKey(user, ip), out _);
-
-        private static int RemainingMinutes(string user, string ip)
-        {
-            if (!_fails.TryGetValue(FailKey(user, ip), out var f)) return 0;
-            var left = LockDuration - (DateTime.Now - f.Last);
-            return left > TimeSpan.Zero ? (int)Math.Ceiling(left.TotalMinutes) : 0;
         }
 
         /// <summary>ورود مدیر و تولید توکن JWT (با قفل + پیام عمومی)</summary>
@@ -134,20 +106,22 @@ namespace TandisWebApp.Services
                     };
                 }
 
-                if (IsLocked(req.Username, ip))
+                // ✅ استفاده از SecurityHelper برای قفل
+                if (SecurityHelper.IsLocked(req.Username, ip))
                 {
                     return new ApiResponse<AdminLoginResponse>
                     {
                         Success = false,
-                        Message = $"به دلیل تلاش‌های ناموفق متعدد، حساب به مدت {RemainingMinutes(req.Username, ip)} دقیقه قفل است."
+                        Message = $"به دلیل تلاش‌های ناموفق متعدد، حساب به مدت {SecurityHelper.RemainingMinutes(req.Username, ip)} دقیقه قفل است."
                     };
                 }
 
                 var admin = await _provider.FindAsync(req.Username, req.Password);
 
+                // ✅ پیام عمومی (جلوگیری از User Enumeration)
                 if (admin == null || !admin.IsValid)
                 {
-                    RecordFail(req.Username, ip);
+                    SecurityHelper.RecordFail(req.Username, ip);
                     return new ApiResponse<AdminLoginResponse>
                     {
                         Success = false,
@@ -155,9 +129,9 @@ namespace TandisWebApp.Services
                     };
                 }
 
-                ClearFails(req.Username, ip);
+                SecurityHelper.ClearFails(req.Username, ip);
 
-                // ✅ فیکس CS1503: cast به short
+                // Cast به short برای GenerateAdminToken
                 var token = _jwt.GenerateAdminToken((short)admin.UserID, admin.Username, admin.DisplayName, admin.ShiftID);
 
                 return new ApiResponse<AdminLoginResponse>
@@ -185,7 +159,7 @@ namespace TandisWebApp.Services
             }
         }
 
-        /// <summary>✅ جدید: تغییر رمز عبور مدیر (فیکس CS1061 + CS8130)</summary>
+        /// <summary>تغییر رمز عبور مدیر</summary>
         public async Task<(bool ok, string msg)> ChangePasswordAsync(int userID, string oldPass, string newPass, string confirmPass)
         {
             if (string.IsNullOrWhiteSpace(newPass) || newPass.Length < 8)
