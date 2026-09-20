@@ -2,82 +2,98 @@
     ViewData["Title"] = "داشبورد مدیر";
     Layout = "_AdminLayout";
 }
-<!-- ========== داشبورد مدیریت ========== -->
-<div class="row g-3 mb-4">
+
+<!-- ========== ردیف ۱: حاضرین + ثبت‌نام/تمدید ========== -->
+<div class="row g-3 mb-3">
     <!-- کارت افراد حاضر -->
     <div class="col-12 col-md-4">
-        <div class="card h-100">
-            <div class="card-body text-center d-flex flex-column justify-content-between">
-                <!-- بلوک عدد -->
-                <div>
-                    <div class="text-muted mb-1">🏋️ افراد حاضر در باشگاه</div>
-                    <div id="insideCount" style="font-size:36px;font-weight:800;line-height:1.2;">-</div>
-                    <div class="text-muted small">نفر</div>
-                </div>
-
-                <!-- ✅ پیش‌نمایش زنده: دقیقاً اینجا، بین عدد و دکمه‌ها -->
-                <div id="insidePreview" class="inside-preview mt-3 text-start"></div>
-
-                <!-- بلوک دکمه‌ها -->
-                <div class="d-flex gap-2 mt-3">
-                    <button class="btn btn-outline-primary w-100" id="btnInsideList">
-                        <i class="bi bi-people-fill me-1"></i> مشاهده لیست
-                    </button>
-                    <button class="btn btn-outline-secondary" id="btnRefreshInside" title="به‌روزرسانی">
-                        <i class="bi bi-arrow-repeat"></i>
-                    </button>
-                </div>
+        <div class="dash-card h-100">
+            <div class="dash-head">
+                <span><i class="bi bi-people-fill hd-icon"></i> افراد حاضر در باشگاه</span>
+            </div>
+            <div class="text-center py-2">
+                <div id="insideCount" class="inside-count">-</div>
+                <div class="text-muted small">نفر داخل باشگاه</div>
+            </div>
+            <div id="insidePreview" class="inside-preview mt-2"></div>
+            <div class="d-flex gap-2 mt-3">
+                <button class="btn-glass flex-fill" id="btnInsideList">
+                    <i class="bi bi-people-fill"></i> مشاهده لیست
+                </button>
+                <button class="btn-glass-icon" id="btnRefreshInside" title="به‌روزرسانی">
+                    <i class="bi bi-arrow-repeat"></i>
+                </button>
             </div>
         </div>
     </div>
-    <!-- کارت ثبت‌نام/تمدید + نمودار -->
+
+    <!-- کارت ثبت‌نام/تمدید -->
     <div class="col-12 col-md-8">
-        <div class="card h-100">
-            <div class="card-body">
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                    <div class="fw-bold">📊 ثبت‌نام و تمدید</div>
-                    <span id="deltaBadge" class="badge bg-success">-</span>
-                </div>
+        <div class="dash-card h-100">
+            <div class="dash-head">
+                <span><i class="bi bi-bar-chart-fill hd-icon"></i> ثبت‌نام و تمدید</span>
+                <span id="deltaBadge" class="delta-badge up">-</span>
+            </div>
 
-                <div class="btn-group w-100 mb-3" role="group">
-                    <input type="radio" class="btn-check" name="periodRadio" id="pDay" value="day" checked autocomplete="off">
-                    <label class="btn btn-outline-primary" for="pDay">روز</label>
-                    <input type="radio" class="btn-check" name="periodRadio" id="pWeek" value="week" autocomplete="off">
-                    <label class="btn btn-outline-success" for="pWeek">هفته</label>
-                    <input type="radio" class="btn-check" name="periodRadio" id="pMonth" value="month" autocomplete="off">
-                    <label class="btn btn-outline-warning" for="pMonth">ماه</label>
-                </div>
+            <!-- انتخاب دوره: pill های شیشه‌ای -->
+            <div class="period-group mt-3">
+                <input type="radio" class="btn-check" name="periodRadio" id="pDay" value="day" checked autocomplete="off">
+                <label class="period-btn" for="pDay">روز</label>
+                <input type="radio" class="btn-check" name="periodRadio" id="pWeek" value="week" autocomplete="off">
+                <label class="period-btn" for="pWeek">هفته</label>
+                <input type="radio" class="btn-check" name="periodRadio" id="pMonth" value="month" autocomplete="off">
+                <label class="period-btn" for="pMonth">ماه</label>
+            </div>
 
-                <div class="row text-center g-2">
-                    <div class="col-6">
-                        <div class="donut-wrap">
-                            <svg viewBox="0 0 42 42" class="donut" id="donutCur">
-                                <circle cx="21" cy="21" r="15.9155" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="5"></circle>
-                                <circle class="seg-reg" cx="21" cy="21" r="15.9155" fill="none" stroke="#4a90e2" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-                                <circle class="seg-ren" cx="21" cy="21" r="15.9155" fill="none" stroke="#2ecc71" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-                                <text class="donut-center" x="21" y="23.5" text-anchor="middle" fill="#ffffff" font-size="7.5" font-weight="700">0</text>
-                            </svg>
-                        </div>
-                        <div class="text-muted small mt-1" id="curLabel">دوره جاری</div>
+            <div class="row text-center g-2 mt-2">
+                <div class="col-6">
+                    <div class="donut-wrap">
+                        <svg viewBox="0 0 42 42" class="donut" id="donutCur">
+                            <circle cx="21" cy="21" r="15.9155" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="5"></circle>
+                            <circle class="seg-reg" cx="21" cy="21" r="15.9155" fill="none" stroke="#66d3e8" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                            <circle class="seg-ren" cx="21" cy="21" r="15.9155" fill="none" stroke="#667eea" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                            <text class="donut-center" x="21" y="23.5" text-anchor="middle" fill="#ffffff" font-size="7.5" font-weight="700">0</text>
+                        </svg>
                     </div>
-                    <div class="col-6">
-                        <div class="donut-wrap">
-                            <svg viewBox="0 0 42 42" class="donut" id="donutPrev">
-                                <circle cx="21" cy="21" r="15.9155" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="5"></circle>
-                                <circle class="seg-reg" cx="21" cy="21" r="15.9155" fill="none" stroke="#4a90e2" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-                                <circle class="seg-ren" cx="21" cy="21" r="15.9155" fill="none" stroke="#2ecc71" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-                                <text class="donut-center" x="21" y="23.5" text-anchor="middle" fill="#ffffff" font-size="7.5" font-weight="700">0</text>
-                            </svg>
-                        </div>
-                        <div class="text-muted small mt-1" id="prevLabel">دوره قبل</div>
-                    </div>
+                    <div class="donut-label" id="curLabel">دوره جاری</div>
                 </div>
-
-                <div class="d-flex justify-content-center gap-4 mt-3 small">
-                    <span><span style="color:#4a90e2;">●</span> ثبت‌نام: <b id="curReg">0</b></span>
-                    <span><span style="color:#2ecc71;">●</span> تمدید: <b id="curRen">0</b></span>
+                <div class="col-6">
+                    <div class="donut-wrap">
+                        <svg viewBox="0 0 42 42" class="donut" id="donutPrev">
+                            <circle cx="21" cy="21" r="15.9155" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="5"></circle>
+                            <circle class="seg-reg" cx="21" cy="21" r="15.9155" fill="none" stroke="#66d3e8" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                            <circle class="seg-ren" cx="21" cy="21" r="15.9155" fill="none" stroke="#667eea" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                            <text class="donut-center" x="21" y="23.5" text-anchor="middle" fill="#ffffff" font-size="7.5" font-weight="700">0</text>
+                        </svg>
+                    </div>
+                    <div class="donut-label" id="prevLabel">دوره قبل</div>
                 </div>
             </div>
+
+            <div class="donut-legend">
+                <span><i style="background:#66d3e8"></i> ثبت‌نام: <b id="curReg">0</b></span>
+                <span><i style="background:#667eea"></i> تمدید: <b id="curRen">0</b></span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== ردیف ۲: مبالغ دریافتی (سلولی) ========== -->
+<div class="dash-card mb-3">
+    <div class="dash-head">
+        <span><i class="bi bi-cash-coin hd-icon"></i> مبالغ دریافتی</span>
+        <span id="creditDeltaBadge" class="delta-badge up">-</span>
+    </div>
+    <div class="money-grid mt-3">
+        <div class="money-cell cur">
+            <div class="mc-head"><i class="bi bi-calendar-check-fill"></i> <span id="creditCurLabel">دوره جاری</span></div>
+            <div class="mc-amount"><span id="curCredit">0</span> <small>ریال</small></div>
+            <div class="mc-sub"><i class="bi bi-receipt"></i> <span><span id="curCreditCount">0</span> سند دریافتی</span></div>
+        </div>
+        <div class="money-cell">
+            <div class="mc-head"><i class="bi bi-calendar-x-fill"></i> <span id="creditPrevLabel">دوره قبل</span></div>
+            <div class="mc-amount"><span id="prevCredit">0</span> <small>ریال</small></div>
+            <div class="mc-sub"><i class="bi bi-receipt"></i> <span><span id="prevCreditCount">0</span> سند دریافتی</span></div>
         </div>
     </div>
 </div>
@@ -85,14 +101,14 @@
 <!-- مودال لیست افراد حاضر -->
 <div class="modal fade" id="insideModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"> افراد حاضر در باشگاه</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <div class="modal-content glass-modal">
+            <div class="modal-header grad-header">
+                <h5 class="modal-title"><i class="bi bi-people-fill me-2"></i>افراد حاضر در باشگاه</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table table-dark table-hover align-middle" style="--bs-table-bg:transparent;">
                         <thead>
                             <tr><th>نام</th><th>کد عضویت</th><th>ورزش</th><th>ساعت ورود</th><th>وضعیت</th></tr>
                         </thead>
@@ -103,130 +119,345 @@
         </div>
     </div>
 </div>
-<!-- کارت مبالغ دریافتی -->
-<div class="row g-3 mb-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                    <div class="fw-bold">💰 مبالغ دریافتی</div>
-                    <span id="creditDeltaBadge" class="badge bg-success">-</span>
-                </div>
-                <div class="row text-center g-3">
-                    <div class="col-6 col-md-5 offset-md-1">
-                        <div class="text-muted small" id="creditCurLabel">دوره جاری</div>
-                        <div class="fs-5 fw-bold text-success mt-1">
-                            <span id="curCredit">0</span> <small class="text-muted">ریال</small>
-                        </div>
-                        <div class="text-muted small"><span id="curCreditCount">0</span> سند دریافتی</div>
-                    </div>
-                    <div class="col-6 col-md-5">
-                        <div class="text-muted small" id="creditPrevLabel">دوره قبل</div>
-                        <div class="fs-5 fw-bold mt-1">
-                            <span id="prevCredit">0</span> <small class="text-muted">ریال</small>
-                        </div>
-                        <div class="text-muted small"><span id="prevCreditCount">0</span> سند دریافتی</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row g-3">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title"><i class="bi bi-grid-1x2"></i> گزارش‌های مدیریتی</h5>
-                <p class="text-muted">از منوی بالا یا کارت‌های زیر گزارش مورد نظر را انتخاب کنید.</p>
-            </div>
-        </div>
-    </div>
 
-    <div class="col-md-6 col-lg-3">
-        <a href="/Admin/TrafficReport" class="text-decoration-none">
-            <div class="card text-center h-100" style="border-top:3px solid #0d6efd">
-                <div class="card-body p-4">
-                    <div style="font-size:2.5rem">🚪</div>
-                    <h6 class="mt-2">گزارش ترددها</h6>
-                    <small class="text-muted">ورود و خروج اعضای شیفت</small>
-                </div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <a href="/Admin/RegisterReport" class="text-decoration-none">
-            <div class="card text-center h-100" style="border-top:3px solid #198754">
-                <div class="card-body p-4">
-                    <div style="font-size:2.5rem">🔄</div>
-                    <h6 class="mt-2">ثبت‌نام و تمدید</h6>
-                    <small class="text-muted">ثبت‌نام‌ها و تمدیدهای دوره</small>
-                </div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <a href="/Admin/OneSessionReport" class="text-decoration-none">
-            <div class="card text-center h-100" style="border-top:3px solid #ffc107">
-                <div class="card-body p-4">
-                    <div style="font-size:2.5rem">🎫</div>
-                    <h6 class="mt-2">تک‌جلسه‌ها</h6>
-                    <small class="text-muted">بلیت‌های جلسه آزاد</small>
-                </div>
-            </div>
-        </a>
-    </div>
-    <div class="col-md-6 col-lg-3">
-        <a href="/Admin/FinanceReport" class="text-decoration-none">
-            <div class="card text-center h-100" style="border-top:3px solid #dc3545">
-                <div class="card-body p-4">
-                    <div style="font-size:2.5rem">💰</div>
-                    <h6 class="mt-2">گزارش صندوق</h6>
-                    <small class="text-muted">تراکنش‌های مالی شیفت</small>
-                </div>
-            </div>
-        </a>
-    </div>
-</div>
+<style>
+    /* ===== کارت شیشه‌ای داشبورد ===== */
+    .dash-card {
+        position: relative;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        padding: 16px;
+        overflow: hidden;
+    }
+
+        .dash-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: -40px;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(46,134,222,.25), transparent 70%);
+            pointer-events: none;
+        }
+
+    .dash-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        font-weight: 800;
+        color: #fff;
+        font-size: .95rem;
+    }
+
+    .hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
+    }
+
+    /* ===== عدد حاضرین: متن گرادیان ===== */
+    .inside-count {
+        font-size: 2.8rem;
+        font-weight: 800;
+        line-height: 1.1;
+        background: linear-gradient(135deg, #66d3e8, #667eea);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    /* ===== ردیف پیش‌نمایش حاضرین ===== */
+    .inside-row {
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 10px;
+        padding: 6px 10px;
+        margin-bottom: 6px;
+        font-size: .8rem;
+        color: #cbd3da;
+    }
+
+    /* ===== دکمه‌های شیشه‌ای ===== */
+    .btn-glass {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: rgba(13,110,253,.14);
+        border: 1px solid rgba(102,211,232,.35);
+        color: #dce9ff;
+        border-radius: 14px;
+        padding: 10px 14px;
+        font-weight: 700;
+        font-size: .85rem;
+        transition: all .25s;
+    }
+
+        .btn-glass i {
+            color: #66d3e8;
+        }
+
+        .btn-glass:hover {
+            background: rgba(13,110,253,.28);
+            color: #fff;
+        }
+
+    .btn-glass-icon {
+        flex: 0 0 auto;
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.16);
+        color: #66d3e8;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .35s;
+    }
+
+        .btn-glass-icon:hover {
+            transform: rotate(120deg);
+            background: rgba(102,211,232,.15);
+            color: #fff;
+        }
+
+    /* ===== انتخاب دوره: pill شیشه‌ای ===== */
+    .period-group {
+        display: flex;
+        gap: 8px;
+    }
+
+    .period-btn {
+        flex: 1;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.14);
+        color: #9fb3c8;
+        border-radius: 12px;
+        padding: 9px 0;
+        font-size: .85rem;
+        font-weight: 700;
+        text-align: center;
+        cursor: pointer;
+        transition: all .25s;
+        margin: 0;
+    }
+
+        .period-btn:hover {
+            color: #fff;
+            background: rgba(255,255,255,.10);
+        }
+
+    .btn-check:checked + .period-btn {
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        border-color: transparent;
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(30,111,217,.35);
+    }
+
+    /* ===== بج تغییر درصد: شیشه‌ای ===== */
+    .delta-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: .72rem;
+        font-weight: 800;
+    }
+
+        .delta-badge.up {
+            background: rgba(56,217,169,.14);
+            border: 1px solid rgba(56,217,169,.40);
+            color: #38d9a9;
+        }
+
+        .delta-badge.down {
+            background: rgba(255,107,129,.14);
+            border: 1px solid rgba(255,107,129,.40);
+            color: #ff6b81;
+        }
+
+    /* ===== دونات ===== */
+    .donut-wrap {
+        display: flex;
+        justify-content: center;
+    }
+
+    .donut {
+        width: 120px;
+        height: 120px;
+    }
+
+    .donut-label {
+        font-size: .78rem;
+        color: #9fb3c8;
+        margin-top: 6px;
+    }
+
+    .donut-legend {
+        display: flex;
+        justify-content: center;
+        gap: 22px;
+        margin-top: 12px;
+        font-size: .8rem;
+        color: #9fb3c8;
+    }
+
+        .donut-legend i {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+
+        .donut-legend b {
+            color: #fff;
+        }
+
+    /* ===== سلول‌های مبالغ ===== */
+    .money-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    @@media (max-width: 575.98px) {
+        .money-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .money-cell {
+        position: relative;
+        overflow: hidden;
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 16px;
+        padding: 16px;
+    }
+
+        .money-cell::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(102,211,232,.16), transparent 70%);
+            pointer-events: none;
+        }
+
+    .mc-head {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: .78rem;
+        color: #9fb3c8;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+        .mc-head i {
+            color: #66d3e8;
+            font-size: 1rem;
+        }
+
+    .mc-amount {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: .5px;
+    }
+
+    .money-cell.cur .mc-amount {
+        background: linear-gradient(90deg, #66d3e8, #8ab6ff);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+
+    .mc-amount small {
+        font-size: .68rem;
+        color: #9fb3c8;
+        font-weight: 600;
+    }
+
+    .money-cell.cur .mc-amount small {
+        color: #9fb3c8;
+        -webkit-text-fill-color: #9fb3c8;
+    }
+
+    .mc-sub {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .72rem;
+        color: #9fb3c8;
+        margin-top: 8px;
+    }
+
+        .mc-sub i {
+            color: #667eea;
+        }
+
+    /* ===== مودال شیشه‌ای ===== */
+    .glass-modal {
+        background: rgba(16,20,36,.97);
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 18px;
+        color: #fff;
+        backdrop-filter: blur(14px);
+    }
+
+    .grad-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-weight: 800;
+    }
+</style>
+
 @section Scripts {
     <script>
-                // ✅ پیش‌نمایش زنده افراد حاضر (پر کردن فضای خالی کارت)
         function loadInsidePreview() {
             apiCall('/api/Admin/InsideList', 'GET', null, function (res) {
                 if (!res.success) return;
                 var rows = res.data || [];
                 var box = $('#insidePreview');
                 box.empty();
-
                 if (!rows.length) {
-                    box.html('<div class="text-muted small text-center py-2">در حال حاضر کسی داخل باشگاه نیست</div>');
+                    box.html('<div class="text-center small py-2" style="color:#9fb3c8">در حال حاضر کسی داخل باشگاه نیست</div>');
                     return;
                 }
-
-                var max = 4;
+                var max = 3;
                 rows.slice(0, max).forEach(function (r) {
                     box.append(
                         '<div class="inside-row d-flex justify-content-between align-items-center gap-2">' +
                             '<span class="text-truncate">' + esc(r.personName) +
                                 (r.isGuest ? ' <span class="badge bg-warning" style="font-size:10px;">مهمان</span>' : '') +
                             '</span>' +
-                            '<span class="text-muted small" style="direction:ltr;">' + esc(r.entryTime || '') + '</span>' +
+                            '<span style="direction:ltr;color:#66d3e8;font-size:.72rem;">' + esc(r.entryTime || '') + '</span>' +
                         '</div>'
                     );
                 });
-
                 if (rows.length > max) {
                     box.append('<div class="text-center small mt-1">' +
-                        '<a href="#" id="lnkMoreInside" class="link-light text-decoration-none">+ ' +
+                        '<a href="#" id="lnkMoreInside" style="color:#66d3e8;text-decoration:none">+ ' +
                         faNum(rows.length - max) + ' نفر دیگر…</a></div>');
                 }
             });
         }
 
-        // کلیک روی «+N نفر دیگر» → باز کردن مودال لیست کامل
         $(document).on('click', '#lnkMoreInside', function (e) {
             e.preventDefault();
             loadInsideList();
         });
+
         function renderDonut(sel, reg, ren, center) {
             var total = reg + ren;
             var pReg = total ? Math.round(reg * 100 / total) : 0;
@@ -241,6 +472,12 @@
             svg.find('.donut-center').text(center);
         }
 
+        function setDelta(sel, delta) {
+            $(sel).removeClass('up down').addClass(delta >= 0 ? 'up' : 'down')
+                .html('<i class="bi ' + (delta >= 0 ? 'bi-caret-up-fill' : 'bi-caret-down-fill') + '"></i> ' +
+                      faNum(Math.abs(delta)) + '٪ نسبت به دوره قبل');
+        }
+
         function loadDashboard(period) {
             apiCall('/api/Admin/DashboardStats?period=' + period, 'GET', null, function (res) {
                 if (!res.success) return;
@@ -250,28 +487,24 @@
                 $('#prevLabel').text(d.previousLabel);
                 $('#curReg').text(faNum(d.currentRegister));
                 $('#curRen').text(faNum(d.currentRenew));
-                renderDonut('#donutCur',  d.currentRegister,  d.currentRenew,  faNum(d.currentRegister  + d.currentRenew));
+                renderDonut('#donutCur', d.currentRegister, d.currentRenew, faNum(d.currentRegister + d.currentRenew));
                 renderDonut('#donutPrev', d.previousRegister, d.previousRenew, faNum(d.previousRegister + d.previousRenew));
 
-                var curT  = d.currentRegister  + d.currentRenew;
+                var curT = d.currentRegister + d.currentRenew;
                 var prevT = d.previousRegister + d.previousRenew;
                 var delta = prevT === 0 ? (curT > 0 ? 100 : 0) : Math.round((curT - prevT) * 100 / prevT);
-                $('#deltaBadge').removeClass('bg-success bg-danger')
-                    .addClass(delta >= 0 ? 'bg-success' : 'bg-danger')
-                    .text((delta >= 0 ? '▲ ' : '▼ ') + faNum(Math.abs(delta)) + '٪ نسبت به دوره قبل');
-                            // ✅ کارت مبالغ دریافتی
-        $('#creditCurLabel').text(d.currentLabel);
-        $('#creditPrevLabel').text(d.previousLabel);
-        $('#curCredit').text(faNum(d.currentCredit));
-        $('#prevCredit').text(faNum(d.previousCredit));
-        $('#curCreditCount').text(faNum(d.currentCreditCount));
-        $('#prevCreditCount').text(faNum(d.previousCreditCount));
+                setDelta('#deltaBadge', delta);
 
-        var cd = d.previousCredit === 0 ? (d.currentCredit > 0 ? 100 : 0)
-                 : Math.round((d.currentCredit - d.previousCredit) * 100 / d.previousCredit);
-        $('#creditDeltaBadge').removeClass('bg-success bg-danger')
-            .addClass(cd >= 0 ? 'bg-success' : 'bg-danger')
-            .text((cd >= 0 ? '▲ ' : '▼ ') + faNum(Math.abs(cd)) + '٪ نسبت به دوره قبل');
+                $('#creditCurLabel').text(d.currentLabel);
+                $('#creditPrevLabel').text(d.previousLabel);
+                $('#curCredit').text(faNum(d.currentCredit));
+                $('#prevCredit').text(faNum(d.previousCredit));
+                $('#curCreditCount').text(faNum(d.currentCreditCount));
+                $('#prevCreditCount').text(faNum(d.previousCreditCount));
+
+                var cd = d.previousCredit === 0 ? (d.currentCredit > 0 ? 100 : 0)
+                         : Math.round((d.currentCredit - d.previousCredit) * 100 / d.previousCredit);
+                setDelta('#creditDeltaBadge', cd);
             });
         }
 
@@ -288,8 +521,8 @@
                             '<td>' + esc(r.personName) + '</td>' +
                             '<td>' + (r.memberCode ? esc(r.memberCode) : '-') + '</td>' +
                             '<td>' + esc(r.sportName) + '</td>' +
-                            '<td>' + esc(r.entryTime || '-') + '</td>' +
-                            '<td>' + (r.isGuest ? '<span class="badge bg-warning">مهمان</span>' : '<span class="badge bg-success">عضو</span>') + '</td>' +
+                            '<td style="direction:ltr;text-align:right;">' + esc(r.entryTime || '-') + '</td>' +
+                            '<td>' + (r.isGuest ? '<span class="badge bg-warning">مهمان</span>' : '<span class="badge" style="background:rgba(56,217,169,.2);color:#38d9a9;">عضو</span>') + '</td>' +
                         '</tr>';
                     });
                     $('#tbodyInside').html(html);
@@ -298,20 +531,15 @@
             });
         }
 
-        // ✅ فقط وقتی همه‌چیز (jQuery + DOM) آماده شد اجرا کن
         $(function () {
-            $('input[name="periodRadio"]').on('change', function () {
-                loadDashboard($(this).val());
-            });
+            $('input[name="periodRadio"]').on('change', function () { loadDashboard($(this).val()); });
             $('#btnInsideList').on('click', loadInsideList);
             $('#btnRefreshInside').on('click', function () {
-            loadDashboard($('input[name="periodRadio"]:checked').val());
-            loadInsidePreview();   // ✅ جدید
+                loadDashboard($('input[name="periodRadio"]:checked').val());
+                loadInsidePreview();
             });
-
-            // بارگذاری اولیه
             loadDashboard('day');
-            loadInsidePreview();   // ✅ جدید
+            loadInsidePreview();
         });
     </script>
 }

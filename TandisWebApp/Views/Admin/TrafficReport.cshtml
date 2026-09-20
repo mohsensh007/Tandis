@@ -3,199 +3,151 @@
     Layout = "_AdminLayout";
 }
 
-<div class="card mb-3">
-    <div class="card-header"><i class="bi bi-funnel"></i> فیلتر بازه زمانی</div>
-    <div class="card-body">
-        <div class="row g-2 align-items-end">
-            <div class="col-md-3">
-                <label class="form-label">از تاریخ</label>
-                <div class="input-group">
-                    <input type="text" id="fromDate" class="form-control" placeholder="مثلاً 1405/01/01" readonly />
-                    <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('fromDate','از تاریخ')">
-                        <i class="bi bi-calendar3"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-danger" onclick="$('#fromDate').val('')" title="پاک کردن">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
+<div class="rep-filter mb-3">
+    <div class="row g-2">
+        <div class="col-6 col-md-3">
+            <div class="rep-label">از تاریخ</div>
+            <div class="rep-input-group">
+                <input type="text" id="fromDate" class="rep-input" placeholder="1405/01/01" readonly />
+                <button type="button" class="rep-btn-icon" onclick="openCalendar('fromDate','از تاریخ')"><i class="bi bi-calendar3"></i></button>
+                <button type="button" class="rep-btn-icon danger" onclick="$('#fromDate').val('')"><i class="bi bi-x-lg"></i></button>
             </div>
-            <div class="col-md-3">
-                <label class="form-label">تا تاریخ</label>
-                <div class="input-group">
-                    <input type="text" id="toDate" class="form-control" placeholder="مثلاً 1405/03/31" readonly />
-                    <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('toDate','تا تاریخ')">
-                        <i class="bi bi-calendar3"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-danger" onclick="$('#toDate').val('')" title="پاک کردن">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="rep-label">تا تاریخ</div>
+            <div class="rep-input-group">
+                <input type="text" id="toDate" class="rep-input" placeholder="1405/03/31" readonly />
+                <button type="button" class="rep-btn-icon" onclick="openCalendar('toDate','تا تاریخ')"><i class="bi bi-calendar3"></i></button>
+                <button type="button" class="rep-btn-icon danger" onclick="$('#toDate').val('')"><i class="bi bi-x-lg"></i></button>
             </div>
-            <div class="col-md-3">
-                <button class="btn btn-primary w-100" id="btnSearch"><i class="bi bi-search"></i> نمایش گزارش</button>
-            </div>
-            <div class="col-md-3">
-                <button class="btn btn-success w-100" id="btnExport" onclick="exportTableToCSV('tblTraffic', 'گزارش-ترددها')">
-                    <i class="bi bi-file-earmark-excel"></i> خروجی اکسل
-                </button>
-            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="rep-label">&nbsp;</div>
+            <button class="rep-btn-main" id="btnSearch"><i class="bi bi-search"></i> نمایش گزارش</button>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="rep-label">&nbsp;</div>
+            <button class="rep-btn-excel" id="btnExport"><i class="bi bi-file-earmark-excel"></i> خروجی اکسل</button>
         </div>
     </div>
 </div>
 
-<!-- خلاصه گزارش -->
-<div class="row g-3 mb-3" id="summaryCards" style="display:none;">
-    <div class="col-md-4">
-        <div class="card bg-primary text-white">
-            <div class="card-body text-center">
-                <h5 id="summaryTotal">۰</h5>
-                <small>کل ترددها</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-success text-white">
-            <div class="card-body text-center">
-                <h5 id="summaryMembers">۰</h5>
-                <small>اعضا</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-warning text-dark">
-            <div class="card-body text-center">
-                <h5 id="summaryGuests">۰</h5>
-                <small>مهمانان</small>
-            </div>
-        </div>
-    </div>
+<div class="rep-summary mb-3" id="summaryCards" style="display:none;">
+    <div class="rep-chip hl"><b id="summaryTotal">۰</b><span>کل ترددها</span></div>
+    <div class="rep-chip"><b id="summaryMembers">۰</b><span>اعضا</span></div>
+    <div class="rep-chip"><b id="summaryGuests">۰</b><span>مهمانان</span></div>
 </div>
 
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <span><i class="bi bi-list-ul"></i> لیست ترددها</span>
-        <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-primary" id="rowCount">۰ رکورد</span>
-            <input type="text" id="searchInput" class="form-control form-control-sm" style="width: 200px;" placeholder="جستجو در جدول..." />
-        </div>
+<div class="rep-list-head">
+    <span class="rep-count" id="rowCount">۰ رکورد</span>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <select id="sortKey" class="rep-search">
+            <option value="">مرتب‌سازی: پیش‌فرض</option>
+            <option value="date">تاریخ ورود</option>
+            <option value="name">نام شخص</option>
+        </select>
+        <button type="button" class="rep-btn-icon" id="sortDir" data-dir="desc" title="جهت مرتب‌سازی">
+            <i class="bi bi-sort-down"></i>
+        </button>
+        <input type="text" id="searchInput" class="rep-search" placeholder="🔍 جستجو..." />
     </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-sm align-middle mb-0" id="tblTraffic">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>نام شخص</th>
-                        <th>کد عضویت</th>
-                        <th>تاریخ ورود</th>
-                        <th>ساعت ورود</th>
-                        <th>تاریخ خروج</th>
-                        <th>ساعت خروج</th>
-                        <th>توضیحات</th>
-                        <th>کمد</th>
-                        <th>نوع عضویت</th>
-                    </tr>
-                </thead>
-                <tbody id="tbodyTraffic">
-                    <tr><td colspan="10" class="text-center text-muted p-4">برای نمایش گزارش، فیلتر را تنظیم کرده و دکمه «نمایش گزارش» را بزنید.</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+</div>
+<div id="repList">
+    <div class="text-center text-muted py-4">فیلتر را تنظیم کرده و «نمایش گزارش» را بزنید.</div>
 </div>
 
 @section Scripts {
-<script>
-    $('#btnSearch').click(function () {
-        var from = $.trim($('#fromDate').val());
-        var to = $.trim($('#toDate').val());
-        if (from && to && from > to) { showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error'); return; }
+    <script>
+        var lastRows = [];
+        var csvColumns = [
+            { t: 'نام', g: function (r) { return r.personName || ''; } },
+            { t: 'کد عضویت', g: function (r) { return r.memberCode || ''; } },
+            { t: 'تاریخ ورود', g: function (r) { return r.entryDate || ''; } },
+            { t: 'ساعت ورود', g: function (r) { return r.entryTime || ''; } },
+            { t: 'تاریخ خروج', g: function (r) { return r.exitDate || ''; } },
+            { t: 'ساعت خروج', g: function (r) { return r.exitTime || ''; } },
+            { t: 'کمد', g: function (r) { return r.BoxID || ''; } },
+            { t: 'نوع', g: function (r) { return r.isGuest ? 'مهمان' : 'ورزشکار'; } },
+            { t: 'توضیحات', g: function (r) { return r.entryDesc || ''; } }
+        ];
 
-        var qs = '?';
-        if (from) qs += 'from=' + encodeURIComponent(from) + '&';
-        if (to) qs += 'to=' + encodeURIComponent(to) + '&';
-
-        apiCall('/api/Admin/TrafficReport' + qs, 'GET', null, function (res) {
-            if (res.success) renderTable(res.data || [], res.summary);
-        });
-    });
-
-    function renderTable(rows, summary) {
-        $('#rowCount').text(faNum(rows.length) + ' رکورد');
-        
-        // نمایش خلاصه گزارش
-        if (summary) {
-            $('#summaryTotal').text(faNum(summary.totalCount));
-            $('#summaryMembers').text(faNum(summary.memberCount));
-            $('#summaryGuests').text(faNum(summary.guestCount));
-            $('#summaryCards').show();
-        } else {
-            $('#summaryCards').hide();
-        }
-
-        if (rows.length === 0) {
-            $('#tbodyTraffic').html('<tr><td colspan="10" class="text-center text-muted p-4">ترددی در این بازه یافت نشد.</td></tr>');
-            return;
-        }
-        var html = '';
-        $.each(rows, function (i, r) {
-            var typeBadge = r.isGuest
-                ? '<span class="badge bg-warning text-dark">مهمان</span>'
-                : '<span class="badge bg-success">ورزشکار</span>';
-            html += '<tr>' +
-                '<td>' + faNum(i + 1) + '</td>' +
-                '<td>' + esc(r.personName || '-') + '</td>' +
-                '<td>' + esc(r.memberCode || '-') + '</td>' +
-                '<td>' + esc(r.entryDate || '-') + '</td>' +
-                '<td>' + esc(r.entryTime || '-') + '</td>' +
-                '<td>' + esc(r.exitDate || '-') + '</td>' +
-                '<td>' + esc(r.exitTime || '-') + '</td>' +
-                '<td>' + esc(r.entryDesc || '-') + '</td>' +
-                '<td>' + esc(r.BoxID || '-') + '</td>' +
-                '<td>' + typeBadge + '</td>' +
-                '</tr>';
-        });
-        $('#tbodyTraffic').html(html);
-        initTableSearch();
-    }
-
-    // جستجوی ساده در جدول
-    function initTableSearch() {
-        $('#searchInput').off('keyup').on('keyup', function () {
-            var value = $(this).val().toLowerCase().trim();
-            $('#tbodyTraffic tr').each(function () {
-                var text = $(this).text().toLowerCase();
-                $(this).toggle(text.indexOf(value) > -1);
+        $('#btnSearch').click(function () {
+            var from = $.trim($('#fromDate').val());
+            var to = $.trim($('#toDate').val());
+            if (from && to && from > to) { showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error'); return; }
+            var qs = '?';
+            if (from) qs += 'from=' + encodeURIComponent(from) + '&';
+            if (to) qs += 'to=' + encodeURIComponent(to) + '&';
+            apiCall('/api/Admin/TrafficReport' + qs, 'GET', null, function (res) {
+                if (res.success) renderList(res.data || [], res.summary);
             });
-            updateRowNumbers('#tbodyTraffic');
         });
-    }
 
-    // به‌روزرسانی شماره ردیف‌ها پس از فیلتر/جستجو
-    function updateRowNumbers(tbodySelector) {
-        var idx = 1;
-        $(tbodySelector + ' tr:visible').each(function () {
-            $(this).find('td:first').text(faNum(idx++));
-        });
-    }
+        function renderList(rows, summary) {
+            lastRows = rows;
+            lastSummary = summary || null;
+            if (summary) {
+                $('#summaryTotal').text(faNum(summary.totalCount));
+                $('#summaryMembers').text(faNum(summary.memberCount));
+                $('#summaryGuests').text(faNum(summary.guestCount));
+                $('#summaryCards').show();
+            } else { $('#summaryCards').hide(); }
 
-    // خروجی CSV
-    function exportTableToCSV(tableId, fileName) {
-        var rows = document.querySelectorAll('#' + tableId + ' tr');
-        if (rows.length <= 1) { showToast('ابتدا گزارش را نمایش دهید', 'warning'); return; }
-        var csv = [];
-        for (var i = 0; i < rows.length; i++) {
-            var cols = rows[i].querySelectorAll('td, th');
-            var line = [];
-            for (var j = 0; j < cols.length; j++) line.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
-            csv.push(line.join(','));
+            $('#rowCount').text(faNum(rows.length) + ' رکورد');
+            $('#searchInput').val('');
+            var $box = $('#repList');
+            if (!rows.length) { $box.html('<div class="text-center text-muted py-4">ترددی در این بازه یافت نشد.</div>'); return; }
+
+            var html = '';
+            $.each(rows, function (i, r) {
+                var badge = r.isGuest ? '<span class="rep-badge guest">مهمان</span>' : '<span class="rep-badge member">ورزشکار</span>';
+                html += '<div class="rep-card">' +
+                    '<div class="rep-head">' +
+                        '<div class="rep-num">' + faNum(i + 1) + '</div>' +
+                        '<div class="rep-mid">' +
+                            '<div class="rep-line"><b>' + esc(r.personName || '-') + '</b> ' + badge + '</div>' +
+                            '<div class="rep-line">📥 ورود: ' + esc(r.entryDate || '-') + ' <b>' + esc(r.entryTime || '-') + '</b></div>' +
+                            '<div class="rep-line">📤 خروج: ' + esc(r.exitDate || '-') + ' <b>' + esc(r.exitTime || '-') + '</b></div>' +
+                        '</div>' +
+                        '<button type="button" class="rep-toggle"><i class="bi bi-chevron-left"></i></button>' +
+                    '</div>' +
+                    '<div class="rep-details">' +
+                        '<div class="rep-drow"><span>کد عضویت</span><b>' + esc(r.memberCode || '-') + '</b></div>' +
+                        '<div class="rep-drow"><span>کمد</span><b>' + esc(r.BoxID || '-') + '</b></div>' +
+                        '<div class="rep-drow"><span>توضیحات</span><b>' + esc(r.entryDesc || '-') + '</b></div>' +
+                    '</div>' +
+                '</div>';
+            });
+            $box.html(html);
         }
-        var csvContent = '\uFEFF' + csv.join('\n'); // BOM برای فارسی
-        var blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-        var link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = fileName + '.csv';
-        link.click();
-    }
-</script>
+
+        $(document).on('click', '.rep-head', function () {
+            var $c = $(this).closest('.rep-card');
+            $c.toggleClass('open');
+            $c.find('.rep-details').slideToggle(200);
+        });
+
+        $('#searchInput').on('keyup', function () {
+            var v = $(this).val().toLowerCase(); var n = 0;
+            $('.rep-card').each(function () {
+                var m = $(this).text().toLowerCase().indexOf(v) > -1;
+                $(this).toggle(m); if (m) n++;
+            });
+            $('#rowCount').text(faNum(n) + ' رکورد');
+        });
+
+        $('#btnExport').click(function () {
+            if (!lastRows.length) { showToast('ابتدا گزارش را نمایش دهید', 'warning'); return; }
+            var lines = [csvColumns.map(function (c) { return '"' + c.t + '"'; }).join(',')];
+            lastRows.forEach(function (r) {
+                lines.push(csvColumns.map(function (c) { return '"' + String(c.g(r)).replace(/"/g, '""') + '"'; }).join(','));
+            });
+            var blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'گزارش-ترددها.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        });
+    </script>
 }

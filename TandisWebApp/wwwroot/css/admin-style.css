@@ -578,6 +578,313 @@ body.admin-glass-body .card.bg-info {
     font-weight: 600;
     text-align: center;
 }
+/* ========== UI مشترک گزارش‌ها (کارت سلولی) ========== */
+.rep-filter {
+    background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 18px;
+    padding: 14px;
+}
+
+.rep-label {
+    font-size: .75rem;
+    color: #9fb3c8;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.rep-input-group {
+    display: flex;
+    gap: 6px;
+}
+
+.rep-input {
+    flex: 1;
+    min-width: 0;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.16);
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 12px;
+    font-size: .82rem;
+}
+
+    .rep-input:focus {
+        outline: none;
+        border-color: rgba(102,211,232,.5);
+        background: rgba(255,255,255,.12);
+    }
+
+.rep-btn-icon {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.16);
+    color: #66d3e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .rep-btn-icon.danger {
+        color: #ff6b81;
+    }
+
+.rep-btn-main {
+    width: 100%;
+    background: linear-gradient(135deg, #1E6FD9, #667eea);
+    border: none;
+    color: #fff;
+    font-weight: 800;
+    font-size: .88rem;
+    border-radius: 14px;
+    padding: 10px;
+    box-shadow: 0 6px 16px rgba(30,111,217,.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.rep-btn-excel {
+    width: 100%;
+    background: rgba(56,217,169,.14);
+    border: 1px solid rgba(56,217,169,.4);
+    color: #38d9a9;
+    font-weight: 700;
+    font-size: .82rem;
+    border-radius: 14px;
+    padding: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.rep-summary {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.rep-chip {
+    flex: 1 1 auto;
+    min-width: 90px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 14px;
+    padding: 10px 12px;
+    text-align: center;
+}
+
+    .rep-chip b {
+        display: block;
+        color: #fff;
+        font-size: 1rem;
+        font-weight: 800;
+    }
+
+    .rep-chip span {
+        font-size: .68rem;
+        color: #9fb3c8;
+    }
+
+    .rep-chip.hl b {
+        color: #66d3e8;
+    }
+
+.rep-list-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 14px 0 10px;
+}
+
+.rep-count {
+    background: rgba(102,211,232,.14);
+    border: 1px solid rgba(102,211,232,.35);
+    color: #66d3e8;
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: .72rem;
+    font-weight: 800;
+}
+
+.rep-search {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.16);
+    color: #fff;
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: .8rem;
+    width: 190px;
+}
+
+.rep-card {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.rep-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.rep-num {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .78rem;
+    box-shadow: 0 4px 10px rgba(118,75,162,.35);
+}
+
+.rep-mid {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.rep-line {
+    font-size: .8rem;
+    color: #cbd3da;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .rep-line b {
+        color: #fff;
+    }
+
+    .rep-line .amt {
+        color: #38d9a9;
+        font-weight: 800;
+    }
+
+.rep-toggle {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(255,255,255,.08);
+    border: none;
+    color: #9bd7f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform .25s, background .25s;
+}
+
+.rep-card.open .rep-toggle {
+    transform: rotate(-90deg);
+    background: rgba(102,211,232,.25);
+    color: #fff;
+}
+
+.rep-details {
+    display: none;
+    padding: 10px 12px 12px;
+    border-top: 1px dashed rgba(255,255,255,.15);
+    background: rgba(0,0,0,.15);
+}
+
+.rep-drow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: .78rem;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+    .rep-drow:last-child {
+        border-bottom: none;
+    }
+
+    .rep-drow span {
+        color: #8a93a6;
+        flex: 0 0 auto;
+    }
+
+    .rep-drow b {
+        color: #e9ecef;
+        font-weight: 700;
+        text-align: left;
+        word-break: break-word;
+    }
+
+.rep-badge {
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: .68rem;
+    font-weight: 800;
+}
+
+    .rep-badge.guest, .rep-badge.ren {
+        background: rgba(255,193,7,.18);
+        color: #ffd200;
+        border: 1px solid rgba(255,193,7,.4);
+    }
+
+    .rep-badge.member, .rep-badge.reg {
+        background: rgba(56,217,169,.18);
+        color: #38d9a9;
+        border: 1px solid rgba(56,217,169,.4);
+    }
+
+.rep-mode-group {
+    display: flex;
+    gap: 8px;
+}
+
+.rep-mode {
+    flex: 1;
+    text-align: center;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.14);
+    color: #9fb3c8;
+    border-radius: 12px;
+    padding: 8px 0;
+    font-size: .82rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin: 0;
+}
+
+.btn-check:checked + .rep-mode {
+    background: linear-gradient(135deg, #1E6FD9, #667eea);
+    border-color: transparent;
+    color: #fff;
+}
+select.rep-search {
+    width: auto;
+    min-width: 140px;
+}
+
+.rep-search option {
+    background: #101424;
+    color: #fff;
+}
 
 /* در موبایل فشرده‌تر */
 @media (max-width: 576px) {

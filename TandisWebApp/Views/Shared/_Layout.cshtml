@@ -3,7 +3,6 @@
     var fullName = HttpContextAccessor.HttpContext?.User?.FindFirst("FullName")?.Value ?? "کاربر";
     var isAuthenticated = HttpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true;
     var isCoach = HttpContextAccessor.HttpContext?.User?.FindFirst("RoleID")?.Value == "2";
-
     var unreadCount = 0;
     var msgPreview = new List<TandisWebApp.DTOs.MemberMessageRowDto>();
 
@@ -139,7 +138,7 @@
             backdrop-filter: blur(14px);
             box-shadow: 0 20px 50px rgba(0,0,0,.5);
         }
-
+       
         /* فاصله محتوا از بار شناور تا چیزی زیرش قایم نشه */
         @@media (max-width: 767.98px) {
             body {
@@ -168,7 +167,7 @@
 
                 <!-- ✅ دکمه همبرگری حذف شد -->
 
-                <div class="collapse navbar-collapse" id="navbarMain">
+                <div class="collapse navbar-collapse" id="navbarMain">                  
                     <!-- فضای خالی وسط -->
                     <div class="flex-grow-1"></div>
 

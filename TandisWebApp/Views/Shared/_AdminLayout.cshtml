@@ -2,6 +2,8 @@
     var adminName = HttpContextAccessor.HttpContext?.User?.FindFirst("FullName")?.Value ?? "مدیر";
     var shiftID = HttpContextAccessor.HttpContext?.User?.FindFirst("AdminShiftID")?.Value ?? "1";
     var shiftName = shiftID == "2" ? "بانوان" : "آقایان";
+    var shiftClass = shiftID == "2" ? "shift-ladies" : "shift-gents";
+    var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
 }
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -15,7 +17,6 @@
     <meta name="apple-mobile-web-app-title" content="تندیس" />
     <link rel="apple-touch-icon" href="/images/app-icon.png" />
 
-    <!-- جلوگیری از ذخیره‌سازی در کش برای آپدیت‌های سریع‌تر -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,53 +25,375 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
+
+    <style>
+        /* ===== نوار پایین شناور پنل ادمین ===== */
+        .admin-bottom-nav {
+            position: fixed;
+            bottom: 12px;
+            left: 14px;
+            right: 14px;
+            z-index: 1030;
+            display: flex;
+            justify-content: space-around;
+            align-items: stretch;
+            background: rgba(15, 23, 42, .88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 22px;
+            box-shadow: 0 12px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
+            padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+        }
+
+        .abn-item {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            color: #8a93a6;
+            text-decoration: none;
+            font-size: .68rem;
+            font-weight: 600;
+            padding: 8px 0 5px;
+            transition: color .3s, transform .15s;
+        }
+
+            .abn-item i {
+                font-size: 1.25rem;
+                opacity: .7;
+                transition: all .35s cubic-bezier(.22,.9,.35,1.2);
+            }
+
+            .abn-item:active {
+                transform: scale(.92);
+            }
+
+            .abn-item.abn-active {
+                color: #fff;
+            }
+
+                .abn-item.abn-active i {
+                    opacity: 1;
+                    transform: translateY(-2px) scale(1.1);
+                    color: #66d3e8;
+                }
+
+        /* ===== نشانگر نورانی سُر‌خور ===== */
+        .abn-glow {
+            position: absolute;
+            top: 5px;
+            left: 0;
+            width: 34px;
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            box-shadow: 0 0 14px rgba(118,75,162,.9);
+            transform: translateX(-200px) translateX(-50%);
+            transition: transform .5s cubic-bezier(.22,.9,.35,1.15), opacity .3s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+            .abn-glow.show {
+                opacity: 1;
+            }
+
+        /* ===== نوار بالا ===== */
+        .admin-top-nav {
+            background: rgba(15, 23, 42, .75) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+            .admin-top-nav .navbar-brand {
+                color: #fff;
+                font-weight: 800;
+            }
+
+            .admin-top-nav .nav-link {
+                color: #cbd3da;
+                font-size: .85rem;
+            }
+
+                .admin-top-nav .nav-link:hover {
+                    color: #fff;
+                }
+
+                .admin-top-nav .nav-link.nav-active {
+                    color: #fff !important;
+                    background: rgba(102,211,232,.16);
+                    border: 1px solid rgba(102,211,232,.35);
+                    border-radius: 10px;
+                }
+
+        /* ===== بنر شیفت ===== */
+        .shift-banner {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 16px;
+            padding: 10px 14px;
+            margin-bottom: 14px;
+            backdrop-filter: blur(8px);
+        }
+
+        .sb-icon {
+            flex: 0 0 auto;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(0,0,0,.35);
+        }
+
+        .shift-gents .sb-icon {
+            background: linear-gradient(135deg, #1E6FD9, #66D3E8);
+        }
+
+        .shift-ladies .sb-icon {
+            background: linear-gradient(135deg, #cb356b, #f7971e);
+        }
+
+        .sb-title {
+            font-weight: 800;
+            color: #fff;
+            font-size: .95rem;
+        }
+
+        .sb-sub {
+            font-size: .75rem;
+            color: #9fb3c8;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .sb-dot {
+            flex: 0 0 auto;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #38d9a9;
+            box-shadow: 0 0 10px rgba(56,217,169,.9);
+            animation: sbPulse 2s infinite;
+        }
+
+        @@keyframes sbPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(.75);
+                opacity: .6;
+            }
+        }
+
+        /* ===== مودال‌های شیشه‌ای ادمین ===== */
+        #changePassModal .modal-content,
+        #logoutModal .modal-content {
+            background: rgba(16,20,36,.97);
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 18px;
+            color: #fff;
+            backdrop-filter: blur(14px);
+        }
+
+        #changePassModal .form-control {
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.18);
+            color: #fff;
+        }
+
+            #changePassModal .form-control::placeholder {
+                color: #8a93a6;
+            }
+
+        #changePassModal .form-label {
+            color: #9fb3c8;
+        }
+
+        .cp-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            font-weight: 800;
+        }
+
+        .btn-grad-purple {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: #fff;
+            font-weight: 700;
+            border-radius: 12px;
+            padding: 8px 18px;
+            box-shadow: 0 6px 16px rgba(118,75,162,.40);
+        }
+
+            .btn-grad-purple:hover {
+                filter: brightness(1.1);
+                color: #fff;
+            }
+        /* ===== دکمه تغییر رمز: pill فیروزه‌ای ===== */
+        .btn-key-glass {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(102,211,232,.12);
+            border: 1px solid rgba(102,211,232,.35);
+            color: #66d3e8;
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: .8rem;
+            font-weight: 700;
+            transition: all .25s;
+        }
+
+            .btn-key-glass:hover {
+                background: rgba(102,211,232,.25);
+                color: #fff;
+                border-color: rgba(102,211,232,.6);
+            }
+
+            .btn-key-glass i {
+                font-size: .95rem;
+            }
+
+        /* ===== دکمه خروج: pill شیشه‌ای قرمز ملایم ===== */
+        .btn-logout-glass {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,107,129,.12);
+            border: 1px solid rgba(255,107,129,.40);
+            color: #ff8fa3;
+            border-radius: 999px;
+            padding: 6px 16px;
+            font-size: .8rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all .25s;
+        }
+
+            .btn-logout-glass:hover {
+                background: rgba(255,107,129,.25);
+                color: #fff;
+                border-color: rgba(255,107,129,.6);
+            }
+        /* فاصله محتوا از نوار پایین شناور در موبایل */
+        @@media (max-width: 767.98px) {
+            body {
+                padding-bottom: 96px;
+            }
+        }
+    </style>
 </head>
 <body class="admin-glass-body">
-    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color:#2c3e50">
-        <div class="container">
-            <a class="navbar-brand fw-bold d-flex align-items-center gap-2" href="/Admin">
-                <img src="~/images/logo2.png" alt="تندیس" height="36" />
+    <!-- ========== نوار بالا (بدون همبرگری) ========== -->
+    <nav class="navbar navbar-expand-lg admin-top-nav">
+        <div class="container-fluid px-3">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/Admin">
+                <img src="~/images/logo2.png" alt="تندیس" height="34" />
                 <span>پنل مدیر</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAdmin">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarAdmin">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item"><a class="nav-link" href="/Admin"><i class="bi bi-grid-1x2"></i> داشبورد</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/Admin/TrafficReport"><i class="bi bi-arrow-left-right"></i> ترددها</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/Admin/RegisterReport"><i class="bi bi-arrow-repeat"></i> ثبت‌نام/تمدید</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/Admin/OneSessionReport"><i class="bi bi-ticket-perforated"></i> تک‌جلسه</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/Admin/FinanceReport"><i class="bi bi-cash-stack"></i> گزارش صندوق</a></li>
-                </ul>
-                <ul class="navbar-nav">
-                    <li class="nav-item"><span class="nav-link text-warning"><i class="bi bi-building"></i> شیفت @shiftName</span></li>
-                    <li class="nav-item"><span class="nav-link text-light"><i class="bi bi-person-gear"></i> @adminName</span></li>
-                    <li class="nav-item"><a class="nav-link" href="/Admin/Logout"><i class="bi bi-box-arrow-left"></i> خروج</a></li>
-                    <!-- زنگوله پیام‌ها -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link position-relative" href="#" id="notifBell" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-bell-fill" style="font-size:20px;"></i>
-                            <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:10px;display:none;">0</span>
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end" style="min-width:300px;max-height:400px;overflow-y:auto;">
-                            <li class="dropdown-header fw-bold">پیام‌های جدید</li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li id="notifList"><a class="dropdown-item text-muted small">در حال بارگذاری...</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-center text-primary fw-bold" href="/Admin/Messages">مشاهده همه پیام‌ها</a></li>
-                        </ul>
-                    </li>
-                </ul>
+
+            <!-- ✅ لینک‌های دسکتاپ (فقط lg به بالا) -->
+            <ul class="navbar-nav d-none d-lg-flex flex-row gap-1 me-auto ms-3">
+                <li class="nav-item">
+                    <a class="nav-link @(currentPath == "/admin" ? "nav-active" : "")"
+                       href="/Admin"><i class="bi bi-house-door-fill me-1"></i>داشبورد</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(currentPath.StartsWith("/admin/reports") || currentPath.StartsWith("/admin/trafficreport") || currentPath.StartsWith("/admin/registerreport") || currentPath.StartsWith("/admin/onesessionreport") || currentPath.StartsWith("/admin/financereport") ? "nav-active" : "")"
+                       href="/Admin/Reports"><i class="bi bi-graph-up-arrow me-1"></i>گزارش‌ها</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(currentPath.StartsWith("/admin/messages") ? "nav-active" : "")"
+                       href="/Admin/Messages"><i class="bi bi-chat-dots-fill me-1"></i>پیام‌ها</a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end">
+                       
+          
+                <!-- ✅ تغییر رمز -->
+                <button type="button" class="btn-key-glass" id="btnOpenChangePass"
+                        title="تغییر رمز عبور" data-bs-toggle="tooltip" data-bs-placement="bottom">
+                    <i class="bi bi-key-fill"></i>
+                    <span class="d-none d-md-inline">تغییر رمز</span>
+                </button>
+
+                <!-- زنگوله پیام‌ها -->
+                <div class="dropdown">
+                    <a class="nav-link position-relative p-2" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="bi bi-bell-fill text-light" style="font-size:20px;"></i>
+                        <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:10px;display:none;">0</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end" style="min-width:300px;max-height:400px;overflow-y:auto;">
+                        <li class="dropdown-header fw-bold">پیام‌های جدید</li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li id="notifList"><a class="dropdown-item text-muted small">در حال بارگذاری...</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-center text-primary fw-bold" href="/Admin/Messages">مشاهده همه پیام‌ها</a></li>
+                    </ul>
+                </div>
+
+              
+                <!-- خروج (فقط دسکتاپ) -->
+                <a class="d-none d-md-inline-flex btn-logout-glass js-logout" href="/Admin/Logout">
+                    <i class="bi bi-box-arrow-left"></i> خروج
+                </a>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-3">
+    <div class="container mt-3 mb-4">
+        <!-- ===== بنر شیفت ===== -->
+        <div class="shift-banner @shiftClass">
+            <div class="sb-icon"><i class="bi bi-building-fill-check"></i></div>
+            <div class="flex-grow-1" style="min-width:0">
+                <div class="sb-title">شیفت @shiftName</div>
+                <div class="sb-sub"><i class="bi bi-person-gear"></i> @adminName</div>
+            </div>
+            <span class="sb-dot" title="آنلاین"></span>
+        </div>
+
         @RenderBody()
     </div>
 
-    @* === مودال تقویم جلالی مشترک (برای فیلتر بازه تاریخ در گزارش‌ها) === *@
+    <!-- ========== نوار پایین شناور (موبایل + تبلت) ========== -->
+    <nav class="admin-bottom-nav d-lg-none" id="adminBottomNav">
+        <span class="abn-glow" id="abnGlow"></span>
+
+        <a href="/Admin" class="abn-item" data-key="home">
+            <i class="bi bi-house-door-fill"></i>
+            <span>خانه</span>
+        </a>
+        <a href="/Admin/Reports" class="abn-item" data-key="reports">
+            <i class="bi bi-graph-up-arrow"></i>
+            <span>گزارش‌ها</span>
+        </a>
+        <a href="/Admin/Messages" class="abn-item" data-key="messages">
+            <i class="bi bi-chat-dots-fill"></i>
+            <span>پیام‌ها</span>
+        </a>
+        <a href="/Admin/Logout" class="abn-item js-logout" data-key="exit">
+            <i class="bi bi-box-arrow-left"></i>
+            <span>خروج</span>
+        </a>
+    </nav>
+
+    <!-- ========== مودال تقویم جلالی مشترک ========== -->
     <div class="modal fade" id="datePickerModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -103,21 +426,64 @@
         </div>
     </div>
 
-   
+    <!-- ========== مودال تغییر رمز ========== -->
+    <div class="modal fade" id="changePassModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header cp-header">
+                    <h5 class="modal-title"><i class="bi bi-key-fill me-2"></i>تغییر رمز عبور</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label class="form-label small">رمز فعلی</label>
+                        <input type="password" id="cpOld" class="form-control" autocomplete="current-password" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">رمز جدید (حداقل ۸ کاراکتر)</label>
+                        <input type="password" id="cpNew" class="form-control" autocomplete="new-password" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small">تکرار رمز جدید</label>
+                        <input type="password" id="cpConf" class="form-control" autocomplete="new-password" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
+                    <button type="button" class="btn btn-grad-purple" id="btnSubmitChangePass">
+                        <i class="bi bi-check-lg me-1"></i> ثبت تغییر
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== مودال تأیید خروج ========== -->
+    <div class="modal fade" id="logoutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center p-4">
+                    <div style="font-size:2.6rem" class="mb-2">🚪</div>
+                    <div class="fw-bold mb-1">خروج از پنل مدیریت</div>
+                    <div class="small mb-3" style="color:#9fb3c8">آیا مطمئن هستید که می‌خواهید خارج شوید؟</div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">انصراف</button>
+                        <button type="button" class="btn btn-danger w-100" id="btnConfirmLogout">
+                            <i class="bi bi-box-arrow-left me-1"></i> خروج
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- اول jalali-calendar.js -->
     <script src="~/js/jalali-calendar.js"></script>
-
-    <!-- بعد site.js (ولی site.js رو دیگه ازش استفاده نکن) -->
-    <!-- <script src="~/js/site.js?v=3"></script> -->
-    <!-- به جای site.js از یه فایل جدا برای توابع دیگه استفاده کن -->
     <script src="~/js/site-functions.js?v=3"></script>
+
     <script>
-        // === تقویم جلالی مشترک برای صفحات گزارش ===
-        // رویداد ناوبری ماه که در همه گزارش‌ها یکسان است.
-        // مقدار calendarCallback (آیدی input) قبل از باز کردن تقویم توسط هر صفحه تنظیم می‌شود.
+        // === تقویم جلالی مشترک ===
         $('#prevMonth').click(function () {
             calendarDate.m++;
             if (calendarDate.m > 12) { calendarDate.m = 1; calendarDate.y++; }
@@ -128,39 +494,62 @@
             if (calendarDate.m < 1) { calendarDate.m = 12; calendarDate.y--; }
             renderCalendar();
         });
-
-        // تابع کمکی: باز کردن تقویم روی یک input مشخص (برای صفحات گزارش)
-        // در پنل ادمین، روزهای گذشته نیز قابل انتخاب هستند.
         function openCalendar(inputId, title) {
             $('#calendarTitle').text(title || 'انتخاب تاریخ');
             initCalendar(inputId, null, true);
             new bootstrap.Modal('#datePickerModal').show();
         }
 
-        // خروجی فرار از HTML
         function esc(str) {
             if (str === null || str === undefined) return '';
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
                               .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
         }
-
-        // تبدیل عدد به فارسی + جداکننده هزارگان
         function faNum(n) { return Number(n || 0).toLocaleString('fa-IR'); }
-    </script>
-    @await RenderSectionAsync("Scripts", required: false)
-    <script>
+
+        // ===== مرتب‌سازی مشترک همه گزارش‌ها =====
+        function repValOf(r, key) {
+            if (key === 'name')   return r.personName || r.typeDesc || '';
+            if (key === 'date')   return (r.entryDate || r.creationDate || r.dateDisplay || '') + ' ' + (r.entryTime || r.creationTime || '');
+            if (key === 'amount') return Number(String(r.finalPaymentDisplay || r.amountDisplay || '').replace(/[^0-9]/g, '')) || 0;
+            return 0;
+        }
+
+        window.repSortAndRender = function () {
+            if (typeof renderList !== 'function') return;
+            if (typeof lastRows === 'undefined' || !lastRows || !lastRows.length) return;
+
+            var summ = (typeof lastSummary !== 'undefined') ? lastSummary : null;
+            var key = $('#sortKey').val();
+            var dir = ($('#sortDir').data('dir') === 'asc') ? 1 : -1;
+            if (!key) return;
+
+            var sorted = lastRows.slice().sort(function (a, b) {
+                var va = repValOf(a, key), vb = repValOf(b, key);
+                if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * dir;
+                return String(va).localeCompare(String(vb), 'fa') * dir;
+            });
+
+            renderList(sorted, summ);
+        };
+
+        $(document).on('change', '#sortKey', function () { window.repSortAndRender(); });
+        $(document).on('click', '#sortDir', function () {
+            var asc = $(this).data('dir') === 'asc';
+            $(this).data('dir', asc ? 'desc' : 'asc')
+                   .html('<i class="bi ' + (asc ? 'bi-sort-up' : 'bi-sort-down') + '"></i>');
+            window.repSortAndRender();
+        });
+
+        // === زنگوله پیام‌ها ===
         function loadNotifBell() {
             $.get('/api/Admin/Messages/UnreadCount', function (res) {
                 if (res.success) {
                     var badge = $('#notifBadge');
-                    if (res.count > 0) {
-                        badge.text(faNum(res.count)).show();
-                    } else {
-                        badge.hide();
-                    }
+                    if (res.count > 0) badge.text(faNum(res.count)).show();
+                    else badge.hide();
                 }
             });
-
             $.get('/api/Admin/Messages/Inbox', function (res) {
                 if (res.success && res.data && res.data.length) {
                     var html = '';
@@ -176,10 +565,105 @@
                 }
             });
         }
+
+        // ===== 🔑 تغییر رمز از داخل پنل =====
+        $('#btnOpenChangePass').on('click', function () {
+            $('#cpOld, #cpNew, #cpConf').val('');
+            new bootstrap.Modal('#changePassModal').show();
+        });
+
+        $('#btnSubmitChangePass').on('click', function () {
+            var old = $('#cpOld').val(), nw = $('#cpNew').val(), cf = $('#cpConf').val();
+            if (!old || !nw || !cf) { showToast('تمام فیلدها را پر کنید', 'error'); return; }
+            if (nw.length < 8) { showToast('رمز جدید باید حداقل ۸ کاراکتر باشد', 'error'); return; }
+            if (nw === old) { showToast('رمز جدید نباید با رمز فعلی یکسان باشد', 'error'); return; }
+            if (nw !== cf) { showToast('رمز جدید و تکرار آن مطابقت ندارد', 'error'); return; }
+
+            apiCall('/api/Admin/ChangePassword', 'POST',
+                { oldPassword: old, newPassword: nw, confirmPassword: cf },
+                function (res) {
+                    if (res.success) {
+                        showToast(res.message || 'رمز عبور با موفقیت تغییر کرد', 'success');
+                        var m = document.getElementById('changePassModal');
+                        bootstrap.Modal.getInstance(m).hide();
+                    } else {
+                        showToast(res.message || 'خطا در تغییر رمز', 'error');
+                    }
+                });
+        });
+
+        // ===== 🚪 تأیید خروج =====
+        $(document).on('click', '.js-logout', function (e) {
+            e.preventDefault();
+            new bootstrap.Modal('#logoutModal').show();
+        });
+        $('#btnConfirmLogout').on('click', function () {
+            window.location.href = '/Admin/Logout';
+        });
+
+        // === نشانگر سُر‌خور نوار پایین ===
+        (function () {
+            var bar = document.getElementById('adminBottomNav');
+            if (!bar) return;
+            var glow = document.getElementById('abnGlow');
+            var items = Array.prototype.slice.call(bar.querySelectorAll('.abn-item'));
+            if (!glow || !items.length) return;
+
+            var path = window.location.pathname.toLowerCase();
+            var currentKey = 'home';
+            if (path.indexOf('/admin/reports') === 0 ||
+                path.indexOf('/admin/trafficreport') === 0 ||
+                path.indexOf('/admin/registerreport') === 0 ||
+                path.indexOf('/admin/onesessionreport') === 0 ||
+                path.indexOf('/admin/financereport') === 0) {
+                currentKey = 'reports';
+            } else if (path.indexOf('/admin/messages') === 0) {
+                currentKey = 'messages';
+            }
+
+            function findItem(key) {
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].getAttribute('data-key') === key) return items[i];
+                }
+                return null;
+            }
+
+            var current = findItem(currentKey);
+            var lastKey = sessionStorage.getItem('abnLastKey');
+            var lastItem = lastKey ? findItem(lastKey) : null;
+
+            function centerOf(item) { return item.offsetLeft + item.offsetWidth / 2; }
+
+            function placeAt(item, animate) {
+                if (!item) return;
+                if (!animate) glow.style.transition = 'none';
+                glow.style.transform = 'translateX(' + centerOf(item) + 'px) translateX(-50%)';
+                if (!animate) { void glow.offsetWidth; glow.style.transition = ''; }
+                glow.classList.add('show');
+            }
+
+            items.forEach(function (i) { i.classList.toggle('abn-active', i === current); });
+
+            if (current) {
+                if (lastItem && lastItem !== current) {
+                    placeAt(lastItem, false);
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () { placeAt(current, true); });
+                    });
+                } else {
+                    placeAt(current, false);
+                }
+            }
+
+            sessionStorage.setItem('abnLastKey', currentKey);
+            window.addEventListener('resize', function () { placeAt(current, false); });
+        })();
+
         $(function () {
             loadNotifBell();
             setInterval(loadNotifBell, 30000); // هر ۳۰ ثانیه
         });
     </script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

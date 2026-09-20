@@ -1,5 +1,6 @@
 ﻿@{
-    ViewData["Title"] = "پیام‌ها";
+    ViewData["Title"] = "مدیریت پیام‌ها";
+    Layout = "_AdminLayout";  
 }
 
 <!-- ✅ نوار ابزار بالا -->
@@ -125,3 +126,116 @@
 @section Scripts {
     <script src="~/js/admin-messages.js?v=1"></script>
 }
+<style>
+    /* ===== دکمه‌های تم‌رنگ: گرادیان بنفش-آبی، کوچیک و جمع‌وجور ===== */
+    .btn-outline-warning,
+    .btn-outline-secondary,
+    .btn-outline-primary,
+    .btn-outline-light {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: #fff;
+        font-weight: 700;
+        font-size: .78rem;
+        padding: .5rem .95rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(118,75,162,.35);
+        transition: all .25s;
+    }
+
+        .btn-outline-warning:hover,
+        .btn-outline-secondary:hover,
+        .btn-outline-primary:hover,
+        .btn-outline-light:hover {
+            filter: brightness(1.12);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+    /* ===== دکمه ارسال پیام: همون گرادیان، تمام‌عرض ولی نه ضخیم ===== */
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: #fff;
+        font-weight: 800;
+        font-size: .88rem;
+        padding: .6rem 1rem;
+        border-radius: 14px;
+        box-shadow: 0 6px 16px rgba(118,75,162,.40);
+        transition: all .25s;
+    }
+
+        .btn-primary:hover {
+            filter: brightness(1.12);
+            color: #fff;
+        }
+
+    /* ===== اینپوت‌های شیشه‌ای ===== */
+    .form-control, .form-select {
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.16);
+        color: #fff;
+        border-radius: 12px;
+        font-size: .85rem;
+    }
+
+        .form-control::placeholder {
+            color: #8a93a6;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background: rgba(255,255,255,.12);
+            border-color: rgba(102,211,232,.5);
+            color: #fff;
+            box-shadow: 0 0 0 .2rem rgba(102,211,232,.15);
+        }
+
+        .form-select option {
+            background: #101424;
+            color: #fff;
+        }
+
+    .form-label {
+        color: #9fb3c8;
+        font-size: .8rem;
+        font-weight: 700;
+    }
+
+    /* ===== جدول اینباکس شیشه‌ای ===== */
+    .table thead th {
+        background: rgba(255,255,255,.06);
+        color: #9fb3c8;
+        font-size: .78rem;
+        font-weight: 700;
+        border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+
+    .table tbody td {
+        border-color: rgba(255,255,255,.06);
+        font-size: .82rem;
+        color: #cbd3da;
+    }
+
+    .table-hover tbody tr:hover > * {
+        background: rgba(102,211,232,.06);
+    }
+
+    /* ===== بج‌های داخل جدول ===== */
+    .badge.bg-warning {
+        background: rgba(255,193,7,.18) !important;
+        color: #ffd200;
+        border: 1px solid rgba(255,193,7,.4);
+    }
+
+    .badge.bg-success {
+        background: rgba(56,217,169,.18) !important;
+        color: #38d9a9;
+        border: 1px solid rgba(56,217,169,.4);
+    }
+
+    .badge.bg-danger {
+        background: rgba(255,107,129,.18) !important;
+        color: #ff6b81;
+        border: 1px solid rgba(255,107,129,.4);
+    }
+</style>

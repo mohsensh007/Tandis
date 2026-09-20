@@ -97,36 +97,69 @@ namespace TandisWebApp.Services
 
         public async Task<AdminReportResponse<AdminRegisterRowDto, RegisterReportSummaryDto>> GetRegisterReportAsync(short shiftID, string? from, string? to, string mode)
         {
-            // استفاده از Join به جای Contains برای جلوگیری از خطای SQL
             var query = _db.Acc_MemberSports
                 .Where(ms => ms.Gen_SportSanse != null && ms.Gen_SportSanse.ShiftID == shiftID);
 
-            // فیلتر بازه زمانی بر اساس CreationDate (شمسی)
             if (!string.IsNullOrWhiteSpace(from))
                 query = query.Where(ms => ms.CreationDate != null && ms.CreationDate.CompareTo(from) >= 0);
             if (!string.IsNullOrWhiteSpace(to))
                 query = query.Where(ms => ms.CreationDate != null && ms.CreationDate.CompareTo(to) <= 0);
 
-            // فیلتر نوع: ثبت‌نام / تمدید / هر دو
             if (mode == "register")
                 query = query.Where(ms => ms.IsRevival == null || ms.IsRevival == false);
             else if (mode == "renew")
                 query = query.Where(ms => ms.IsRevival == true);
 
-            var rows = await (
+            // ✅ همه join ها در یک کوئری — بدون N+1
+            var rawRows = await (
                 from ms in query
-                orderby ms.SportMemberID descending
-                select new { ms, sanse = ms.Gen_SportSanse }
-            ).ToListAsync();
+                join sanse in _db.Gen_SportSanses on ms.SportSanseID equals sanse.SportSanseID into sj
+                from sanse in sj.DefaultIfEmpty()
 
-            // بهینه‌سازی N+1 Query: همه MemberIDها را یک‌جا بگیریم
-            var memberIDs = rows
-                .Where(x => x.ms.MemberID.HasValue && x.ms.MemberID.Value > 0)
-                .Select(x => x.ms.MemberID.GetValueOrDefault())
+                    // Join برای SportName
+                join sportCat in _db.Gen_Sport_Categories on sanse.SportCatID equals sportCat.SportCatID into sportCatJoin
+                from sportCat in sportCatJoin.DefaultIfEmpty()
+
+                    // Join برای CoachName (از طریق CoachMemberID → Gen_Members → Gen_Persons)
+                join coachM in _db.Gen_Members on sanse.CoachMemberID equals coachM.MemberID into coachMJoin
+                from coachM in coachMJoin.DefaultIfEmpty()
+                join coachP in _db.Gen_Persons on coachM.PersonID equals coachP.PersonID into coachPJoin
+                from coachP in coachPJoin.DefaultIfEmpty()
+
+                    // Join برای MembershipType
+                join memType in _db.Gen_MembershipTypes on sanse.MembershipTypeID equals memType.MembershipTypeID into memTypeJoin
+                from memType in memTypeJoin.DefaultIfEmpty()
+
+                    // Join برای Period
+                join period in _db.Gen_Periods on sanse.PeriodID equals period.PeriodID into periodJoin
+                from period in periodJoin.DefaultIfEmpty()
+
+                orderby ms.SportMemberID descending
+                select new
+                {
+                    ms.SportMemberID,
+                    ms.MemberID,
+                    ms.IsRevival,
+                    ms.FinalPayment,
+                    ms.StartDate,
+                    ms.EndDate,
+                    ms.CreationDate,
+                    ms.CreationTime,
+                    SportName = sportCat != null ? sportCat.SportName : "",
+                    SanseName = sanse != null ? sanse.SanseName : "",
+                    CoachName = coachP != null ? coachP.FullName : "",
+                    MembershipTypeDesc = memType != null ? memType.MembershipTypeDesc : "",
+                    PeriodDesc = period != null ? period.Description : ""
+                }).ToListAsync();
+
+            // بهینه‌سازی: همه MemberIDها را یک‌جا بگیریم
+            var memberIDs = rawRows
+                .Where(x => x.MemberID.HasValue && x.MemberID.Value > 0)
+                .Select(x => x.MemberID.GetValueOrDefault())
                 .Distinct()
                 .ToList();
 
-            var memberInfos = new Dictionary<int, string>();
+            var memberInfos = new Dictionary<int, (string FullName, string MemberCode)>();
             if (memberIDs.Count > 0)
             {
                 memberInfos = await (
@@ -134,7 +167,10 @@ namespace TandisWebApp.Services
                     join p in _db.Gen_Persons on m.PersonID equals p.PersonID
                     where memberIDs.Contains(m.MemberID)
                     select new { m.MemberID, p.FullName }
-                ).ToDictionaryAsync(x => x.MemberID, x => x.FullName ?? "");
+                ).ToDictionaryAsync(
+                    x => x.MemberID,
+                    x => (x.FullName ?? "", _helper.SetSeprator(x.MemberID))
+                );
             }
 
             var result = new List<AdminRegisterRowDto>();
@@ -142,39 +178,37 @@ namespace TandisWebApp.Services
             int registerCount = 0;
             int renewalCount = 0;
 
-            foreach (var item in rows)
+            foreach (var item in rawRows)
             {
-                var s = item.sanse;
                 var personName = "";
                 string? memberCode = null;
 
-                // نام و کد عضو - از Dictionary به جای کوئری جداگانه
-                if (item.ms.MemberID > 0 && memberInfos.TryGetValue(item.ms.MemberID.Value, out var fullName))
+                if (item.MemberID > 0 && memberInfos.TryGetValue(item.MemberID.Value, out var info))
                 {
-                    personName = fullName;
-                    memberCode = _helper.SetSeprator(item.ms.MemberID.Value);
+                    personName = info.FullName;
+                    memberCode = info.MemberCode;
                 }
 
-                bool isRevival = item.ms.IsRevival ?? false;
+                bool isRevival = item.IsRevival ?? false;
                 if (isRevival) renewalCount++; else registerCount++;
-                totalAmount += item.ms.FinalPayment ?? 0;
+                totalAmount += item.FinalPayment ?? 0;
 
                 result.Add(new AdminRegisterRowDto
                 {
-                    SportMemberID = item.ms.SportMemberID,
+                    SportMemberID = item.SportMemberID,
                     PersonName = personName,
                     MemberCode = memberCode,
-                    SportName = s != null ? (s.Gen_Sport_Category?.SportName ?? "") : "",
-                    SanseName = s?.SanseName ?? "",
-                    CoachName = s != null ? (s.Gen_Member?.Gen_Person?.FullName ?? "") : "",
-                    MembershipTypeDesc = s != null ? (s.Gen_MembershipType?.MembershipTypeDesc ?? "") : "",
-                    PeriodDesc = s != null ? (s.Gen_Period?.Description ?? "") : "",
-                    FinalPayment = item.ms.FinalPayment ?? 0,
-                    FinalPaymentDisplay = _helper.SetSeprator(item.ms.FinalPayment ?? 0) + " ریال",
-                    StartDate = item.ms.StartDate,
-                    EndDate = item.ms.EndDate,
-                    CreationDate = item.ms.CreationDate,
-                    CreationTime = item.ms.CreationTime,
+                    SportName = item.SportName ?? "",
+                    SanseName = item.SanseName ?? "",
+                    CoachName = item.CoachName ?? "",
+                    MembershipTypeDesc = item.MembershipTypeDesc ?? "",
+                    PeriodDesc = item.PeriodDesc ?? "",
+                    FinalPayment = item.FinalPayment ?? 0,
+                    FinalPaymentDisplay = _helper.SetSeprator(item.FinalPayment ?? 0) + " ریال",
+                    StartDate = item.StartDate,
+                    EndDate = item.EndDate,
+                    CreationDate = item.CreationDate,
+                    CreationTime = item.CreationTime,
                     IsRevival = isRevival
                 });
             }

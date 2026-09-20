@@ -310,5 +310,13 @@ namespace TandisWebApp.Controllers
             var model = await _reports.GetCoachStudentMessagesReportAsync(shiftID, from, to);
             return View(model);
         }
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("Admin/Reports")]
+        public IActionResult Reports()
+        {
+            ViewData["Title"] = "گزارش‌ها";
+            return View();
+        }
     }
 }

@@ -3,136 +3,87 @@
     Layout = "_AdminLayout";
 }
 
-<div class="card mb-3">
-    <div class="card-header"><i class="bi bi-funnel"></i> فیلتر بازه زمانی</div>
-    <div class="card-body">
-        <div class="row g-2 align-items-end">
-            <div class="col-md-3">
-                <label class="form-label">از تاریخ</label>
-                <div class="input-group">
-                    <input type="text" id="fromDate" class="form-control" placeholder="مثلاً 1405/01/01" readonly />
-                    <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('fromDate','از تاریخ',false)">
-                        <i class="bi bi-calendar3"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-danger" onclick="$('#fromDate').val('')">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
+<div class="rep-filter mb-3">
+    <div class="row g-2">
+        <div class="col-6 col-md-3">
+            <div class="rep-label">از تاریخ</div>
+            <div class="rep-input-group">
+                <input type="text" id="fromDate" class="rep-input" placeholder="1405/01/01" readonly />
+                <button type="button" class="rep-btn-icon" onclick="openCalendar('fromDate','از تاریخ')"><i class="bi bi-calendar3"></i></button>
+                <button type="button" class="rep-btn-icon danger" onclick="$('#fromDate').val('')"><i class="bi bi-x-lg"></i></button>
             </div>
-            <div class="col-md-3">
-                <label class="form-label">تا تاریخ</label>
-                <div class="input-group">
-                    <input type="text" id="toDate" class="form-control" placeholder="مثلاً 1405/03/31" readonly />
-                    <button type="button" class="btn btn-outline-secondary" onclick="openCalendar('toDate','تا تاریخ',false)">
-                        <i class="bi bi-calendar3"></i>
-                    </button>
-                    <button type="button" class="btn btn-outline-danger" onclick="$('#toDate').val('')">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="rep-label">تا تاریخ</div>
+            <div class="rep-input-group">
+                <input type="text" id="toDate" class="rep-input" placeholder="1405/03/31" readonly />
+                <button type="button" class="rep-btn-icon" onclick="openCalendar('toDate','تا تاریخ')"><i class="bi bi-calendar3"></i></button>
+                <button type="button" class="rep-btn-icon danger" onclick="$('#toDate').val('')"><i class="bi bi-x-lg"></i></button>
             </div>
-            <div class="col-md-3">
-                <button class="btn btn-primary w-100" id="btnSearch">
-                    <i class="bi bi-search"></i> نمایش گزارش
-                </button>
-            </div>
-            <div class="col-md-3">
-                <button class="btn btn-success w-100" onclick="exportTableToCSV('tblFinance','گزارش-صندوق')">
-                    <i class="bi bi-file-earmark-excel"></i> خروجی اکسل
-                </button>
-            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="rep-label">&nbsp;</div>
+            <button class="rep-btn-main" id="btnSearch"><i class="bi bi-search"></i> نمایش گزارش</button>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="rep-label">&nbsp;</div>
+            <button class="rep-btn-excel" id="btnExport"><i class="bi bi-file-earmark-excel"></i> خروجی اکسل</button>
         </div>
     </div>
 </div>
 
-<!-- خلاصه گزارش -->
-<div class="row g-3 mb-3" id="summaryCards">
-    <div class="col-md-4">
-        <div class="card bg-primary text-white">
-            <div class="card-body text-center">
-                <h5 id="summaryTotal">۰</h5>
-                <small>تعداد تراکنش‌ها</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-success text-white">
-            <div class="card-body text-center">
-                <h5 id="summaryCreditCount">۰</h5>
-                <small>تعداد دریافتی</small>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-4">
-        <div class="card bg-info text-white">
-            <div class="card-body text-center">
-                <h5 id="summaryTotalAmount">—</h5>
-                <small>مجموع دریافتی</small>
-            </div>
-        </div>
-    </div>
+<div class="rep-summary mb-3" id="summaryCards">
+    <div class="rep-chip hl"><b id="summaryTotal">۰</b><span>تعداد تراکنش‌ها</span></div>
+    <div class="rep-chip"><b id="summaryCreditCount">۰</b><span>تعداد دریافتی</span></div>
+    <div class="rep-chip"><b id="summaryTotalAmount">—</b><span>مجموع دریافتی</span></div>
 </div>
 
-<div class="card">
-    <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <span><i class="bi bi-cash-stack"></i> لیست دریافتی‌های صندوق</span>
-        <div class="d-flex align-items-center gap-2">
-            <span class="badge bg-success" id="rowCount">۰ رکورد</span>
-            <input type="text" id="searchInput" class="form-control form-control-sm" style="width: 200px;" placeholder="جستجو در جدول..." />
-        </div>
+<div class="rep-list-head">
+    <span class="rep-count" id="rowCount">۰ رکورد</span>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <select id="sortKey" class="rep-search">
+            <option value="">مرتب‌سازی: پیش‌فرض</option>
+            <option value="date">تاریخ</option>
+            <option value="amount">مبلغ</option>
+            <option value="name">نام / شرح</option>
+        </select>
+        <button type="button" class="rep-btn-icon" id="sortDir" data-dir="desc" title="جهت مرتب‌سازی">
+            <i class="bi bi-sort-down"></i>
+        </button>
+        <input type="text" id="searchInput" class="rep-search" placeholder="🔍 جستجو..." />
     </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-striped table-hover table-sm align-middle mb-0" id="tblFinance">
-                <thead class="table-light">
-                    <tr>
-                        <th>#</th>
-                        <th>نوع دریافتی</th>
-                        <th>شرح</th>
-                        <th>نام شخص</th>
-                        <th>توضیحات</th>
-                        <th>مبلغ (ریال)</th>
-                        <th>تاریخ</th>
-                    </tr>
-                </thead>
-                <tbody id="tbodyFinance">
-                    <tr>
-                        <td colspan="7" class="text-center text-muted p-4">
-                            برای نمایش گزارش، فیلتر را تنظیم کرده و دکمه «نمایش گزارش» را بزنید.
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
+</div>
+<div id="repList">
+    <div class="text-center text-muted py-4">فیلتر را تنظیم کرده و «نمایش گزارش» را بزنید.</div>
 </div>
 
 @section Scripts {
     <script>
-        // ========== نمایش گزارش ==========
+        var lastSummary = null;
+        var lastRows = [];
+        var csvColumns = [
+            { t: 'نوع دریافتی', g: function (r) { return r.typeDesc || ''; } },
+            { t: 'نام شخص', g: function (r) { return r.personName || ''; } },
+            { t: 'توضیحات', g: function (r) { return r.description || ''; } },
+            { t: 'مبلغ', g: function (r) { return r.amountDisplay || ''; } },
+            { t: 'تاریخ', g: function (r) { return r.dateDisplay || ''; } }
+        ];
+
         $('#btnSearch').click(function () {
             var from = $.trim($('#fromDate').val());
-            var to   = $.trim($('#toDate').val());
-
-            if (from && to && from > to) {
-                showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error');
-                return;
-            }
-
+            var to = $.trim($('#toDate').val());
+            if (from && to && from > to) { showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error'); return; }
             var qs = '?';
             if (from) qs += 'from=' + encodeURIComponent(from) + '&';
-            if (to)   qs += 'to='   + encodeURIComponent(to)   + '&';
-
+            if (to) qs += 'to=' + encodeURIComponent(to) + '&';
             apiCall('/api/Admin/FinanceReport' + qs, 'GET', null, function (res) {
-                if (res.success) {
-                    renderTable(res.data || [], res.summary);
-                }
+                if (res.success) renderList(res.data || [], res.summary);
             });
         });
 
-        // ========== رندر جدول و خلاصه ==========
-        function renderTable(rows, summary) {
-            // خلاصه همیشه به‌روز می‌شه
+        function renderList(rows, summary) {
+            lastRows = rows;
+            lastSummary = summary || null;
             if (summary) {
                 $('#summaryTotal').text(faNum(summary.totalCount || 0));
                 $('#summaryCreditCount').text(faNum(summary.creditCount || 0));
@@ -144,78 +95,58 @@
             }
 
             $('#rowCount').text(faNum(rows.length) + ' رکورد');
-
-            if (rows.length === 0) {
-                $('#tbodyFinance').html(
-                    '<tr><td colspan="7" class="text-center text-muted p-4">تراکنشی در این بازه یافت نشد.</td></tr>'
-                );
-                initTableSearch();
-                return;
-            }
+            $('#searchInput').val('');
+            var $box = $('#repList');
+            if (!rows.length) { $box.html('<div class="text-center text-muted py-4">تراکنشی در این بازه یافت نشد.</div>'); return; }
 
             var html = '';
             $.each(rows, function (i, r) {
-                var typeBadge = '<span class="badge bg-success">دریافتی</span>';
-                html += '<tr>' +
-                    '<td>' + faNum(i + 1) + '</td>' +
-                    '<td>' + typeBadge + '</td>' +
-                    '<td>' + esc(r.typeDesc || '-') + '</td>' +
-                    '<td>' + esc(r.personName || '-') + '</td>' +
-                    '<td>' + esc(r.description || '-') + '</td>' +
-                    '<td class="text-nowrap text-success">' + esc(r.amountDisplay || '-') + '</td>' +
-                    '<td class="text-nowrap">' + esc(r.dateDisplay || '-') + '</td>' +
-                    '</tr>';
+                html += '<div class="rep-card">' +
+                    '<div class="rep-head">' +
+                        '<div class="rep-num">' + faNum(i + 1) + '</div>' +
+                        '<div class="rep-mid">' +
+                            '<div class="rep-line"><b>' + esc(r.typeDesc || '-') + '</b> <span class="rep-badge reg">دریافتی</span></div>' +
+                            '<div class="rep-line">👤 ' + esc(r.personName || '-') + '</div>' +
+                            '<div class="rep-line">💰 <span class="amt">' + esc(r.amountDisplay || '-') + '</span></div>' +
+                        '</div>' +
+                        '<button type="button" class="rep-toggle"><i class="bi bi-chevron-left"></i></button>' +
+                    '</div>' +
+                    '<div class="rep-details">' +
+                        '<div class="rep-drow"><span>توضیحات</span><b>' + esc(r.description || '-') + '</b></div>' +
+                        '<div class="rep-drow"><span>تاریخ</span><b>' + esc(r.dateDisplay || '-') + '</b></div>' +
+                    '</div>' +
+                '</div>';
             });
-
-            $('#tbodyFinance').html(html);
-            initTableSearch();
+            $box.html(html);
         }
 
-        // ========== جستجو در جدول ==========
-        function initTableSearch() {
-            $('#searchInput').off('keyup').on('keyup', function () {
-                var value = $(this).val().toLowerCase();
-                var visibleCount = 0;
+        $(document).on('click', '.rep-head', function () {
+            var $c = $(this).closest('.rep-card');
+            $c.toggleClass('open');
+            $c.find('.rep-details').slideToggle(200);
+        });
 
-                $('#tblFinance tbody tr').each(function () {
-                    var text = $(this).text().toLowerCase();
-                    var match = text.indexOf(value) > -1;
-                    $(this).toggle(match);
-                    if (match) {
-                        visibleCount++;
-                        $(this).find('td:first').text(faNum(visibleCount));
-                    }
-                });
-
-                $('#rowCount').text(faNum(visibleCount) + ' رکورد');
+        $('#searchInput').on('keyup', function () {
+            var v = $(this).val().toLowerCase(); var n = 0;
+            $('.rep-card').each(function () {
+                var m = $(this).text().toLowerCase().indexOf(v) > -1;
+                $(this).toggle(m); if (m) n++;
             });
-        }
+            $('#rowCount').text(faNum(n) + ' رکورد');
+        });
 
-        // ========== خروجی CSV (UTF-8 BOM برای فارسی در Excel) ==========
-        function exportTableToCSV(tableId, fileName) {
-            var rows = document.querySelectorAll('#' + tableId + ' tr');
-            if (rows.length <= 1) {
-                showToast('ابتدا گزارش را نمایش دهید', 'warning');
-                return;
-            }
-
-            var csv = [];
-            for (var i = 0; i < rows.length; i++) {
-                if ($(rows[i]).is(':hidden')) continue;   // ردیف‌های فیلترشده رو رد کن
-                var cols = rows[i].querySelectorAll('td, th');
-                var line = [];
-                for (var j = 0; j < cols.length; j++) {
-                    line.push('"' + cols[j].innerText.replace(/"/g, '""') + '"');
-                }
-                csv.push(line.join(','));
-            }
-
-            var blob = new Blob(['\uFEFF' + csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        $('#btnExport').click(function () {
+            if (!lastRows.length) { showToast('ابتدا گزارش را نمایش دهید', 'warning'); return; }
+            var lines = [csvColumns.map(function (c) { return '"' + c.t + '"'; }).join(',')];
+            lastRows.forEach(function (r) {
+                lines.push(csvColumns.map(function (c) { return '"' + String(c.g(r)).replace(/"/g, '""') + '"'; }).join(','));
+            });
+            var blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
             var link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
-            link.download = fileName + '.csv';
+            link.download = 'گزارش-صندوق.csv';
             link.click();
             URL.revokeObjectURL(link.href);
-        }
+        });
     </script>
 }
