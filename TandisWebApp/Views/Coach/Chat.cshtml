@@ -4,50 +4,203 @@
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h5 class="mb-0">💬 @Model.StudentName</h5>
-    </div>
-    <a href="/Coach/Messages" class="btn btn-outline-secondary btn-sm">🔙 پیام‌ها</a>
+    <h5 class="mb-0"><i class="bi bi-chat-dots-fill hd-icon"></i> @Model.StudentName</h5>
+    <a href="/Coach/Messages" class="coach-back-pill"><i class="bi bi-arrow-right"></i> پیام‌ها</a>
 </div>
 
-<div class="card mb-3" style="max-height:500px; overflow-y:auto;">
-    <div class="card-body">
-        @if (Model.Messages.Count == 0)
+<!-- ========== تاریخچه گفتگو ========== -->
+<div class="ch-box" id="chBox">
+    @if (Model.Messages.Count == 0)
+    {
+        <div class="ch-empty">
+            <div style="font-size:2.2rem" class="mb-2">💬</div>
+            هنوز پیامی رد و بدل نشده
+        </div>
+    }
+    else
+    {
+        @foreach (var msg in Model.Messages)
         {
-            <div class="text-center text-muted">
-                هنوز پیامی رد و بدل نشده
-            </div>
-        }
-        else
-        {
-            @foreach (var msg in Model.Messages)
-            {
-                <div class="mb-3 @(msg.IsFromMe ? "text-end" : "text-start")">
-                    <div class="d-inline-block p-2 rounded @(msg.IsFromMe ? "bg-primary text-white" : "bg-light")" style="max-width:70%;">
-                        @if (!string.IsNullOrEmpty(msg.Title))
-                        {
-                            <div class="fw-bold">@msg.Title</div>
-                        }
-                        <div>@msg.Body</div>
-                        <small class="@(msg.IsFromMe ? "text-white-50" : "text-muted")">@msg.CreationDate @msg.CreationTime</small>
-                    </div>
+            <div class="ch-row @(msg.IsFromMe ? "ch-mine" : "")">
+                <div class="ch-bubble">
+                    @if (!string.IsNullOrEmpty(msg.Title))
+                    {
+                        <div class="ch-title">@msg.Title</div>
+                    }
+                    <div class="ch-body">@msg.Body</div>
+                    <div class="ch-time">@msg.CreationDate @msg.CreationTime</div>
                 </div>
-            }
+            </div>
         }
-    </div>
+    }
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <form method="post" asp-action="SendMessage">
-            <input type="hidden" name="studentID" value="@Model.StudentMemberID" />
-            <div class="mb-2">
-                <input type="text" name="title" class="form-control" placeholder="عنوان (اختیاری)" />
-            </div>
-            <div class="mb-2">
-                <textarea name="body" class="form-control" rows="3" placeholder="متن پیام..." required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary">📤 ارسال</button>
-        </form>
-    </div>
+<!-- ========== فرم ارسال ========== -->
+<div class="ch-form-card mt-3">
+    <form method="post" asp-action="SendMessage">
+        <input type="hidden" name="studentID" value="@Model.StudentMemberID" />
+        <div class="mb-2">
+            <input type="text" name="title" class="ch-input" placeholder="عنوان (اختیاری)" />
+        </div>
+        <div class="mb-3">
+            <textarea name="body" class="ch-input" rows="3" placeholder="متن پیام..." required></textarea>
+        </div>
+        <button type="submit" class="ch-send">
+            <i class="bi bi-send-fill"></i> ارسال
+        </button>
+    </form>
 </div>
+
+<style>
+    .hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
+    }
+
+    .coach-back-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 7px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+
+        .coach-back-pill i {
+            color: #66d3e8;
+            transition: transform .25s;
+        }
+
+        .coach-back-pill:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+        }
+
+            .coach-back-pill:hover i {
+                transform: translateX(3px);
+            }
+
+    .ch-box {
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        padding: 16px;
+        max-height: 440px;
+        overflow-y: auto;
+    }
+
+    .ch-empty {
+        text-align: center;
+        padding: 34px 10px;
+        color: #9fb3c8;
+        font-size: .88rem;
+    }
+
+    .ch-row {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 10px;
+    }
+
+        .ch-row.ch-mine {
+            justify-content: flex-end;
+        }
+
+    .ch-bubble {
+        max-width: 78%;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 16px;
+        padding: 10px 14px;
+        color: #e9ecef;
+    }
+
+    .ch-mine .ch-bubble {
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        border-color: transparent;
+        color: #fff;
+        box-shadow: 0 5px 14px rgba(30,111,217,.35);
+    }
+
+    .ch-title {
+        font-weight: 800;
+        font-size: .82rem;
+        margin-bottom: 4px;
+    }
+
+    .ch-body {
+        font-size: .85rem;
+        line-height: 1.8;
+        word-break: break-word;
+    }
+
+    .ch-time {
+        font-size: .65rem;
+        opacity: .65;
+        margin-top: 6px;
+    }
+
+    .ch-form-card {
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        padding: 16px;
+    }
+
+    .ch-input {
+        width: 100%;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #fff;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-size: .85rem;
+    }
+
+        .ch-input::placeholder {
+            color: #8a93a6;
+        }
+
+        .ch-input:focus {
+            outline: none;
+            background: rgba(255,255,255,.12);
+            border-color: rgba(102,211,232,.5);
+        }
+
+    .ch-send {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: #fff;
+        font-weight: 800;
+        font-size: .85rem;
+        border-radius: 14px;
+        padding: 9px 22px;
+        box-shadow: 0 6px 16px rgba(118,75,162,.4);
+        transition: all .25s;
+    }
+
+        .ch-send:hover {
+            filter: brightness(1.1);
+            color: #fff;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        // ✅ اسکرول خودکار به آخرین پیام
+        $(function () {
+            var b = document.getElementById('chBox');
+            if (b) b.scrollTop = b.scrollHeight;
+        });
+    </script>
+}

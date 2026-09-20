@@ -5,17 +5,15 @@
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0">💬 پیام‌های شاگردان</h5>
-    <a href="/Coach" class="btn btn-outline-secondary btn-sm">🔙 داشبورد</a>
+    <h5 class="mb-0"><i class="bi bi-chat-dots-fill hd-icon"></i> پیام‌های شاگردان</h5>
+    <a href="/Coach" class="coach-back-pill"><i class="bi bi-arrow-right"></i> داشبورد</a>
 </div>
 
 @if (Model.Count == 0)
 {
-    <div class="card">
-        <div class="card-body text-center text-muted py-5">
-            <div style="font-size:3rem">💬</div>
-            هنوز گفتگویی با شاگردان ندارید
-        </div>
+    <div class="ms-empty">
+        <div style="font-size:2.4rem" class="mb-2">💬</div>
+        هنوز گفتگویی با شاگردان ندارید
     </div>
 }
 else
@@ -25,32 +23,28 @@ else
         {
             <div class="col-md-6">
                 <a href="/Coach/Chat?studentID=@st.StudentMemberID" class="text-decoration-none">
-                    <div class="card h-100 chat-card">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div class="d-flex align-items-center gap-2">
-                                    <div class="chat-avatar">👤</div>
-                                    <div>
-                                        <div class="fw-bold">@st.StudentName</div>
-                                        <div class="small text-muted">@st.Mobile</div>
-                                    </div>
-                                </div>
-                                @if (st.UnreadCount > 0)
-                                {
-                                    <span class="badge bg-danger rounded-pill">@st.UnreadCount.ToString(fa)</span>
-                                }
+                    <div class="ms-card h-100">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="ms-avatar"><i class="bi bi-person-fill"></i></div>
+                            <div class="flex-grow-1" style="min-width:0">
+                                <div class="ms-name">@st.StudentName</div>
+                                <div class="ms-mobile" dir="ltr">@st.Mobile</div>
                             </div>
-
-                            @if (!string.IsNullOrEmpty(st.LastMessage))
+                            @if (st.UnreadCount > 0)
                             {
-                                <div class="chat-preview mt-2">@st.LastMessage</div>
-                                <div class="small text-muted mt-1">@st.LastMessageDate - @st.LastMessageTime</div>
+                                <span class="ms-unread">@st.UnreadCount.ToString(fa)</span>
                             }
-                            else
-                            {
-                                <div class="chat-preview mt-2 text-muted">هنوز پیامی رد و بدل نشده</div>
-                            }
+                            <i class="bi bi-chevron-left ms-arrow"></i>
                         </div>
+                        @if (!string.IsNullOrEmpty(st.LastMessage))
+                        {
+                            <div class="ms-preview">@st.LastMessage</div>
+                            <div class="ms-date">@st.LastMessageDate - @st.LastMessageTime</div>
+                        }
+                        else
+                        {
+                            <div class="ms-preview ms-muted">هنوز پیامی رد و بدل نشده</div>
+                        }
                     </div>
                 </a>
             </div>
@@ -59,34 +53,148 @@ else
 }
 
 <style>
-    .chat-card {
-        background: rgba(255,255,255,.06);
-        border: 1px solid rgba(255,255,255,.12);
-        color: #e9ecef;
-        transition: all .2s;
+    .hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
     }
 
-        .chat-card:hover {
-            transform: translateY(-3px);
-            background: rgba(255,255,255,.1);
+    .coach-back-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 7px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+
+        .coach-back-pill i {
+            color: #66d3e8;
+            transition: transform .25s;
         }
 
-    .chat-avatar {
-        width: 44px;
-        height: 44px;
+        .coach-back-pill:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+        }
+
+            .coach-back-pill:hover i {
+                transform: translateX(3px);
+            }
+
+    .ms-empty {
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        text-align: center;
+        padding: 44px 16px;
+        color: #9fb3c8;
+        font-size: .9rem;
+    }
+
+    .ms-card {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 18px;
+        padding: 16px;
+        transition: transform .25s, border-color .25s;
+    }
+
+        .ms-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: -40px;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(46,134,222,.25), transparent 70%);
+            pointer-events: none;
+        }
+
+    a:hover .ms-card {
+        transform: translateY(-4px);
+        border-color: rgba(102,211,232,.45);
+    }
+
+    .ms-avatar {
+        flex: 0 0 auto;
+        width: 46px;
+        height: 46px;
         border-radius: 50%;
-        background: linear-gradient(135deg,#6f42c1,#0d6efd);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.3rem;
+        color: #fff;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        box-shadow: 0 5px 14px rgba(118,75,162,.4);
     }
 
-    .chat-preview {
+    .ms-name {
+        font-weight: 800;
+        color: #fff;
+        font-size: .95rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ms-mobile {
+        font-size: .75rem;
+        color: #66d3e8;
+        margin-top: 2px;
+        text-align: right;
+    }
+
+    .ms-unread {
+        flex: 0 0 auto;
+        background: #ff6b81;
+        color: #fff;
+        border-radius: 999px;
+        padding: 3px 9px;
+        font-size: .68rem;
+        font-weight: 800;
+        box-shadow: 0 2px 8px rgba(255,107,129,.5);
+    }
+
+    .ms-arrow {
+        flex: 0 0 auto;
+        color: #66d3e8;
+        transition: transform .25s;
+    }
+
+    a:hover .ms-arrow {
+        transform: translateX(-4px);
+    }
+
+    .ms-preview {
+        margin-top: 12px;
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 12px;
+        padding: 9px 12px;
         color: #cbd3da;
-        font-size: .9rem;
+        font-size: .8rem;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+    }
+
+    .ms-muted {
+        color: #8a93a6;
+    }
+
+    .ms-date {
+        font-size: .68rem;
+        color: #8a93a6;
+        margin-top: 6px;
     }
 </style>

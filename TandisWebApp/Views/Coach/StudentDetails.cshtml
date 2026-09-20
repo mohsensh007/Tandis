@@ -6,121 +6,304 @@
 
 <!-- هدر -->
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <div>
-        <h5 class="mb-0">👤 @Model.FullName</h5>
-        <div class="text-muted small">@Model.ClassName</div>
+    <div class="d-flex align-items-center gap-3" style="min-width:0">
+        <div class="sd-avatar"><i class="bi bi-person-fill"></i></div>
+        <div style="min-width:0">
+            <h5 class="mb-0">@Model.FullName</h5>
+            <div class="sd-sub">@Model.ClassName</div>
+        </div>
     </div>
     <div class="d-flex gap-2 align-items-center">
-        <span class="badge bg-@Model.StatusClass fs-6">@Model.StatusLabel</span>
-        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">🔙 برگشت</a>
+        <span class="stt stt-@Model.StatusClass" style="font-size:.75rem; padding:6px 16px;">@Model.StatusLabel</span>
+        <a href="javascript:history.back()" class="coach-back-pill"><i class="bi bi-arrow-right"></i> برگشت</a>
     </div>
 </div>
 
 <!-- کارت‌های اطلاعات -->
 <div class="row g-3 mb-3">
     <div class="col-6 col-md-3">
-        <div class="card stat-card h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon bg-gradient-success">🎟️</div>
-                <div>
-                    <div class="stat-label">باقی‌مانده</div>
-                    <div class="stat-value">@Model.RemainingSessions.ToString(fa)</div>
-                </div>
-            </div>
+        <div class="sd-card h-100">
+            <div class="sd-icon grad-turquoise"><i class="bi bi-ticket-perforated-fill"></i></div>
+            <div class="sd-label">باقی‌مانده</div>
+            <div class="sd-value">@Model.RemainingSessions.ToString(fa)</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="card stat-card h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon bg-gradient-info">✅</div>
-                <div>
-                    <div class="stat-label">مصرف‌شده</div>
-                    <div class="stat-value">@Model.UsedSessions.ToString(fa)</div>
-                </div>
-            </div>
+        <div class="sd-card h-100">
+            <div class="sd-icon grad-blue"><i class="bi bi-check2-circle"></i></div>
+            <div class="sd-label">مصرف‌شده</div>
+            <div class="sd-value">@Model.UsedSessions.ToString(fa)</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="card stat-card h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon bg-gradient-warning">📅</div>
-                <div>
-                    <div class="stat-label">پایان دوره</div>
-                    <div class="stat-value" style="font-size:1.1rem">@(Model.EndDate ?? "-")</div>
-                </div>
-            </div>
+        <div class="sd-card h-100">
+            <div class="sd-icon grad-purple"><i class="bi bi-calendar-x-fill"></i></div>
+            <div class="sd-label">پایان دوره</div>
+            <div class="sd-value sd-small">@(Model.EndDate ?? "-")</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="card stat-card h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon bg-gradient-danger">📞</div>
-                <div class="flex-grow-1" style="min-width:0;">
-                    <div class="stat-label">موبایل</div>
-                    @if (!string.IsNullOrEmpty(Model.Mobile))
-                    {
-                        <!-- ✅ dir=ltr تا شماره کامل و درست نمایش داده بشه -->
-                        <div dir="ltr" style="text-align:right; font-size:1.05rem; font-weight:700; overflow-wrap:anywhere;">
-                            <a href="tel:@Model.Mobile" class="text-decoration-none">@Model.Mobile</a>
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="fw-bold">-</div>
-                    }
+        <div class="sd-card h-100">
+            <div class="sd-icon grad-pink"><i class="bi bi-telephone-fill"></i></div>
+            <div class="sd-label">موبایل</div>
+            @if (!string.IsNullOrEmpty(Model.Mobile))
+            {
+                <div class="sd-value sd-small" dir="ltr">
+                    <a href="tel:@Model.Mobile" class="sd-tel">@Model.Mobile</a>
                 </div>
-            </div>
+            }
+            else
+            {
+                <div class="sd-value sd-small">-</div>
+            }
         </div>
     </div>
 </div>
 
 <!-- تاریخچه حضور -->
-<div class="card">
-    <div class="card-header">🚪 تاریخچه حضور (@Model.Attendances.Count.ToString(fa) تردد)</div>
-    <div class="card-body p-0">
+<div class="sd-box">
+    <div class="sd-box-head"><i class="bi bi-door-open-fill me-2"></i>تاریخچه حضور (@Model.Attendances.Count.ToString(fa) تردد)</div>
+    <div class="p-3">
         @if (Model.Attendances.Count == 0)
         {
-            <div class="empty-state">
-                <div class="empty-icon">🚪</div>
+            <div class="sd-empty">
+                <div style="font-size:2.2rem" class="mb-2">🚪</div>
                 هنوز ترددی ثبت نشده
             </div>
         }
         else
         {
-            <div class="table-responsive">
-                <table class="table mb-0">
-                    <thead class="table-light">
-                        <tr>
-                            <th>تاریخ ورود</th>
-                            <th>ساعت ورود</th>
-                            <th>تاریخ خروج</th>
-                            <th>ساعت خروج</th>
-                            <th class="text-center">وضعیت</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var t in Model.Attendances)
-                        {
-                            <tr>
-                                <td>@(t.EntryDate ?? "-")</td>
-                                <td>@(t.EntryTime ?? "-")</td>
-                                <td>@(t.ExitDate ?? "-")</td>
-                                <td>@(t.ExitTime ?? "-")</td>
-                                <td class="text-center">
-                                    @if (t.IsOpen)
-                                    {
-                                        <span class="badge bg-success">🟢 داخل باشگاه</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="badge bg-secondary">خروج ثبت‌شده</span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+            @foreach (var t in Model.Attendances)
+            {
+                <div class="sd-att">
+                    <div class="sd-att-lines">
+                        <div class="sd-line"><i class="bi bi-box-arrow-in-down"></i> ورود: @(t.EntryDate ?? "-") <b>@(t.EntryTime ?? "-")</b></div>
+                        <div class="sd-line"><i class="bi bi-box-arrow-out"></i> خروج: @(t.ExitDate ?? "-") <b>@(t.ExitTime ?? "-")</b></div>
+                    </div>
+                    @if (t.IsOpen)
+                    {
+                        <span class="stt stt-success">🟢 داخل باشگاه</span>
+                    }
+                    else
+                    {
+                        <span class="stt stt-secondary">خروج ثبت ‌شده</span>
+                    }
+                </div>
+            }
         }
     </div>
 </div>
+
+<style>
+    .sd-avatar {
+        flex: 0 0 auto;
+        width: 48px;
+        height: 48px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        color: #fff;
+        background: linear-gradient(135deg, #1E6FD9, #66d3e8);
+        box-shadow: 0 6px 16px rgba(30,111,217,.35);
+    }
+
+    .sd-sub {
+        font-size: .78rem;
+        color: #9fb3c8;
+        margin-top: 3px;
+    }
+
+    .coach-back-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 7px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+
+        .coach-back-pill i {
+            color: #66d3e8;
+            transition: transform .25s;
+        }
+
+        .coach-back-pill:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+        }
+
+            .coach-back-pill:hover i {
+                transform: translateX(3px);
+            }
+
+    .sd-card {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 18px;
+        padding: 18px 14px;
+        text-align: center;
+    }
+
+        .sd-card::before {
+            content: '';
+            position: absolute;
+            top: -35px;
+            left: -35px;
+            width: 110px;
+            height: 110px;
+            background: radial-gradient(circle, rgba(46,134,222,.25), transparent 70%);
+            pointer-events: none;
+        }
+
+    .sd-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(0,0,0,.3);
+        margin-bottom: 10px;
+    }
+
+    .grad-blue {
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+    }
+
+    .grad-turquoise {
+        background: linear-gradient(135deg, #2E86DE, #66d3e8);
+    }
+
+    .grad-purple {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .grad-pink {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .sd-label {
+        font-size: .75rem;
+        color: #9fb3c8;
+        font-weight: 700;
+    }
+
+    .sd-value {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #fff;
+        margin-top: 4px;
+    }
+
+    .sd-small {
+        font-size: 1rem;
+    }
+
+    .sd-tel {
+        color: #66d3e8;
+        text-decoration: none;
+    }
+
+        .sd-tel:hover {
+            color: #fff;
+        }
+
+    .sd-box {
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .sd-box-head {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-weight: 800;
+        font-size: .95rem;
+        padding: 12px 16px;
+    }
+
+    .sd-empty {
+        text-align: center;
+        padding: 34px 10px;
+        color: #9fb3c8;
+        font-size: .88rem;
+    }
+
+    .sd-att {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 14px;
+        padding: 10px 14px;
+        margin-bottom: 8px;
+    }
+
+        .sd-att:last-child {
+            margin-bottom: 0;
+        }
+
+    .sd-line {
+        font-size: .78rem;
+        color: #cbd3da;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .sd-line b {
+            color: #fff;
+        }
+
+        .sd-line i {
+            color: #66d3e8;
+        }
+
+    .stt {
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: .68rem;
+        font-weight: 800;
+    }
+
+    .stt-success {
+        background: rgba(56,217,169,.16);
+        color: #38d9a9;
+        border: 1px solid rgba(56,217,169,.4);
+    }
+
+    .stt-warning {
+        background: rgba(255,193,7,.16);
+        color: #ffd200;
+        border: 1px solid rgba(255,193,7,.4);
+    }
+
+    .stt-secondary {
+        background: rgba(255,255,255,.10);
+        color: #9fb3c8;
+        border: 1px solid rgba(255,255,255,.2);
+    }
+
+    .stt-danger {
+        background: rgba(255,107,129,.16);
+        color: #ff6b81;
+        border: 1px solid rgba(255,107,129,.4);
+    }
+</style>

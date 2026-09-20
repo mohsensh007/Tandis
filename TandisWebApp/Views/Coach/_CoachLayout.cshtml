@@ -1,0 +1,357 @@
+﻿@{
+    var coachName = HttpContextAccessor.HttpContext?.User?.FindFirst("FullName")?.Value ?? "مربی";
+    var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
+}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="تندیس" />
+    <link rel="apple-touch-icon" href="/images/app-icon.png" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - پنل مربی | تندیس</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <style>
+        /* ===== پس‌زمینه ثابت بدون لگ ===== */
+        body.coach-glass-body {
+            background-color: #0f172a;
+            min-height: 100vh;
+            color: #e2e8f0;
+        }
+
+            body.coach-glass-body::before {
+                content: '';
+                position: fixed;
+                inset: 0;
+                z-index: -1;
+                background: linear-gradient(135deg, rgba(15,23,42,.88), rgba(30,60,114,.85)), url('/images/gym-login-bg.webp') no-repeat center center / cover;
+                transform: translateZ(0);
+                pointer-events: none;
+            }
+
+        /* ===== نوار بالا ===== */
+        .coach-top-nav {
+            background: rgba(15, 23, 42, .75) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,.08);
+        }
+
+            .coach-top-nav .navbar-brand {
+                color: #fff;
+                font-weight: 800;
+            }
+
+            .coach-top-nav .nav-link {
+                color: #cbd3da;
+                font-size: .85rem;
+            }
+
+                .coach-top-nav .nav-link:hover {
+                    color: #fff;
+                }
+
+                .coach-top-nav .nav-link.nav-active {
+                    color: #fff !important;
+                    background: rgba(102,211,232,.16);
+                    border: 1px solid rgba(102,211,232,.35);
+                    border-radius: 10px;
+                }
+
+        /* ===== دکمه خروج ===== */
+        .btn-logout-glass {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,107,129,.12);
+            border: 1px solid rgba(255,107,129,.40);
+            color: #ff8fa3;
+            border-radius: 999px;
+            padding: 6px 16px;
+            font-size: .8rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all .25s;
+        }
+
+            .btn-logout-glass:hover {
+                background: rgba(255,107,129,.25);
+                color: #fff;
+                border-color: rgba(255,107,129,.6);
+            }
+
+        /* ===== نوار پایین شناور ===== */
+        .coach-bottom-nav {
+            position: fixed;
+            bottom: 12px;
+            left: 14px;
+            right: 14px;
+            z-index: 1030;
+            display: flex;
+            justify-content: space-around;
+            align-items: stretch;
+            background: rgba(15, 23, 42, .88);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 22px;
+            box-shadow: 0 12px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
+            padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+        }
+
+        .cbn-item {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            color: #8a93a6;
+            text-decoration: none;
+            font-size: .68rem;
+            font-weight: 600;
+            padding: 8px 0 5px;
+            transition: color .3s, transform .15s;
+        }
+
+            .cbn-item i {
+                font-size: 1.25rem;
+                opacity: .7;
+                transition: all .35s cubic-bezier(.22,.9,.35,1.2);
+            }
+
+            .cbn-item:active {
+                transform: scale(.92);
+            }
+
+            .cbn-item.cbn-active {
+                color: #fff;
+            }
+
+                .cbn-item.cbn-active i {
+                    opacity: 1;
+                    transform: translateY(-2px) scale(1.1);
+                    color: #66d3e8;
+                }
+
+        /* ===== نشانگر نورانی سُر‌خور ===== */
+        .cbn-glow {
+            position: absolute;
+            top: 5px;
+            left: 0;
+            width: 34px;
+            height: 4px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            box-shadow: 0 0 14px rgba(118,75,162,.9);
+            transform: translateX(-200px) translateX(-50%);
+            transition: transform .5s cubic-bezier(.22,.9,.35,1.15), opacity .3s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+            .cbn-glow.show {
+                opacity: 1;
+            }
+
+        /* ===== مودال تأیید خروج ===== */
+        #coachLogoutModal .modal-content {
+            background: rgba(16,20,36,.97);
+            border: 1px solid rgba(255,255,255,.15);
+            border-radius: 18px;
+            color: #fff;
+            backdrop-filter: blur(14px);
+        }
+
+        /* فاصله محتوا از نوار پایین در موبایل */
+        @@media (max-width: 767.98px) {
+            body {
+                padding-bottom: 96px;
+            }
+        }
+    </style>
+</head>
+<body class="coach-glass-body">
+    <!-- ========== نوار بالا ========== -->
+    <nav class="navbar navbar-expand-lg coach-top-nav">
+        <div class="container-fluid px-3">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/Coach">
+                <img src="~/images/logo2.png" alt="تندیس" height="34" />
+                <span>پنل مربی</span>
+            </a>
+
+            <!-- لینک‌های دسکتاپ -->
+            <ul class="navbar-nav d-none d-lg-flex flex-row gap-1 me-auto ms-3">
+                <li class="nav-item">
+                    <a class="nav-link @(currentPath == "/coach" || currentPath == "/coach/index" ? "nav-active" : "")"
+                       href="/Coach"><i class="bi bi-house-door-fill me-1"></i>داشبورد</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(currentPath.StartsWith("/coach/classes") || currentPath.StartsWith("/coach/classstudents") || currentPath.StartsWith("/coach/studentdetails") ? "nav-active" : "")"
+                       href="/Coach/Classes"><i class="bi bi-book-fill me-1"></i>کلاس‌های من</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(currentPath.StartsWith("/coach/messages") || currentPath.StartsWith("/coach/chat") ? "nav-active" : "")"
+                       href="/Coach/Messages"><i class="bi bi-chat-dots-fill me-1"></i>پیام‌ها</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(currentPath.StartsWith("/coach/commission") ? "nav-active" : "")"
+                       href="/Coach/Commission"><i class="bi bi-cash-coin me-1"></i>پورسانت</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link @(currentPath.StartsWith("/coach/programs") || currentPath.StartsWith("/coach/programedit") ? "nav-active" : "")"
+                       href="/Coach/Programs"><i class="bi bi-clipboard2-pulse me-1"></i>برنامه‌ها</a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end">
+                <span class="d-none d-md-inline text-light small ms-2"><i class="bi bi-person-fill"></i> @coachName</span>
+                <a class="btn-logout-glass js-logout" href="/Account/Logout">
+                    <i class="bi bi-box-arrow-left"></i> خروج
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3 mb-4">
+        @RenderBody()
+    </div>
+
+    <!-- ========== نوار پایین شناور (۴ آیتم) ========== -->
+    <nav class="coach-bottom-nav d-lg-none" id="coachBottomNav">
+        <span class="cbn-glow" id="cbnGlow"></span>
+
+        <a href="/Coach" class="cbn-item" data-key="home">
+            <i class="bi bi-house-door-fill"></i>
+            <span>داشبورد</span>
+        </a>
+        <a href="/Coach/Classes" class="cbn-item" data-key="classes">
+            <i class="bi bi-book-fill"></i>
+            <span>کلاس‌های من</span>
+        </a>
+        <a href="/Coach/Messages" class="cbn-item" data-key="messages">
+            <i class="bi bi-chat-dots-fill"></i>
+            <span>پیام‌ها</span>
+        </a>
+        <a href="/Account/Logout" class="cbn-item js-logout" data-key="exit">
+            <i class="bi bi-box-arrow-left"></i>
+            <span>خروج</span>
+        </a>
+    </nav>
+
+    <!-- ========== مودال تأیید خروج ========== -->
+    <div class="modal fade" id="coachLogoutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center p-4">
+                    <div style="font-size:2.6rem" class="mb-2">🚪</div>
+                    <div class="fw-bold mb-1">خروج از پنل مربی</div>
+                    <div class="small mb-3" style="color:#9fb3c8">آیا مطمئن هستید که می‌خواهید خارج شوید؟</div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">انصراف</button>
+                        <button type="button" class="btn btn-danger w-100" id="btnConfirmCoachLogout">
+                            <i class="bi bi-box-arrow-left me-1"></i> خروج
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/jalali-calendar.js"></script>
+    <script src="~/js/site-functions.js?v=3"></script>
+
+    <script>
+        function esc(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                              .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+        function faNum(n) { return Number(n || 0).toLocaleString('fa-IR'); }
+
+        // ===== تأیید خروج =====
+        $(document).on('click', '.js-logout', function (e) {
+            e.preventDefault();
+            new bootstrap.Modal('#coachLogoutModal').show();
+        });
+        $('#btnConfirmCoachLogout').on('click', function () {
+            window.location.href = '/Account/Logout';
+        });
+
+        // ===== نشانگر سُر‌خور نوار پایین =====
+        (function () {
+            var bar = document.getElementById('coachBottomNav');
+            if (!bar) return;
+            var glow = document.getElementById('cbnGlow');
+            var items = Array.prototype.slice.call(bar.querySelectorAll('.cbn-item'));
+            if (!glow || !items.length) return;
+
+            var path = window.location.pathname.toLowerCase();
+            var currentKey = null;
+
+            // ✅ داشبورد = صفحه اول
+            if (path === '/coach' || path === '/coach/' || path === '/coach/index') {
+                currentKey = 'home';
+            }
+            else if (path.indexOf('/coach/classes') === 0 ||
+                     path.indexOf('/coach/classstudents') === 0 ||
+                     path.indexOf('/coach/studentdetails') === 0) {
+                currentKey = 'classes';
+            }
+            else if (path.indexOf('/coach/messages') === 0 ||
+                     path.indexOf('/coach/chat') === 0) {
+                currentKey = 'messages';
+            }
+
+            function findItem(key) {
+                for (var i = 0; i < items.length; i++) {
+                    if (items[i].getAttribute('data-key') === key) return items[i];
+                }
+                return null;
+            }
+
+            var current = currentKey ? findItem(currentKey) : null;
+            var lastKey = sessionStorage.getItem('cbnLastKey');
+            var lastItem = lastKey ? findItem(lastKey) : null;
+
+            function centerOf(item) { return item.offsetLeft + item.offsetWidth / 2; }
+
+            function placeAt(item, animate) {
+                if (!item) return;
+                if (!animate) glow.style.transition = 'none';
+                glow.style.transform = 'translateX(' + centerOf(item) + 'px) translateX(-50%)';
+                if (!animate) { void glow.offsetWidth; glow.style.transition = ''; }
+                glow.classList.add('show');
+            }
+
+            items.forEach(function (i) { i.classList.toggle('cbn-active', i === current); });
+
+            if (current) {
+                if (lastItem && lastItem !== current) {
+                    placeAt(lastItem, false);
+                    requestAnimationFrame(function () {
+                        requestAnimationFrame(function () { placeAt(current, true); });
+                    });
+                } else {
+                    placeAt(current, false);
+                }
+            } else {
+                glow.classList.remove('show');
+            }
+
+            if (currentKey) sessionStorage.setItem('cbnLastKey', currentKey);
+            window.addEventListener('resize', function () { placeAt(current, false); });
+        })();
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

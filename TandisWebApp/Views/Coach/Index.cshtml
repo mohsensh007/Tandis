@@ -2,79 +2,68 @@
 @{
     ViewData["Title"] = "پنل مربی";
     var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
+    var unread = (int)(ViewBag.UnreadMessages ?? 0);
 }
 
-<!-- نوار خوش‌آمد -->
-<div class="card mb-3">
-    <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <div>
-            <h5 class="mb-0">🏋️ پنل مربی</h5>
-            <div class="text-muted small">خوش آمدید، @Model.CoachName</div>
-        </div>
-        <div class="d-flex gap-2 align-items-center flex-wrap">
-            <a href="/Coach/Classes" class="btn btn-primary btn-sm">📚 کلاس‌های من</a>
-            <a href="/Coach/Commission" class="btn btn-success btn-sm">💰 پورسانت</a>
-            <a href="/Coach/Messages" class="btn btn-info btn-sm position-relative">
-                💬 پیام‌ها
-                @if ((ViewBag.UnreadMessages ?? 0) > 0)
-                {
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        @ViewBag.UnreadMessages
-                    </span>
-                }
-            </a>
-            <span class="badge bg-success fs-6">@Model.TodayClasses.Count.ToString(fa) کلاس امروز</span>
-        </div>
+<!-- ========== بنر خوش‌آمد ========== -->
+<div class="coach-banner mb-3">
+    <div class="cb-icon"><i class="bi bi-person-badge-fill"></i></div>
+    <div class="flex-grow-1" style="min-width:0">
+        <div class="cb-title">پنل مربی</div>
+        <div class="cb-sub">خوش آمدید، @Model.CoachName</div>
     </div>
+    <span class="cb-chip"><i class="bi bi-calendar-check-fill"></i> @Model.TodayClasses.Count.ToString(fa) کلاس امروز</span>
 </div>
 
-<!-- کارت‌های آمار -->
+<!-- ========== دسترسی سریع ========== -->
+<div class="d-flex flex-wrap gap-2 mb-3">
+    <a href="/Coach/Classes" class="coach-pill"><i class="bi bi-book-fill"></i> کلاس‌های من</a>
+    <a href="/Coach/Commission" class="coach-pill"><i class="bi bi-cash-coin"></i> پورسانت</a>
+    <a href="/Coach/Programs" class="coach-pill"><i class="bi bi-clipboard2-pulse"></i> برنامه‌ها</a>
+    <a href="/Coach/Messages" class="coach-pill position-relative">
+        <i class="bi bi-chat-dots-fill"></i> پیام‌ها
+        @if (unread > 0)
+        {
+            <span class="pill-badge">@unread.ToString(fa)</span>
+        }
+    </a>
+</div>
+
+<!-- ========== کارت‌های آمار ========== -->
 <div class="row g-3 mb-3">
     <div class="col-6 col-md-4">
-        <div class="card stat-card h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon bg-gradient-success">👥</div>
-                <div>
-                    <div class="stat-label">شاگردان فعال</div>
-                    <div class="stat-value">@Model.ActiveStudents.ToString(fa)</div>
-                </div>
-            </div>
+        <div class="cstat-card h-100">
+            <div class="cstat-icon grad-blue"><i class="bi bi-people-fill"></i></div>
+            <div class="cstat-label">شاگردان فعال</div>
+            <div class="cstat-value">@Model.ActiveStudents.ToString(fa)</div>
         </div>
     </div>
     <div class="col-6 col-md-4">
         <a href="/Coach/Classes" class="text-decoration-none">
-            <div class="card stat-card h-100 hover-card">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="stat-icon bg-gradient-info">📚</div>
-                    <div>
-                        <div class="stat-label">کلاس‌های من</div>
-                        <div class="stat-value">@Model.MyClassCount.ToString(fa)</div>
-                    </div>
-                </div>
+            <div class="cstat-card h-100">
+                <div class="cstat-icon grad-turquoise"><i class="bi bi-book-fill"></i></div>
+                <div class="cstat-label">کلاس‌های من</div>
+                <div class="cstat-value">@Model.MyClassCount.ToString(fa)</div>
             </div>
         </a>
     </div>
     <div class="col-6 col-md-4">
-        <div class="card stat-card h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon bg-gradient-warning">🚪</div>
-                <div>
-                    <div class="stat-label">حضور امروز</div>
-                    <div class="stat-value">@Model.TodayAttendance.ToString(fa)</div>
-                </div>
-            </div>
+        <div class="cstat-card h-100">
+            <div class="cstat-icon grad-purple"><i class="bi bi-door-open-fill"></i></div>
+            <div class="cstat-label">حضور امروز</div>
+            <div class="cstat-value">@Model.TodayAttendance.ToString(fa)</div>
         </div>
     </div>
 </div>
 
-<!-- کلاس‌های امروز -->
-<div class="card">
-    <div class="card-header">📅 کلاس‌های امروز</div>
-    <div class="card-body">
+<!-- ========== کلاس‌های امروز ========== -->
+<div class="coach-card">
+    <div class="coach-card-head"><i class="bi bi-calendar3 me-2"></i>کلاس‌های امروز</div>
+    <div class="p-3">
         @if (Model.TodayClasses.Count == 0)
         {
-            <div class="empty-state">
-                <div class="empty-icon">📅</div>
+            <div class="coach-empty">
+                <div style="font-size:2.2rem" class="mb-2">📅</div>
                 امروز کلاسی ندارید
             </div>
         }
@@ -84,34 +73,33 @@
                 @foreach (var c in Model.TodayClasses)
                 {
                     <div class="col-md-6">
-                        <div class="card h-100">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-start">
-                                    <div>
-                                        <div class="fw-bold">@c.SportName - @c.SanseName</div>
-                                        <div class="text-muted small mt-1">
-                                            🕐 @c.StartTime?.ToString(@"hh\:mm", fa) تا @c.EndTime?.ToString(@"hh\:mm", fa)
-                                        </div>
+                        <div class="class-card h-100">
+                            <div class="d-flex justify-content-between align-items-start gap-2">
+                                <div style="min-width:0">
+                                    <div class="class-title">@c.SportName - @c.SanseName</div>
+                                    <div class="class-time">
+                                        <i class="bi bi-clock-fill"></i>
+                                        @c.StartTime?.ToString(@"hh\:mm", fa) تا @c.EndTime?.ToString(@"hh\:mm", fa)
                                     </div>
-                                    <span class="badge @(c.Status == "ongoing" ? "bg-success" : c.Status == "upcoming" ? "bg-warning text-dark" : "bg-secondary")">
-                                        @c.StatusDesc
-                                    </span>
                                 </div>
-                                <div class="d-flex flex-wrap gap-3 mt-3 small">
-                                    <span>👥 ثبت‌نام: @c.RegCount.ToString(fa)</span>
-                                    @if (c.ClassCapacity != null)
-                                    {
-                                        <span>💺 ظرفیت: @c.ClassCapacity.Value.ToString(fa)</span>
-                                        <span>✅ جای خالی: @c.FreeNow.Value.ToString(fa)</span>
-                                    }
-                                    <span>🚪 حضور امروز: @c.TodayAttendance.ToString(fa)</span>
-                                </div>
-                                <div class="mt-3">
-                                    <a href="/Coach/ClassStudents/@c.SportSanseID" class="btn btn-outline-primary btn-sm">
-                                        👥 مشاهده شاگردان
-                                    </a>
-                                </div>
+                                <span class="status-badge @(c.Status == "ongoing" ? "st-on" : c.Status == "upcoming" ? "st-soon" : "st-done")">
+                                    @c.StatusDesc
+                                </span>
                             </div>
+
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <span class="class-pill"><i class="bi bi-person-plus-fill"></i> ثبت‌نام: @c.RegCount.ToString(fa)</span>
+                                @if (c.ClassCapacity != null)
+                                {
+                                    <span class="class-pill"><i class="bi bi-person-check-fill"></i> ظرفیت: @c.ClassCapacity.Value.ToString(fa)</span>
+                                    <span class="class-pill"><i class="bi bi-person-dash-fill"></i> جای خالی: @c.FreeNow.Value.ToString(fa)</span>
+                                }
+                                <span class="class-pill"><i class="bi bi-door-open-fill"></i> حضور: @c.TodayAttendance.ToString(fa)</span>
+                            </div>
+
+                            <a href="/Coach/ClassStudents/@c.SportSanseID" class="class-btn mt-3">
+                                <i class="bi bi-people-fill"></i> مشاهده شاگردان
+                            </a>
                         </div>
                     </div>
                 }
@@ -121,12 +109,287 @@
 </div>
 
 <style>
-    .hover-card {
-        transition: all .2s;
+    /* ===== بنر خوش‌آمد ===== */
+    .coach-banner {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 16px;
+        padding: 12px 14px;
+        backdrop-filter: blur(8px);
     }
 
-        .hover-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 20px rgba(0,0,0,.1) !important;
+    .cb-icon {
+        flex: 0 0 auto;
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.35rem;
+        color: #fff;
+        background: linear-gradient(135deg, #1E6FD9, #66D3E8);
+        box-shadow: 0 6px 16px rgba(30,111,217,.35);
+    }
+
+    .cb-title {
+        font-weight: 800;
+        color: #fff;
+        font-size: 1rem;
+    }
+
+    .cb-sub {
+        font-size: .78rem;
+        color: #9fb3c8;
+        margin-top: 2px;
+    }
+
+    .cb-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(102,211,232,.14);
+        border: 1px solid rgba(102,211,232,.35);
+        color: #66d3e8;
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: .75rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    /* ===== pill های دسترسی سریع ===== */
+    .coach-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.16);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 8px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+
+        .coach-pill i {
+            color: #66d3e8;
+        }
+
+        .coach-pill:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+            border-color: rgba(102,211,232,.45);
+        }
+
+    .pill-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background: #ff6b81;
+        color: #fff;
+        border-radius: 999px;
+        font-size: .62rem;
+        font-weight: 800;
+        padding: 2px 7px;
+        box-shadow: 0 2px 8px rgba(255,107,129,.5);
+    }
+
+    /* ===== کارت‌های آمار ===== */
+    .cstat-card {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 18px;
+        padding: 18px 14px;
+        text-align: center;
+        transition: transform .25s, border-color .25s;
+    }
+
+        .cstat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(102,211,232,.4);
+        }
+
+        .cstat-card::before {
+            content: '';
+            position: absolute;
+            top: -35px;
+            left: -35px;
+            width: 110px;
+            height: 110px;
+            background: radial-gradient(circle, rgba(46,134,222,.25), transparent 70%);
+            pointer-events: none;
+        }
+
+    .cstat-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(0,0,0,.3);
+        margin-bottom: 10px;
+    }
+
+    .grad-blue {
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+    }
+
+    .grad-turquoise {
+        background: linear-gradient(135deg, #2E86DE, #66d3e8);
+    }
+
+    .grad-purple {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+    }
+
+    .cstat-label {
+        font-size: .75rem;
+        color: #9fb3c8;
+        font-weight: 700;
+    }
+
+    .cstat-value {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #fff;
+        margin-top: 4px;
+        line-height: 1.1;
+    }
+
+    /* ===== کارت کلاس‌های امروز ===== */
+    .coach-card {
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .coach-card-head {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-weight: 800;
+        font-size: .95rem;
+        padding: 12px 16px;
+    }
+
+    .coach-empty {
+        text-align: center;
+        padding: 34px 10px;
+        color: #9fb3c8;
+        font-size: .88rem;
+    }
+
+    /* ===== کارت هر کلاس ===== */
+    .class-card {
+        position: relative;
+        overflow: hidden;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 16px;
+        padding: 14px;
+    }
+
+        .class-card::before {
+            content: '';
+            position: absolute;
+            top: -35px;
+            left: -35px;
+            width: 110px;
+            height: 110px;
+            background: radial-gradient(circle, rgba(102,211,232,.15), transparent 70%);
+            pointer-events: none;
+        }
+
+    .class-title {
+        font-weight: 800;
+        color: #fff;
+        font-size: .95rem;
+    }
+
+    .class-time {
+        font-size: .78rem;
+        color: #9fb3c8;
+        margin-top: 5px;
+    }
+
+        .class-time i {
+            color: #66d3e8;
+            margin-left: 4px;
+        }
+
+    .status-badge {
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: .68rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .st-on {
+        background: rgba(56,217,169,.16);
+        color: #38d9a9;
+        border: 1px solid rgba(56,217,169,.4);
+    }
+
+    .st-soon {
+        background: rgba(255,193,7,.16);
+        color: #ffd200;
+        border: 1px solid rgba(255,193,7,.4);
+    }
+
+    .st-done {
+        background: rgba(255,255,255,.10);
+        color: #9fb3c8;
+        border: 1px solid rgba(255,255,255,.2);
+    }
+
+    .class-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(13,110,253,.14);
+        border: 1px solid rgba(13,110,253,.30);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: .73rem;
+        font-weight: 700;
+    }
+
+        .class-pill i {
+            color: #66d3e8;
+            font-size: .82rem;
+        }
+
+    .class-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        color: #fff;
+        border-radius: 12px;
+        padding: 8px 16px;
+        font-size: .8rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 5px 14px rgba(30,111,217,.35);
+        transition: all .25s;
+    }
+
+        .class-btn:hover {
+            filter: brightness(1.1);
+            color: #fff;
         }
 </style>

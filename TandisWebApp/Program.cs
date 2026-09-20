@@ -104,6 +104,7 @@ builder.Services.AddScoped<AccountingService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<CommonHelperService>();
 builder.Services.AddScoped<TandisWebApp.Services.QrService>();
+builder.Services.AddScoped<CoachProgramService>();
 
 builder.Services.AddScoped<IAdminUserProvider, DbAdminUserProvider>();
 builder.Services.AddScoped<AdminAuthService>();

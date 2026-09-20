@@ -4,16 +4,17 @@
     var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
 }
 
+<!-- ========== هدر صفحه ========== -->
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0">📚 کلاس‌های من</h5>
-    <a href="/Coach" class="btn btn-outline-secondary btn-sm">🔙 داشبورد</a>
+    <h5 class="mb-0"><i class="bi bi-book-fill hd-icon"></i> کلاس‌های من</h5>
+    <a href="/Coach" class="coach-back-pill"><i class="bi bi-arrow-right"></i> داشبورد</a>
 </div>
 
 @if (Model.Count == 0)
 {
-    <div class="empty-state">
-        <div class="empty-icon">📚</div>
-        هیچ کلاسی برای شما تعریف نشده است
+    <div class="cc-empty">
+        <div style="font-size:2.4rem" class="mb-2">📚</div>
+        هنوز کلاسی برای شما ثبت نشده است
     </div>
 }
 else
@@ -23,29 +24,35 @@ else
         {
             <div class="col-md-6 col-lg-4">
                 <a href="/Coach/ClassStudents/@c.SportSanseID" class="text-decoration-none">
-                    <div class="card h-100 shadow-sm hover-card">
-                        <div class="card-body">
-                            <div class="fw-bold fs-6 mb-1 text-dark">
-                                @c.SportName
+                    <div class="cc-card h-100">
+                        <div class="d-flex align-items-start gap-3">
+                            <div class="cc-icon"><i class="bi bi-book-fill"></i></div>
+                            <div style="min-width:0" class="flex-grow-1">
+                                <div class="cc-title">@c.SportName</div>
+                                <div class="cc-sub">@c.SanseName</div>
                             </div>
-                            <div class="text-muted small mb-2">@c.SanseName</div>
+                            <i class="bi bi-chevron-left cc-arrow"></i>
+                        </div>
 
-                            <div class="small mb-3">
-                                <span class="text-muted">📅</span>
-                                @c.ScheduleSummary
-                            </div>
+                        <div class="cc-schedule">
+                            <i class="bi bi-calendar3"></i>
+                            <span>@c.ScheduleSummary</span>
+                        </div>
 
-                            <div class="d-flex justify-content-between small">
-                                <span>👥 <strong>@c.ActiveStudents.ToString(fa)</strong> فعال</span>
-                                @if (c.ClassCapacity != null)
-                                {
-                                    <span>💺 <strong>@c.FreeNow?.ToString(fa)</strong> جای خالی</span>
-                                }
-                                else
-                                {
-                                    <span>📊 جمع: @c.TotalStudents.ToString(fa)</span>
-                                }
-                            </div>
+                        <div class="d-flex flex-wrap gap-2 mt-3">
+                            <span class="cc-pill"><i class="bi bi-people-fill"></i> @c.ActiveStudents.ToString(fa) فعال</span>
+                            @if (c.ClassCapacity != null)
+                            {
+                                <span class="cc-pill"><i class="bi bi-person-check-fill"></i> @c.FreeNow?.ToString(fa) جای خالی</span>
+                            }
+                            else
+                            {
+                                <span class="cc-pill"><i class="bi bi-bar-chart-fill"></i> جمع: @c.TotalStudents.ToString(fa)</span>
+                            }
+                        </div>
+
+                        <div class="cc-foot mt-3">
+                            <i class="bi bi-people-fill"></i> مشاهده شاگردان
                         </div>
                     </div>
                 </a>
@@ -55,12 +62,174 @@ else
 }
 
 <style>
-    .hover-card {
-        transition: all .2s;
+    .hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
     }
 
-        .hover-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 6px 20px rgba(0,0,0,.1) !important;
+    /* ===== دکمه بازگشت شیشه‌ای ===== */
+    .coach-back-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 7px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+
+        .coach-back-pill i {
+            color: #66d3e8;
+            transition: transform .25s;
         }
+
+        .coach-back-pill:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+            border-color: rgba(102,211,232,.45);
+        }
+
+            .coach-back-pill:hover i {
+                transform: translateX(3px);
+            }
+
+    /* ===== حالت خالی ===== */
+    .cc-empty {
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        text-align: center;
+        padding: 44px 16px;
+        color: #9fb3c8;
+        font-size: .9rem;
+    }
+
+    /* ===== کارت کلاس شیشه‌ای ===== */
+    .cc-card {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 18px;
+        padding: 16px;
+        transition: transform .25s, border-color .25s;
+    }
+
+        .cc-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: -40px;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(46,134,222,.25), transparent 70%);
+            pointer-events: none;
+        }
+
+    a:hover .cc-card {
+        transform: translateY(-4px);
+        border-color: rgba(102,211,232,.45);
+    }
+
+    .cc-icon {
+        flex: 0 0 auto;
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: #fff;
+        background: linear-gradient(135deg, #2E86DE, #66d3e8);
+        box-shadow: 0 6px 16px rgba(46,134,222,.35);
+    }
+
+    .cc-title {
+        font-weight: 800;
+        color: #fff;
+        font-size: .98rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .cc-sub {
+        font-size: .78rem;
+        color: #9fb3c8;
+        margin-top: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .cc-arrow {
+        flex: 0 0 auto;
+        color: #66d3e8;
+        font-size: 1rem;
+        transition: transform .25s;
+    }
+
+    a:hover .cc-arrow {
+        transform: translateX(-4px);
+    }
+
+    /* ===== کادر برنامه هفتگی ===== */
+    .cc-schedule {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 12px;
+        padding: 9px 12px;
+        margin-top: 13px;
+        font-size: .78rem;
+        color: #cbd3da;
+        line-height: 1.7;
+    }
+
+        .cc-schedule i {
+            color: #66d3e8;
+            font-size: .95rem;
+            margin-top: 3px;
+            flex: 0 0 auto;
+        }
+
+    /* ===== pill های آمار ===== */
+    .cc-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(13,110,253,.14);
+        border: 1px solid rgba(13,110,253,.30);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: .73rem;
+        font-weight: 700;
+    }
+
+        .cc-pill i {
+            color: #66d3e8;
+            font-size: .82rem;
+        }
+
+    /* ===== پاورقی کارت ===== */
+    .cc-foot {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #66d3e8;
+        font-size: .78rem;
+        font-weight: 700;
+        border-top: 1px dashed rgba(255,255,255,.12);
+        padding-top: 11px;
+    }
 </style>

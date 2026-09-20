@@ -7,73 +7,244 @@
 <!-- هدر -->
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <div>
-        <h5 class="mb-0">👥 شاگردان</h5>
-        <div class="text-muted small">@ViewBag.ClassName</div>
+        <h5 class="mb-0"><i class="bi bi-people-fill hd-icon"></i> شاگردان</h5>
+        <div class="cs-sub">@ViewBag.ClassName</div>
     </div>
     <div class="d-flex gap-2 align-items-center">
-        <span class="badge bg-primary fs-6">@Model.Count.ToString(fa) نفر</span>
-        <a href="/Coach/Classes" class="btn btn-outline-secondary btn-sm">🔙 کلاس‌ها</a>
+        <span class="cs-count">@Model.Count.ToString(fa) نفر</span>
+        <a href="/Coach/Classes" class="coach-back-pill"><i class="bi bi-arrow-right"></i> کلاس‌ها</a>
     </div>
 </div>
 
-<!-- جدول شاگردان -->
 @if (Model.Count == 0)
 {
-    <div class="empty-state">
-        <div class="empty-icon">👥</div>
+    <div class="cs-empty">
+        <div style="font-size:2.4rem" class="mb-2">👥</div>
         هنوز هیچ شاگردی در این کلاس ثبت‌نام نکرده
     </div>
 }
 else
 {
-    <div class="card">
-        <div class="table-responsive">
-            <table class="table mb-0 align-middle">
-                <thead class="table-light">
-                    <tr>
-                        <th>نام</th>
-                        <th class="d-none d-md-table-cell">موبایل</th>
-                        <th class="d-none d-md-table-cell">پایان دوره</th>
-                        <th class="text-center">جلسات</th>
-                        <th class="text-center">وضعیت</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var st in Model)
-                    {
-                        <tr>
-                            <td class="fw-bold">
-                                <a href="/Coach/StudentDetails/@st.SportMemberID" class="text-decoration-none">
-                                    @st.FullName
-                                </a>
-                            </td>
-                            <td class="d-none d-md-table-cell">
+    <div class="row g-3">
+        @foreach (var st in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <a href="/Coach/StudentDetails/@st.SportMemberID" class="text-decoration-none">
+                    <div class="cs-card h-100">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="cs-avatar"><i class="bi bi-person-fill"></i></div>
+                            <div style="min-width:0" class="flex-grow-1">
+                                <div class="cs-name">@st.FullName</div>
                                 @if (!string.IsNullOrEmpty(st.Mobile))
                                 {
-                                    <a href="tel:@st.Mobile" dir="ltr" class="text-decoration-none">@st.Mobile</a>
+                                    <div class="cs-mobile" dir="ltr">@st.Mobile</div>
                                 }
                                 else
                                 {
-                                    <span class="text-muted">-</span>
+                                    <div class="cs-mobile">-</div>
                                 }
-                            </td>
-                            <td class="d-none d-md-table-cell">@(st.EndDate ?? "-")</td>
-                            <td class="text-center">
-                                <span class="fw-bold">@st.RemainingSessions.ToString(fa)</span>
-                                <small class="text-muted">/ @st.TotalSessions.ToString(fa)</small>
-                            </td>
-                            <td class="text-center">
-                                <span class="badge bg-@st.StatusClass">@st.StatusLabel</span>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                            </div>
+                            <i class="bi bi-chevron-left cs-arrow"></i>
+                        </div>
+                        <div class="d-flex flex-wrap gap-2 mt-3">
+                            <span class="cs-pill"><i class="bi bi-calendar-x-fill"></i> پایان: @(st.EndDate ?? "-")</span>
+                            <span class="cs-pill"><i class="bi bi-ticket-perforated-fill"></i> جلسات: @st.RemainingSessions.ToString(fa) / @st.TotalSessions.ToString(fa)</span>
+                            <span class="stt stt-@st.StatusClass">@st.StatusLabel</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
     </div>
-
-    <!-- راهنما -->
-    <div class="text-muted small mt-2">
-        💡 روی نام هر شاگرد کلیک کنید تا کارت کامل و تاریخچه حضورش باز شود.
+    <div class="cs-hint mt-3">
+        <i class="bi bi-info-circle"></i> روی کارت هر شاگرد بزنید تا کارت کامل و تاریخچه حضورش باز شود.
     </div>
 }
+
+<style>
+    .hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
+    }
+
+    .cs-sub {
+        font-size: .78rem;
+        color: #9fb3c8;
+        margin-top: 3px;
+    }
+
+    .cs-count {
+        background: rgba(102,211,232,.14);
+        border: 1px solid rgba(102,211,232,.35);
+        color: #66d3e8;
+        border-radius: 999px;
+        padding: 5px 14px;
+        font-size: .75rem;
+        font-weight: 800;
+    }
+
+    .coach-back-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 7px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+
+        .coach-back-pill i {
+            color: #66d3e8;
+            transition: transform .25s;
+        }
+
+        .coach-back-pill:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+            border-color: rgba(102,211,232,.45);
+        }
+
+            .coach-back-pill:hover i {
+                transform: translateX(3px);
+            }
+
+    .cs-empty {
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        text-align: center;
+        padding: 44px 16px;
+        color: #9fb3c8;
+        font-size: .9rem;
+    }
+
+    .cs-card {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 18px;
+        padding: 16px;
+        transition: transform .25s, border-color .25s;
+    }
+
+        .cs-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: -40px;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(46,134,222,.25), transparent 70%);
+            pointer-events: none;
+        }
+
+    a:hover .cs-card {
+        transform: translateY(-4px);
+        border-color: rgba(102,211,232,.45);
+    }
+
+    .cs-avatar {
+        flex: 0 0 auto;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #fff;
+        background: linear-gradient(135deg, #2E86DE, #66d3e8);
+        box-shadow: 0 5px 14px rgba(46,134,222,.35);
+    }
+
+    .cs-name {
+        font-weight: 800;
+        color: #fff;
+        font-size: .95rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .cs-mobile {
+        font-size: .75rem;
+        color: #66d3e8;
+        margin-top: 2px;
+        text-align: right;
+    }
+
+    .cs-arrow {
+        flex: 0 0 auto;
+        color: #66d3e8;
+        transition: transform .25s;
+    }
+
+    a:hover .cs-arrow {
+        transform: translateX(-4px);
+    }
+
+    .cs-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(13,110,253,.14);
+        border: 1px solid rgba(13,110,253,.30);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: .73rem;
+        font-weight: 700;
+    }
+
+        .cs-pill i {
+            color: #66d3e8;
+            font-size: .82rem;
+        }
+
+    .cs-hint {
+        color: #9fb3c8;
+        font-size: .75rem;
+    }
+
+        .cs-hint i {
+            color: #66d3e8;
+        }
+
+    .stt {
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: .68rem;
+        font-weight: 800;
+    }
+
+    .stt-success {
+        background: rgba(56,217,169,.16);
+        color: #38d9a9;
+        border: 1px solid rgba(56,217,169,.4);
+    }
+
+    .stt-warning {
+        background: rgba(255,193,7,.16);
+        color: #ffd200;
+        border: 1px solid rgba(255,193,7,.4);
+    }
+
+    .stt-secondary {
+        background: rgba(255,255,255,.10);
+        color: #9fb3c8;
+        border: 1px solid rgba(255,255,255,.2);
+    }
+
+    .stt-danger {
+        background: rgba(255,107,129,.16);
+        color: #ff6b81;
+        border: 1px solid rgba(255,107,129,.4);
+    }
+</style>

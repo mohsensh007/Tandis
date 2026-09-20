@@ -36,6 +36,10 @@ namespace TandisWebApp.Data
         public DbSet<Gen_Setting> Gen_Settings { get; set; } = null!;
         public DbSet<Gen_Box> Gen_Boxes { get; set; } = null!;
         public DbSet<Gen_LockerRoom> Gen_LockerRooms { get; set; }
+        //====================== coach Program =========================
+        public DbSet<Gen_PrgmItem> Gen_PrgmItems { get; set; } = null!;
+        public DbSet<SportPrg> SportPrgs { get; set; } = null!;
+        public DbSet<SportPrgDtl> SportPrgDtls { get; set; } = null!;
 
         // ==================== Acc - حسابداری و ثبت‌نام ====================
         public DbSet<Acc_MemberSport> Acc_MemberSports { get; set; } = null!;

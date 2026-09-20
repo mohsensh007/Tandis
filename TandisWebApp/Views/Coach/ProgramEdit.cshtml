@@ -1,0 +1,513 @@
+﻿@model TandisWebApp.DTOs.CoachProgramEditDto
+@{
+    ViewData["Title"] = Model.PrgID > 0 ? "ویرایش برنامه" : "برنامه جدید";
+    var students = (List<TandisWebApp.DTOs.StudentOptionDto>)ViewBag.Students;
+    var itemOptions = (List<TandisWebApp.DTOs.ProgramItemEditDto>)ViewBag.ItemOptions;
+
+    // ✅ پیش‌فرض: از امروز تا یک ماه آینده
+    var pc = new System.Globalization.PersianCalendar();
+    var nowDt = DateTime.Now;
+    var plusDt = nowDt.AddMonths(1);
+    var defStart = $"{pc.GetYear(nowDt):0000}/{pc.GetMonth(nowDt):00}/{pc.GetDayOfMonth(nowDt):00}";
+    var defEnd = $"{pc.GetYear(plusDt):0000}/{pc.GetMonth(plusDt):00}/{pc.GetDayOfMonth(plusDt):00}";
+    var startVal = Model.PrgID > 0 && !string.IsNullOrEmpty(Model.StartDateShamsi) ? Model.StartDateShamsi : defStart;
+    var endVal = Model.PrgID > 0 && !string.IsNullOrEmpty(Model.EndDateShamsi) ? Model.EndDateShamsi : defEnd;
+
+    var typeOptions = new Dictionary<byte, string> {
+        { 1, "عادی" }, { 2, "دراپ ست" }, { 3, "سوپرست" }, { 4, "تری‌ست" },
+        { 5, "ست غول" }, { 6, "پیرامید" }, { 7, "استراحت-مکث" }, { 8, "تمپو دار" }
+    };
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0"><i class="bi bi-clipboard2-pulse hd-icon"></i> @ViewData["Title"]</h5>
+    <a href="/Coach/Programs" class="coach-back-pill"><i class="bi bi-arrow-right"></i> برنامه‌ها</a>
+</div>
+
+<div class="pe-card">
+    <!-- ===== اطلاعات اصلی ===== -->
+    <div class="row g-3">
+        <div class="col-md-4">
+            <label class="pe-lbl">شاگرد</label>
+            <div class="d-flex gap-2">
+                <input type="text" id="txtStudentName" class="pe-input" readonly
+                       placeholder="انتخاب شاگرد..." value="@Model.StudentName" />
+                <button type="button" class="pe-cal-btn" id="btnOpenStudents" title="انتخاب شاگرد">
+                    <i class="bi bi-person-lines-fill"></i>
+                </button>
+            </div>
+            <input type="hidden" id="selStudentID" value="@Model.MemberID" />
+        </div>
+        <div class="col-6 col-md-4">
+            <label class="pe-lbl">تاریخ شروع</label>
+            <div class="d-flex gap-2">
+                <input type="text" id="txtStart" class="pe-input" readonly value="@startVal" />
+                <button type="button" class="pe-cal-btn" onclick="openCal('txtStart')"><i class="bi bi-calendar3"></i></button>
+            </div>
+        </div>
+        <div class="col-6 col-md-4">
+            <label class="pe-lbl">تاریخ پایان</label>
+            <div class="d-flex gap-2">
+                <input type="text" id="txtEnd" class="pe-input" readonly value="@endVal" />
+                <button type="button" class="pe-cal-btn" onclick="openCal('txtEnd')"><i class="bi bi-calendar3"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== حرکات ===== -->
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
+        <div class="pe-lbl mb-0" style="font-size:.85rem"><i class="bi bi-list-check"></i> حرکات برنامه</div>
+        <button type="button" class="pe-add-btn" id="btnAddItem"><i class="bi bi-plus-lg"></i> افزودن حرکت</button>
+    </div>
+
+    <datalist id="daySuggestions">
+        <option value="روز پا"></option>
+        <option value="روز سینه"></option>
+        <option value="روز زیر بغل"></option>
+        <option value="روز سرشانه"></option>
+        <option value="روز دست و بازو"></option>
+        <option value="روز شکم و پهلو"></option>
+        <option value="روز فول بدن"></option>
+    </datalist>
+
+    <div id="itemsBox">
+        @foreach (var it in Model.Items)
+        {
+            <div class="pe-item-card">
+                <div class="row g-2">
+                    <div class="col-7">
+                        <label class="pe-lbl">روز / گروه عضلانی</label>
+                        <input type="text" class="pe-input inpDay" list="daySuggestions" placeholder="مثلاً روز پا" value="@it.DayTitle" />
+                    </div>
+                    <div class="col-4">
+                        <label class="pe-lbl">نوع حرکت</label>
+                        <select class="pe-input inpType">
+                            @foreach (var t in typeOptions)
+                            {
+                                if ((int)t.Key == (it.ExerciseType ?? 1))
+                                {
+                                    <option value="@t.Key" selected>@t.Value</option>
+                                }
+                                else
+                                {
+                                    <option value="@t.Key">@t.Value</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="col-1 d-flex align-items-end justify-content-center pb-1">
+                        <button type="button" class="pe-del-item"><i class="bi bi-trash3"></i></button>
+                    </div>
+                    <div class="col-12">
+                        <label class="pe-lbl">حرکت</label>
+                        <select class="pe-input selItem">
+                            <option value="0">+ حرکت جدید (دستی بنویس)...</option>
+                            @foreach (var o in itemOptions)
+                            {
+                                if (o.ItemID == it.ItemID)
+                                {
+                                    <option value="@o.ItemID" selected>@o.ItemDesc</option>
+                                }
+                                else
+                                {
+                                    <option value="@o.ItemID">@o.ItemDesc</option>
+                                }
+                            }
+                        </select>
+                        <input type="text" class="pe-input txtNewItem mt-2" style="display:@(it.ItemID == 0 ? "block" : "none")"
+                               placeholder="شرح حرکت جدید (مثلاً: پرس سینه با هالتر)" value="@(it.ItemID == 0 ? it.ItemDesc : "")" />
+                    </div>
+                    <div class="col-3"><label class="pe-lbl">ست</label><input type="number" min="1" class="pe-input inpSets" value="@it.SetCount" /></div>
+                    <div class="col-3"><label class="pe-lbl">تکرار</label><input type="number" min="0" class="pe-input inpReps" value="@it.RepCount" /></div>
+                    <div class="col-3"><label class="pe-lbl">وزن (kg)</label><input type="number" min="0" class="pe-input inpW" value="@it.WCount" /></div>
+                    <div class="col-3"><label class="pe-lbl">استراحت (ثانیه)</label><input type="number" min="0" step="5" class="pe-input inpRest" value="@it.RestSeconds" /></div>
+                    <div class="col-12"><label class="pe-lbl">توضیح (اختیاری)</label><input type="text" class="pe-input inpNote" placeholder="مثلاً: کنترل فاز منفی حرکت..." value="@it.Note" /></div>
+                </div>
+            </div>
+        }
+
+        <!-- قالب ردیف جدید (مخفی) -->
+        <div class="pe-item-card template" id="rowTemplate" style="display:none">
+            <div class="row g-2">
+                <div class="col-7">
+                    <label class="pe-lbl">روز / گروه عضلانی</label>
+                    <input type="text" class="pe-input inpDay" list="daySuggestions" placeholder="مثلاً روز پا" />
+                </div>
+                <div class="col-4">
+                    <label class="pe-lbl">نوع حرکت</label>
+                    <select class="pe-input inpType">
+                        @foreach (var t in typeOptions)
+                        {
+                            if (t.Key == 1)
+                            {
+                                <option value="@t.Key" selected>@t.Value</option>
+                            }
+                            else
+                            {
+                                <option value="@t.Key">@t.Value</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-1 d-flex align-items-end justify-content-center pb-1">
+                    <button type="button" class="pe-del-item"><i class="bi bi-trash3"></i></button>
+                </div>
+                <div class="col-12">
+                    <label class="pe-lbl">حرکت</label>
+                    <select class="pe-input selItem">
+                        <option value="0">+ حرکت جدید (دستی بنویس)...</option>
+                        @foreach (var o in itemOptions)
+                        {
+                            <option value="@o.ItemID">@o.ItemDesc</option>
+                        }
+                    </select>
+                    <input type="text" class="pe-input txtNewItem mt-2" style="display:none" placeholder="شرح حرکت جدید (مثلاً: پرس سینه با هالتر)" />
+                </div>
+                <div class="col-3"><label class="pe-lbl">ست</label><input type="number" min="1" class="pe-input inpSets" /></div>
+                <div class="col-3"><label class="pe-lbl">تکرار</label><input type="number" min="0" class="pe-input inpReps" /></div>
+                <div class="col-3"><label class="pe-lbl">وزن (kg)</label><input type="number" min="0" class="pe-input inpW" /></div>
+                <div class="col-3"><label class="pe-lbl">استراحت (ثانیه)</label><input type="number" min="0" step="5" class="pe-input inpRest" placeholder="90" /></div>
+                <div class="col-12"><label class="pe-lbl">توضیح (اختیاری)</label><input type="text" class="pe-input inpNote" placeholder="مثلاً: کنترل فاز منفی حرکت..." /></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button type="button" class="pe-save-btn" id="btnSave">
+            <i class="bi bi-check-lg"></i> ذخیره برنامه
+        </button>
+    </div>
+</div>
+
+<!-- ========== اورلی انتخاب شاگرد ========== -->
+<div class="stu-overlay" id="stuOverlay" style="display:none">
+    <div class="stu-panel">
+        <div class="stu-head">
+            <span><i class="bi bi-person-lines-fill me-2"></i>انتخاب شاگرد</span>
+            <button type="button" class="stu-close" id="stuClose"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="stu-body">
+            <input type="text" id="stuSearch" class="pe-input" placeholder="🔍 جستجوی نام شاگرد..." />
+            <div class="row g-2">
+                <div class="col-6"><select id="stuSport" class="pe-input"></select></div>
+                <div class="col-6"><select id="stuSanse" class="pe-input"></select></div>
+            </div>
+            <div class="stu-list" id="stuList"></div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== تقویم شمسی ===== -->
+<div class="modal fade" id="datePickerModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content pe-modal">
+            <div class="modal-header pe-modal-head">
+                <h5 class="modal-title"><i class="bi bi-calendar3"></i> <span id="calendarTitle">انتخاب تاریخ</span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <button type="button" class="btn btn-sm btn-outline-secondary px-3" id="prevMonth">›</button>
+                    <strong id="currentMonthLabel" class="fs-5"></strong>
+                    <button type="button" class="btn btn-sm btn-outline-secondary px-3" id="nextMonth">‹</button>
+                </div>
+                <table class="cal-table">
+                    <thead class="text-center">
+                        <tr>
+                            <th>شنبه</th><th>یک شنبه</th><th>دو شنبه</th><th>سه شنبه</th>
+                            <th>چهار شنبه</th><th>پنج شنبه</th><th>جمعه</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendarBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hd-icon { color: #66d3e8; margin-left: 6px; }
+    .coach-back-pill {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff; border-radius: 999px;
+        padding: 7px 18px; font-size: .82rem; font-weight: 700;
+        text-decoration: none; backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+    .coach-back-pill i { color: #66d3e8; transition: transform .25s; }
+    .coach-back-pill:hover { background: rgba(255,255,255,.14); color: #fff; }
+    .coach-back-pill:hover i { transform: translateX(3px); }
+
+    .pe-card {
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        padding: 18px;
+    }
+    .pe-lbl { display: block; font-size: .72rem; color: #9fb3c8; font-weight: 700; margin-bottom: 4px; }
+    .pe-lbl i { color: #66d3e8; }
+    .pe-input {
+        width: 100%;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #fff; border-radius: 12px;
+        padding: 9px 12px; font-size: .85rem;
+    }
+    .pe-input:focus { outline: none; background: rgba(255,255,255,.12); border-color: rgba(102,211,232,.5); }
+    .pe-input[readonly] { cursor: pointer; }
+    select.pe-input option { background: #101424; color: #fff; }
+    .pe-cal-btn {
+        flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.16);
+        color: #66d3e8;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .pe-cal-btn:hover { background: rgba(102,211,232,.2); color: #fff; }
+
+    /* ✅ دکمه افزودن حرکت: گرادیان */
+    .pe-add-btn {
+        display: inline-flex; align-items: center; gap: 7px;
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        border: none; color: #fff;
+        border-radius: 12px; padding: 8px 18px;
+        font-size: .82rem; font-weight: 700;
+        box-shadow: 0 5px 14px rgba(30,111,217,.35);
+        transition: all .25s;
+    }
+    .pe-add-btn:hover { filter: brightness(1.12); color: #fff; transform: translateY(-1px); }
+
+    /* ✅ کارت هر حرکت */
+    .pe-item-card {
+        position: relative;
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 16px;
+        padding: 14px;
+        margin-bottom: 12px;
+    }
+    .pe-item-card::before {
+        content: '';
+        position: absolute; top: 0; right: 0;
+        width: 4px; height: 100%;
+        background: linear-gradient(180deg, #66d3e8, #667eea);
+        border-radius: 0 16px 16px 0;
+        opacity: .6;
+    }
+    .pe-del-item {
+        background: rgba(255,107,129,.12);
+        border: 1px solid rgba(255,107,129,.35);
+        color: #ff8fa3; border-radius: 10px;
+        width: 38px; height: 38px;
+        display: inline-flex; align-items: center; justify-content: center;
+        transition: all .25s;
+    }
+    .pe-del-item:hover { background: rgba(255,107,129,.25); color: #fff; }
+
+    .pe-save-btn {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none; color: #fff;
+        font-weight: 800; font-size: .9rem;
+        border-radius: 14px; padding: 10px 26px;
+        box-shadow: 0 6px 16px rgba(118,75,162,.4);
+        transition: all .25s;
+    }
+    .pe-save-btn:hover { filter: brightness(1.1); color: #fff; }
+
+    .pe-modal {
+        background: rgba(16,20,36,.97);
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 18px; color: #fff;
+        backdrop-filter: blur(14px);
+    }
+    .pe-modal-head { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; font-weight: 800; }
+
+    .stu-overlay {
+        position: fixed; inset: 0; z-index: 1080;
+        background: rgba(8,12,22,.55);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: flex; align-items: center; justify-content: center;
+        padding: 16px;
+    }
+    .stu-panel {
+        width: 100%; max-width: 560px; max-height: 82vh;
+        display: flex; flex-direction: column;
+        background: rgba(16,20,36,.97);
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 20px; overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    }
+    .stu-head {
+        display: flex; justify-content: space-between; align-items: center;
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        color: #fff; font-weight: 800; font-size: .92rem;
+        padding: 12px 16px;
+    }
+    .stu-close {
+        background: rgba(255,255,255,.15); border: none; color: #fff;
+        width: 32px; height: 32px; border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .stu-close:hover { background: rgba(255,107,129,.4); }
+    .stu-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+    .stu-list { overflow-y: auto; min-height: 0; display: flex; flex-direction: column; gap: 8px; max-height: 46vh; }
+    .stu-row {
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 12px; padding: 10px 14px;
+        cursor: pointer; transition: all .2s;
+    }
+    .stu-row:hover { border-color: rgba(102,211,232,.5); background: rgba(102,211,232,.10); }
+    .stu-name { color: #fff; font-weight: 800; font-size: .88rem; }
+    .stu-sub { color: #9fb3c8; font-size: .72rem; margin-top: 3px; }
+    .stu-empty { text-align: center; color: #9fb3c8; padding: 26px 0; font-size: .85rem; }
+</style>
+
+@section Scripts {
+    <script>
+        // ===== داده شاگردان =====
+        var students = @Json.Serialize(students);
+        function gId(s)    { return s.memberID  || s.MemberID  || 0; }
+        function gName(s)  { return s.fullName  || s.FullName  || ''; }
+        function gSport(s) { return s.sportName || s.SportName || ''; }
+        function gSanse(s) { return s.sanseName || s.SanseName || ''; }
+
+        function fillFilters() {
+            var sports = [], sanses = [];
+            students.forEach(function (s) {
+                var sp = gSport(s), sn = gSanse(s);
+                if (sp && sports.indexOf(sp) === -1) sports.push(sp);
+                if (sn && sanses.indexOf(sn) === -1) sanses.push(sn);
+            });
+            sports.sort(); sanses.sort();
+            var hSp = '<option value="">همه رشته‌ها</option>';
+            sports.forEach(function (x) { hSp += '<option>' + esc(x) + '</option>'; });
+            $('#stuSport').html(hSp);
+            var hSn = '<option value="">همه سانس‌ها</option>';
+            sanses.forEach(function (x) { hSn += '<option>' + esc(x) + '</option>'; });
+            $('#stuSanse').html(hSn);
+        }
+
+        function renderStudents() {
+            var q = $.trim($('#stuSearch').val()).toLowerCase();
+            var sp = $('#stuSport').val();
+            var sn = $('#stuSanse').val();
+            var html = '', count = 0;
+            students.forEach(function (s) {
+                if (q && gName(s).toLowerCase().indexOf(q) === -1) return;
+                if (sp && gSport(s) !== sp) return;
+                if (sn && gSanse(s) !== sn) return;
+                count++;
+                html += '<div class="stu-row" data-id="' + gId(s) + '" data-name="' + esc(gName(s)) + '">' +
+                    '<div class="stu-name">' + esc(gName(s)) + '</div>' +
+                    '<div class="stu-sub">' + esc(gSport(s) || '-') + ' - ' + esc(gSanse(s) || '-') + '</div>' +
+                '</div>';
+            });
+            if (!count) html = '<div class="stu-empty">شاگردی با این مشخصات یافت نشد</div>';
+            $('#stuList').html(html);
+        }
+
+        $('#btnOpenStudents').click(function () {
+            fillFilters(); renderStudents();
+            $('#stuOverlay').fadeIn(150);
+            setTimeout(function () { $('#stuSearch').trigger('focus'); }, 200);
+        });
+        function closeOverlay() { $('#stuOverlay').fadeOut(150); }
+        $('#stuClose').click(closeOverlay);
+        $('#stuOverlay').on('click', function (e) { if (e.target === this) closeOverlay(); });
+        $(document).on('keyup', '#stuSearch', renderStudents);
+        $('#stuSport, #stuSanse').on('change', renderStudents);
+        $(document).on('click', '.stu-row', function () {
+            $('#selStudentID').val($(this).data('id'));
+            $('#txtStudentName').val($(this).data('name'));
+            closeOverlay();
+        });
+
+        // ===== تقویم شمسی =====
+        function openCal(inputId) {
+            initCalendar(inputId, null, true);
+            new bootstrap.Modal('#datePickerModal').show();
+        }
+        $('#prevMonth').click(function () {
+            calendarDate.m++;
+            if (calendarDate.m > 12) { calendarDate.m = 1; calendarDate.y++; }
+            renderCalendar();
+        });
+        $('#nextMonth').click(function () {
+            calendarDate.m--;
+            if (calendarDate.m < 1) { calendarDate.m = 12; calendarDate.y--; }
+            renderCalendar();
+        });
+
+        // ===== ✅ نمایش/پنهان اینپوت حرکت جدید =====
+        function syncNewItem($row) {
+            var isnew = String($row.find('.selItem').val() || '0') === '0';
+            $row.find('.txtNewItem').css('display', isnew ? 'block' : 'none');
+        }
+        $(document).on('change', '.selItem', function () {
+            syncNewItem($(this).closest('.pe-item-card'));
+        });
+        // ✅ همگام‌سازی همه ردیف‌های موجود موقع لود صفحه
+        $(function () {
+            $('#itemsBox .pe-item-card:not(.template)').each(function () { syncNewItem($(this)); });
+        });
+
+        // ===== افزودن / حذف ردیف =====
+        $('#btnAddItem').click(function () {
+            var $t = $('#rowTemplate').clone().removeAttr('id').removeClass('template').css('display', 'block');
+            $('#itemsBox').append($t);
+            syncNewItem($t);   // ✅ چون پیش‌فرض «حرکت جدید» است، اینپوت بلافاصله باز می‌شه
+            $t[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(function () {
+                if ($t.find('.txtNewItem').is(':visible')) $t.find('.txtNewItem').trigger('focus');
+            }, 200);
+        });
+        $(document).on('click', '.pe-del-item', function () {
+            $(this).closest('.pe-item-card').remove();
+        });
+
+        // ===== ذخیره =====
+        $('#btnSave').click(function () {
+            var memberID = parseInt($('#selStudentID').val() || '0');
+            if (memberID <= 0) { showToast('شاگرد را انتخاب کنید', 'error'); return; }
+
+            var items = [];
+            var valid = true;
+            $('#itemsBox .pe-item-card:not(.template)').each(function () {
+                var $r = $(this);
+                var itemID = parseInt($r.find('.selItem').val() || '0');
+                var newDesc = $.trim($r.find('.txtNewItem').val());
+                if (itemID === 0 && !newDesc) { valid = false; return; }
+                function num(sel) { var v = $r.find(sel).val(); return v === '' || v === null ? null : parseInt(v); }
+                items.push({
+                    itemID: itemID,
+                    newItemDesc: newDesc,
+                    dayTitle: $.trim($r.find('.inpDay').val()) || null,
+                    exerciseType: parseInt($r.find('.inpType').val() || '1'),
+                    setCount: num('.inpSets'),
+                    repCount: num('.inpReps'),
+                    wCount: num('.inpW'),
+                    restSeconds: num('.inpRest'),
+                    note: $.trim($r.find('.inpNote').val()) || null
+                });
+            });
+
+            if (!valid || !items.length) { showToast('لیست حرکات را کامل کنید (حرکت جدید نیاز به شرح دارد)', 'error'); return; }
+
+            apiCall('/Coach/SaveProgram', 'POST', {
+                prgID: @Model.PrgID,
+                memberID: memberID,
+                startDateShamsi: $.trim($('#txtStart').val()),
+                endDateShamsi: $.trim($('#txtEnd').val()),
+                items: items
+            }, function (res) {
+                showToast(res.message, res.success ? 'success' : 'error');
+                if (res.success) setTimeout(function () { window.location.href = '/Coach/Programs'; }, 800);
+            });
+        });
+    </script>
+}

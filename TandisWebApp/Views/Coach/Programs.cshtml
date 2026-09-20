@@ -1,0 +1,254 @@
+﻿@model List<TandisWebApp.DTOs.CoachProgramRowDto>
+@{
+    ViewData["Title"] = "برنامه‌های تمرینی";
+    var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h5 class="mb-0"><i class="bi bi-clipboard2-pulse hd-icon"></i> برنامه‌های تمرینی</h5>
+    <a href="/Coach/ProgramEdit" class="pg-new-btn"><i class="bi bi-plus-lg"></i> برنامه جدید</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="pg-empty">
+        <div style="font-size:2.4rem" class="mb-2">📋</div>
+        هنوز برنامه‌ای ثبت نکرده‌اید
+    </div>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var p in Model)
+        {
+            <div class="col-md-6 col-lg-4">
+                <div class="pg-card h-100">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="pg-avatar"><i class="bi bi-clipboard2-pulse-fill"></i></div>
+                        <div class="flex-grow-1" style="min-width:0">
+                            <div class="pg-name">@p.StudentName</div>
+                            <div class="pg-dates"><i class="bi bi-calendar-range"></i> @p.StartDateShamsi تا @p.EndDateShamsi</div>
+                        </div>
+                        @if (p.IsActive)
+                        {
+                            <span class="pg-badge pg-on">فعال</span>
+                        }
+                        else
+                        {
+                            <span class="pg-badge pg-off">پایان‌یافته</span>
+                        }
+                    </div>
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <span class="pg-pill"><i class="bi bi-list-ul"></i> @p.ItemCount.ToString(fa) حرکت</span>
+                    </div>
+                    <div class="d-flex gap-2 mt-3 flex-wrap">
+                        <a href="/Coach/ProgramDetails/@p.PrgID" class="pg-view-btn"><i class="bi bi-eye-fill"></i> مشاهده</a>
+                        <a href="/Coach/ProgramEdit?id=@p.PrgID" class="pg-edit-btn"><i class="bi bi-pencil-fill"></i> ویرایش</a>
+                        <button type="button" class="pg-del-btn" data-prg="@p.PrgID"><i class="bi bi-trash3"></i> حذف</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<style>
+    .hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
+    }
+
+    .pg-new-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        color: #fff;
+        border-radius: 12px;
+        padding: 8px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 5px 14px rgba(30,111,217,.35);
+        transition: all .25s;
+    }
+
+        .pg-new-btn:hover {
+            filter: brightness(1.1);
+            color: #fff;
+        }
+
+    .pg-empty {
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        text-align: center;
+        padding: 44px 16px;
+        color: #9fb3c8;
+        font-size: .9rem;
+    }
+
+    .pg-card {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 18px;
+        padding: 16px;
+    }
+
+        .pg-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: -40px;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(46,134,222,.25), transparent 70%);
+            pointer-events: none;
+        }
+
+    .pg-avatar {
+        flex: 0 0 auto;
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #fff;
+        background: linear-gradient(135deg, #2E86DE, #66d3e8);
+        box-shadow: 0 5px 14px rgba(46,134,222,.35);
+    }
+
+    .pg-name {
+        font-weight: 800;
+        color: #fff;
+        font-size: .95rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .pg-dates {
+        font-size: .75rem;
+        color: #9fb3c8;
+        margin-top: 3px;
+    }
+
+        .pg-dates i {
+            color: #66d3e8;
+            margin-left: 4px;
+        }
+
+    .pg-badge {
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: .68rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .pg-on {
+        background: rgba(56,217,169,.16);
+        color: #38d9a9;
+        border: 1px solid rgba(56,217,169,.4);
+    }
+
+    .pg-off {
+        background: rgba(255,255,255,.10);
+        color: #9fb3c8;
+        border: 1px solid rgba(255,255,255,.2);
+    }
+
+    .pg-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(13,110,253,.14);
+        border: 1px solid rgba(13,110,253,.30);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 5px 12px;
+        font-size: .73rem;
+        font-weight: 700;
+    }
+
+        .pg-pill i {
+            color: #66d3e8;
+            font-size: .82rem;
+        }
+
+    .pg-edit-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(102,211,232,.12);
+        border: 1px solid rgba(102,211,232,.35);
+        color: #66d3e8;
+        border-radius: 10px;
+        padding: 6px 14px;
+        font-size: .78rem;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all .25s;
+    }
+
+        .pg-edit-btn:hover {
+            background: rgba(102,211,232,.25);
+            color: #fff;
+        }
+
+    .pg-del-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255,107,129,.12);
+        border: 1px solid rgba(255,107,129,.35);
+        color: #ff8fa3;
+        border-radius: 10px;
+        padding: 6px 14px;
+        font-size: .78rem;
+        font-weight: 700;
+        transition: all .25s;
+    }
+
+        .pg-del-btn:hover {
+            background: rgba(255,107,129,.25);
+            color: #fff;
+        }
+
+    .pg-view-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        color: #fff;
+        border-radius: 10px;
+        padding: 6px 14px;
+        font-size: .78rem;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 4px 12px rgba(30,111,217,.3);
+        transition: all .25s;
+    }
+
+        .pg-view-btn:hover {
+            filter: brightness(1.12);
+            color: #fff;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        $(document).on('click', '.pg-del-btn', function () {
+            var id = $(this).data('prg');
+            if (!confirm('این برنامه حذف شود؟')) return;
+            apiCall('/Coach/DeleteProgram', 'POST', id, function (res) {
+                showToast(res.message, res.success ? 'success' : 'error');
+                if (res.success) setTimeout(function () { location.reload(); }, 700);
+            });
+        });
+    </script>
+}
