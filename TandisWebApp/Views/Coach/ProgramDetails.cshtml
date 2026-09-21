@@ -2,20 +2,34 @@
 @{
     ViewData["Title"] = "جزئیات برنامه";
     var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
+
+    
     var typeLabels = new Dictionary<byte, string> {
         { 1, "عادی" }, { 2, "دراپ ست" }, { 3, "سوپرست" }, { 4, "تری‌ست" },
         { 5, "ست غول" }, { 6, "پیرامید" }, { 7, "استراحت-مکث" }, { 8, "تمپو دار" }
     };
+
+    
     string DayIcon(string t)
     {
-        if (t.Contains("پا")) return "🦵";
-        if (t.Contains("سینه")) return "🏋️";
-        if (t.Contains("زیر بغل") || t.Contains("پشت")) return "🚣";
-        if (t.Contains("سرشانه")) return "💪";
-        if (t.Contains("دست") || t.Contains("بازو")) return "🦾";
-        if (t.Contains("شکم") || t.Contains("پهلو")) return "🧘";
-        if (t.Contains("فول") || t.Contains("کل")) return "⚡";
-        return "📅";
+        var sb = new System.Text.StringBuilder();
+        foreach (var part in (t ?? "").Split('+'))
+        {
+            switch (part.Trim())
+            {
+                case "روز پا": sb.Append("🦵"); break;
+                case "روز سینه": sb.Append("🏋️"); break;
+                case "روز سرشانه": sb.Append("🤸"); break;
+                case "روز زیر بغل": sb.Append("🚣"); break;
+                case "روز جلو بازو": sb.Append("💪"); break;
+                case "روز پشت بازو": sb.Append("🦾"); break;
+                case "روز شکم": sb.Append("🧘"); break;
+                case "روز پهلو": sb.Append("🌀"); break;
+                case "روز هوازی": sb.Append("🏃"); break;
+                case "روز فول بادی": sb.Append("⚡"); break;
+            }
+        }
+        return sb.Length == 0 ? "📅" : sb.ToString();
     }
 }
 
@@ -142,7 +156,6 @@
             color: #fff;
         }
 
-    /* ===== بنر شاگرد ===== */
     .pd-banner {
         display: flex;
         align-items: center;
@@ -205,7 +218,6 @@
         border: 1px solid rgba(255,255,255,.2);
     }
 
-    /* ===== باکس هر روز ===== */
     .pd-day {
         background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
         border: 1px solid rgba(255,255,255,.14);
@@ -244,7 +256,6 @@
         padding: 12px;
     }
 
-    /* ===== کارت هر حرکت ===== */
     .pd-ex {
         background: rgba(255,255,255,.06);
         border: 1px solid rgba(255,255,255,.10);

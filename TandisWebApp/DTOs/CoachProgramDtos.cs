@@ -93,4 +93,14 @@
         public string DayTitle { get; set; } = string.Empty;
         public List<ProgramItemEditDto> Items { get; set; } = new();
     }
+    // ===== ردیف شاگرد (لیست همه شاگردان مربی) =====
+    public class CoachStudentRowDto
+    {
+        public int MemberID { get; set; }
+        public string FullName { get; set; } = string.Empty;
+        public string Mobile { get; set; } = string.Empty;
+        public string SportName { get; set; } = string.Empty;
+        public string SanseName { get; set; } = string.Empty;
+        public string EndDate { get; set; } = string.Empty;
+    }
 }

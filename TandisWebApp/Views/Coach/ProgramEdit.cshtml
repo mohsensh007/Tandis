@@ -13,9 +13,24 @@
     var startVal = Model.PrgID > 0 && !string.IsNullOrEmpty(Model.StartDateShamsi) ? Model.StartDateShamsi : defStart;
     var endVal = Model.PrgID > 0 && !string.IsNullOrEmpty(Model.EndDateShamsi) ? Model.EndDateShamsi : defEnd;
 
+    // ✅ دراپ ست (نه دروپ ست)
     var typeOptions = new Dictionary<byte, string> {
         { 1, "عادی" }, { 2, "دراپ ست" }, { 3, "سوپرست" }, { 4, "تری‌ست" },
         { 5, "ست غول" }, { 6, "پیرامید" }, { 7, "استراحت-مکث" }, { 8, "تمپو دار" }
+    };
+
+    // ✅ ۱۰ گروه عضلانی / روز تمرین
+    var fixedDays = new (string Icon, string Key)[] {
+        ("🦵", "روز پا"),
+        ("🏋️", "روز سینه"),
+        ("🤸", "روز سرشانه"),
+        ("🚣", "روز زیر بغل"),
+        ("💪", "روز جلو بازو"),
+        ("🦾", "روز پشت بازو"),
+        ("🧘", "روز شکم"),
+        ("🌀", "روز پهلو"),
+        ("🏃", "روز هوازی"),
+        ("⚡", "روز فول بدن")
     };
 }
 
@@ -54,51 +69,38 @@
         </div>
     </div>
 
-    <!-- ===== حرکات ===== -->
-    <div class="d-flex justify-content-between align-items-center mt-4 mb-2">
-        <div class="pe-lbl mb-0" style="font-size:.85rem"><i class="bi bi-list-check"></i> حرکات برنامه</div>
-        <button type="button" class="pe-add-btn" id="btnAddItem"><i class="bi bi-plus-lg"></i> افزودن حرکت</button>
+    <!-- ===== انتخاب روزهای تمرین (چندانتخابی) ===== -->
+    <div class="day-select-box mt-4">
+        <div class="ds-title"><i class="bi bi-calendar-week"></i> روزهای تمرین این برنامه را انتخاب کنید (چند روز قابل انتخابه):</div>
+        <div class="ds-chips" id="dayChips">
+            @foreach (var d in fixedDays)
+            {
+                <button type="button" class="ds-chip" data-day="@d.Key">@d.Icon @d.Key</button>
+            }
+        </div>
+        <div class="ds-hint" id="dsHint">⚠️ برای افزودن حرکت، ابتدا حداقل یک روز را انتخاب کنید</div>
+        <div class="ds-selected" id="dsSelectedWrap" style="display:none">
+            حرکات جدید به این روز اضافه می‌شن: <b id="dsSelected"></b>
+        </div>
     </div>
 
-    <datalist id="daySuggestions">
-        <option value="روز پا"></option>
-        <option value="روز سینه"></option>
-        <option value="روز زیر بغل"></option>
-        <option value="روز سرشانه"></option>
-        <option value="روز دست و بازو"></option>
-        <option value="روز شکم و پهلو"></option>
-        <option value="روز فول بدن"></option>
-    </datalist>
+    <!-- ===== حرکات ===== -->
+    <div class="d-flex justify-content-between align-items-center mt-3 mb-2">
+        <div class="pe-lbl mb-0" style="font-size:.85rem"><i class="bi bi-list-check"></i> حرکات برنامه</div>
+        <button type="button" class="pe-add-btn" id="btnAddItem" disabled><i class="bi bi-plus-lg"></i> افزودن حرکت</button>
+    </div>
 
     <div id="itemsBox">
         @foreach (var it in Model.Items)
         {
             <div class="pe-item-card">
-                <div class="row g-2">
-                    <div class="col-7">
-                        <label class="pe-lbl">روز / گروه عضلانی</label>
-                        <input type="text" class="pe-input inpDay" list="daySuggestions" placeholder="مثلاً روز پا" value="@it.DayTitle" />
-                    </div>
-                    <div class="col-4">
-                        <label class="pe-lbl">نوع حرکت</label>
-                        <select class="pe-input inpType">
-                            @foreach (var t in typeOptions)
-                            {
-                                if ((int)t.Key == (it.ExerciseType ?? 1))
-                                {
-                                    <option value="@t.Key" selected>@t.Value</option>
-                                }
-                                else
-                                {
-                                    <option value="@t.Key">@t.Value</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                    <div class="col-1 d-flex align-items-end justify-content-center pb-1">
-                        <button type="button" class="pe-del-item"><i class="bi bi-trash3"></i></button>
-                    </div>
-                    <div class="col-12">
+                <input type="hidden" class="inpDay" value="@it.DayTitle" />
+                <div class="d-flex justify-content-between align-items-center gap-2">
+                    <span class="pe-day-badge">@it.DayTitle</span>
+                    <button type="button" class="pe-del-item"><i class="bi bi-trash3"></i></button>
+                </div>
+                <div class="row g-2 mt-2">
+                    <div class="col-8">
                         <label class="pe-lbl">حرکت</label>
                         <select class="pe-input selItem">
                             <option value="0">+ حرکت جدید (دستی بنویس)...</option>
@@ -117,6 +119,22 @@
                         <input type="text" class="pe-input txtNewItem mt-2" style="display:@(it.ItemID == 0 ? "block" : "none")"
                                placeholder="شرح حرکت جدید (مثلاً: پرس سینه با هالتر)" value="@(it.ItemID == 0 ? it.ItemDesc : "")" />
                     </div>
+                    <div class="col-4">
+                        <label class="pe-lbl">نوع حرکت</label>
+                        <select class="pe-input inpType">
+                            @foreach (var t in typeOptions)
+                            {
+                                if ((int)t.Key == (it.ExerciseType ?? 1))
+                                {
+                                    <option value="@t.Key" selected>@t.Value</option>
+                                }
+                                else
+                                {
+                                    <option value="@t.Key">@t.Value</option>
+                                }
+                            }
+                        </select>
+                    </div>
                     <div class="col-3"><label class="pe-lbl">ست</label><input type="number" min="1" class="pe-input inpSets" value="@it.SetCount" /></div>
                     <div class="col-3"><label class="pe-lbl">تکرار</label><input type="number" min="0" class="pe-input inpReps" value="@it.RepCount" /></div>
                     <div class="col-3"><label class="pe-lbl">وزن (kg)</label><input type="number" min="0" class="pe-input inpW" value="@it.WCount" /></div>
@@ -128,10 +146,22 @@
 
         <!-- قالب ردیف جدید (مخفی) -->
         <div class="pe-item-card template" id="rowTemplate" style="display:none">
-            <div class="row g-2">
-                <div class="col-7">
-                    <label class="pe-lbl">روز / گروه عضلانی</label>
-                    <input type="text" class="pe-input inpDay" list="daySuggestions" placeholder="مثلاً روز پا" />
+            <input type="hidden" class="inpDay" value="" />
+            <div class="d-flex justify-content-between align-items-center gap-2">
+                <span class="pe-day-badge"></span>
+                <button type="button" class="pe-del-item"><i class="bi bi-trash3"></i></button>
+            </div>
+            <div class="row g-2 mt-2">
+                <div class="col-8">
+                    <label class="pe-lbl">حرکت</label>
+                    <select class="pe-input selItem">
+                        <option value="0">+ حرکت جدید (دستی بنویس)...</option>
+                        @foreach (var o in itemOptions)
+                        {
+                            <option value="@o.ItemID">@o.ItemDesc</option>
+                        }
+                    </select>
+                    <input type="text" class="pe-input txtNewItem mt-2" style="display:none" placeholder="شرح حرکت جدید (مثلاً: پرس سینه با هالتر)" />
                 </div>
                 <div class="col-4">
                     <label class="pe-lbl">نوع حرکت</label>
@@ -148,20 +178,6 @@
                             }
                         }
                     </select>
-                </div>
-                <div class="col-1 d-flex align-items-end justify-content-center pb-1">
-                    <button type="button" class="pe-del-item"><i class="bi bi-trash3"></i></button>
-                </div>
-                <div class="col-12">
-                    <label class="pe-lbl">حرکت</label>
-                    <select class="pe-input selItem">
-                        <option value="0">+ حرکت جدید (دستی بنویس)...</option>
-                        @foreach (var o in itemOptions)
-                        {
-                            <option value="@o.ItemID">@o.ItemDesc</option>
-                        }
-                    </select>
-                    <input type="text" class="pe-input txtNewItem mt-2" style="display:none" placeholder="شرح حرکت جدید (مثلاً: پرس سینه با هالتر)" />
                 </div>
                 <div class="col-3"><label class="pe-lbl">ست</label><input type="number" min="1" class="pe-input inpSets" /></div>
                 <div class="col-3"><label class="pe-lbl">تکرار</label><input type="number" min="0" class="pe-input inpReps" /></div>
@@ -214,8 +230,13 @@
                 <table class="cal-table">
                     <thead class="text-center">
                         <tr>
-                            <th>شنبه</th><th>یک شنبه</th><th>دو شنبه</th><th>سه شنبه</th>
-                            <th>چهار شنبه</th><th>پنج شنبه</th><th>جمعه</th>
+                            <th>شنبه</th>
+                            <th>یک شنبه</th>
+                            <th>دو شنبه</th>
+                            <th>سه شنبه</th>
+                            <th>چهار شنبه</th>
+                            <th>پنج شنبه</th>
+                            <th>جمعه</th>
                         </tr>
                     </thead>
                     <tbody id="calendarBody"></tbody>
@@ -226,19 +247,40 @@
 </div>
 
 <style>
-    .hd-icon { color: #66d3e8; margin-left: 6px; }
+    .hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
+    }
+
     .coach-back-pill {
-        display: inline-flex; align-items: center; gap: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         background: rgba(255,255,255,.08);
         border: 1px solid rgba(255,255,255,.18);
-        color: #dce9ff; border-radius: 999px;
-        padding: 7px 18px; font-size: .82rem; font-weight: 700;
-        text-decoration: none; backdrop-filter: blur(8px);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 7px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
         transition: all .25s;
     }
-    .coach-back-pill i { color: #66d3e8; transition: transform .25s; }
-    .coach-back-pill:hover { background: rgba(255,255,255,.14); color: #fff; }
-    .coach-back-pill:hover i { transform: translateX(3px); }
+
+        .coach-back-pill i {
+            color: #66d3e8;
+            transition: transform .25s;
+        }
+
+        .coach-back-pill:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+        }
+
+            .coach-back-pill:hover i {
+                transform: translateX(3px);
+            }
 
     .pe-card {
         background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
@@ -246,40 +288,126 @@
         border-radius: 20px;
         padding: 18px;
     }
-    .pe-lbl { display: block; font-size: .72rem; color: #9fb3c8; font-weight: 700; margin-bottom: 4px; }
-    .pe-lbl i { color: #66d3e8; }
+
+    .pe-lbl {
+        display: block;
+        font-size: .72rem;
+        color: #9fb3c8;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+        .pe-lbl i {
+            color: #66d3e8;
+        }
+
     .pe-input {
         width: 100%;
         background: rgba(255,255,255,.08);
         border: 1px solid rgba(255,255,255,.18);
-        color: #fff; border-radius: 12px;
-        padding: 9px 12px; font-size: .85rem;
+        color: #fff;
+        border-radius: 12px;
+        padding: 9px 12px;
+        font-size: .85rem;
     }
-    .pe-input:focus { outline: none; background: rgba(255,255,255,.12); border-color: rgba(102,211,232,.5); }
-    .pe-input[readonly] { cursor: pointer; }
-    select.pe-input option { background: #101424; color: #fff; }
+
+        .pe-input:focus {
+            outline: none;
+            background: rgba(255,255,255,.12);
+            border-color: rgba(102,211,232,.5);
+        }
+
+        .pe-input[readonly] {
+            cursor: pointer;
+        }
+
+    select.pe-input option {
+        background: #101424;
+        color: #fff;
+    }
+
     .pe-cal-btn {
-        flex: 0 0 auto; width: 40px; height: 40px; border-radius: 12px;
+        flex: 0 0 auto;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
         background: rgba(255,255,255,.08);
         border: 1px solid rgba(255,255,255,.16);
         color: #66d3e8;
-        display: flex; align-items: center; justify-content: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    .pe-cal-btn:hover { background: rgba(102,211,232,.2); color: #fff; }
 
-    /* ✅ دکمه افزودن حرکت: گرادیان */
-    .pe-add-btn {
-        display: inline-flex; align-items: center; gap: 7px;
-        background: linear-gradient(135deg, #1E6FD9, #667eea);
-        border: none; color: #fff;
-        border-radius: 12px; padding: 8px 18px;
-        font-size: .82rem; font-weight: 700;
-        box-shadow: 0 5px 14px rgba(30,111,217,.35);
-        transition: all .25s;
+        .pe-cal-btn:hover {
+            background: rgba(102,211,232,.2);
+            color: #fff;
+        }
+
+    /* ===== باکس انتخاب روز ===== */
+    .day-select-box {
+        background: rgba(13,110,253,.10);
+        border: 1px dashed rgba(102,211,232,.45);
+        border-radius: 16px;
+        padding: 12px 14px;
     }
-    .pe-add-btn:hover { filter: brightness(1.12); color: #fff; transform: translateY(-1px); }
 
-    /* ✅ کارت هر حرکت */
+    .ds-title {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: .8rem;
+        font-weight: 800;
+        color: #66d3e8;
+        margin-bottom: 10px;
+    }
+
+    .ds-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .ds-chip {
+        background: rgba(255,255,255,.07);
+        border: 1px solid rgba(255,255,255,.16);
+        color: #cbd3da;
+        border-radius: 999px;
+        padding: 7px 15px;
+        font-size: .78rem;
+        font-weight: 700;
+        transition: all .2s;
+    }
+
+        .ds-chip:hover {
+            background: rgba(255,255,255,.13);
+            color: #fff;
+        }
+
+        .ds-chip.ds-on {
+            background: linear-gradient(135deg, #1E6FD9, #667eea);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(30,111,217,.35);
+        }
+
+    .ds-hint {
+        margin-top: 9px;
+        font-size: .72rem;
+        color: #ffd200;
+    }
+
+    .ds-selected {
+        margin-top: 9px;
+        font-size: .75rem;
+        color: #9fb3c8;
+    }
+
+        .ds-selected b {
+            color: #66d3e8;
+        }
+
+    /* ===== کارت حرکت ===== */
     .pe-item-card {
         position: relative;
         background: rgba(255,255,255,.05);
@@ -288,89 +416,324 @@
         padding: 14px;
         margin-bottom: 12px;
     }
-    .pe-item-card::before {
-        content: '';
-        position: absolute; top: 0; right: 0;
-        width: 4px; height: 100%;
-        background: linear-gradient(180deg, #66d3e8, #667eea);
-        border-radius: 0 16px 16px 0;
-        opacity: .6;
+
+        .pe-item-card::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            bottom: 12px;
+            right: 0;
+            width: 3px;
+            border-radius: 3px;
+            background: linear-gradient(180deg, #66d3e8, #667eea);
+            opacity: .6;
+        }
+
+    .pe-day-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(102,211,232,.14);
+        border: 1px solid rgba(102,211,232,.35);
+        color: #66d3e8;
+        border-radius: 999px;
+        padding: 4px 13px;
+        font-size: .72rem;
+        font-weight: 800;
     }
+
     .pe-del-item {
         background: rgba(255,107,129,.12);
         border: 1px solid rgba(255,107,129,.35);
-        color: #ff8fa3; border-radius: 10px;
-        width: 38px; height: 38px;
-        display: inline-flex; align-items: center; justify-content: center;
+        color: #ff8fa3;
+        border-radius: 10px;
+        width: 36px;
+        height: 36px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         transition: all .25s;
     }
-    .pe-del-item:hover { background: rgba(255,107,129,.25); color: #fff; }
+
+        .pe-del-item:hover {
+            background: rgba(255,107,129,.25);
+            color: #fff;
+        }
+
+    .pe-add-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        border: none;
+        color: #fff;
+        border-radius: 12px;
+        padding: 8px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        box-shadow: 0 5px 14px rgba(30,111,217,.3);
+        transition: all .25s;
+    }
+
+        .pe-add-btn:hover {
+            filter: brightness(1.12);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        .pe-add-btn:disabled {
+            opacity: .4;
+            pointer-events: none;
+            filter: grayscale(.5);
+            box-shadow: none;
+        }
 
     .pe-save-btn {
-        display: inline-flex; align-items: center; gap: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border: none; color: #fff;
-        font-weight: 800; font-size: .9rem;
-        border-radius: 14px; padding: 10px 26px;
+        border: none;
+        color: #fff;
+        font-weight: 800;
+        font-size: .9rem;
+        border-radius: 14px;
+        padding: 10px 26px;
         box-shadow: 0 6px 16px rgba(118,75,162,.4);
         transition: all .25s;
     }
-    .pe-save-btn:hover { filter: brightness(1.1); color: #fff; }
+
+        .pe-save-btn:hover {
+            filter: brightness(1.1);
+            color: #fff;
+        }
 
     .pe-modal {
         background: rgba(16,20,36,.97);
         border: 1px solid rgba(255,255,255,.15);
-        border-radius: 18px; color: #fff;
+        border-radius: 18px;
+        color: #fff;
         backdrop-filter: blur(14px);
     }
-    .pe-modal-head { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; font-weight: 800; }
+
+    .pe-modal-head {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-weight: 800;
+    }
+
+    /* ===== ✅ تقویم شمسی تیره ===== */
+    #datePickerModal .modal-body {
+        background: transparent;
+    }
+
+    #datePickerModal .cal-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 4px;
+    }
+
+        #datePickerModal .cal-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            border-radius: 8px;
+            padding: 8px 2px;
+            font-size: .7rem;
+            font-weight: 700;
+        }
+
+        #datePickerModal .cal-table td {
+            background: rgba(255,255,255,.06);
+            color: #e9ecef;
+            border-radius: 8px;
+            padding: 10px 2px;
+            text-align: center;
+            cursor: pointer;
+            font-size: .85rem;
+            transition: background .2s;
+        }
+
+            #datePickerModal .cal-table td:hover {
+                background: rgba(102,211,232,.3);
+                color: #fff;
+            }
+
+            #datePickerModal .cal-table td:empty {
+                background: transparent;
+                cursor: default;
+            }
+
+    #datePickerModal #currentMonthLabel {
+        color: #fff;
+    }
+
+    #datePickerModal #prevMonth, #datePickerModal #nextMonth {
+        background: rgba(255,255,255,.1);
+        border: 1px solid rgba(255,255,255,.2);
+        color: #fff;
+        border-radius: 10px;
+    }
+
+        #datePickerModal #prevMonth:hover, #datePickerModal #nextMonth:hover {
+            background: rgba(102,211,232,.25);
+        }
 
     .stu-overlay {
-        position: fixed; inset: 0; z-index: 1080;
+        position: fixed;
+        inset: 0;
+        z-index: 1080;
         background: rgba(8,12,22,.55);
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
-        display: flex; align-items: center; justify-content: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         padding: 16px;
     }
+
     .stu-panel {
-        width: 100%; max-width: 560px; max-height: 82vh;
-        display: flex; flex-direction: column;
+        width: 100%;
+        max-width: 560px;
+        max-height: 82vh;
+        display: flex;
+        flex-direction: column;
         background: rgba(16,20,36,.97);
         border: 1px solid rgba(255,255,255,.15);
-        border-radius: 20px; overflow: hidden;
+        border-radius: 20px;
+        overflow: hidden;
         box-shadow: 0 20px 60px rgba(0,0,0,.6);
     }
+
     .stu-head {
-        display: flex; justify-content: space-between; align-items: center;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         background: linear-gradient(135deg, #1E6FD9, #667eea);
-        color: #fff; font-weight: 800; font-size: .92rem;
+        color: #fff;
+        font-weight: 800;
+        font-size: .92rem;
         padding: 12px 16px;
     }
+
     .stu-close {
-        background: rgba(255,255,255,.15); border: none; color: #fff;
-        width: 32px; height: 32px; border-radius: 10px;
-        display: flex; align-items: center; justify-content: center;
+        background: rgba(255,255,255,.15);
+        border: none;
+        color: #fff;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
-    .stu-close:hover { background: rgba(255,107,129,.4); }
-    .stu-body { padding: 14px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
-    .stu-list { overflow-y: auto; min-height: 0; display: flex; flex-direction: column; gap: 8px; max-height: 46vh; }
+
+        .stu-close:hover {
+            background: rgba(255,107,129,.4);
+        }
+
+    .stu-body {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 0;
+    }
+
+    .stu-list {
+        overflow-y: auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 46vh;
+    }
+
     .stu-row {
         background: rgba(255,255,255,.06);
         border: 1px solid rgba(255,255,255,.10);
-        border-radius: 12px; padding: 10px 14px;
-        cursor: pointer; transition: all .2s;
+        border-radius: 12px;
+        padding: 10px 14px;
+        cursor: pointer;
+        transition: all .2s;
     }
-    .stu-row:hover { border-color: rgba(102,211,232,.5); background: rgba(102,211,232,.10); }
-    .stu-name { color: #fff; font-weight: 800; font-size: .88rem; }
-    .stu-sub { color: #9fb3c8; font-size: .72rem; margin-top: 3px; }
-    .stu-empty { text-align: center; color: #9fb3c8; padding: 26px 0; font-size: .85rem; }
+
+        .stu-row:hover {
+            border-color: rgba(102,211,232,.5);
+            background: rgba(102,211,232,.10);
+        }
+
+    .stu-name {
+        color: #fff;
+        font-weight: 800;
+        font-size: .88rem;
+    }
+
+    .stu-sub {
+        color: #9fb3c8;
+        font-size: .72rem;
+        margin-top: 3px;
+    }
+
+    .stu-empty {
+        text-align: center;
+        color: #9fb3c8;
+        padding: 26px 0;
+        font-size: .85rem;
+    }
 </style>
 
 @section Scripts {
+    <!-- ✅ تگ داده شاگردان — حتماً قبل از اسکریپت اصلی -->
+    <script type="application/json" id="studentsJson">@Json.Serialize(students)</script>
+
     <script>
+        // ===== ✅ خواندن ایمن داده شاگردان (دیگه هیچ‌وقت کرش نمی‌کنه) =====
+        var students = [];
+        try {
+            var studentsEl = document.getElementById('studentsJson');
+            if (studentsEl) students = JSON.parse(studentsEl.textContent);
+        } catch (e) { students = []; }
+
+        // ===== روزهای ثابت (ترتیب مهمه) =====
+        var FIXED_DAYS = ['روز پا', 'روز سینه', 'روز سرشانه', 'روز زیر بغل', 'روز جلو بازو', 'روز پشت بازو', 'روز شکم', 'روز پهلو', 'روز هوازی', 'روز فول بدن'];
+
+        function selectedDays() {
+            var arr = [];
+            $('#dayChips .ds-chip.ds-on').each(function () { arr.push(String($(this).data('day'))); });
+            arr.sort(function (a, b) { return FIXED_DAYS.indexOf(a) - FIXED_DAYS.indexOf(b); });
+            return arr;
+        }
+        function currentDayTitle() { return selectedDays().join(' + '); }
+
+        $(document).on('click', '.ds-chip', function () {
+            $(this).toggleClass('ds-on');
+            applyDayFilter();
+            updateAddState();
+        });
+
+        function applyDayFilter() {
+            var sel = selectedDays();
+            $('.pe-item-card:not(.template)').each(function () {
+                var dt = String($(this).find('.inpDay').val() || '');
+                if (!sel.length) { $(this).show(); return; }
+                var show = false;
+                for (var i = 0; i < sel.length; i++) {
+                    if (dt.indexOf(sel[i]) > -1) { show = true; break; }
+                }
+                $(this).toggle(show);
+            });
+        }
+
+        function updateAddState() {
+            var sel = selectedDays();
+            var has = sel.length > 0;
+            $('#btnAddItem').prop('disabled', !has);
+            $('#dsHint').toggle(!has);
+            $('#dsSelectedWrap').toggle(has);
+            if (has) $('#dsSelected').text(currentDayTitle());
+        }
+
         // ===== داده شاگردان =====
-        var students = @Json.Serialize(students);
         function gId(s)    { return s.memberID  || s.MemberID  || 0; }
         function gName(s)  { return s.fullName  || s.FullName  || ''; }
         function gSport(s) { return s.sportName || s.SportName || ''; }
@@ -443,7 +806,7 @@
             renderCalendar();
         });
 
-        // ===== ✅ نمایش/پنهان اینپوت حرکت جدید =====
+        // ===== نمایش/پنهان اینپوت حرکت جدید =====
         function syncNewItem($row) {
             var isnew = String($row.find('.selItem').val() || '0') === '0';
             $row.find('.txtNewItem').css('display', isnew ? 'block' : 'none');
@@ -451,16 +814,18 @@
         $(document).on('change', '.selItem', function () {
             syncNewItem($(this).closest('.pe-item-card'));
         });
-        // ✅ همگام‌سازی همه ردیف‌های موجود موقع لود صفحه
-        $(function () {
-            $('#itemsBox .pe-item-card:not(.template)').each(function () { syncNewItem($(this)); });
-        });
 
         // ===== افزودن / حذف ردیف =====
         $('#btnAddItem').click(function () {
+            var sel = selectedDays();
+            if (!sel.length) { showToast('ابتدا حداقل یک روز تمرین انتخاب کنید', 'error'); return; }
+            var title = sel.join(' + ');
             var $t = $('#rowTemplate').clone().removeAttr('id').removeClass('template').css('display', 'block');
+            $t.find('.inpDay').val(title);
+            $t.find('.pe-day-badge').text(title);
             $('#itemsBox').append($t);
-            syncNewItem($t);   // ✅ چون پیش‌فرض «حرکت جدید» است، اینپوت بلافاصله باز می‌شه
+            syncNewItem($t);
+            applyDayFilter();
             $t[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
             setTimeout(function () {
                 if ($t.find('.txtNewItem').is(':visible')) $t.find('.txtNewItem').trigger('focus');
@@ -486,7 +851,7 @@
                 items.push({
                     itemID: itemID,
                     newItemDesc: newDesc,
-                    dayTitle: $.trim($r.find('.inpDay').val()) || null,
+                    dayTitle: String($r.find('.inpDay').val() || ''),
                     exerciseType: parseInt($r.find('.inpType').val() || '1'),
                     setCount: num('.inpSets'),
                     repCount: num('.inpReps'),
@@ -499,7 +864,7 @@
             if (!valid || !items.length) { showToast('لیست حرکات را کامل کنید (حرکت جدید نیاز به شرح دارد)', 'error'); return; }
 
             apiCall('/Coach/SaveProgram', 'POST', {
-                prgID: @Model.PrgID,
+                prgID: parseInt('@Model.PrgID', 10),
                 memberID: memberID,
                 startDateShamsi: $.trim($('#txtStart').val()),
                 endDateShamsi: $.trim($('#txtEnd').val()),
@@ -508,6 +873,13 @@
                 showToast(res.message, res.success ? 'success' : 'error');
                 if (res.success) setTimeout(function () { window.location.href = '/Coach/Programs'; }, 800);
             });
+        });
+
+        // ===== وضعیت اولیه =====
+        $(function () {
+            $('#itemsBox .pe-item-card:not(.template)').each(function () { syncNewItem($(this)); });
+            applyDayFilter();
+            updateAddState();
         });
     </script>
 }

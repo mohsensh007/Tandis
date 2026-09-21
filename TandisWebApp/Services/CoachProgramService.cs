@@ -206,14 +206,14 @@ namespace TandisWebApp.Services
             return (true, "برنامه با موفقیت ذخیره شد", head.PrgID);
         }
 
-        /// <summary>حذف برنامه (+ حرکاتش)</summary>
+       
+        /// <summary>حذف برنامه (CASCADE خودش جزئیات رو پاک می‌کنه)</summary>
         public async Task<(bool ok, string msg)> DeleteProgramAsync(int prgID, int coachMemberID)
         {
             var head = await _db.SportPrgs.FirstOrDefaultAsync(p => p.PrgID == prgID && p.CoachID == coachMemberID);
             if (head == null) return (false, "برنامه یافت نشد");
 
-            var details = await _db.SportPrgDtls.Where(d => d.PrgID == prgID).ToListAsync();
-            _db.SportPrgDtls.RemoveRange(details);
+            // ✅ فقط سربرگ رو حذف می‌کنیم — FK CASCADE خودش SportPrgDtlها رو پاک می‌کنه
             _db.SportPrgs.Remove(head);
             await _db.SaveChangesAsync();
             return (true, "برنامه حذف شد");
@@ -315,6 +315,30 @@ namespace TandisWebApp.Services
             }
 
             return result;
+        }
+        /// <summary>همه شاگردان فعال مربی (در همه کلاس‌ها)</summary>
+        public async Task<List<CoachStudentRowDto>> GetAllStudentsAsync(int coachMemberID)
+        {
+            var today = ToShamsi(DateTime.Now.Date);
+            return await (
+                from ams in _db.Acc_MemberSports
+                join ss in _db.Gen_SportSanses on ams.SportSanseID equals ss.SportSanseID
+                where ss.CoachMemberID == coachMemberID
+                   && ams.IsActive == true
+                   && ams.EndDate != null
+                   && ams.EndDate.CompareTo(today) >= 0
+                join m in _db.Gen_Members on ams.MemberID equals m.MemberID
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                orderby p.FirstName, p.LastName
+                select new CoachStudentRowDto
+                {
+                    MemberID = m.MemberID,
+                    FullName = (p.FirstName + " " + p.LastName),
+                    Mobile = p.Mobile ?? "",
+                    SportName = ss.Gen_Sport_Category != null ? ss.Gen_Sport_Category.SportName ?? "" : "",
+                    SanseName = ss.SanseName ?? "",
+                    EndDate = ams.EndDate ?? ""
+                }).ToListAsync();
         }
     }
 }

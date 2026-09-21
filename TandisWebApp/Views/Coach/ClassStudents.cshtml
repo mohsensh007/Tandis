@@ -4,17 +4,26 @@
     var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
 }
 
-<!-- هدر -->
-<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <div>
-        <h5 class="mb-0"><i class="bi bi-people-fill hd-icon"></i> شاگردان</h5>
-        <div class="cs-sub">@ViewBag.ClassName</div>
+<!-- ===== هدر گرادیان (مثل بقیه صفحات) ===== -->
+<div class="cs-head-bar mb-3">
+    <div class="d-flex align-items-center gap-2 flex-grow-1" style="min-width:0">
+        <span class="cs-head-icon"><i class="bi bi-people-fill"></i></span>
+        <div style="min-width:0">
+            <div class="cs-head-title">شاگردان کلاس</div>
+            <div class="cs-head-sub">@ViewBag.ClassName</div>
+        </div>
     </div>
-    <div class="d-flex gap-2 align-items-center">
-        <span class="cs-count">@Model.Count.ToString(fa) نفر</span>
-        <a href="/Coach/Classes" class="coach-back-pill"><i class="bi bi-arrow-right"></i> کلاس‌ها</a>
-    </div>
+    <span class="cs-count">@Model.Count.ToString(fa) نفر</span>
+    <a href="/Coach/Classes" class="coach-back-pill"><i class="bi bi-arrow-right"></i> کلاس‌ها</a>
 </div>
+
+<!-- ===== جستجو ===== -->
+@if (Model.Count > 0)
+{
+    <div class="mb-3">
+        <input type="text" id="csSearch" class="glass-search" placeholder="🔍 جستجوی نام شاگرد..." />
+    </div>
+}
 
 @if (Model.Count == 0)
 {
@@ -35,51 +44,62 @@ else
                             <div class="cs-avatar"><i class="bi bi-person-fill"></i></div>
                             <div style="min-width:0" class="flex-grow-1">
                                 <div class="cs-name">@st.FullName</div>
-                                @if (!string.IsNullOrEmpty(st.Mobile))
-                                {
-                                    <div class="cs-mobile" dir="ltr">@st.Mobile</div>
-                                }
-                                else
-                                {
-                                    <div class="cs-mobile">-</div>
-                                }
+                                <div class="cs-mobile" dir="ltr">@(string.IsNullOrEmpty(st.Mobile) ? "-" : st.Mobile)</div>
                             </div>
-                            <i class="bi bi-chevron-left cs-arrow"></i>
+                            <span class="stt stt-@st.StatusClass">@st.StatusLabel</span>
                         </div>
                         <div class="d-flex flex-wrap gap-2 mt-3">
                             <span class="cs-pill"><i class="bi bi-calendar-x-fill"></i> پایان: @(st.EndDate ?? "-")</span>
                             <span class="cs-pill"><i class="bi bi-ticket-perforated-fill"></i> جلسات: @st.RemainingSessions.ToString(fa) / @st.TotalSessions.ToString(fa)</span>
-                            <span class="stt stt-@st.StatusClass">@st.StatusLabel</span>
                         </div>
+                        <div class="cs-foot mt-3"><i class="bi bi-person-vcard"></i> مشاهده کارت و تاریخچه حضور</div>
                     </div>
                 </a>
             </div>
         }
     </div>
-    <div class="cs-hint mt-3">
-        <i class="bi bi-info-circle"></i> روی کارت هر شاگرد بزنید تا کارت کامل و تاریخچه حضورش باز شود.
-    </div>
+    <div class="cs-hint mt-3"><i class="bi bi-info-circle"></i> روی کارت هر شاگرد بزنید تا کارت کامل و تاریخچه حضورش باز شود.</div>
 }
 
 <style>
-    .hd-icon {
-        color: #66d3e8;
-        margin-left: 6px;
+    .cs-head-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        padding: 12px 16px;
+        color: #fff;
     }
 
-    .cs-sub {
-        font-size: .78rem;
-        color: #9fb3c8;
-        margin-top: 3px;
+    .cs-head-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: rgba(255,255,255,.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.15rem;
+    }
+
+    .cs-head-title {
+        font-weight: 800;
+        font-size: .95rem;
+    }
+
+    .cs-head-sub {
+        font-size: .75rem;
+        opacity: .85;
+        margin-top: 2px;
     }
 
     .cs-count {
-        background: rgba(102,211,232,.14);
-        border: 1px solid rgba(102,211,232,.35);
-        color: #66d3e8;
+        background: rgba(255,255,255,.18);
         border-radius: 999px;
         padding: 5px 14px;
-        font-size: .75rem;
+        font-size: .72rem;
         font-weight: 800;
     }
 
@@ -87,32 +107,37 @@ else
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: rgba(255,255,255,.08);
-        border: 1px solid rgba(255,255,255,.18);
-        color: #dce9ff;
+        background: rgba(255,255,255,.14);
+        border: 1px solid rgba(255,255,255,.25);
+        color: #fff;
         border-radius: 999px;
         padding: 7px 18px;
         font-size: .82rem;
         font-weight: 700;
         text-decoration: none;
-        backdrop-filter: blur(8px);
         transition: all .25s;
     }
 
-        .coach-back-pill i {
-            color: #66d3e8;
-            transition: transform .25s;
-        }
-
         .coach-back-pill:hover {
-            background: rgba(255,255,255,.14);
+            background: rgba(255,255,255,.25);
             color: #fff;
-            border-color: rgba(102,211,232,.45);
         }
 
-            .coach-back-pill:hover i {
-                transform: translateX(3px);
-            }
+    .glass-search {
+        width: 100%;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #fff;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-size: .85rem;
+    }
+
+        .glass-search:focus {
+            outline: none;
+            border-color: rgba(102,211,232,.5);
+            background: rgba(255,255,255,.12);
+        }
 
     .cs-empty {
         background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
@@ -167,27 +192,17 @@ else
     .cs-name {
         font-weight: 800;
         color: #fff;
-        font-size: .95rem;
+        font-size: .92rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .cs-mobile {
-        font-size: .75rem;
+        font-size: .73rem;
         color: #66d3e8;
         margin-top: 2px;
         text-align: right;
-    }
-
-    .cs-arrow {
-        flex: 0 0 auto;
-        color: #66d3e8;
-        transition: transform .25s;
-    }
-
-    a:hover .cs-arrow {
-        transform: translateX(-4px);
     }
 
     .cs-pill {
@@ -198,15 +213,26 @@ else
         border: 1px solid rgba(13,110,253,.30);
         color: #dce9ff;
         border-radius: 999px;
-        padding: 5px 12px;
-        font-size: .73rem;
+        padding: 4px 12px;
+        font-size: .72rem;
         font-weight: 700;
     }
 
         .cs-pill i {
             color: #66d3e8;
-            font-size: .82rem;
+            font-size: .8rem;
         }
+
+    .cs-foot {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #66d3e8;
+        font-size: .76rem;
+        font-weight: 700;
+        border-top: 1px dashed rgba(255,255,255,.12);
+        padding-top: 10px;
+    }
 
     .cs-hint {
         color: #9fb3c8;
@@ -222,6 +248,7 @@ else
         padding: 4px 12px;
         font-size: .68rem;
         font-weight: 800;
+        white-space: nowrap;
     }
 
     .stt-success {
@@ -248,3 +275,15 @@ else
         border: 1px solid rgba(255,107,129,.4);
     }
 </style>
+
+@section Scripts {
+    <script>
+        $('#csSearch').on('keyup', function () {
+            var q = $.trim($(this).val()).toLowerCase();
+            $('.cs-card').each(function () {
+                var txt = $(this).text().toLowerCase();
+                $(this).closest('div[class*="col-"]').toggle(txt.indexOf(q) > -1);
+            });
+        });
+    </script>
+}

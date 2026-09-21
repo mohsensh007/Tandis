@@ -2,140 +2,636 @@
 @{
     ViewData["Title"] = "گزارش پورسانت";
     var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
-    var fromDate = Model.FromDate;  
-    var toDate = Model.ToDate;      
+    var fromDate = Model.FromDate;
+    var toDate = Model.ToDate;
 }
 
-<!-- هدر -->
+<!-- ===== هدر ===== -->
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <h5 class="mb-0">💰 گزارش پورسانت</h5>
-    <a href="/Coach" class="btn btn-outline-secondary btn-sm">🔙 داشبورد</a>
+    <h5 class="mb-0"><i class="bi bi-cash-coin hd-icon"></i> گزارش پورسانت</h5>
+    <a href="/Coach" class="cm-back-pill"><i class="bi bi-arrow-right"></i> داشبورد</a>
 </div>
 
-<!-- فیلتر -->
-<div class="card mb-3">
-    <div class="card-body">
-        <form method="get" asp-action="Commission" class="row g-2 align-items-end">
-            <div class="col-auto">
-                <label class="form-label small">از تاریخ</label>
-                <input type="text" name="fromDate" value="@fromDate" class="form-control" placeholder="1405/06/01" />
+<!-- ===== فیلتر با تقویم شمسی ===== -->
+<form method="get" asp-action="Commission" class="cm-filter mb-3">
+    <div class="row g-2">
+        <div class="col-6 col-md-3">
+            <label class="cm-lbl">از تاریخ</label>
+            <div class="d-flex gap-2">
+                <input type="text" name="fromDate" id="txtFrom" class="cm-input" readonly value="@fromDate" placeholder="1405/01/01" />
+                <button type="button" class="cm-cal-btn" onclick="openCal('txtFrom')"><i class="bi bi-calendar3"></i></button>
             </div>
-            <div class="col-auto">
-                <label class="form-label small">تا تاریخ</label>
-                <input type="text" name="toDate" value="@toDate" class="form-control" placeholder="1405/06/31" />
+        </div>
+        <div class="col-6 col-md-3">
+            <label class="cm-lbl">تا تاریخ</label>
+            <div class="d-flex gap-2">
+                <input type="text" name="toDate" id="txtTo" class="cm-input" readonly value="@toDate" placeholder="1405/03/31" />
+                <button type="button" class="cm-cal-btn" onclick="openCal('txtTo')"><i class="bi bi-calendar3"></i></button>
             </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-primary">🔍 اعمال فیلتر</button>
-            </div>
-            <div class="col-auto">
-                <a href="/Coach/Commission" class="btn btn-outline-secondary">ماه جاری</a>
-            </div>
-        </form>
+        </div>
+        <div class="col-6 col-md-3 d-flex align-items-end">
+            <button type="submit" class="cm-apply w-100"><i class="bi bi-funnel-fill"></i> اعمال فیلتر</button>
+        </div>
+        <div class="col-6 col-md-3 d-flex align-items-end">
+            <a href="/Coach/Commission" class="cm-month w-100"><i class="bi bi-calendar-month"></i> ماه جاری</a>
+        </div>
     </div>
-</div>
+</form>
 
-<!-- کارت‌های آمار -->
+<!-- ===== کارت‌های آمار (فقط پورسانت) ===== -->
 <div class="row g-3 mb-3">
     <div class="col-6 col-md-3">
-        <div class="card stat-card h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon bg-gradient-success">💵</div>
-                <div>
-                    <div class="stat-label">پورسانت این ماه</div>
-                    <div class="stat-value">@Model.ThisMonthAmount.ToString("N0", fa)</div>
-                </div>
-            </div>
+        <div class="cm-card h-100">
+            <div class="cm-icon grad-green"><i class="bi bi-cash-stack"></i></div>
+            <div class="cm-label">پورسانت این ماه</div>
+            <div class="cm-value">@Model.ThisMonthAmount.ToString("N0", fa)</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="card stat-card h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon bg-gradient-info">📊</div>
-                <div>
-                    <div class="stat-label">تعداد این ماه</div>
-                    <div class="stat-value">@Model.ThisMonthCount.ToString(fa)</div>
-                </div>
-            </div>
+        <div class="cm-card h-100">
+            <div class="cm-icon grad-turquoise"><i class="bi bi-bar-chart-fill"></i></div>
+            <div class="cm-label">تعداد این ماه</div>
+            <div class="cm-value">@Model.ThisMonthCount.ToString(fa)</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="card stat-card h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon bg-gradient-warning">💰</div>
-                <div>
-                    <div class="stat-label">جمع کل (دوره)</div>
-                    <div class="stat-value">@Model.TotalAmount.ToString("N0", fa)</div>
-                </div>
-            </div>
+        <div class="cm-card h-100">
+            <div class="cm-icon grad-purple"><i class="bi bi-wallet2"></i></div>
+            <div class="cm-label">جمع پورسانت (دوره)</div>
+            <div class="cm-value">@Model.TotalAmount.ToString("N0", fa)</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="card stat-card h-100">
-            <div class="card-body d-flex align-items-center gap-3">
-                <div class="stat-icon bg-gradient-danger">🎟️</div>
-                <div>
-                    <div class="stat-label">تعداد کل ثبت‌نام</div>
-                    <div class="stat-value">@Model.TotalCount.ToString(fa)</div>
-                </div>
-            </div>
+        <div class="cm-card h-100">
+            <div class="cm-icon grad-orange"><i class="bi bi-person-plus-fill"></i></div>
+            <div class="cm-label">تعداد کل ثبت‌نام</div>
+            <div class="cm-value">@Model.TotalCount.ToString(fa)</div>
         </div>
     </div>
 </div>
 
-<!-- جدول -->
-<div class="card">
-    <div class="card-header">📋 جزئیات ثبت‌نام‌ها</div>
-    <div class="card-body p-0">
+<!-- ===== لیست کارت‌های بازشو (مثل گزارش تردد) ===== -->
+<div class="cm-box">
+    <div class="cm-box-head">
+        <span><i class="bi bi-list-ul me-2"></i>جزئیات پورسانت ثبت‌نام‌ها</span>
+        <span class="cm-box-count">@Model.Rows.Count.ToString(fa) رکورد</span>
+    </div>
+    <div class="cm-box-body">
         @if (Model.Rows.Count == 0)
         {
-            <div class="empty-state">
-                <div class="empty-icon">💰</div>
+            <div class="cm-empty">
+                <div style="font-size:2.2rem" class="mb-2">💰</div>
                 در این بازه زمانی ثبت‌نامی نبوده
             </div>
         }
         else
         {
-            <div class="table-responsive">
-                <table class="table mb-0 align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>نام شاگرد</th>
-                            <th class="d-none d-md-table-cell">رشته</th>
-                            <th>تاریخ</th>
-                            <th class="text-end">مبلغ</th>
-                            <th class="text-end">پورسانت</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var r in Model.Rows)
-                        {
-                            <tr>
-                                <td>
-                                    <div class="fw-bold">@r.StudentName</div>
-                                    <small class="text-muted">
-                                        @r.SportName - @r.SanseName
-                                        @if (r.IsRevival)
-                                        {
-                                            <span class="badge bg-info">تمدید</span>
-                                        }
-                                    </small>
-                                </td>
-                                <td class="d-none d-md-table-cell">@r.SportName</td>
-                                <td>@(r.StartDate ?? "-")</td>
-                                <td class="text-end">@r.Amount.ToString("N0", fa)</td>
-                                <td class="text-end fw-bold text-success">@r.TotalCommission.ToString("N0", fa)</td>
-                            </tr>
-                        }
-                    </tbody>
-                    <tfoot class="table-light">
-                        <tr>
-                            <th colspan="3">جمع کل</th>
-                            <th class="text-end">@Model.Rows.Sum(r => r.Amount).ToString("N0", fa)</th>
-                            <th class="text-end text-success">@Model.TotalAmount.ToString("N0", fa)</th>
-                        </tr>
-                    </tfoot>
-                </table>
+            @foreach (var r in Model.Rows)
+            {
+                <div class="cmr-card">
+                    <!-- سر کارت: نام + تاریخ + پورسانت -->
+                    <div class="cmr-head">
+                        <div class="cmr-mid">
+                            <div class="cmr-name">@r.StudentName</div>
+                            <div class="cmr-date"><i class="bi bi-calendar3"></i> @(r.StartDate ?? "-")</div>
+                        </div>
+                        <div class="cmr-amount">@r.TotalCommission.ToString("N0", fa)</div>
+                        <button type="button" class="cmr-toggle"><i class="bi bi-chevron-left"></i></button>
+                    </div>
+                    <!-- جزئیات بازشو: رشته / سانس / نوع / پورسانت جدا -->
+                    <div class="cmr-details">
+                        <div class="cmr-drow"><span>رشته</span><b>@r.SportName</b></div>
+                        <div class="cmr-drow"><span>سانس</span><b>@r.SanseName</b></div>
+                        <div class="cmr-drow"><span>تاریخ ثبت</span><b>@(r.StartDate ?? "-")</b></div>
+                        <div class="cmr-drow">
+                            <span>نوع</span>
+                            @if (r.IsRevival)
+                            {
+                                <b><span class="cm-rev">تمدید</span></b>
+                            }
+                            else
+                            {
+                                <b><span class="cm-new">ثبت‌نام</span></b>
+                            }
+                        </div>
+                        <div class="cmr-drow"><span>پورسانت مربی</span><b class="cmr-green">@r.TotalCommission.ToString("N0", fa) ریال</b></div>
+                    </div>
+                </div>
+            }
+
+            <!-- جمع کل -->
+            <div class="cmr-total">
+                <span><i class="bi bi-calculator-fill me-1"></i> جمع کل پورسانت</span>
+                <b>@Model.TotalAmount.ToString("N0", fa) ریال</b>
             </div>
         }
     </div>
 </div>
+
+<!-- ===== تقویم شمسی ===== -->
+<div class="modal fade" id="datePickerModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content cm-modal">
+            <div class="modal-header cm-modal-head">
+                <h5 class="modal-title"><i class="bi bi-calendar3"></i> <span id="calendarTitle">انتخاب تاریخ</span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <button type="button" class="cm-nav-btn" id="prevMonth">›</button>
+                    <strong id="currentMonthLabel" class="fs-5"></strong>
+                    <button type="button" class="cm-nav-btn" id="nextMonth">‹</button>
+                </div>
+                <table class="cal-table">
+                    <thead class="text-center">
+                        <tr>
+                            <th>شنبه</th>
+                            <th>یک شنبه</th>
+                            <th>دو شنبه</th>
+                            <th>سه شنبه</th>
+                            <th>چهار شنبه</th>
+                            <th>پنج شنبه</th>
+                            <th>جمعه</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendarBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
+    }
+
+    .cm-back-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 7px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+
+        .cm-back-pill i {
+            color: #66d3e8;
+            transition: transform .25s;
+        }
+
+        .cm-back-pill:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+        }
+
+            .cm-back-pill:hover i {
+                transform: translateX(3px);
+            }
+
+    .cm-filter {
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 18px;
+        padding: 14px;
+    }
+
+    .cm-lbl {
+        display: block;
+        font-size: .72rem;
+        color: #9fb3c8;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .cm-input {
+        width: 100%;
+        min-width: 0;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #fff;
+        border-radius: 12px;
+        padding: 9px 12px;
+        font-size: .85rem;
+        cursor: pointer;
+    }
+
+        .cm-input:focus {
+            outline: none;
+            border-color: rgba(102,211,232,.5);
+            background: rgba(255,255,255,.12);
+        }
+
+    .cm-cal-btn {
+        flex: 0 0 auto;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.16);
+        color: #66d3e8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .cm-cal-btn:hover {
+            background: rgba(102,211,232,.2);
+            color: #fff;
+        }
+
+    .cm-apply {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: #fff;
+        font-weight: 800;
+        font-size: .85rem;
+        border-radius: 12px;
+        padding: 10px;
+        box-shadow: 0 6px 16px rgba(118,75,162,.4);
+        transition: all .25s;
+    }
+
+        .cm-apply:hover {
+            filter: brightness(1.1);
+            color: #fff;
+        }
+
+    .cm-month {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: rgba(102,211,232,.12);
+        border: 1px solid rgba(102,211,232,.35);
+        color: #66d3e8;
+        border-radius: 12px;
+        padding: 10px;
+        font-weight: 700;
+        font-size: .85rem;
+        text-decoration: none;
+        transition: all .25s;
+    }
+
+        .cm-month:hover {
+            background: rgba(102,211,232,.25);
+            color: #fff;
+        }
+
+    .cm-card {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 18px;
+        padding: 18px 14px;
+        text-align: center;
+    }
+
+        .cm-card::before {
+            content: '';
+            position: absolute;
+            top: -35px;
+            left: -35px;
+            width: 110px;
+            height: 110px;
+            background: radial-gradient(circle, rgba(46,134,222,.25), transparent 70%);
+            pointer-events: none;
+        }
+
+    .cm-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 13px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(0,0,0,.3);
+        margin-bottom: 10px;
+    }
+
+    .grad-green {
+        background: linear-gradient(135deg, #2E86DE, #66d3e8);
+    }
+
+    .grad-turquoise {
+        background: linear-gradient(135deg, #2E86DE, #66d3e8);
+    }
+
+    .grad-purple {
+        background: linear-gradient(135deg, #2E86DE, #66d3e8);
+    }
+
+    .grad-orange {
+        background: linear-gradient(135deg, #2E86DE, #66d3e8);
+    }
+
+    .cm-label {
+        font-size: .73rem;
+        color: #9fb3c8;
+        font-weight: 700;
+    }
+
+    .cm-value {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #fff;
+        margin-top: 4px;
+    }
+
+    .cm-box {
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .cm-box-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-weight: 800;
+        font-size: .95rem;
+        padding: 12px 16px;
+    }
+
+    .cm-box-count {
+        background: rgba(255,255,255,.18);
+        border-radius: 999px;
+        padding: 3px 12px;
+        font-size: .68rem;
+        font-weight: 800;
+    }
+
+    .cm-box-body {
+        padding: 12px;
+    }
+
+    .cm-empty {
+        text-align: center;
+        padding: 34px 10px;
+        color: #9fb3c8;
+        font-size: .88rem;
+    }
+
+    /* ===== کارت بازشو (مثل گزارش تردد) ===== */
+    .cmr-card {
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 14px;
+        margin-bottom: 10px;
+        overflow: hidden;
+    }
+
+    .cmr-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        cursor: pointer;
+    }
+
+    .cmr-mid {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .cmr-name {
+        color: #fff;
+        font-weight: 800;
+        font-size: .9rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .cmr-date {
+        font-size: .72rem;
+        color: #9fb3c8;
+        margin-top: 3px;
+    }
+
+        .cmr-date i {
+            color: #66d3e8;
+            margin-left: 4px;
+        }
+
+    .cmr-amount {
+        flex: 0 0 auto;
+        color: #66d3e8;
+        font-weight: 800;
+        font-size: .95rem;
+    }
+
+    .cmr-toggle {
+        flex: 0 0 auto;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        background: rgba(255,255,255,.08);
+        border: none;
+        color: #9bd7f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform .25s, background .25s;
+    }
+
+    .cmr-card.open .cmr-toggle {
+        transform: rotate(-90deg);
+        background: rgba(102,211,232,.25);
+        color: #fff;
+    }
+
+    .cmr-details {
+        display: none;
+        padding: 10px 14px 12px;
+        border-top: 1px dashed rgba(255,255,255,.15);
+        background: rgba(0,0,0,.15);
+    }
+
+    .cmr-drow {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        font-size: .78rem;
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+        .cmr-drow:last-child {
+            border-bottom: none;
+        }
+
+        .cmr-drow span {
+            color: #8a93a6;
+            flex: 0 0 auto;
+        }
+
+        .cmr-drow b {
+            color: #e9ecef;
+            font-weight: 700;
+            text-align: left;
+            word-break: break-word;
+        }
+
+    .cmr-green {
+        color: #66d3e8 !important;
+    }
+
+    .cm-rev {
+        background: rgba(102,211,232,.14);
+        border: 1px solid rgba(102,211,232,.35);
+        color: #66d3e8;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: .66rem;
+        font-weight: 800;
+    }
+
+    .cm-new {
+        background: rgba(56,217,169,.14);
+        border: 1px solid rgba(56,217,169,.35);
+        color: #66d3e8;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: .66rem;
+        font-weight: 800;
+    }
+
+    .cmr-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+        background: rgba(102,211,232,.10);
+        border: 1px solid rgba(102,211,232,.30);
+        border-radius: 14px;
+        padding: 12px 16px;
+        margin-top: 4px;
+    }
+
+        .cmr-total span {
+            color: #66d3e8;
+            font-weight: 800;
+            font-size: .85rem;
+        }
+
+        .cmr-total b {
+            color: #66d3e8;
+            font-weight: 800;
+            font-size: 1rem;
+        }
+
+    .cm-modal {
+        background: rgba(16,20,36,.97);
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 18px;
+        color: #fff;
+        backdrop-filter: blur(14px);
+    }
+
+    .cm-modal-head {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        font-weight: 800;
+    }
+
+    .cm-nav-btn {
+        background: rgba(255,255,255,.1);
+        border: 1px solid rgba(255,255,255,.2);
+        color: #fff;
+        border-radius: 10px;
+        width: 36px;
+        height: 36px;
+    }
+
+        .cm-nav-btn:hover {
+            background: rgba(102,211,232,.25);
+        }
+
+    #datePickerModal .cal-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 4px;
+    }
+
+        #datePickerModal .cal-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            border-radius: 8px;
+            padding: 8px 2px;
+            font-size: .7rem;
+            font-weight: 700;
+        }
+
+        #datePickerModal .cal-table td {
+            background: rgba(255,255,255,.06);
+            color: #e9ecef;
+            border-radius: 8px;
+            padding: 10px 2px;
+            text-align: center;
+            cursor: pointer;
+            font-size: .85rem;
+            transition: background .2s;
+        }
+
+            #datePickerModal .cal-table td:hover {
+                background: rgba(102,211,232,.3);
+                color: #fff;
+            }
+
+            #datePickerModal .cal-table td:empty {
+                background: transparent;
+                cursor: default;
+            }
+
+    #datePickerModal #currentMonthLabel {
+        color: #fff;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        // ===== باز/بسته کردن جزئیات کارت =====
+        $(document).on('click', '.cmr-head', function () {
+            var $c = $(this).closest('.cmr-card');
+            $c.toggleClass('open');
+            $c.find('.cmr-details').slideToggle(200);
+        });
+
+        // ===== تقویم شمسی =====
+        function openCal(inputId) {
+            initCalendar(inputId, null, true);
+            new bootstrap.Modal('#datePickerModal').show();
+        }
+        $('#prevMonth').click(function () {
+            calendarDate.m++;
+            if (calendarDate.m > 12) { calendarDate.m = 1; calendarDate.y++; }
+            renderCalendar();
+        });
+        $('#nextMonth').click(function () {
+            calendarDate.m--;
+            if (calendarDate.m < 1) { calendarDate.m = 12; calendarDate.y--; }
+            renderCalendar();
+        });
+    </script>
+}

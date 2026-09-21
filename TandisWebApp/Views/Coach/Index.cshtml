@@ -2,7 +2,6 @@
 @{
     ViewData["Title"] = "پنل مربی";
     var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
-    var unread = (int)(ViewBag.UnreadMessages ?? 0);
 }
 
 <!-- ========== بنر خوش‌آمد ========== -->
@@ -15,44 +14,31 @@
     <span class="cb-chip"><i class="bi bi-calendar-check-fill"></i> @Model.TodayClasses.Count.ToString(fa) کلاس امروز</span>
 </div>
 
-<!-- ========== دسترسی سریع ========== -->
-<div class="d-flex flex-wrap gap-2 mb-3">
-    <a href="/Coach/Classes" class="coach-pill"><i class="bi bi-book-fill"></i> کلاس‌های من</a>
-    <a href="/Coach/Commission" class="coach-pill"><i class="bi bi-cash-coin"></i> پورسانت</a>
-    <a href="/Coach/Programs" class="coach-pill"><i class="bi bi-clipboard2-pulse"></i> برنامه‌ها</a>
-    <a href="/Coach/Messages" class="coach-pill position-relative">
-        <i class="bi bi-chat-dots-fill"></i> پیام‌ها
-        @if (unread > 0)
-        {
-            <span class="pill-badge">@unread.ToString(fa)</span>
-        }
-    </a>
-</div>
-
-<!-- ========== کارت‌های آمار ========== -->
+<!-- ========== کارت‌های آمار (بدون کلاس‌های من + پورسانت بزرگ) ========== -->
 <div class="row g-3 mb-3">
     <div class="col-6 col-md-4">
-        <div class="cstat-card h-100">
-            <div class="cstat-icon grad-blue"><i class="bi bi-people-fill"></i></div>
+        <div class="cstat-card h-100 cstat-clickable" id="btnAllStudents" title="مشاهده همه شاگردان">
+            <div class="cstat-icon grad-green"><i class="bi bi-people-fill"></i></div>
             <div class="cstat-label">شاگردان فعال</div>
             <div class="cstat-value">@Model.ActiveStudents.ToString(fa)</div>
+            <div class="cstat-hint"><i class="bi bi-hand-index-fill"></i> برای مشاهده لیست بزنید</div>
         </div>
     </div>
     <div class="col-6 col-md-4">
-        <a href="/Coach/Classes" class="text-decoration-none">
-            <div class="cstat-card h-100">
-                <div class="cstat-icon grad-turquoise"><i class="bi bi-book-fill"></i></div>
-                <div class="cstat-label">کلاس‌های من</div>
-                <div class="cstat-value">@Model.MyClassCount.ToString(fa)</div>
-            </div>
-        </a>
-    </div>
-    <div class="col-6 col-md-4">
         <div class="cstat-card h-100">
-            <div class="cstat-icon grad-purple"><i class="bi bi-door-open-fill"></i></div>
+            <div class="cstat-icon grad-orange"><i class="bi bi-door-open-fill"></i></div>
             <div class="cstat-label">حضور امروز</div>
             <div class="cstat-value">@Model.TodayAttendance.ToString(fa)</div>
         </div>
+    </div>
+    <div class="col-6 col-md-4">
+        <a href="/Coach/Commission" class="text-decoration-none">
+            <div class="cstat-card h-100">
+                <div class="cstat-icon grad-turquoise"><i class="bi bi-cash-coin"></i></div>
+                <div class="cstat-label">پورسانت</div>
+                <div class="cstat-value cstat-link">مشاهده گزارش <i class="bi bi-arrow-left"></i></div>
+            </div>
+        </a>
     </div>
 </div>
 
@@ -86,7 +72,6 @@
                                     @c.StatusDesc
                                 </span>
                             </div>
-
                             <div class="d-flex flex-wrap gap-2 mt-3">
                                 <span class="class-pill"><i class="bi bi-person-plus-fill"></i> ثبت‌نام: @c.RegCount.ToString(fa)</span>
                                 @if (c.ClassCapacity != null)
@@ -96,7 +81,6 @@
                                 }
                                 <span class="class-pill"><i class="bi bi-door-open-fill"></i> حضور: @c.TodayAttendance.ToString(fa)</span>
                             </div>
-
                             <a href="/Coach/ClassStudents/@c.SportSanseID" class="class-btn mt-3">
                                 <i class="bi bi-people-fill"></i> مشاهده شاگردان
                             </a>
@@ -108,8 +92,21 @@
     </div>
 </div>
 
+<!-- ========== اورلی همه شاگردان ========== -->
+<div class="stu-overlay" id="stuOverlay" style="display:none">
+    <div class="stu-panel">
+        <div class="stu-head">
+            <span><i class="bi bi-people-fill me-2"></i>همه شاگردان من</span>
+            <button type="button" class="stu-close" id="stuClose"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <div class="stu-body">
+            <input type="text" id="stuSearch" class="stu-search" placeholder="🔍 جستجوی نام شاگرد..." />
+            <div class="stu-list" id="stuList"></div>
+        </div>
+    </div>
+</div>
+
 <style>
-    /* ===== بنر خوش‌آمد ===== */
     .coach-banner {
         display: flex;
         align-items: center;
@@ -131,7 +128,7 @@
         justify-content: center;
         font-size: 1.35rem;
         color: #fff;
-        background: linear-gradient(135deg, #1E6FD9, #66D3E8);
+        background: linear-gradient(135deg, #1E6FD9, #66d3e8);
         box-shadow: 0 6px 16px rgba(30,111,217,.35);
     }
 
@@ -161,47 +158,6 @@
         white-space: nowrap;
     }
 
-    /* ===== pill های دسترسی سریع ===== */
-    .coach-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 7px;
-        background: rgba(255,255,255,.08);
-        border: 1px solid rgba(255,255,255,.16);
-        color: #dce9ff;
-        border-radius: 999px;
-        padding: 8px 18px;
-        font-size: .82rem;
-        font-weight: 700;
-        text-decoration: none;
-        backdrop-filter: blur(8px);
-        transition: all .25s;
-    }
-
-        .coach-pill i {
-            color: #66d3e8;
-        }
-
-        .coach-pill:hover {
-            background: rgba(255,255,255,.14);
-            color: #fff;
-            border-color: rgba(102,211,232,.45);
-        }
-
-    .pill-badge {
-        position: absolute;
-        top: -6px;
-        right: -6px;
-        background: #ff6b81;
-        color: #fff;
-        border-radius: 999px;
-        font-size: .62rem;
-        font-weight: 800;
-        padding: 2px 7px;
-        box-shadow: 0 2px 8px rgba(255,107,129,.5);
-    }
-
-    /* ===== کارت‌های آمار ===== */
     .cstat-card {
         position: relative;
         overflow: hidden;
@@ -213,11 +169,6 @@
         transition: transform .25s, border-color .25s;
     }
 
-        .cstat-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(102,211,232,.4);
-        }
-
         .cstat-card::before {
             content: '';
             position: absolute;
@@ -227,6 +178,15 @@
             height: 110px;
             background: radial-gradient(circle, rgba(46,134,222,.25), transparent 70%);
             pointer-events: none;
+        }
+
+    .cstat-clickable {
+        cursor: pointer;
+    }
+
+        .cstat-clickable:hover {
+            transform: translateY(-3px);
+            border-color: rgba(102,211,232,.5);
         }
 
     .cstat-icon {
@@ -242,16 +202,16 @@
         margin-bottom: 10px;
     }
 
-    .grad-blue {
-        background: linear-gradient(135deg, #1E6FD9, #667eea);
+    .grad-green {
+        background: linear-gradient(135deg, #2E86DE, #66d3e8);
+    }
+
+    .grad-orange {
+        background: linear-gradient(135deg, #2E86DE, #66d3e8);
     }
 
     .grad-turquoise {
         background: linear-gradient(135deg, #2E86DE, #66d3e8);
-    }
-
-    .grad-purple {
-        background: linear-gradient(135deg, #667eea, #764ba2);
     }
 
     .cstat-label {
@@ -266,9 +226,28 @@
         color: #fff;
         margin-top: 4px;
         line-height: 1.1;
+        min-height: 2.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
     }
 
-    /* ===== کارت کلاس‌های امروز ===== */
+    .cstat-link {
+        font-size: 1rem;
+        color: #66d3e8;
+    }
+
+    .cstat-hint {
+        font-size: .66rem;
+        color: #8a93a6;
+        margin-top: 7px;
+    }
+
+        .cstat-hint i {
+            color: #66d3e8;
+        }
+
     .coach-card {
         background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
         border: 1px solid rgba(255,255,255,.14);
@@ -291,7 +270,6 @@
         font-size: .88rem;
     }
 
-    /* ===== کارت هر کلاس ===== */
     .class-card {
         position: relative;
         overflow: hidden;
@@ -300,17 +278,6 @@
         border-radius: 16px;
         padding: 14px;
     }
-
-        .class-card::before {
-            content: '';
-            position: absolute;
-            top: -35px;
-            left: -35px;
-            width: 110px;
-            height: 110px;
-            background: radial-gradient(circle, rgba(102,211,232,.15), transparent 70%);
-            pointer-events: none;
-        }
 
     .class-title {
         font-weight: 800;
@@ -363,33 +330,179 @@
         border: 1px solid rgba(13,110,253,.30);
         color: #dce9ff;
         border-radius: 999px;
-        padding: 5px 12px;
-        font-size: .73rem;
+        padding: 4px 12px;
+        font-size: .72rem;
         font-weight: 700;
     }
 
         .class-pill i {
             color: #66d3e8;
-            font-size: .82rem;
+            font-size: .8rem;
         }
 
     .class-btn {
         display: inline-flex;
         align-items: center;
         gap: 7px;
-        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: #fff;
         border-radius: 12px;
         padding: 8px 16px;
         font-size: .8rem;
         font-weight: 700;
         text-decoration: none;
-        box-shadow: 0 5px 14px rgba(30,111,217,.35);
+        box-shadow: 0 5px 14px rgba(118,75,162,.35);
         transition: all .25s;
     }
 
-        .class-btn:hover {
-            filter: brightness(1.1);
-            color: #fff;
+    .stu-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1080;
+        background: rgba(8,12,22,.55);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+    }
+
+    .stu-panel {
+        width: 100%;
+        max-width: 560px;
+        max-height: 82vh;
+        display: flex;
+        flex-direction: column;
+        background: rgba(16,20,36,.97);
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    }
+
+    .stu-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        color: #fff;
+        font-weight: 800;
+        font-size: .92rem;
+        padding: 12px 16px;
+    }
+
+    .stu-close {
+        background: rgba(255,255,255,.15);
+        border: none;
+        color: #fff;
+        width: 32px;
+        height: 32px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .stu-close:hover {
+            background: rgba(255,107,129,.4);
         }
+
+    .stu-body {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        min-height: 0;
+    }
+
+    .stu-search {
+        width: 100%;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #fff;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-size: .85rem;
+    }
+
+        .stu-search:focus {
+            outline: none;
+            border-color: rgba(102,211,232,.5);
+            background: rgba(255,255,255,.12);
+        }
+
+    .stu-list {
+        overflow-y: auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 52vh;
+    }
+
+    .stu-row {
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 12px;
+        padding: 10px 14px;
+    }
+
+    .stu-name {
+        color: #fff;
+        font-weight: 800;
+        font-size: .88rem;
+    }
+
+    .stu-sub {
+        color: #9fb3c8;
+        font-size: .72rem;
+        margin-top: 3px;
+    }
+
+    .stu-empty {
+        text-align: center;
+        color: #9fb3c8;
+        padding: 26px 0;
+        font-size: .85rem;
+    }
 </style>
+
+@section Scripts {
+    <script>
+        var allStudents = [];
+
+        function renderStudents() {
+            var q = $.trim($('#stuSearch').val()).toLowerCase();
+            var html = '', count = 0;
+            allStudents.forEach(function (s) {
+                var name = s.fullName || s.FullName || '';
+                if (q && name.toLowerCase().indexOf(q) === -1) return;
+                count++;
+                html += '<div class="stu-row">' +
+                    '<div class="stu-name">' + esc(name) + '</div>' +
+                    '<div class="stu-sub">' + esc(s.sportName || s.SportName || '-') + ' - ' +
+                        esc(s.sanseName || s.SanseName || '-') + ' | تا ' +
+                        esc(s.endDate || s.EndDate || '-') + '</div>' +
+                '</div>';
+            });
+            if (!count) html = '<div class="stu-empty">شاگردی یافت نشد</div>';
+            $('#stuList').html(html);
+        }
+
+        $('#btnAllStudents').click(function () {
+            $('#stuOverlay').fadeIn(150);
+            if (!allStudents.length) {
+                apiCall('/Coach/AllStudents', 'GET', null, function (res) {
+                    if (res.success) { allStudents = res.data || []; renderStudents(); }
+                });
+            } else {
+                renderStudents();
+            }
+        });
+        function closeOverlay() { $('#stuOverlay').fadeOut(150); }
+        $('#stuClose').click(closeOverlay);
+        $('#stuOverlay').on('click', function (e) { if (e.target === this) closeOverlay(); });
+        $(document).on('keyup', '#stuSearch', renderStudents);
+    </script>
+}

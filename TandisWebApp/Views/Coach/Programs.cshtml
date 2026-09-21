@@ -8,6 +8,9 @@
     <h5 class="mb-0"><i class="bi bi-clipboard2-pulse hd-icon"></i> برنامه‌های تمرینی</h5>
     <a href="/Coach/ProgramEdit" class="pg-new-btn"><i class="bi bi-plus-lg"></i> برنامه جدید</a>
 </div>
+<div class="mb-3">
+    <input type="text" id="pgSearch" class="glass-search" placeholder="🔍 جستجو در برنامه‌ها (نام شاگرد)..." />
+</div>
 
 @if (Model.Count == 0)
 {
@@ -238,6 +241,22 @@ else
             filter: brightness(1.12);
             color: #fff;
         }
+
+    .glass-search {
+        width: 100%;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #fff;
+        border-radius: 999px;
+        padding: 10px 18px;
+        font-size: .85rem;
+    }
+
+        .glass-search:focus {
+            outline: none;
+            border-color: rgba(102,211,232,.5);
+            background: rgba(255,255,255,.12);
+        }
 </style>
 
 @section Scripts {
@@ -248,6 +267,13 @@ else
             apiCall('/Coach/DeleteProgram', 'POST', id, function (res) {
                 showToast(res.message, res.success ? 'success' : 'error');
                 if (res.success) setTimeout(function () { location.reload(); }, 700);
+            });
+        });
+                $('#pgSearch').on('keyup', function () {
+            var q = $.trim($(this).val()).toLowerCase();
+            $('.pg-card').each(function () {
+                var txt = $(this).text().toLowerCase();
+                $(this).closest('div[class*="col-"]').toggle(txt.indexOf(q) > -1);
             });
         });
     </script>

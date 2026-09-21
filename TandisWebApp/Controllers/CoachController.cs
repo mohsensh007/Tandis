@@ -146,5 +146,12 @@ namespace TandisWebApp.Controllers
                 return NotFound();
             return View(model);
         }
+        /// <summary>همه شاگردان مربی (JSON برای مودال)</summary>
+        [HttpGet]
+        public async Task<IActionResult> AllStudents()
+        {
+            var list = await _programs.GetAllStudentsAsync(CoachMemberID);
+            return Ok(new { success = true, data = list });
+        }
     }
 }
