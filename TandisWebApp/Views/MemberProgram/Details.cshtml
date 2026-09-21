@@ -1,0 +1,439 @@
+﻿@model TandisWebApp.DTOs.MemberProgramDto
+@{
+    ViewData["Title"] = "جزئیات برنامه";
+    Layout = "_Layout";
+
+    var pc = new System.Globalization.PersianCalendar();
+    var today = $"{pc.GetYear(DateTime.Now):0000}/{pc.GetMonth(DateTime.Now):00}/{pc.GetDayOfMonth(DateTime.Now):00}";
+
+    var typeLabels = new System.Collections.Generic.Dictionary<byte, string> {
+        { 1, "عادی" }, { 2, "دراپ ست" }, { 3, "سوپرست" }, { 4, "تری‌ست" },
+        { 5, "ست غول" }, { 6, "پیرامید" }, { 7, "استراحت-مکث" }, { 8, "تمپو دار" }
+    };
+
+    string DayIcon(string t)
+    {
+        var sb = new System.Text.StringBuilder();
+        foreach (var part in (t ?? "").Split('+'))
+        {
+            switch (part.Trim())
+            {
+                case "روز پا": sb.Append("🦵"); break;
+                case "روز سینه": sb.Append("🏋️"); break;
+                case "روز سرشانه": sb.Append("🤸"); break;
+                case "روز زیر بغل": sb.Append("🚣"); break;
+                case "روز جلو بازو": sb.Append("💪"); break;
+                case "روز پشت بازو": sb.Append("🦾"); break;
+                case "روز شکم": sb.Append("🧘"); break;
+                case "روز پهلو": sb.Append("🌀"); break;
+                case "روز هوازی": sb.Append("🏃"); break;
+                case "روز فول بدن": sb.Append("⚡"); break;
+            }
+        }
+        return sb.Length == 0 ? "📅" : sb.ToString();
+    }
+
+    // ✅ گروه‌بندی بر اساس روز — بدون «حرکات عمومی»
+    var groups = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<TandisWebApp.DTOs.ProgramItemEditDto>>();
+    var groupKeys = new System.Collections.Generic.List<string>();
+    foreach (var it in Model.Items)
+    {
+        if (string.IsNullOrWhiteSpace(it.DayTitle)) continue;
+        if (!groups.ContainsKey(it.DayTitle))
+        {
+            groups[it.DayTitle] = new System.Collections.Generic.List<TandisWebApp.DTOs.ProgramItemEditDto>();
+            groupKeys.Add(it.DayTitle);
+        }
+        groups[it.DayTitle].Add(it);
+    }
+
+    // ✅ روزهای تکی برای چیپ‌های فیلتر
+    var singles = new System.Collections.Generic.List<string>();
+    foreach (var k in groupKeys)
+    {
+        foreach (var part in k.Split('+'))
+        {
+            var p2 = part.Trim();
+            if (!string.IsNullOrEmpty(p2) && !singles.Contains(p2)) singles.Add(p2);
+        }
+    }
+
+    var isActive = string.CompareOrdinal(Model.EndDateShamsi, today) >= 0;
+}
+
+<!-- ===== هدر ===== -->
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h5 class="mb-0"><i class="bi bi-clipboard2-pulse mp-hd-icon"></i> جزئیات برنامه</h5>
+    <a href="/MyProgram" class="mp-back-pill"><i class="bi bi-arrow-right"></i> برنامه‌های من</a>
+</div>
+
+<!-- ===== کارت اطلاعات برنامه ===== -->
+<div class="mp-info mb-3">
+    <div class="flex-grow-1" style="min-width:0">
+        <div class="mp-coach"><i class="bi bi-person-badge-fill me-1"></i> مربی: @Model.CoachName</div>
+        <div class="mp-period"><i class="bi bi-calendar-range me-1"></i> @Model.StartDateShamsi تا @Model.EndDateShamsi</div>
+    </div>
+    @if (isActive)
+    {
+        <span class="mp-badge mp-on">فعال</span>
+    }
+    else
+    {
+        <span class="mp-badge mp-off">پایان‌یافته</span>
+    }
+</div>
+
+@if (groups.Count == 0)
+{
+    <div class="mp-empty">
+        <div style="font-size:2.2rem" class="mb-2">📋</div>
+        این برنامه روز بندی نشده است
+    </div>
+}
+else
+{
+    <!-- ===== فیلتر روزها ===== -->
+    <div class="mpf-bar">
+        <button type="button" class="mpf-chip mpf-on" data-group=""><i class="bi bi-grid-3x3-gap-fill"></i> همه</button>
+        @foreach (var s in singles)
+        {
+            <button type="button" class="mpf-chip" data-group="@s">@DayIcon(s) @s</button>
+        }
+    </div>
+
+    <!-- ===== باکس‌های روز ===== -->
+    @foreach (var g in groups)
+    {
+        <div class="mp-day" data-days="@g.Key">
+            <div class="mp-day-head">
+                <span class="mp-day-icon">@DayIcon(g.Key)</span>
+                <span class="mp-day-title">@g.Key</span>
+                <span class="mp-day-count">@g.Value.Count حرکت</span>
+            </div>
+            <div class="mp-day-body">
+                @foreach (var it in g.Value)
+                {
+                    <div class="mp-ex">
+                        <div class="mp-ex-top">
+                            <div class="mp-ex-name">@it.ItemDesc</div>
+                            @if (it.ExerciseType != null && it.ExerciseType != 1 && typeLabels.ContainsKey(it.ExerciseType.Value))
+                            {
+                                <span class="mp-type">@typeLabels[it.ExerciseType.Value]</span>
+                            }
+                        </div>
+                        <div class="mp-ex-pills">
+                            @if (it.SetCount != null)
+                            {
+                                <span class="mp-pill"><i class="bi bi-layers-fill"></i> ست: @it.SetCount.Value</span>
+                            }
+                            @if (it.RepCount != null)
+                            {
+                                <span class="mp-pill"><i class="bi bi-repeat"></i> تکرار: @it.RepCount.Value</span>
+                            }
+                            @if (it.WCount != null)
+                            {
+                                <span class="mp-pill"><i class="bi bi-barbell-fill"></i> وزن: @it.WCount.Value کیلو</span>
+                            }
+                            @if (it.RestSeconds != null)
+                            {
+                                <span class="mp-pill"><i class="bi bi-stopwatch-fill"></i> استراحت: @it.RestSeconds.Value ثانیه</span>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(it.Note))
+                        {
+                            <div class="mp-note"><i class="bi bi-info-circle-fill"></i><span>@it.Note</span></div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}
+
+<style>
+    .mp-hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
+    }
+
+    .mp-back-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 7px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+
+        .mp-back-pill i {
+            color: #66d3e8;
+            transition: transform .25s;
+        }
+
+        .mp-back-pill:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+        }
+
+            .mp-back-pill:hover i {
+                transform: translateX(3px);
+            }
+
+    .mp-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 16px;
+        padding: 12px 16px;
+        color: #fff;
+    }
+
+    .mp-coach {
+        font-weight: 800;
+        font-size: .9rem;
+    }
+
+    .mp-period {
+        font-size: .72rem;
+        opacity: .85;
+        margin-top: 3px;
+    }
+
+    .mp-badge {
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: .68rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .mp-on {
+        background: rgba(56,217,169,.18);
+        color: #38d9a9;
+        border: 1px solid rgba(56,217,169,.45);
+    }
+
+    .mp-off {
+        background: rgba(255,255,255,.12);
+        color: #cbd3da;
+        border: 1px solid rgba(255,255,255,.25);
+    }
+
+    .mp-empty {
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        text-align: center;
+        padding: 40px 16px;
+        color: #9fb3c8;
+        font-size: .9rem;
+    }
+
+    /* ===== فیلتر روزها ===== */
+    .mpf-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+        background: rgba(13,110,253,.08);
+        border: 1px dashed rgba(102,211,232,.40);
+        border-radius: 16px;
+        padding: 10px 12px;
+    }
+
+    .mpf-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(255,255,255,.07);
+        border: 1px solid rgba(255,255,255,.16);
+        color: #cbd3da;
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-size: .76rem;
+        font-weight: 700;
+        transition: all .2s;
+    }
+
+        .mpf-chip:hover {
+            background: rgba(255,255,255,.13);
+            color: #fff;
+        }
+
+        .mpf-chip.mpf-on {
+            background: linear-gradient(135deg, #1E6FD9, #667eea);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(30,111,217,.35);
+        }
+
+    /* ===== باکس روز ===== */
+    .mp-day {
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 14px;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .mp-day-head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(102,211,232,.10);
+        border-bottom: 1px solid rgba(102,211,232,.25);
+        padding: 9px 12px;
+    }
+
+    .mp-day-icon {
+        font-size: 1.1rem;
+    }
+
+    .mp-day-title {
+        flex-grow: 1;
+        color: #66d3e8;
+        font-weight: 800;
+        font-size: .85rem;
+    }
+
+    .mp-day-count {
+        background: rgba(102,211,232,.14);
+        border: 1px solid rgba(102,211,232,.35);
+        color: #66d3e8;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: .64rem;
+        font-weight: 800;
+    }
+
+    .mp-day-body {
+        padding: 10px;
+    }
+
+    /* ===== کارت حرکت ===== */
+    .mp-ex {
+        position: relative;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.09);
+        border-radius: 12px;
+        padding: 10px 12px;
+        margin-bottom: 8px;
+    }
+
+        .mp-ex:last-child {
+            margin-bottom: 0;
+        }
+
+        .mp-ex::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            bottom: 10px;
+            right: 0;
+            width: 3px;
+            border-radius: 3px;
+            background: linear-gradient(180deg, #66d3e8, #667eea);
+            opacity: .6;
+        }
+
+    .mp-ex-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .mp-ex-name {
+        color: #fff;
+        font-weight: 800;
+        font-size: .88rem;
+        line-height: 1.6;
+        word-break: break-word;
+    }
+
+    .mp-type {
+        flex: 0 0 auto;
+        background: rgba(118,75,162,.22);
+        border: 1px solid rgba(118,75,162,.5);
+        color: #c9b9f9;
+        border-radius: 999px;
+        padding: 2px 10px;
+        font-size: .64rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .mp-ex-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+    }
+
+    .mp-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(13,110,253,.14);
+        border: 1px solid rgba(13,110,253,.30);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 3px 10px;
+        font-size: .7rem;
+        font-weight: 700;
+    }
+
+        .mp-pill i {
+            color: #66d3e8;
+            font-size: .78rem;
+        }
+
+    .mp-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 6px;
+        margin-top: 8px;
+        font-size: .74rem;
+        color: #cbd3da;
+        background: rgba(255,193,7,.08);
+        border: 1px solid rgba(255,193,7,.22);
+        border-radius: 10px;
+        padding: 6px 10px;
+        line-height: 1.7;
+    }
+
+        .mp-note i {
+            color: #ffd200;
+            font-size: .8rem;
+            margin-top: 2px;
+            flex: 0 0 auto;
+        }
+</style>
+
+@section Scripts {
+    <script>
+        // ===== فیلتر روزها: همه / تک‌تک روزها =====
+        $(document).on('click', '.mpf-chip', function () {
+            $('.mpf-chip').removeClass('mpf-on');
+            $(this).addClass('mpf-on');
+            var g = String($(this).attr('data-group') || '');
+
+            if (!g) {
+                $('.mp-day').show();
+                return;
+            }
+            $('.mp-day').each(function () {
+                var days = String($(this).attr('data-days') || '');
+                $(this).toggle(days.indexOf(g) > -1);
+            });
+        });
+    </script>
+}

@@ -113,6 +113,23 @@
     </div>
 </div>
 
+<!-- ========== ✅ کارت برنامه تمرینی من (دسکتاپ + موبایل) ========== -->
+<a href="/MyProgram" class="mp-entry mb-3">
+    <div class="mp-entry-inner">
+        <div class="mp-entry-icon">
+            <i class="bi bi-clipboard2-pulse-fill"></i>
+        </div>
+        <div class="mp-entry-info">
+            <div class="mp-entry-title">برنامه تمرینی من</div>
+            <div class="mp-entry-sub" id="mpEntrySub">برنامه‌های مربی</div>
+        </div>
+        <div class="mp-entry-right">
+            <span class="mp-entry-count" id="myProgramCount" style="display:none">۰</span>
+            <i class="bi bi-arrow-left"></i>
+        </div>
+    </div>
+</a>
+
 <style>
     /* ===== هدر پروفایل ===== */
     .avatar-circle {
@@ -156,6 +173,104 @@
             box-shadow: 0 0 8px rgba(13,110,253,.7);
             flex: 0 0 auto;
         }
+
+    /* ===== ✅ کارت برنامه تمرینی (دسکتاپ + موبایل) ===== */
+    .mp-entry {
+        display: block;
+        text-decoration: none;
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18));
+        border: 1px solid rgba(102,211,232,.35);
+        transition: transform .25s, border-color .25s, box-shadow .25s;
+    }
+
+        .mp-entry:hover {
+            transform: translateY(-3px);
+            border-color: rgba(102,211,232,.65);
+            box-shadow: 0 10px 28px rgba(118,75,162,.30);
+        }
+
+        .mp-entry::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 160px;
+            height: 160px;
+            background: radial-gradient(circle, rgba(102,211,232,.25), transparent 70%);
+            pointer-events: none;
+        }
+
+        .mp-entry::after {
+            content: '';
+            position: absolute;
+            bottom: -60px;
+            left: -30px;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(118,75,162,.25), transparent 70%);
+            pointer-events: none;
+        }
+
+    .mp-entry-inner {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 18px;
+    }
+
+    .mp-entry-icon {
+        flex: 0 0 auto;
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #fff;
+        box-shadow: 0 8px 20px rgba(118,75,162,.45);
+    }
+
+    .mp-entry-info {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .mp-entry-title {
+        font-weight: 800;
+        font-size: 1rem;
+        color: #fff;
+        margin-bottom: 3px;
+    }
+
+    .mp-entry-sub {
+        font-size: .76rem;
+        color: #9fb3c8;
+    }
+
+    .mp-entry-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #66d3e8;
+        font-size: 1.1rem;
+    }
+
+    .mp-entry-count {
+        background: rgba(102,211,232,.16);
+        border: 1px solid rgba(102,211,232,.40);
+        color: #66d3e8;
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: .74rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
 
     /* ===== آیکن‌های سه‌بعدی آبی-سفید کارت‌های اعتبار ===== */
     .stat-icon.stat-icon-light {
@@ -411,6 +526,7 @@
         grid-template-columns: repeat(3, 1fr);
         gap: 12px;
     }
+
     @@media (min-width: 576px) {
         .allmenu-grid {
             grid-template-columns: repeat(4, 1fr);
@@ -626,7 +742,25 @@
         function toFa(n) { return String(n).replace(/[0-9]/g, function(d){ return faDigits[d]; }); }
         function fmtNum(n) { return Number(n || 0).toLocaleString('fa-IR'); }
 
-                // ========== منوی «نمایش همه» ==========
+        // ========== ✅ بارگذاری تعداد برنامه‌های فعال (بج روی کارت) ==========
+        function loadMyProgramCount() {
+            apiCall('/api/MyProgram/ActiveCount', 'GET', null, function (res) {
+                var $c = $('#myProgramCount');
+                var $sub = $('#mpEntrySub');
+                if (!res || !res.success) return;
+                var cnt = Number(res.count || 0);
+                if (cnt > 0) {
+                    $c.text(toFa(cnt) + ' برنامه فعال').css('display', 'inline-block');
+                    $sub.text('برای مشاهده برنامه‌ها بزنید');
+                } else {
+                    $c.hide();
+                    $sub.text('هنوز برنامه‌ای از مربی دریافت نکرده‌اید');
+                }
+            });
+        }
+        loadMyProgramCount();
+
+        // ========== منوی «نمایش همه» ==========
         (function () {
             var overlay = document.getElementById('allMenuOverlay');
             if (!overlay) return;
@@ -685,7 +819,7 @@
                 '</div>';
         }
 
-                // --- بارگذاری پروفایل و آمار مالی ---
+        // --- بارگذاری پروفایل و آمار مالی ---
         function loadDashboardCredits() {
             apiCall('/api/Profile/GetProfile', 'GET', null, function (res) {
                 if (!res.success) return;
@@ -734,7 +868,7 @@
         loadDashboardCredits();
 
         // ✅ اگه عدد بلند بود، فونت رو خودکار کوچیک می‌کنه تا هرگز نشکنه
-                function fitCreditValues() {
+        function fitCreditValues() {
             document.querySelectorAll('.credit-value').forEach(function (el) {
                 el.style.fontSize = '';
                 var size = 1.05;
@@ -745,7 +879,6 @@
             });
         }
         window.addEventListener('resize', fitCreditValues);
-        loadDashboardCredits();
 
         // --- بارگذاری سانس‌های فعال (طراحی جدید: کارت شیشه‌ای + pills آبی + آیکن تقویم) ---
         apiCall('/api/Register/ActiveSanses', 'GET', null, function (res) {

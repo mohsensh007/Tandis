@@ -1,0 +1,207 @@
+﻿@model List<TandisWebApp.DTOs.MemberProgramDto>
+@{
+    ViewData["Title"] = "برنامه‌های تمرینی من";
+    Layout = "_Layout";
+
+    var pc = new System.Globalization.PersianCalendar();
+    var today = $"{pc.GetYear(DateTime.Now):0000}/{pc.GetMonth(DateTime.Now):00}/{pc.GetDayOfMonth(DateTime.Now):00}";
+
+    var programs = new System.Collections.Generic.List<(TandisWebApp.DTOs.MemberProgramDto Prog, bool IsActive, int ItemCount, int DayCount)>();
+    foreach (var p in Model)
+    {
+        var days = new System.Collections.Generic.List<string>();
+        foreach (var it in p.Items)
+        {
+            if (!string.IsNullOrWhiteSpace(it.DayTitle) && !days.Contains(it.DayTitle))
+                days.Add(it.DayTitle);
+        }
+        programs.Add((p, string.CompareOrdinal(p.EndDateShamsi, today) >= 0, p.Items.Count, days.Count));
+    }
+}
+
+<!-- ===== هدر ===== -->
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h5 class="mb-0"><i class="bi bi-clipboard2-pulse mpl-hd-icon"></i> برنامه‌های تمرینی من</h5>
+    <a href="/Home" class="mpl-back-pill"><i class="bi bi-arrow-right"></i> داشبورد</a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="mpl-empty">
+        <div style="font-size:2.4rem" class="mb-2">🏋️</div>
+        هنوز برنامه‌ای از سمت مربی دریافت نکرده‌اید
+    </div>
+}
+else
+{
+    @foreach (var pr in programs)
+    {
+        <a href="/MyProgram/Details/@pr.Prog.PrgID" class="mpl-card">
+            <div class="mpl-head">
+                <div class="flex-grow-1" style="min-width:0">
+                    <div class="mpl-coach"><i class="bi bi-person-badge-fill me-1"></i> مربی: @pr.Prog.CoachName</div>
+                    <div class="mpl-period"><i class="bi bi-calendar-range me-1"></i> @pr.Prog.StartDateShamsi تا @pr.Prog.EndDateShamsi</div>
+                </div>
+                @if (pr.IsActive)
+                {
+                    <span class="mpl-badge mpl-on">فعال</span>
+                }
+                else
+                {
+                    <span class="mpl-badge mpl-off">پایان‌یافته</span>
+                }
+            </div>
+            <div class="mpl-body">
+                <div class="mpl-stats">
+                    <span class="mpl-stat"><i class="bi bi-list-check"></i> @pr.ItemCount حرکت</span>
+                    <span class="mpl-stat"><i class="bi bi-calendar-week"></i> @pr.DayCount روز تمرین</span>
+                </div>
+                <div class="mpl-foot">
+                    مشاهده جزئیات برنامه <i class="bi bi-arrow-left"></i>
+                </div>
+            </div>
+        </a>
+    }
+}
+
+<style>
+    .mpl-hd-icon {
+        color: #66d3e8;
+        margin-left: 6px;
+    }
+
+    .mpl-back-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 7px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        text-decoration: none;
+        backdrop-filter: blur(8px);
+        transition: all .25s;
+    }
+
+        .mpl-back-pill i {
+            color: #66d3e8;
+            transition: transform .25s;
+        }
+
+        .mpl-back-pill:hover {
+            background: rgba(255,255,255,.14);
+            color: #fff;
+        }
+
+            .mpl-back-pill:hover i {
+                transform: translateX(3px);
+            }
+
+    .mpl-empty {
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        text-align: center;
+        padding: 44px 16px;
+        color: #9fb3c8;
+        font-size: .9rem;
+    }
+
+    .mpl-card {
+        display: block;
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 12px;
+        text-decoration: none;
+        transition: transform .25s, border-color .25s;
+    }
+
+        .mpl-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(102,211,232,.45);
+        }
+
+    .mpl-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 12px 16px;
+        color: #fff;
+    }
+
+    .mpl-coach {
+        font-weight: 800;
+        font-size: .9rem;
+    }
+
+    .mpl-period {
+        font-size: .72rem;
+        opacity: .85;
+        margin-top: 3px;
+    }
+
+    .mpl-badge {
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: .68rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .mpl-on {
+        background: rgba(56,217,169,.18);
+        color: #38d9a9;
+        border: 1px solid rgba(56,217,169,.45);
+    }
+
+    .mpl-off {
+        background: rgba(255,255,255,.12);
+        color: #cbd3da;
+        border: 1px solid rgba(255,255,255,.25);
+    }
+
+    .mpl-body {
+        padding: 12px 14px;
+    }
+
+    .mpl-stats {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .mpl-stat {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(13,110,253,.14);
+        border: 1px solid rgba(13,110,253,.30);
+        color: #dce9ff;
+        border-radius: 999px;
+        padding: 4px 12px;
+        font-size: .72rem;
+        font-weight: 700;
+    }
+
+        .mpl-stat i {
+            color: #66d3e8;
+            font-size: .8rem;
+        }
+
+    .mpl-foot {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 6px;
+        margin-top: 10px;
+        color: #66d3e8;
+        font-size: .78rem;
+        font-weight: 800;
+    }
+</style>

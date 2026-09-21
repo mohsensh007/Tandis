@@ -219,6 +219,7 @@ namespace TandisWebApp.Services
             return (true, "برنامه حذف شد");
         }
 
+       
         /// <summary>برنامه‌های فعالِ یک عضو (برای پنل عضو)</summary>
         public async Task<List<MemberProgramDto>> GetMemberProgramsAsync(int memberID)
         {
@@ -236,18 +237,24 @@ namespace TandisWebApp.Services
             var result = new List<MemberProgramDto>();
             foreach (var h in heads)
             {
+                // ✅ همه فیلدها (مخصوصاً DayTitle) خونده می‌شن
                 var items = await (
                     from d in _db.SportPrgDtls
                     where d.PrgID == h.PrgID
                     join i in _db.Gen_PrgmItems on d.ItemID equals i.ItemID into ij
                     from i in ij.DefaultIfEmpty()
-                    orderby d.SportPrgDtlID
+                    orderby d.SortOrder, d.SportPrgDtlID
                     select new ProgramItemEditDto
                     {
                         ItemID = d.ItemID ?? 0,
                         ItemDesc = i != null ? i.ItemDesc ?? "" : "",
                         SetCount = d.SetCount,
-                        WCount = d.WCount
+                        WCount = d.WCount,
+                        RepCount = d.RepCount,
+                        RestSeconds = d.RestSeconds,
+                        ExerciseType = d.ExerciseType,
+                        DayTitle = d.DayTitle,
+                        Note = d.Note
                     }).ToListAsync();
 
                 result.Add(new MemberProgramDto
@@ -339,6 +346,49 @@ namespace TandisWebApp.Services
                     SanseName = ss.SanseName ?? "",
                     EndDate = ams.EndDate ?? ""
                 }).ToListAsync();
+        }
+        /// <summary>برنامه تکی یک عضو (برای صفحه جزئیات)</summary>
+        public async Task<MemberProgramDto?> GetMemberProgramAsync(int memberID, int prgID)
+        {
+            var head = await (
+                from p in _db.SportPrgs
+                where p.PrgID == prgID && p.MemberID == memberID
+                join cm in _db.Gen_Members on p.CoachID equals cm.MemberID into cmj
+                from cm in cmj.DefaultIfEmpty()
+                join cp in _db.Gen_Persons on cm.PersonID equals cp.PersonID into cpj
+                from cp in cpj.DefaultIfEmpty()
+                select new { p.PrgID, Coach = (cp.FirstName + " " + cp.LastName), p.StartDate, p.EndDate }
+            ).FirstOrDefaultAsync();
+
+            if (head == null) return null;
+
+            var items = await (
+                from d in _db.SportPrgDtls
+                where d.PrgID == prgID
+                join i in _db.Gen_PrgmItems on d.ItemID equals i.ItemID into ij
+                from i in ij.DefaultIfEmpty()
+                orderby d.SortOrder, d.SportPrgDtlID
+                select new ProgramItemEditDto
+                {
+                    ItemID = d.ItemID ?? 0,
+                    ItemDesc = i != null ? i.ItemDesc ?? "" : "",
+                    SetCount = d.SetCount,
+                    WCount = d.WCount,
+                    RepCount = d.RepCount,
+                    RestSeconds = d.RestSeconds,
+                    ExerciseType = d.ExerciseType,
+                    DayTitle = d.DayTitle,
+                    Note = d.Note
+                }).ToListAsync();
+
+            return new MemberProgramDto
+            {
+                PrgID = head.PrgID,
+                CoachName = string.IsNullOrWhiteSpace(head.Coach) ? "مربی" : head.Coach!,
+                StartDateShamsi = ToShamsi(head.StartDate),
+                EndDateShamsi = ToShamsi(head.EndDate),
+                Items = items
+            };
         }
     }
 }
