@@ -1,10 +1,10 @@
 ﻿@model TandisWebApp.DTOs.CoachProgramEditDto
 @{
     ViewData["Title"] = Model.PrgID > 0 ? "ویرایش برنامه" : "برنامه جدید";
+    Layout = "_CoachLayout";
     var students = (List<TandisWebApp.DTOs.StudentOptionDto>)ViewBag.Students;
     var itemOptions = (List<TandisWebApp.DTOs.ProgramItemEditDto>)ViewBag.ItemOptions;
 
-    // ✅ پیش‌فرض: از امروز تا یک ماه آینده
     var pc = new System.Globalization.PersianCalendar();
     var nowDt = DateTime.Now;
     var plusDt = nowDt.AddMonths(1);
@@ -13,13 +13,11 @@
     var startVal = Model.PrgID > 0 && !string.IsNullOrEmpty(Model.StartDateShamsi) ? Model.StartDateShamsi : defStart;
     var endVal = Model.PrgID > 0 && !string.IsNullOrEmpty(Model.EndDateShamsi) ? Model.EndDateShamsi : defEnd;
 
-    // ✅ دراپ ست (نه دروپ ست)
     var typeOptions = new Dictionary<byte, string> {
         { 1, "عادی" }, { 2, "دراپ ست" }, { 3, "سوپرست" }, { 4, "تری‌ست" },
         { 5, "ست غول" }, { 6, "پیرامید" }, { 7, "استراحت-مکث" }, { 8, "تمپو دار" }
     };
 
-    // ✅ ۱۰ گروه عضلانی / روز تمرین
     var fixedDays = new (string Icon, string Key)[] {
         ("🦵", "روز پا"),
         ("🏋️", "روز سینه"),
@@ -69,7 +67,7 @@
         </div>
     </div>
 
-    <!-- ===== انتخاب روزهای تمرین (چندانتخابی) ===== -->
+    <!-- ===== انتخاب روزهای تمرین ===== -->
     <div class="day-select-box mt-4">
         <div class="ds-title"><i class="bi bi-calendar-week"></i> روزهای تمرین این برنامه را انتخاب کنید (چند روز قابل انتخابه):</div>
         <div class="ds-chips" id="dayChips">
@@ -93,6 +91,7 @@
     <div id="itemsBox">
         @foreach (var it in Model.Items)
         {
+            var extras = it.ExtraItems ?? new List<TandisWebApp.DTOs.ProgramSubItemDto>();
             <div class="pe-item-card">
                 <input type="hidden" class="inpDay" value="@it.DayTitle" />
                 <div class="d-flex justify-content-between align-items-center gap-2">
@@ -100,7 +99,7 @@
                     <button type="button" class="pe-del-item"><i class="bi bi-trash3"></i></button>
                 </div>
                 <div class="row g-2 mt-2">
-                    <div class="col-8">
+                    <div class="col-md-8">
                         <label class="pe-lbl">حرکت</label>
                         <select class="pe-input selItem">
                             <option value="0">+ حرکت جدید (دستی بنویس)...</option>
@@ -119,7 +118,7 @@
                         <input type="text" class="pe-input txtNewItem mt-2" style="display:@(it.ItemID == 0 ? "block" : "none")"
                                placeholder="شرح حرکت جدید (مثلاً: پرس سینه با هالتر)" value="@(it.ItemID == 0 ? it.ItemDesc : "")" />
                     </div>
-                    <div class="col-4">
+                    <div class="col-md-4">
                         <label class="pe-lbl">نوع حرکت</label>
                         <select class="pe-input inpType">
                             @foreach (var t in typeOptions)
@@ -140,11 +139,113 @@
                     <div class="col-3"><label class="pe-lbl">وزن (kg)</label><input type="number" min="0" class="pe-input inpW" value="@it.WCount" /></div>
                     <div class="col-3"><label class="pe-lbl">استراحت (ثانیه)</label><input type="number" min="0" step="5" class="pe-input inpRest" value="@it.RestSeconds" /></div>
                     <div class="col-12"><label class="pe-lbl">توضیح (اختیاری)</label><input type="text" class="pe-input inpNote" placeholder="مثلاً: کنترل فاز منفی حرکت..." value="@it.Note" /></div>
+
+                    <!-- ===== دراپ ست ===== -->
+                    <div class="col-12 tech-fields tech-drop" style="display:@(it.ExerciseType == 2 ? "block" : "none")">
+                        <div class="tech-head"><i class="bi bi-arrow-down-circle-fill"></i> تنظیمات دراپ ست</div>
+                        <div class="row g-2">
+                            <div class="col-6"><label class="pe-lbl">تعداد دراپ (۱ تا ۶)</label><input type="number" min="1" max="6" class="pe-input inpDropCount" value="@it.DropCount" /></div>
+                            <div class="col-6"><label class="pe-lbl">کاهش وزن هر دراپ (٪)</label><input type="number" min="5" max="50" class="pe-input inpDropPct" value="@it.DropWeightPct" placeholder="مثلاً 20" /></div>
+                        </div>
+                    </div>
+
+                    <!-- ===== پیرامید ===== -->
+                    <div class="col-12 tech-fields tech-pyramid" style="display:@(it.ExerciseType == 6 ? "block" : "none")">
+                        <div class="tech-head"><i class="bi bi-triangle-fill"></i> تنظیمات پیرامید</div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="pe-lbl">جهت</label>
+                                <select class="pe-input inpPyramidDir">
+                                    @{
+                                        var pdir = it.PyramidDir ?? 0;
+                                    }
+                                    @if (pdir == 1)
+                                    {
+                                        <option value="1" selected>صعودی (وزن زیاد → کم)</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="1">صعودی (وزن زیاد → کم)</option>
+                                    }
+                                    @if (pdir == 2)
+                                    {
+                                        <option value="2" selected>معکوس (سنگین اول)</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="2">معکوس (سنگین اول)</option>
+                                    }
+                                    @if (pdir == 3)
+                                    {
+                                        <option value="3" selected>کامل (صعود + نزول)</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="3">کامل (صعود + نزول)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6"><label class="pe-lbl">پله وزن هر ست (kg)</label><input type="number" min="0" class="pe-input inpWeightStep" value="@it.WeightStep" /></div>
+                        </div>
+                    </div>
+
+                    <!-- ===== استراحت-مکث ===== -->
+                    <div class="col-12 tech-fields tech-pause" style="display:@(it.ExerciseType == 7 ? "block" : "none")">
+                        <div class="tech-head"><i class="bi bi-pause-circle-fill"></i> تنظیمات استراحت-مکث</div>
+                        <div class="row g-2">
+                            <div class="col-6"><label class="pe-lbl">تعداد مینی‌ست (۱ تا ۵)</label><input type="number" min="1" max="5" class="pe-input inpPauseCount" value="@it.PauseCount" /></div>
+                            <div class="col-6"><label class="pe-lbl">مکث بین مینی‌ست (ثانیه)</label><input type="number" min="5" max="60" class="pe-input inpPauseRest" value="@it.PauseRest" /></div>
+                        </div>
+                    </div>
+
+                    <!-- ===== تمپو ===== -->
+                    <div class="col-12 tech-fields tech-tempo" style="display:@(it.ExerciseType == 8 ? "block" : "none")">
+                        <div class="tech-head"><i class="bi bi-clock-fill"></i> تمپو (کد ۴ رقمی: پایین / مکث / بالا / مکث)</div>
+                        <input type="text" class="pe-input inpTempo" value="@it.Tempo" placeholder="مثال: 3-1-2-0" maxlength="15" />
+                    </div>
+
+                    <!-- ===== combo ===== -->
+                    <div class="col-12 tech-fields tech-combo" style="display:@(it.ExerciseType >= 3 && it.ExerciseType <= 5 ? "block" : "none")">
+                        <div class="tech-head"><i class="bi bi-link-45deg"></i> حرکات هم‌گروه (پشت‌سرهم بدون استراحت)</div>
+                        <div class="combo-slots" data-max="@(it.ExerciseType == 3 ? 1 : it.ExerciseType == 4 ? 2 : 5)">
+                            @for (var i = 0; i < extras.Count; i++)
+                            {
+                                var ex = extras[i];
+                                <div class="combo-slot">
+                                    <div class="row g-2">
+                                        <div class="col-md-6">
+                                            <label class="pe-lbl">حرکت @(i + 2)</label>
+                                            <select class="pe-input comboSelItem">
+                                                <option value="0">+ حرکت جدید...</option>
+                                                @foreach (var o in itemOptions)
+                                                {
+                                                    if (o.ItemID == ex.ItemID)
+                                                    {
+                                                        <option value="@o.ItemID" selected>@o.ItemDesc</option>
+                                                    }
+                                                    else
+                                                    {
+                                                        <option value="@o.ItemID">@o.ItemDesc</option>
+                                                    }
+                                                }
+                                            </select>
+                                            <input type="text" class="pe-input comboTxtNewItem mt-1" style="display:@(ex.ItemID == 0 ? "block" : "none")"
+                                                   value="@(ex.ItemID == 0 ? ex.ItemDesc : "")" placeholder="شرح حرکت جدید" />
+                                        </div>
+                                        <div class="col-3"><label class="pe-lbl">تکرار</label><input type="number" min="0" class="pe-input comboReps" value="@ex.RepCount" /></div>
+                                        <div class="col-3"><label class="pe-lbl">وزن (kg)</label><input type="number" min="0" class="pe-input comboW" value="@ex.WCount" /></div>
+                                    </div>
+                                    <button type="button" class="combo-del" title="حذف"><i class="bi bi-x-lg"></i></button>
+                                </div>
+                            }
+                        </div>
+                        <button type="button" class="combo-add-btn"><i class="bi bi-plus"></i> افزودن حرکت هم‌گروه</button>
+                    </div>
                 </div>
             </div>
         }
 
-        <!-- قالب ردیف جدید (مخفی) -->
+        <!-- ===== قالب ردیف جدید (مخفی) ===== -->
         <div class="pe-item-card template" id="rowTemplate" style="display:none">
             <input type="hidden" class="inpDay" value="" />
             <div class="d-flex justify-content-between align-items-center gap-2">
@@ -152,7 +253,7 @@
                 <button type="button" class="pe-del-item"><i class="bi bi-trash3"></i></button>
             </div>
             <div class="row g-2 mt-2">
-                <div class="col-8">
+                <div class="col-md-8">
                     <label class="pe-lbl">حرکت</label>
                     <select class="pe-input selItem">
                         <option value="0">+ حرکت جدید (دستی بنویس)...</option>
@@ -163,7 +264,7 @@
                     </select>
                     <input type="text" class="pe-input txtNewItem mt-2" style="display:none" placeholder="شرح حرکت جدید (مثلاً: پرس سینه با هالتر)" />
                 </div>
-                <div class="col-4">
+                <div class="col-md-4">
                     <label class="pe-lbl">نوع حرکت</label>
                     <select class="pe-input inpType">
                         @foreach (var t in typeOptions)
@@ -184,6 +285,44 @@
                 <div class="col-3"><label class="pe-lbl">وزن (kg)</label><input type="number" min="0" class="pe-input inpW" /></div>
                 <div class="col-3"><label class="pe-lbl">استراحت (ثانیه)</label><input type="number" min="0" step="5" class="pe-input inpRest" placeholder="90" /></div>
                 <div class="col-12"><label class="pe-lbl">توضیح (اختیاری)</label><input type="text" class="pe-input inpNote" placeholder="مثلاً: کنترل فاز منفی حرکت..." /></div>
+
+                <div class="col-12 tech-fields tech-drop" style="display:none">
+                    <div class="tech-head"><i class="bi bi-arrow-down-circle-fill"></i> تنظیمات دراپ ست</div>
+                    <div class="row g-2">
+                        <div class="col-6"><label class="pe-lbl">تعداد دراپ (۱ تا ۶)</label><input type="number" min="1" max="6" class="pe-input inpDropCount" /></div>
+                        <div class="col-6"><label class="pe-lbl">کاهش وزن هر دراپ (٪)</label><input type="number" min="5" max="50" class="pe-input inpDropPct" placeholder="20" /></div>
+                    </div>
+                </div>
+                <div class="col-12 tech-fields tech-pyramid" style="display:none">
+                    <div class="tech-head"><i class="bi bi-triangle-fill"></i> تنظیمات پیرامید</div>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="pe-lbl">جهت</label>
+                            <select class="pe-input inpPyramidDir">
+                                <option value="1">صعودی (وزن زیاد → کم)</option>
+                                <option value="2">معکوس (سنگین اول)</option>
+                                <option value="3">کامل (صعود + نزول)</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6"><label class="pe-lbl">پله وزن هر ست (kg)</label><input type="number" min="0" class="pe-input inpWeightStep" /></div>
+                    </div>
+                </div>
+                <div class="col-12 tech-fields tech-pause" style="display:none">
+                    <div class="tech-head"><i class="bi bi-pause-circle-fill"></i> تنظیمات استراحت-مکث</div>
+                    <div class="row g-2">
+                        <div class="col-6"><label class="pe-lbl">تعداد مینی‌ست (۱ تا ۵)</label><input type="number" min="1" max="5" class="pe-input inpPauseCount" /></div>
+                        <div class="col-6"><label class="pe-lbl">مکث بین مینی‌ست (ثانیه)</label><input type="number" min="5" max="60" class="pe-input inpPauseRest" /></div>
+                    </div>
+                </div>
+                <div class="col-12 tech-fields tech-tempo" style="display:none">
+                    <div class="tech-head"><i class="bi bi-clock-fill"></i> تمپو (کد ۴ رقمی)</div>
+                    <input type="text" class="pe-input inpTempo" placeholder="مثال: 3-1-2-0" maxlength="15" />
+                </div>
+                <div class="col-12 tech-fields tech-combo" style="display:none">
+                    <div class="tech-head"><i class="bi bi-link-45deg"></i> حرکات هم‌گروه (پشت‌سرهم بدون استراحت)</div>
+                    <div class="combo-slots" data-max="5"></div>
+                    <button type="button" class="combo-add-btn"><i class="bi bi-plus"></i> افزودن حرکت هم‌گروه</button>
+                </div>
             </div>
         </div>
     </div>
@@ -256,7 +395,6 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: rgba(255,255,255,.08);
         border: 1px solid rgba(255,255,255,.18);
         color: #dce9ff;
         border-radius: 999px;
@@ -274,7 +412,6 @@
         }
 
         .coach-back-pill:hover {
-            background: rgba(255,255,255,.14);
             color: #fff;
         }
 
@@ -283,7 +420,6 @@
             }
 
     .pe-card {
-        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
         border: 1px solid rgba(255,255,255,.14);
         border-radius: 20px;
         padding: 18px;
@@ -508,6 +644,85 @@
             color: #fff;
         }
 
+    /* ===== فیلدهای تکنیک‌ها ===== */
+    .tech-fields {
+        margin-top: 6px;
+    }
+
+    .tech-head {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        background: rgba(118,75,162,.14);
+        border: 1px solid rgba(118,75,162,.35);
+        border-radius: 10px;
+        padding: 7px 12px;
+        color: #c9b9f9;
+        font-size: .76rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+        .tech-head i {
+            color: #c9b9f9;
+        }
+
+    /* ===== اسلات‌های combo ===== */
+    .combo-slots {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .combo-slot {
+        position: relative;
+        background: rgba(102,211,232,.06);
+        border: 1px dashed rgba(102,211,232,.35);
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .combo-del {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        background: rgba(255,107,129,.12);
+        border: 1px solid rgba(255,107,129,.35);
+        color: #ff8fa3;
+        width: 26px;
+        height: 26px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: .7rem;
+    }
+
+        .combo-del:hover {
+            background: rgba(255,107,129,.25);
+            color: #fff;
+        }
+
+    .combo-add-btn {
+        background: rgba(102,211,232,.12);
+        border: 1px solid rgba(102,211,232,.40);
+        color: #66d3e8;
+        border-radius: 10px;
+        padding: 6px 14px;
+        font-size: .76rem;
+        font-weight: 700;
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .combo-add-btn:hover {
+            background: rgba(102,211,232,.22);
+            color: #fff;
+        }
+
+    /* ===== تقویم ===== */
     .pe-modal {
         background: rgba(16,20,36,.97);
         border: 1px solid rgba(255,255,255,.15);
@@ -522,7 +737,6 @@
         font-weight: 800;
     }
 
-    /* ===== ✅ تقویم شمسی تیره ===== */
     #datePickerModal .modal-body {
         background: transparent;
     }
@@ -578,6 +792,7 @@
             background: rgba(102,211,232,.25);
         }
 
+    /* ===== اورلی شاگرد ===== */
     .stu-overlay {
         position: fixed;
         inset: 0;
@@ -683,18 +898,15 @@
 </style>
 
 @section Scripts {
-    <!-- ✅ تگ داده شاگردان — حتماً قبل از اسکریپت اصلی -->
     <script type="application/json" id="studentsJson">@Json.Serialize(students)</script>
 
     <script>
-        // ===== ✅ خواندن ایمن داده شاگردان (دیگه هیچ‌وقت کرش نمی‌کنه) =====
         var students = [];
         try {
             var studentsEl = document.getElementById('studentsJson');
             if (studentsEl) students = JSON.parse(studentsEl.textContent);
         } catch (e) { students = []; }
 
-        // ===== روزهای ثابت (ترتیب مهمه) =====
         var FIXED_DAYS = ['روز پا', 'روز سینه', 'روز سرشانه', 'روز زیر بغل', 'روز جلو بازو', 'روز پشت بازو', 'روز شکم', 'روز پهلو', 'روز هوازی', 'روز فول بدن'];
 
         function selectedDays() {
@@ -733,9 +945,9 @@
             if (has) $('#dsSelected').text(currentDayTitle());
         }
 
-        // ===== داده شاگردان =====
-        function gId(s)    { return s.memberID  || s.MemberID  || 0; }
-        function gName(s)  { return s.fullName  || s.FullName  || ''; }
+        // ===== شاگرد =====
+        function gId(s) { return s.memberID || s.MemberID || 0; }
+        function gName(s) { return s.fullName || s.FullName || ''; }
         function gSport(s) { return s.sportName || s.SportName || ''; }
         function gSanse(s) { return s.sanseName || s.SanseName || ''; }
 
@@ -790,7 +1002,7 @@
             closeOverlay();
         });
 
-        // ===== تقویم شمسی =====
+        // ===== تقویم =====
         function openCal(inputId) {
             initCalendar(inputId, null, true);
             new bootstrap.Modal('#datePickerModal').show();
@@ -806,13 +1018,70 @@
             renderCalendar();
         });
 
-        // ===== نمایش/پنهان اینپوت حرکت جدید =====
+        // ===== حرکت جدید =====
         function syncNewItem($row) {
             var isnew = String($row.find('.selItem').val() || '0') === '0';
             $row.find('.txtNewItem').css('display', isnew ? 'block' : 'none');
         }
         $(document).on('change', '.selItem', function () {
             syncNewItem($(this).closest('.pe-item-card'));
+        });
+
+        // ===== ✅ فیلدهای تکنیک =====
+        function syncTechFields($r) {
+            var t = parseInt($r.find('.inpType').val() || '1');
+            $r.find('.tech-drop').toggle(t === 2);
+            $r.find('.tech-pyramid').toggle(t === 6);
+            $r.find('.tech-pause').toggle(t === 7);
+            $r.find('.tech-tempo').toggle(t === 8);
+            var isCombo = (t === 3 || t === 4 || t === 5);
+            $r.find('.tech-combo').toggle(isCombo);
+            if (isCombo) {
+                var need = (t === 3 ? 1 : t === 4 ? 2 : 3);
+                $r.find('.combo-slots').attr('data-max', (t === 5 ? 5 : need));
+                ensureMinSlots($r, need);
+            }
+        }
+        $(document).on('change', '.inpType', function () {
+            syncTechFields($(this).closest('.pe-item-card'));
+        });
+
+        // ===== ✅ اسلات combo =====
+        function comboSlotHtml() {
+            var opts = '';
+            $('#rowTemplate .selItem option').each(function (i) {
+                if (i === 0) return;
+                opts += '<option value="' + this.value + '">' + esc(this.text) + '</option>';
+            });
+            return '<div class="combo-slot">' +
+                '<div class="row g-2">' +
+                    '<div class="col-md-6">' +
+                        '<label class="pe-lbl">حرکت هم‌گروه</label>' +
+                        '<select class="pe-input comboSelItem"><option value="0">+ حرکت جدید...</option>' + opts + '</select>' +
+                        '<input type="text" class="pe-input comboTxtNewItem mt-1" style="display:none" placeholder="شرح حرکت جدید" />' +
+                    '</div>' +
+                    '<div class="col-3"><label class="pe-lbl">تکرار</label><input type="number" min="0" class="pe-input comboReps" /></div>' +
+                    '<div class="col-3"><label class="pe-lbl">وزن (kg)</label><input type="number" min="0" class="pe-input comboW" /></div>' +
+                '</div>' +
+                '<button type="button" class="combo-del" title="حذف"><i class="bi bi-x-lg"></i></button>' +
+            '</div>';
+        }
+        function ensureMinSlots($r, need) {
+            var $box = $r.find('.combo-slots');
+            while ($box.find('.combo-slot').length < need) $box.append(comboSlotHtml());
+        }
+        $(document).on('click', '.combo-add-btn', function (e) {
+            e.preventDefault();
+            var $r = $(this).closest('.pe-item-card');
+            var max = parseInt($r.find('.combo-slots').attr('data-max') || '5');
+            var cur = $r.find('.combo-slots .combo-slot').length;
+            if (cur >= max) { showToast('حداکثر تعداد حرکت هم‌گروه برای این نوع پر شده', 'error'); return; }
+            $r.find('.combo-slots').append(comboSlotHtml());
+        });
+        $(document).on('click', '.combo-del', function () { $(this).closest('.combo-slot').remove(); });
+        $(document).on('change', '.comboSelItem', function () {
+            var isnew = String($(this).val() || '0') === '0';
+            $(this).closest('.combo-slot').find('.comboTxtNewItem').css('display', isnew ? 'block' : 'none');
         });
 
         // ===== افزودن / حذف ردیف =====
@@ -825,6 +1094,7 @@
             $t.find('.pe-day-badge').text(title);
             $('#itemsBox').append($t);
             syncNewItem($t);
+            syncTechFields($t);
             applyDayFilter();
             $t[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
             setTimeout(function () {
@@ -842,26 +1112,70 @@
 
             var items = [];
             var valid = true;
+
             $('#itemsBox .pe-item-card:not(.template)').each(function () {
                 var $r = $(this);
                 var itemID = parseInt($r.find('.selItem').val() || '0');
                 var newDesc = $.trim($r.find('.txtNewItem').val());
                 if (itemID === 0 && !newDesc) { valid = false; return; }
                 function num(sel) { var v = $r.find(sel).val(); return v === '' || v === null ? null : parseInt(v); }
+                var type = parseInt($r.find('.inpType').val() || '1');
+
+                if (type === 2) {
+                    var dc = parseInt($r.find('.inpDropCount').val() || '0');
+                    if (dc < 1 || dc > 6) { valid = false; showToast('دراپ ست: تعداد دراپ باید ۱ تا ۶ باشد', 'error'); return false; }
+                }
+                if (type === 3 || type === 4 || type === 5) {
+                    var have = $r.find('.combo-slot').length;
+                    if (type === 3 && have !== 1) { valid = false; showToast('سوپرست: دقیقاً ۲ حرکت لازم است', 'error'); return false; }
+                    if (type === 4 && have !== 2) { valid = false; showToast('تری‌ست: دقیقاً ۳ حرکت لازم است', 'error'); return false; }
+                    if (type === 5 && (have < 3 || have > 5)) { valid = false; showToast('ست غول: بین ۴ تا ۶ حرکت لازم است', 'error'); return false; }
+                }
+                if (type === 8) {
+                    var tp = $.trim($r.find('.inpTempo').val());
+                    if (!/^\d(-\d){2,3}$/.test(tp)) { valid = false; showToast('تمپو نامعتبر است (نمونه درست: 3-1-2-0)', 'error'); return false; }
+                }
+
+                var extra = [];
+                if (type === 3 || type === 4 || type === 5) {
+                    $r.find('.combo-slot').each(function () {
+                        var $s = $(this);
+                        var eid = parseInt($s.find('.comboSelItem').val() || '0');
+                        var enew = $.trim($s.find('.comboTxtNewItem').val());
+                        if (eid === 0 && !enew) return;
+                        var rv = $s.find('.comboReps').val();
+                        var wv = $s.find('.comboW').val();
+                        extra.push({
+                            itemID: eid,
+                            newItemDesc: enew,
+                            repCount: rv === '' ? null : parseInt(rv),
+                            wCount: wv === '' ? null : parseInt(wv)
+                        });
+                    });
+                }
+
                 items.push({
                     itemID: itemID,
                     newItemDesc: newDesc,
                     dayTitle: String($r.find('.inpDay').val() || ''),
-                    exerciseType: parseInt($r.find('.inpType').val() || '1'),
+                    exerciseType: type,
                     setCount: num('.inpSets'),
                     repCount: num('.inpReps'),
                     wCount: num('.inpW'),
                     restSeconds: num('.inpRest'),
-                    note: $.trim($r.find('.inpNote').val()) || null
+                    note: $.trim($r.find('.inpNote').val()) || null,
+                    extraItems: extra,
+                    dropCount: type === 2 ? num('.inpDropCount') : null,
+                    dropWeightPct: type === 2 ? num('.inpDropPct') : null,
+                    pyramidDir: type === 6 ? num('.inpPyramidDir') : null,
+                    weightStep: type === 6 ? num('.inpWeightStep') : null,
+                    pauseCount: type === 7 ? num('.inpPauseCount') : null,
+                    pauseRest: type === 7 ? num('.inpPauseRest') : null,
+                    tempo: type === 8 ? ($.trim($r.find('.inpTempo').val()) || null) : null
                 });
             });
 
-            if (!valid || !items.length) { showToast('لیست حرکات را کامل کنید (حرکت جدید نیاز به شرح دارد)', 'error'); return; }
+            if (!valid || !items.length) { showToast('لیست حرکات را کامل کنید', 'error'); return; }
 
             apiCall('/Coach/SaveProgram', 'POST', {
                 prgID: parseInt('@Model.PrgID', 10),
@@ -877,7 +1191,10 @@
 
         // ===== وضعیت اولیه =====
         $(function () {
-            $('#itemsBox .pe-item-card:not(.template)').each(function () { syncNewItem($(this)); });
+            $('#itemsBox .pe-item-card:not(.template)').each(function () {
+                syncNewItem($(this));
+                syncTechFields($(this));
+            });
             applyDayFilter();
             updateAddState();
         });

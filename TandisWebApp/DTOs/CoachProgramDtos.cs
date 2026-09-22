@@ -24,6 +24,17 @@
         public byte? ExerciseType { get; set; }
         public string? DayTitle { get; set; }
         public string? Note { get; set; }
+        // ✅ فیلدهای تکنیک‌ها
+        public int? ComboGroup { get; set; }
+        public byte? SeqInCombo { get; set; }
+        public List<ProgramSubItemDto> ExtraItems { get; set; } = new();
+        public byte? DropCount { get; set; }
+        public byte? DropWeightPct { get; set; }
+        public byte? PyramidDir { get; set; }
+        public int? WeightStep { get; set; }
+        public byte? PauseCount { get; set; }
+        public int? PauseRest { get; set; }
+        public string? Tempo { get; set; }
     }
 
     // ===== فرم ویرایش برنامه =====
@@ -66,6 +77,15 @@
         public byte? ExerciseType { get; set; }
         public string? DayTitle { get; set; }
         public string? Note { get; set; }
+        // ✅ فیلدهای تکنیک‌ها
+        public List<SaveProgramSubItemRequest> ExtraItems { get; set; } = new();
+        public byte? DropCount { get; set; }
+        public byte? DropWeightPct { get; set; }
+        public byte? PyramidDir { get; set; }
+        public int? WeightStep { get; set; }
+        public byte? PauseCount { get; set; }
+        public int? PauseRest { get; set; }
+        public string? Tempo { get; set; }
     }
 
     // ===== نمایش در پنل عضو =====
@@ -102,5 +122,19 @@
         public string SportName { get; set; } = string.Empty;
         public string SanseName { get; set; } = string.Empty;
         public string EndDate { get; set; } = string.Empty;
+    }
+    public class ProgramSubItemDto
+    {
+        public int ItemID { get; set; }
+        public string ItemDesc { get; set; } = string.Empty;
+        public int? RepCount { get; set; }
+        public int? WCount { get; set; }
+    }
+    public class SaveProgramSubItemRequest
+    {
+        public int ItemID { get; set; }
+        public string? NewItemDesc { get; set; }
+        public int? RepCount { get; set; }
+        public int? WCount { get; set; }
     }
 }

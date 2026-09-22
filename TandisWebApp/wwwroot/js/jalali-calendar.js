@@ -126,6 +126,64 @@ function pickDay(day) {
         }, 250);
     }
 }
+/* =====================================================
+   ✅ پوسته جدید تقویم جلالی (هماهنگ با تقویم حضور)
+   بدون تغییر توابع موجود — فقط برچسب‌گذاری سلول‌ها
+   ===================================================== */
+(function () {
+    function skinJalaliCalendar() {
+        var body = document.getElementById('calendarBody');
+        if (!body) return;
+        var cells = body.querySelectorAll('td');
+        for (var i = 0; i < cells.length; i++) {
+            var td = cells[i];
+            td.classList.remove('cal-on', 'cal-off', 'cal-empty');
+
+            // سلول خالی (خانه‌های اول/آخر ماه)
+            if (!td.textContent || !td.textContent.trim()) {
+                td.classList.add('cal-empty');
+                continue;
+            }
+
+            // تشخیص روز غیرفعال: خط‌خوردگی (کلاس یا inline) یا کلاس‌های رایج
+            var cs = window.getComputedStyle(td);
+            var deco = (cs.textDecorationLine || cs.textDecoration || '') + '';
+            var isOff =
+                deco.indexOf('line-through') > -1 ||
+                td.classList.contains('disabled') ||
+                td.classList.contains('cal-disabled') ||
+                td.classList.contains('day-disabled');
+
+            td.classList.add(isOff ? 'cal-off' : 'cal-on');
+        }
+    }
+
+    // هر بار که بدنه تقویم دوباره رندر شد (تعویض ماه)، پوسته رو اعمال کن
+    function watch() {
+        var body = document.getElementById('calendarBody');
+        if (!body || !window.MutationObserver) return;
+        if (body.__calSkinned) return;
+        body.__calSkinned = true;
+        new MutationObserver(function () {
+            requestAnimationFrame(skinJalaliCalendar);
+        }).observe(body, { childList: true, subtree: true });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function () { watch(); skinJalaliCalendar(); });
+    } else {
+        watch(); skinJalaliCalendar();
+    }
+
+    // پوشش اضافه: مودال که باز/تعویض می‌شه
+    document.addEventListener('click', function (e) {
+        if (e.target && e.target.closest && e.target.closest('#datePickerModal')) {
+            setTimeout(skinJalaliCalendar, 0);
+        }
+    });
+
+    window.skinJalaliCalendar = skinJalaliCalendar;
+})();
 
 // اضافه کردن به window
 window.initCalendar = initCalendar;

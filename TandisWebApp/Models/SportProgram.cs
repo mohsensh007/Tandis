@@ -50,5 +50,14 @@ namespace TandisWebApp.Models
         public string? DayTitle { get; set; }
         public string? Note { get; set; }
         public int? SortOrder { get; set; }
+        public int? ComboGroup { get; set; }
+        public byte? SeqInCombo { get; set; }
+        public byte? DropCount { get; set; }
+        public byte? DropWeightPct { get; set; }
+        public byte? PyramidDir { get; set; }
+        public int? WeightStep { get; set; }
+        public byte? PauseCount { get; set; }
+        public int? PauseRest { get; set; }
+        public string? Tempo { get; set; }
     }
 }

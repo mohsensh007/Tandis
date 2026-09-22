@@ -33,7 +33,6 @@
         return sb.Length == 0 ? "📅" : sb.ToString();
     }
 
-    // ✅ گروه‌بندی بر اساس روز — بدون «حرکات عمومی»
     var groups = new System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<TandisWebApp.DTOs.ProgramItemEditDto>>();
     var groupKeys = new System.Collections.Generic.List<string>();
     foreach (var it in Model.Items)
@@ -47,7 +46,6 @@
         groups[it.DayTitle].Add(it);
     }
 
-    // ✅ روزهای تکی برای چیپ‌های فیلتر
     var singles = new System.Collections.Generic.List<string>();
     foreach (var k in groupKeys)
     {
@@ -68,7 +66,7 @@
 </div>
 
 <!-- ===== کارت اطلاعات برنامه ===== -->
-<div class="mp-info mb-3">
+<div class="purple-style mp-info mb-3">
     <div class="flex-grow-1" style="min-width:0">
         <div class="mp-coach"><i class="bi bi-person-badge-fill me-1"></i> مربی: @Model.CoachName</div>
         <div class="mp-period"><i class="bi bi-calendar-range me-1"></i> @Model.StartDateShamsi تا @Model.EndDateShamsi</div>
@@ -79,6 +77,7 @@
     }
     else
     {
+
         <span class="mp-badge mp-off">پایان‌یافته</span>
     }
 </div>
@@ -104,7 +103,7 @@ else
     <!-- ===== باکس‌های روز ===== -->
     @foreach (var g in groups)
     {
-        <div class="mp-day" data-days="@g.Key">
+        <div class="purple-style mp-day" data-days="@g.Key">
             <div class="mp-day-head">
                 <span class="mp-day-icon">@DayIcon(g.Key)</span>
                 <span class="mp-day-title">@g.Key</span>
@@ -113,14 +112,20 @@ else
             <div class="mp-day-body">
                 @foreach (var it in g.Value)
                 {
+                    var extras = it.ExtraItems ?? new System.Collections.Generic.List<TandisWebApp.DTOs.ProgramSubItemDto>();
+                    var hasCombo = extras.Count > 0;
+                    var type = it.ExerciseType ?? 1;
+
                     <div class="mp-ex">
                         <div class="mp-ex-top">
                             <div class="mp-ex-name">@it.ItemDesc</div>
-                            @if (it.ExerciseType != null && it.ExerciseType != 1 && typeLabels.ContainsKey(it.ExerciseType.Value))
+                            @if (type != 1 && typeLabels.ContainsKey((byte)type))
                             {
-                                <span class="mp-type">@typeLabels[it.ExerciseType.Value]</span>
+                                <span class="mp-type">@typeLabels[(byte)type]</span>
                             }
                         </div>
+
+                        <!-- pillهای اصلی -->
                         <div class="mp-ex-pills">
                             @if (it.SetCount != null)
                             {
@@ -139,6 +144,88 @@ else
                                 <span class="mp-pill"><i class="bi bi-stopwatch-fill"></i> استراحت: @it.RestSeconds.Value ثانیه</span>
                             }
                         </div>
+
+                        <!-- ===== ✅ combo (حرکات هم‌گروه) ===== -->
+                        @if (hasCombo)
+                        {
+                            <div class="mp-combo">
+                                <div class="mp-combo-title">🔗 حرکات هم‌گروه (بدون استراحت بینشون):</div>
+                                @for (var i = 0; i < extras.Count; i++)
+                                {
+                                    var ex = extras[i];
+                                    <div class="mp-combo-row">
+                                        <span class="mp-combo-num">@(i + 2)</span>
+                                        <div class="mp-combo-body">
+                                            <div class="mp-combo-name">@ex.ItemDesc</div>
+                                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                                @if (ex.RepCount != null)
+                                                {
+                                                    <span class="mp-pill-sm"><i class="bi bi-repeat"></i> @ex.RepCount.Value</span>
+                                                }
+                                                @if (ex.WCount != null)
+                                                {
+                                                    <span class="mp-pill-sm"><i class="bi bi-barbell-fill"></i> @ex.WCount.Value کیلو</span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+
+                        <!-- ===== ✅ تنظیمات تکنیک ===== -->
+                        @if (type == 2 && it.DropCount != null)
+                        {
+                            <div class="mp-tech mp-tech-drop">
+                                <i class="bi bi-arrow-down-circle-fill"></i>
+                                <span>دراپ ست: <b>@it.DropCount.Value</b> بار کاهش وزن</span>
+                                @if (it.DropWeightPct != null)
+                                {
+                                    <span class="mp-tech-sep">•</span>
+                                    <span>هر بار حدود <b>@it.DropWeightPct.Value٪</b> سبک‌تر</span>
+                                }
+                            </div>
+                        }
+                        @if (type == 6 && it.PyramidDir != null)
+                        {
+                            var dirName = it.PyramidDir.Value == 1 ? "صعودی" : it.PyramidDir.Value == 2 ? "معکوس (سنگین اول)" : "کامل";
+                            <div class="mp-tech mp-tech-pyramid">
+                                <i class="bi bi-triangle-fill"></i>
+                                <span>پیرامید <b>@dirName</b></span>
+                                @if (it.WeightStep != null)
+                                {
+                                    <span class="mp-tech-sep">•</span>
+                                    <span>پله وزن: <b>@it.WeightStep.Value کیلو</b></span>
+                                }
+                            </div>
+                        }
+                        @if (type == 7 && it.PauseCount != null)
+                        {
+                            <div class="mp-tech mp-tech-pause">
+                                <i class="bi bi-pause-circle-fill"></i>
+                                <span>استراحت-مکث: <b>@it.PauseCount.Value</b> مینی‌ست</span>
+                                @if (it.PauseRest != null)
+                                {
+                                    <span class="mp-tech-sep">•</span>
+                                    <span>مکث: <b>@it.PauseRest.Value ثانیه</b></span>
+                                }
+                            </div>
+                        }
+                        @if (type == 8 && !string.IsNullOrEmpty(it.Tempo))
+                        {
+                            var tp = it.Tempo.Split('-');
+                            <div class="mp-tech mp-tech-tempo">
+                                <i class="bi bi-clock-fill"></i>
+                                <span>تمپو: <b class="mp-tempo-code">@it.Tempo</b></span>
+                                @if (tp.Length >= 4)
+                                {
+                                    <span class="mp-tempo-desc">
+                                        (@tp[0]ث پایین‌آوردن، @tp[1]ث مکث، @tp[2]ث بالا‌بردن، @tp[3]ث مکث)
+                                    </span>
+                                }
+                            </div>
+                        }
+
                         @if (!string.IsNullOrEmpty(it.Note))
                         {
                             <div class="mp-note"><i class="bi bi-info-circle-fill"></i><span>@it.Note</span></div>
@@ -190,7 +277,6 @@ else
         display: flex;
         align-items: center;
         gap: 10px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border-radius: 16px;
         padding: 12px 16px;
         color: #fff;
@@ -277,11 +363,10 @@ else
 
     /* ===== باکس روز ===== */
     .mp-day {
-        background: rgba(255,255,255,.05);
-        border: 1px solid rgba(255,255,255,.10);
-        border-radius: 14px;
+        border-radius: 16px;
         overflow: hidden;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255,255,255,.10);
     }
 
     .mp-day-head {
@@ -396,6 +481,168 @@ else
             font-size: .78rem;
         }
 
+    .mp-pill-sm {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.15);
+        color: #cbd3da;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: .66rem;
+        font-weight: 700;
+    }
+
+        .mp-pill-sm i {
+            color: #9fb3c8;
+            font-size: .68rem;
+        }
+
+    /* ===== ✅ باکس combo ===== */
+    .mp-combo {
+        margin-top: 10px;
+        background: rgba(102,211,232,.07);
+        border: 1px dashed rgba(102,211,232,.40);
+        border-radius: 10px;
+        padding: 10px 12px;
+    }
+
+    .mp-combo-title {
+        color: #66d3e8;
+        font-size: .74rem;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+
+    .mp-combo-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 7px 0;
+        border-top: 1px solid rgba(255,255,255,.06);
+    }
+
+        .mp-combo-row:first-of-type {
+            border-top: none;
+        }
+
+    .mp-combo-num {
+        flex: 0 0 auto;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        font-size: .7rem;
+        font-weight: 800;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 3px 8px rgba(118,75,162,.35);
+    }
+
+    .mp-combo-body {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .mp-combo-name {
+        color: #fff;
+        font-weight: 700;
+        font-size: .82rem;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+    /* ===== ✅ pillهای تکنیک ===== */
+    .mp-tech {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        margin-top: 8px;
+        background: rgba(118,75,162,.12);
+        border: 1px solid rgba(118,75,162,.35);
+        border-radius: 10px;
+        padding: 7px 12px;
+        font-size: .74rem;
+        font-weight: 700;
+        color: #e0d6ff;
+        line-height: 1.5;
+    }
+
+        .mp-tech > i {
+            color: #c9b9f9;
+            font-size: .9rem;
+            flex: 0 0 auto;
+        }
+
+        .mp-tech b {
+            color: #fff;
+        }
+
+    .mp-tech-sep {
+        color: rgba(255,255,255,.30);
+        margin: 0 2px;
+    }
+
+    /* رنگ‌های اختصاصی تکنیک‌ها */
+    .mp-tech-drop {
+        background: rgba(255,107,129,.10);
+        border-color: rgba(255,107,129,.30);
+        color: #ffd0d8;
+    }
+
+        .mp-tech-drop > i {
+            color: #ff8fa3;
+        }
+
+    .mp-tech-pyramid {
+        background: rgba(255,169,77,.10);
+        border-color: rgba(255,169,77,.30);
+        color: #ffdfb8;
+    }
+
+        .mp-tech-pyramid > i {
+            color: #ffa94d;
+        }
+
+    .mp-tech-pause {
+        background: rgba(102,211,232,.10);
+        border-color: rgba(102,211,232,.35);
+        color: #c8edf6;
+    }
+
+        .mp-tech-pause > i {
+            color: #66d3e8;
+        }
+
+    .mp-tech-tempo {
+        background: rgba(56,217,169,.10);
+        border-color: rgba(56,217,169,.30);
+        color: #c8f5e7;
+    }
+
+        .mp-tech-tempo > i {
+            color: #38d9a9;
+        }
+
+    .mp-tempo-code {
+        font-family: 'Courier New', monospace;
+        background: rgba(0,0,0,.25);
+        border-radius: 6px;
+        padding: 1px 8px;
+        letter-spacing: 1px;
+    }
+
+    .mp-tempo-desc {
+        font-size: .66rem;
+        color: rgba(200,245,231,.75);
+        font-weight: 600;
+    }
+
+    /* ===== note ===== */
     .mp-note {
         display: flex;
         align-items: flex-start;
@@ -420,16 +667,11 @@ else
 
 @section Scripts {
     <script>
-        // ===== فیلتر روزها: همه / تک‌تک روزها =====
         $(document).on('click', '.mpf-chip', function () {
             $('.mpf-chip').removeClass('mpf-on');
             $(this).addClass('mpf-on');
             var g = String($(this).attr('data-group') || '');
-
-            if (!g) {
-                $('.mp-day').show();
-                return;
-            }
+            if (!g) { $('.mp-day').show(); return; }
             $('.mp-day').each(function () {
                 var days = String($(this).attr('data-days') || '');
                 $(this).toggle(days.indexOf(g) > -1);

@@ -835,4 +835,159 @@ body {
     .purple-style > * {
         position: relative;
     }
+        /* =====================================================
+   GLOBAL SKIN v10 — pillهای شیشه‌ای + تقویم شمسی
+   ===================================================== */
+        /* ===== pill برگشت شیشه‌ای (همه صفحه‌ها) ===== */
+        .coach-back-pill,
+        .btn-back-glass {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.18);
+            color: #dce9ff;
+            border-radius: 999px;
+            padding: 7px 18px;
+            font-size: .82rem;
+            font-weight: 700;
+            text-decoration: none;
+            backdrop-filter: blur(8px);
+            transition: all .25s;
+        }
 
+            .coach-back-pill i,
+            .btn-back-glass i {
+                color: #66d3e8;
+                transition: transform .25s;
+            }
+
+            .coach-back-pill:hover,
+            .btn-back-glass:hover {
+                background: rgba(255,255,255,.14);
+                color: #fff;
+            }
+
+                .coach-back-pill:hover i,
+                .btn-back-glass:hover i {
+                    transform: translateX(3px);
+                }
+        /* ===== اینپوت جستجوی شیشه‌ای ===== */
+        .glass-search {
+            width: 100%;
+            background: rgba(255,255,255,.08);
+            border: 1px solid rgba(255,255,255,.18);
+            color: #fff;
+            border-radius: 999px;
+            padding: 10px 18px;
+            font-size: .85rem;
+        }
+
+            .glass-search:focus {
+                outline: none;
+                border-color: rgba(102,211,232,.5);
+                background: rgba(255,255,255,.12);
+            }
+        /* ===== مودال تقویم شمسی — هم‌پوسته تقویم حضور ===== */
+        #datePickerModal .modal-content {
+            background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18)) !important;
+            border: 1px solid rgba(255,255,255,.18) !important;
+            border-radius: 20px;
+            color: #fff;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,.55);
+        }
+
+        #datePickerModal .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            border: none !important;
+            color: #fff;
+        }
+
+        #datePickerModal .modal-title {
+            color: #fff;
+            font-weight: 800;
+            font-size: .95rem;
+        }
+
+        #datePickerModal .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        #datePickerModal .modal-body {
+            background: transparent !important;
+            color: #fff;
+        }
+
+        #datePickerModal #currentMonthLabel {
+            color: #fff;
+            font-weight: 800;
+            font-size: 1rem;
+        }
+
+        #datePickerModal #prevMonth,
+        #datePickerModal #nextMonth {
+            background: rgba(255,255,255,.14) !important;
+            border: 1px solid rgba(255,255,255,.25) !important;
+            color: #fff !important;
+            border-radius: 10px;
+            width: 36px;
+            height: 36px;
+        }
+
+            #datePickerModal #prevMonth:hover,
+            #datePickerModal #nextMonth:hover {
+                background: rgba(102,211,232,.25) !important;
+            }
+
+        #datePickerModal .cal-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 4px;
+        }
+
+            #datePickerModal .cal-table th {
+                background: linear-gradient(135deg, #667eea, #764ba2) !important;
+                color: #fff !important;
+                border: none !important;
+                border-radius: 8px;
+                padding: 8px 2px;
+                font-size: .7rem;
+                font-weight: 700;
+                text-align: center;
+            }
+
+            #datePickerModal .cal-table td {
+                background: rgba(255,255,255,.07) !important;
+                color: #e9ecef !important;
+                border: 1px solid rgba(255,255,255,.10) !important;
+                border-radius: 10px;
+                padding: 10px 2px;
+                text-align: center;
+                cursor: pointer;
+                font-size: .85rem;
+                transition: background .2s, color .2s;
+            }
+
+                #datePickerModal .cal-table td:hover {
+                    background: rgba(102,211,232,.30) !important;
+                    color: #fff !important;
+                }
+
+                #datePickerModal .cal-table td:empty {
+                    background: transparent !important;
+                    border-color: transparent !important;
+                    cursor: default;
+                }
+                /* روزهای غیرفعال (خط‌خورده) */
+                #datePickerModal .cal-table td[style*="line-through"],
+                #datePickerModal .cal-table td.disabled,
+                #datePickerModal .cal-table td.cal-disabled {
+                    background: rgba(255,107,129,.10) !important;
+                    border-color: rgba(255,107,129,.30) !important;
+                    color: #ff8fa3 !important;
+                    text-decoration: line-through !important;
+                    cursor: not-allowed;
+                }
