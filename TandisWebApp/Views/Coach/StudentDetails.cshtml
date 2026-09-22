@@ -15,35 +15,35 @@
     </div>
     <div class="d-flex gap-2 align-items-center">
         <span class="stt stt-@Model.StatusClass" style="font-size:.75rem; padding:6px 16px;">@Model.StatusLabel</span>
-        <a href="javascript:history.back()" class="coach-back-pill"><i class="bi bi-arrow-right"></i> برگشت</a>
+        <a href="javascript:history.back()" class="purple-style coach-back-pill"><i class="bi bi-arrow-right"></i> برگشت</a>
     </div>
 </div>
 
 <!-- کارت‌های اطلاعات -->
 <div class="row g-3 mb-3">
     <div class="col-6 col-md-3">
-        <div class="sd-card h-100">
+        <div class="purple-style sd-card h-100">
             <div class="sd-icon grad-turquoise"><i class="bi bi-ticket-perforated-fill"></i></div>
             <div class="sd-label">باقی‌مانده</div>
             <div class="sd-value">@Model.RemainingSessions.ToString(fa)</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="sd-card h-100">
+        <div class="purple-style sd-card h-100">
             <div class="sd-icon grad-blue"><i class="bi bi-check2-circle"></i></div>
             <div class="sd-label">مصرف‌شده</div>
             <div class="sd-value">@Model.UsedSessions.ToString(fa)</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="sd-card h-100">
+        <div class="purple-style sd-card h-100">
             <div class="sd-icon grad-purple"><i class="bi bi-calendar-x-fill"></i></div>
             <div class="sd-label">پایان دوره</div>
             <div class="sd-value sd-small">@(Model.EndDate ?? "-")</div>
         </div>
     </div>
     <div class="col-6 col-md-3">
-        <div class="sd-card h-100">
+        <div class="purple-style sd-card h-100">
             <div class="sd-icon grad-pink"><i class="bi bi-telephone-fill"></i></div>
             <div class="sd-label">موبایل</div>
             @if (!string.IsNullOrEmpty(Model.Mobile))
@@ -63,7 +63,7 @@
 <!-- تاریخچه حضور -->
 <div class="sd-box">
     <div class="sd-box-head"><i class="bi bi-door-open-fill me-2"></i>تاریخچه حضور (@Model.Attendances.Count.ToString(fa) تردد)</div>
-    <div class="p-3">
+    <div class="purple-style p-3">
         @if (Model.Attendances.Count == 0)
         {
             <div class="sd-empty">

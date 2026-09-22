@@ -800,4 +800,39 @@ body {
     filter: none;
     transform: translateY(-2px) scale(1.1);
 }
+/* ===== پس‌زمینه بنفش شیشه‌ای + هاله‌های نور — قابل استفاده همه‌جا ===== */
+.purple-style {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18)) !important;
+}
+
+    /* هاله فیروزه‌ای گوشه بالا-راست */
+    .purple-style::before {
+        content: '';
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 160px;
+        height: 160px;
+        background: radial-gradient(circle, rgba(102,211,232,.25), transparent 70%);
+        pointer-events: none; /* ✅ کلیک‌ها رو نمی‌گیره */
+    }
+
+    /* هاله بنفش گوشه پایین-چپ */
+    .purple-style::after {
+        content: '';
+        position: absolute;
+        bottom: -60px;
+        left: -30px;
+        width: 140px;
+        height: 140px;
+        background: radial-gradient(circle, rgba(118,75,162,.25), transparent 70%);
+        pointer-events: none;
+    }
+
+    /* ✅ محتوای داخل عنصر بیاد روی هاله‌ها تا متن واضح بمونه */
+    .purple-style > * {
+        position: relative;
+    }
 

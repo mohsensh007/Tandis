@@ -5,7 +5,7 @@
 }
 
 <!-- ========== بنر خوش‌آمد ========== -->
-<div class="coach-banner mb-3">
+<div class="purple-style coach-banner mb-3">
     <div class="cb-icon"><i class="bi bi-person-badge-fill"></i></div>
     <div class="flex-grow-1" style="min-width:0">
         <div class="cb-title">پنل مربی</div>
@@ -17,7 +17,7 @@
 <!-- ========== کارت‌های آمار (بدون کلاس‌های من + پورسانت بزرگ) ========== -->
 <div class="row g-3 mb-3">
     <div class="col-6 col-md-4">
-        <div class="cstat-card h-100 cstat-clickable" id="btnAllStudents" title="مشاهده همه شاگردان">
+        <div class="purple-style cstat-card h-100 cstat-clickable" id="btnAllStudents" title="مشاهده همه شاگردان">
             <div class="cstat-icon grad-green"><i class="bi bi-people-fill"></i></div>
             <div class="cstat-label">شاگردان فعال</div>
             <div class="cstat-value">@Model.ActiveStudents.ToString(fa)</div>
@@ -25,7 +25,7 @@
         </div>
     </div>
     <div class="col-6 col-md-4">
-        <div class="cstat-card h-100">
+        <div class="purple-style cstat-card h-100">
             <div class="cstat-icon grad-orange"><i class="bi bi-door-open-fill"></i></div>
             <div class="cstat-label">حضور امروز</div>
             <div class="cstat-value">@Model.TodayAttendance.ToString(fa)</div>
@@ -33,7 +33,7 @@
     </div>
     <div class="col-6 col-md-4">
         <a href="/Coach/Commission" class="text-decoration-none">
-            <div class="cstat-card h-100">
+            <div class="purple-style cstat-card h-100">
                 <div class="cstat-icon grad-turquoise"><i class="bi bi-cash-coin"></i></div>
                 <div class="cstat-label">پورسانت</div>
                 <div class="cstat-value cstat-link">مشاهده گزارش <i class="bi bi-arrow-left"></i></div>
@@ -43,7 +43,7 @@
 </div>
 
 <!-- ========== کلاس‌های امروز ========== -->
-<div class="coach-card">
+<div class="purple-style coach-card">
     <div class="coach-card-head"><i class="bi bi-calendar3 me-2"></i>کلاس‌های امروز</div>
     <div class="p-3">
         @if (Model.TodayClasses.Count == 0)
