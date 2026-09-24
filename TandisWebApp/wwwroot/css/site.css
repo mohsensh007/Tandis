@@ -41,20 +41,20 @@ body {
     padding: 24px 12px;
 }
 
-.dash-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 6px 20px rgba(0,0,0,.12);
-}
+    .dash-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 6px 20px rgba(0,0,0,.12);
+    }
 
-.dash-card .icon {
-    font-size: 2.5rem;
-    margin-bottom: 8px;
-}
+    .dash-card .icon {
+        font-size: 2.5rem;
+        margin-bottom: 8px;
+    }
 
-.dash-card .title {
-    font-size: .95rem;
-    font-weight: bold;
-}
+    .dash-card .title {
+        font-size: .95rem;
+        font-weight: bold;
+    }
 
 /* === دکمه‌ها === */
 .btn-primary {
@@ -62,9 +62,9 @@ body {
     border: none;
 }
 
-.btn-primary:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-}
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    }
 
 .btn-success {
     background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
@@ -76,10 +76,10 @@ body {
     border-color: #667eea;
 }
 
-.btn-outline-primary:hover {
-    background: #667eea;
-    color: white;
-}
+    .btn-outline-primary:hover {
+        background: #667eea;
+        color: white;
+    }
 
 /* === جدول === */
 .table th {
@@ -98,22 +98,13 @@ body {
     overflow: hidden;
 }
 
-.login-card .card-header {
-    text-align: center;
-    font-size: 1.4rem;
-    padding: 24px;
-}
+    .login-card .card-header {
+        text-align: center;
+        font-size: 1.4rem;
+        padding: 24px;
+    }
 
-/* === Toast / Alert === */
-.toast-container {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    min-width: 300px;
-}
-
+/* === Alert === */
 .alert-msg {
     padding: 12px 20px;
     border-radius: 8px;
@@ -122,20 +113,44 @@ body {
     animation: slideDown .3s ease;
 }
 
-.alert-msg.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-.alert-msg.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-.alert-msg.warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+    .alert-msg.success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-msg.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .alert-msg.warning {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
 
 @keyframes slideDown {
-    from { opacity: 0; transform: translateY(-20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* === Loading spinner === */
 .spinner-overlay {
     position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(255,255,255,.7);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -143,14 +158,27 @@ body {
 }
 
 /* === Badge === */
-.badge-active { background: #28a745; }
-.badge-inactive { background: #dc3545; }
+.badge-active {
+    background: #28a745;
+}
+
+.badge-inactive {
+    background: #dc3545;
+}
 
 /* === Responsive === */
 @media (max-width: 576px) {
-    .dash-card .icon { font-size: 2rem; }
-    .card-header { font-size: .95rem; }
-    .login-container { margin: 30px 10px; }
+    .dash-card .icon {
+        font-size: 2rem;
+    }
+
+    .card-header {
+        font-size: .95rem;
+    }
+
+    .login-container {
+        margin: 30px 10px;
+    }
 }
 
 /* ============================
@@ -168,27 +196,32 @@ body {
     box-shadow: 0 10px 30px rgba(118, 75, 162, .25);
     transition: transform .25s;
 }
-.session-card:hover { transform: translateY(-4px); }
 
-.session-card .session-bg {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 85% 15%, rgba(255,255,255,.18), transparent 60%);
-    pointer-events: none;
+    .session-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .session-card .session-bg {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at 85% 15%, rgba(255,255,255,.18), transparent 60%);
+        pointer-events: none;
+    }
+
+    .session-card .session-name {
+        font-size: 1.4rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .session-card .session-coach {
+        opacity: .9;
+        font-size: .9rem;
+    }
+
+.session-progress-wrap {
+    margin-top: 14px;
 }
-
-.session-card .session-name {
-    font-size: 1.4rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-
-.session-card .session-coach {
-    opacity: .9;
-    font-size: .9rem;
-}
-
-.session-progress-wrap { margin-top: 14px; }
 
 .session-progress {
     position: relative;
@@ -197,14 +230,17 @@ body {
     border-radius: 999px;
     overflow: hidden;
 }
-.session-progress .bar {
-    height: 100%;
-    background: linear-gradient(90deg, #38ef7d, #11998e);
-    border-radius: 999px;
-    transition: width .8s ease;
-}
 
-.session-progress.low .bar { background: linear-gradient(90deg, #fc5c7d, #f7971e); }
+    .session-progress .bar {
+        height: 100%;
+        background: linear-gradient(90deg, #38ef7d, #11998e);
+        border-radius: 999px;
+        transition: width .8s ease;
+    }
+
+    .session-progress.low .bar {
+        background: linear-gradient(90deg, #fc5c7d, #f7971e);
+    }
 
 .session-stats {
     display: flex;
@@ -234,70 +270,115 @@ body {
     box-shadow: 0 4px 18px rgba(0,0,0,.06);
     transition: transform .2s;
 }
-.stat-card:hover { transform: translateY(-3px); }
 
-.stat-card .stat-icon {
-    width: 56px;
-    height: 56px;
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.6rem;
-    color: #fff;
+    .stat-card:hover {
+        transform: translateY(-3px);
+    }
+
+    .stat-card .stat-icon {
+        width: 56px;
+        height: 56px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        color: #fff;
+    }
+
+    .stat-card .stat-label {
+        color: #6c757d;
+        font-size: .85rem;
+        margin-bottom: 2px;
+    }
+
+    .stat-card .stat-value {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #2c3e50;
+    }
+
+.bg-gradient-success {
+    background: linear-gradient(135deg, #11998e, #38ef7d);
 }
-.stat-card .stat-label { color: #6c757d; font-size: .85rem; margin-bottom: 2px; }
-.stat-card .stat-value { font-size: 1.25rem; font-weight: 700; color: #2c3e50; }
 
-.bg-gradient-success { background: linear-gradient(135deg, #11998e, #38ef7d); }
-.bg-gradient-info    { background: linear-gradient(135deg, #2193b0, #6dd5ed); }
-.bg-gradient-warning { background: linear-gradient(135deg, #f7971e, #ffd200); }
-.bg-gradient-danger  { background: linear-gradient(135deg, #cb356b, #bd3f32); }
+.bg-gradient-info {
+    background: linear-gradient(135deg, #2193b0, #6dd5ed);
+}
+
+.bg-gradient-warning {
+    background: linear-gradient(135deg, #f7971e, #ffd200);
+}
+
+.bg-gradient-danger {
+    background: linear-gradient(135deg, #cb356b, #bd3f32);
+}
 
 /* --- جدول‌های گزارش --- */
 .report-table {
     border-radius: 12px;
     overflow: hidden;
 }
-.report-table thead th {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    font-weight: 600;
-    font-size: .9rem;
-    border: none;
-    white-space: nowrap;
-}
-.report-table tbody td {
-    vertical-align: middle;
-    font-size: .9rem;
-}
-.report-table tbody tr:hover { background: #f8f5ff; }
 
-.badge-credit { background: #11998e; color: #fff; padding: 4px 10px; border-radius: 999px; font-size: .75rem; }
-.badge-debit  { background: #cb356b; color: #fff; padding: 4px 10px; border-radius: 999px; font-size: .75rem; }
+    .report-table thead th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        font-weight: 600;
+        font-size: .9rem;
+        border: none;
+        white-space: nowrap;
+    }
+
+    .report-table tbody td {
+        vertical-align: middle;
+        font-size: .9rem;
+    }
+
+    .report-table tbody tr:hover {
+        background: #f8f5ff;
+    }
+
+.badge-credit {
+    background: #11998e;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: .75rem;
+}
+
+.badge-debit {
+    background: #cb356b;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: .75rem;
+}
 
 /* --- تب‌ها --- */
 .nav-tabs-custom {
     border: none;
     gap: 6px;
 }
-.nav-tabs-custom .nav-link {
-    border: none;
-    border-radius: 10px;
-    color: #6c757d;
-    font-weight: 600;
-    padding: 10px 18px;
-    transition: all .2s;
-}
-.nav-tabs-custom .nav-link.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(102, 126, 234, .3);
-}
-.nav-tabs-custom .nav-link:not(.active):hover {
-    background: #f0eeff;
-    color: #667eea;
-}
+
+    .nav-tabs-custom .nav-link {
+        border: none;
+        border-radius: 10px;
+        color: #6c757d;
+        font-weight: 600;
+        padding: 10px 18px;
+        transition: all .2s;
+    }
+
+        .nav-tabs-custom .nav-link.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, .3);
+        }
+
+        .nav-tabs-custom .nav-link:not(.active):hover {
+            background: #f0eeff;
+            color: #667eea;
+        }
 
 /* --- آیتم خالی --- */
 .empty-state {
@@ -305,7 +386,11 @@ body {
     padding: 40px 20px;
     color: #adb5bd;
 }
-.empty-state .empty-icon { font-size: 3rem; margin-bottom: 10px; }
+
+    .empty-state .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 10px;
+    }
 
 /* --- بخش کارت سریع --- */
 .quick-link {
@@ -320,53 +405,74 @@ body {
     transition: all .2s;
     display: block;
 }
-.quick-link:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0,0,0,.1);
-    color: #667eea;
-}
-.quick-link .ql-icon { font-size: 2rem; }
-.quick-link .ql-title { font-size: .85rem; font-weight: 600; margin-top: 6px; }
+
+    .quick-link:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(0,0,0,.1);
+        color: #667eea;
+    }
+
+    .quick-link .ql-icon {
+        font-size: 2rem;
+    }
+
+    .quick-link .ql-title {
+        font-size: .85rem;
+        font-weight: 600;
+        margin-top: 6px;
+    }
 
 /* ============================
    تقویم شمسی
    ============================ */
-.cal-table { width: 100%; border-collapse: collapse; }
-.cal-table th {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    padding: 10px 0;
-    font-size: .85rem;
-    font-weight: 600;
-    border: none;
+.cal-table {
+    width: 100%;
+    border-collapse: collapse;
 }
-.cal-table td {
-    padding: 12px 4px;
-    text-align: center;
-    font-size: .95rem;
-    font-weight: 600;
-    border: 1px solid #e9ecef;
-    transition: all .15s;
+
+    .cal-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        padding: 10px 0;
+        font-size: .85rem;
+        font-weight: 600;
+        border: none;
+    }
+
+    .cal-table td {
+        padding: 12px 4px;
+        text-align: center;
+        font-size: .95rem;
+        font-weight: 600;
+        border: 1px solid #e9ecef;
+        transition: all .15s;
+    }
+
+.cal-empty {
+    background: #f8f9fa;
 }
-.cal-empty { background: #f8f9fa; }
+
 .cal-disabled {
     color: #ccc;
     background: #f8f9fa;
     cursor: not-allowed;
     text-decoration: line-through;
 }
+
 .cal-active {
     cursor: pointer;
     color: #2c3e50;
     background: #fff;
     border-radius: 0;
 }
-.cal-active:hover {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: #fff;
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, .4);
-}
+
+    .cal-active:hover {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        transform: scale(1.1);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, .4);
+    }
+
 .cal-today {
     background: #e8f0fe !important;
     color: #667eea !important;
@@ -385,404 +491,82 @@ body {
     transition: all .25s;
     margin-bottom: 16px;
 }
-.sanse-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(102, 126, 234, .15);
-}
-.sanse-card .sanse-top {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    padding: 16px 18px;
-    position: relative;
-}
-.sanse-card .sanse-top::after {
-    content: '';
-    position: absolute;
-    top: -30px;
-    left: -30px;
-    width: 100px;
-    height: 100px;
-    background: rgba(255,255,255,.08);
-    border-radius: 50%;
-}
-.sanse-card .sanse-sport {
-    font-size: 1.1rem;
-    font-weight: 700;
-}
-.sanse-card .sanse-name {
-    font-size: .9rem;
-    opacity: .9;
-    margin-top: 2px;
-}
-.sanse-card .sanse-body {
-    padding: 16px 18px;
-}
-.sanse-card .sanse-info {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 14px;
-}
-.sanse-card .sanse-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 5px 12px;
-    background: #f0eeff;
-    border-radius: 999px;
-    font-size: .8rem;
-    color: #4a3f6b;
-    font-weight: 600;
-}
-.sanse-card .sanse-price {
-    font-size: 1.15rem;
-    font-weight: 800;
-    color: #667eea;
-    margin-bottom: 14px;
-}
-.sanse-card .sanse-btn {
-    width: 100%;
-    padding: 12px;
-    border: none;
-    border-radius: 12px;
-    font-weight: 700;
-    font-size: .95rem;
-    transition: all .2s;
-}
-/* استایل‌های Toast Notification */
-.toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    pointer-events: none;
-}
 
-.toast {
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
-    padding: 16px 20px;
-    min-width: 300px;
-    max-width: 400px;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    pointer-events: auto;
-    animation: slideIn 0.3s ease;
-    border-right: 4px solid;
-}
-
-    .toast.success {
-        border-right-color: #00b296;
+    .sanse-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(102, 126, 234, .15);
     }
 
-    .toast.error {
-        border-right-color: #da1e28;
+    .sanse-card .sanse-top {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #fff;
+        padding: 16px 18px;
+        position: relative;
     }
 
-    .toast.warning {
-        border-right-color: #e6ac00;
+        .sanse-card .sanse-top::after {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,.08);
+            border-radius: 50%;
+        }
+
+    .sanse-card .sanse-sport {
+        font-size: 1.1rem;
+        font-weight: 700;
     }
 
-    .toast.info {
-        border-right-color: #0062ff;
+    .sanse-card .sanse-name {
+        font-size: .9rem;
+        opacity: .9;
+        margin-top: 2px;
     }
 
-.toast-content {
-    flex: 1;
-}
-
-.toast-message {
-    color: #161616;
-    font-size: 14px;
-    line-height: 1.5;
-    font-weight: 500;
-}
-
-.toast-close {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #525252;
-    transition: color 0.2s;
-}
-
-    .toast-close:hover {
-        color: #161616;
+    .sanse-card .sanse-body {
+        padding: 16px 18px;
     }
 
-.toast-icon {
-    width: 20px;
-    height: 20px;
-    flex-shrink: 0;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
+    .sanse-card .sanse-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 14px;
     }
 
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* Spinner Overlay */
-.spinner-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99999;
-}
-
-.spinner-border {
-    width: 3rem;
-    height: 3rem;
-    border-width: 0.25em;
-}
-/* =========================================
-   استایل‌های ضروری برای نمایش Toast و Loading
-   ========================================= */
-
-.toast-container {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 99999;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    pointer-events: none;
-}
-
-.toast {
-    background: #ffffff;
-    color: #161616;
-    border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    padding: 16px 20px;
-    min-width: 300px;
-    max-width: 400px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    pointer-events: auto;
-    animation: slideDown 0.3s ease;
-    border-right: 4px solid #da1e28; /* پیش‌فرض قرمز برای خطا */
-}
-
-    .toast.success {
-        border-right-color: #00b296;
+    .sanse-card .sanse-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 5px 12px;
+        background: #f0eeff;
+        border-radius: 999px;
+        font-size: .8rem;
+        color: #4a3f6b;
+        font-weight: 600;
     }
 
-    .toast.error {
-        border-right-color: #da1e28;
+    .sanse-card .sanse-price {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #667eea;
+        margin-bottom: 14px;
     }
 
-    .toast.warning {
-        border-right-color: #e6ac00;
+    .sanse-card .sanse-btn {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: .95rem;
+        transition: all .2s;
     }
 
-    .toast.info {
-        border-right-color: #0062ff;
-    }
-
-.toast-message {
-    font-size: 14px;
-    font-weight: 500;
-    flex: 1;
-    line-height: 1.5;
-}
-
-.toast-close {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px;
-    color: #525252;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-    .toast-close:hover {
-        color: #161616;
-    }
-
-@keyframes slideDown {
-    from {
-        transform: translateY(-20px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* استایل اسپینر لودینگ */
-.spinner-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99999;
-}
-/* =========================================
-   استایل‌های ضروری برای نمایش Toast (نامرئی نبودن)
-   ========================================= */
-.toast-container {
-    position: fixed !important;
-    top: 20px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    z-index: 999999 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-    pointer-events: none !important;
-}
-
-.toast {
-    background: #ffffff !important;
-    color: #161616 !important;
-    border-radius: 8px !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-    padding: 16px 20px !important;
-    min-width: 300px !important;
-    max-width: 400px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    pointer-events: auto !important;
-    animation: slideDown 0.3s ease !important;
-    border-right: 4px solid #da1e28 !important;
-}
-
-.toast-message {
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    flex: 1 !important;
-    line-height: 1.5 !important;
-}
-
-.toast-close {
-    background: transparent !important;
-    border: none !important;
-    cursor: pointer !important;
-    padding: 4px !important;
-    color: #525252 !important;
-}
-
-@keyframes slideDown {
-    from { transform: translateY(-20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
-/* استایل اسپینر لودینگ */
-.spinner-overlay {
-    position: fixed !important;
-    top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
-    background: rgba(0, 0, 0, 0.5) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    z-index: 999999 !important;
-}
-/* =========================================
-   استایل‌های ضروری برای نمایش Toast (نامرئی نبودن)
-   ========================================= */
-.toast-container {
-    position: fixed !important;
-    top: 20px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    z-index: 999999 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 10px !important;
-    pointer-events: none !important;
-}
-
-.toast {
-    background: #ffffff !important;
-    color: #161616 !important;
-    border-radius: 8px !important;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3) !important;
-    padding: 16px 20px !important;
-    min-width: 300px !important;
-    max-width: 400px !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 12px !important;
-    pointer-events: auto !important;
-    animation: slideDown 0.3s ease !important;
-    border-right: 4px solid #da1e28 !important;
-}
-
-.toast-message {
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    flex: 1 !important;
-    line-height: 1.5 !important;
-}
-
-.toast-close {
-    background: transparent !important;
-    border: none !important;
-    cursor: pointer !important;
-    padding: 4px !important;
-    color: #525252 !important;
-}
-
-@keyframes slideDown {
-    from {
-        transform: translateY(-20px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
-}
-
-/* استایل اسپینر لودینگ */
-.spinner-overlay {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: rgba(0, 0, 0, 0.5) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    z-index: 999999 !important;
-}
+/* ===== bn-item img ===== */
 .bn-item img {
     width: 26px;
     height: 26px;
@@ -790,7 +574,6 @@ body {
     opacity: .7;
     filter: grayscale(40%);
     transition: all .35s cubic-bezier(.22,.9,.35,1.2);
-    /* ✅ جدید: حذف هرگونه پس‌زمینه سفید */
     background: transparent;
     mix-blend-mode: normal;
 }
@@ -800,14 +583,14 @@ body {
     filter: none;
     transform: translateY(-2px) scale(1.1);
 }
-/* ===== پس‌زمینه بنفش شیشه‌ای + هاله‌های نور — قابل استفاده همه‌جا ===== */
+
+/* ===== پس‌زمینه بنفش شیشه‌ای + هاله‌های نور ===== */
 .purple-style {
     position: relative;
     overflow: hidden;
     background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18)) !important;
 }
 
-    /* هاله فیروزه‌ای گوشه بالا-راست */
     .purple-style::before {
         content: '';
         position: absolute;
@@ -816,10 +599,9 @@ body {
         width: 160px;
         height: 160px;
         background: radial-gradient(circle, rgba(102,211,232,.25), transparent 70%);
-        pointer-events: none; /* ✅ کلیک‌ها رو نمی‌گیره */
+        pointer-events: none;
     }
 
-    /* هاله بنفش گوشه پایین-چپ */
     .purple-style::after {
         content: '';
         position: absolute;
@@ -831,301 +613,162 @@ body {
         pointer-events: none;
     }
 
-    /* ✅ محتوای داخل عنصر بیاد روی هاله‌ها تا متن واضح بمونه */
     .purple-style > * {
         position: relative;
     }
-        /* =====================================================
-   GLOBAL SKIN v10 — pillهای شیشه‌ای + تقویم شمسی
-   ===================================================== */
-        /* ===== pill برگشت شیشه‌ای (همه صفحه‌ها) ===== */
-        .coach-back-pill,
-        .btn-back-glass {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,.08);
-            border: 1px solid rgba(255,255,255,.18);
-            color: #dce9ff;
-            border-radius: 999px;
-            padding: 7px 18px;
-            font-size: .82rem;
-            font-weight: 700;
-            text-decoration: none;
-            backdrop-filter: blur(8px);
-            transition: all .25s;
-        }
 
-            .coach-back-pill i,
-            .btn-back-glass i {
-                color: #66d3e8;
-                transition: transform .25s;
-            }
-
-            .coach-back-pill:hover,
-            .btn-back-glass:hover {
-                background: rgba(255,255,255,.14);
-                color: #fff;
-            }
-
-                .coach-back-pill:hover i,
-                .btn-back-glass:hover i {
-                    transform: translateX(3px);
-                }
-        /* ===== اینپوت جستجوی شیشه‌ای ===== */
-        .glass-search {
-            width: 100%;
-            background: rgba(255,255,255,.08);
-            border: 1px solid rgba(255,255,255,.18);
-            color: #fff;
-            border-radius: 999px;
-            padding: 10px 18px;
-            font-size: .85rem;
-        }
-
-            .glass-search:focus {
-                outline: none;
-                border-color: rgba(102,211,232,.5);
-                background: rgba(255,255,255,.12);
-            }
-        /* ===== مودال تقویم شمسی — هم‌پوسته تقویم حضور ===== */
-        #datePickerModal .modal-content {
-            background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18)) !important;
-            border: 1px solid rgba(255,255,255,.18) !important;
-            border-radius: 20px;
-            color: #fff;
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,.55);
-        }
-
-        #datePickerModal .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-            border: none !important;
-            color: #fff;
-        }
-
-        #datePickerModal .modal-title {
-            color: #fff;
-            font-weight: 800;
-            font-size: .95rem;
-        }
-
-        #datePickerModal .btn-close {
-            filter: invert(1) grayscale(100%) brightness(200%);
-        }
-
-        #datePickerModal .modal-body {
-            background: transparent !important;
-            color: #fff;
-        }
-
-        #datePickerModal #currentMonthLabel {
-            color: #fff;
-            font-weight: 800;
-            font-size: 1rem;
-        }
-
-        #datePickerModal #prevMonth,
-        #datePickerModal #nextMonth {
-            background: rgba(255,255,255,.14) !important;
-            border: 1px solid rgba(255,255,255,.25) !important;
-            color: #fff !important;
-            border-radius: 10px;
-            width: 36px;
-            height: 36px;
-        }
-
-            #datePickerModal #prevMonth:hover,
-            #datePickerModal #nextMonth:hover {
-                background: rgba(102,211,232,.25) !important;
-            }
-
-        #datePickerModal .cal-table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 4px;
-        }
-
-            #datePickerModal .cal-table th {
-                background: linear-gradient(135deg, #667eea, #764ba2) !important;
-                color: #fff !important;
-                border: none !important;
-                border-radius: 8px;
-                padding: 8px 2px;
-                font-size: .7rem;
-                font-weight: 700;
-                text-align: center;
-            }
-
-            #datePickerModal .cal-table td {
-                background: rgba(255,255,255,.07) !important;
-                color: #e9ecef !important;
-                border: 1px solid rgba(255,255,255,.10) !important;
-                border-radius: 10px;
-                padding: 10px 2px;
-                text-align: center;
-                cursor: pointer;
-                font-size: .85rem;
-                transition: background .2s, color .2s;
-            }
-
-                #datePickerModal .cal-table td:hover {
-                    background: rgba(102,211,232,.30) !important;
-                    color: #fff !important;
-                }
-
-                #datePickerModal .cal-table td:empty {
-                    background: transparent !important;
-                    border-color: transparent !important;
-                    cursor: default;
-                }
-                /* روزهای غیرفعال (خط‌خورده) */
-                #datePickerModal .cal-table td[style*="line-through"],
-                #datePickerModal .cal-table td.disabled,
-                #datePickerModal .cal-table td.cal-disabled {
-                    background: rgba(255,107,129,.10) !important;
-                    border-color: rgba(255,107,129,.30) !important;
-                    color: #ff8fa3 !important;
-                    text-decoration: line-through !important;
-                    cursor: not-allowed;
-                }
-/* =====================================================
-   TOAST SKIN v2 — نوتیفیکیشن شیشه‌ای هماهنگ با تم تندیس
-   ===================================================== */
-@keyframes slideIn {
-    from {
-        transform: translateY(-18px);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+/* ===== pill برگشت شیشه‌ای ===== */
+.coach-back-pill,
+.btn-back-glass {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.18);
+    color: #dce9ff;
+    border-radius: 999px;
+    padding: 7px 18px;
+    font-size: .82rem;
+    font-weight: 700;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+    transition: all .25s;
 }
 
-/* ===== ظرف نگه‌دارنده: وسط صفحه، بالای همه‌چیز ===== */
-#toastContainer.toast-container {
-    position: fixed !important;
-    top: calc(12px + env(safe-area-inset-top)) !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: auto !important;
-    margin: 0 auto !important;
-    width: calc(100% - 24px) !important;
-    max-width: 430px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 8px !important;
-    z-index: 3000 !important;
-    pointer-events: none !important;
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
+    .coach-back-pill i,
+    .btn-back-glass i {
+        color: #66d3e8;
+        transition: transform .25s;
+    }
+
+    .coach-back-pill:hover,
+    .btn-back-glass:hover {
+        background: rgba(255,255,255,.14);
+        color: #fff;
+    }
+
+        .coach-back-pill:hover i,
+        .btn-back-glass:hover i {
+            transform: translateX(3px);
+        }
+
+/* ===== اینپوت جستجوی شیشه‌ای ===== */
+.glass-search {
+    width: 100%;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.18);
+    color: #fff;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: .85rem;
 }
 
-/* ===== خود توست: شیشه‌ای تیره ===== */
-#toastContainer .toast {
-    pointer-events: auto !important;
-    display: flex !important;
-    align-items: flex-start !important;
-    gap: 10px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    min-height: 0 !important;
-    background: rgba(16,20,36,.93) !important;
+    .glass-search:focus {
+        outline: none;
+        border-color: rgba(102,211,232,.5);
+        background: rgba(255,255,255,.12);
+    }
+
+/* ===== مودال تقویم شمسی ===== */
+#datePickerModal .modal-content {
+    background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18)) !important;
+    border: 1px solid rgba(255,255,255,.18) !important;
+    border-radius: 20px;
+    color: #fff;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,.16) !important;
-    border-radius: 14px !important;
-    padding: 12px 14px !important;
-    color: #fff !important;
-    box-shadow: 0 12px 32px rgba(0,0,0,.5) !important;
-    opacity: 1 !important;
-    overflow: hidden !important;
-    animation: slideIn .35s cubic-bezier(.22,.9,.35,1.2) !important;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.55);
 }
 
-    /* ===== نوار رنگی سمت راست (RTL) بر اساس نوع ===== */
-    #toastContainer .toast.success {
-        border-right: 4px solid #38d9a9 !important;
-    }
-
-    #toastContainer .toast.error {
-        border-right: 4px solid #ff6b81 !important;
-    }
-
-    #toastContainer .toast.warning {
-        border-right: 4px solid #ffd200 !important;
-    }
-
-    #toastContainer .toast.info {
-        border-right: 4px solid #66d3e8 !important;
-    }
-
-    /* ===== رنگ آیکن‌ها هماهنگ با تم ===== */
-    #toastContainer .toast.success .toast-icon {
-        stroke: #38d9a9 !important;
-    }
-
-    #toastContainer .toast.error .toast-icon {
-        stroke: #ff6b81 !important;
-    }
-
-    #toastContainer .toast.warning .toast-icon {
-        stroke: #ffd200 !important;
-    }
-
-    #toastContainer .toast.info .toast-icon {
-        stroke: #66d3e8 !important;
-    }
-
-#toastContainer .toast-icon {
-    flex: 0 0 auto !important;
-    width: 22px !important;
-    height: 22px !important;
-    margin-top: 1px;
-}
-
-/* ===== متن: همیشه کامل دیده بشه ===== */
-#toastContainer .toast-content {
-    flex: 1 1 auto !important;
-    min-width: 0 !important;
-    display: block !important;
-}
-
-#toastContainer .toast-message {
-    white-space: normal !important;
-    word-break: break-word !important;
-    overflow: visible !important;
-    text-overflow: clip !important;
-    line-height: 1.8 !important;
-    font-size: .84rem !important;
-    font-weight: 600 !important;
-    color: #e9ecef !important;
-    max-height: none !important;
-}
-
-/* ===== دکمه بستن ===== */
-#toastContainer .toast-close {
-    flex: 0 0 auto !important;
-    background: rgba(255,255,255,.08) !important;
+#datePickerModal .modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
     border: none !important;
-    color: #9fb3c8 !important;
-    width: 26px !important;
-    height: 26px !important;
-    border-radius: 8px !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    transition: all .2s;
+    color: #fff;
 }
 
-    #toastContainer .toast-close:hover {
-        background: rgba(255,107,129,.25) !important;
-        color: #fff !important;
+#datePickerModal .modal-title {
+    color: #fff;
+    font-weight: 800;
+    font-size: .95rem;
+}
+
+#datePickerModal .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+#datePickerModal .modal-body {
+    background: transparent !important;
+    color: #fff;
+}
+
+#datePickerModal #currentMonthLabel {
+    color: #fff;
+    font-weight: 800;
+    font-size: 1rem;
+}
+
+#datePickerModal #prevMonth,
+#datePickerModal #nextMonth {
+    background: rgba(255,255,255,.14) !important;
+    border: 1px solid rgba(255,255,255,.25) !important;
+    color: #fff !important;
+    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+}
+
+    #datePickerModal #prevMonth:hover,
+    #datePickerModal #nextMonth:hover {
+        background: rgba(102,211,232,.25) !important;
     }
+
+#datePickerModal .cal-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 4px;
+}
+
+    #datePickerModal .cal-table th {
+        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        color: #fff !important;
+        border: none !important;
+        border-radius: 8px;
+        padding: 8px 2px;
+        font-size: .7rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    #datePickerModal .cal-table td {
+        background: rgba(255,255,255,.07) !important;
+        color: #e9ecef !important;
+        border: 1px solid rgba(255,255,255,.10) !important;
+        border-radius: 10px;
+        padding: 10px 2px;
+        text-align: center;
+        cursor: pointer;
+        font-size: .85rem;
+        transition: background .2s, color .2s;
+    }
+
+        #datePickerModal .cal-table td:hover {
+            background: rgba(102,211,232,.30) !important;
+            color: #fff !important;
+        }
+
+        #datePickerModal .cal-table td:empty {
+            background: transparent !important;
+            border-color: transparent !important;
+            cursor: default;
+        }
+
+        #datePickerModal .cal-table td[style*="line-through"],
+        #datePickerModal .cal-table td.disabled,
+        #datePickerModal .cal-table td.cal-disabled {
+            background: rgba(255,107,129,.10) !important;
+            border-color: rgba(255,107,129,.30) !important;
+            color: #ff8fa3 !important;
+            text-decoration: line-through !important;
+            cursor: not-allowed;
+        }

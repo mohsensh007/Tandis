@@ -1,8 +1,9 @@
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Security.Claims;
 using TandisWebApp.DTOs;
 using TandisWebApp.Services;
 
@@ -29,6 +30,7 @@ namespace TandisWebApp.Controllers
         // ============================================================
 
         /// <summary>صفحه لاگین</summary>
+        [EnableRateLimiting("login")]
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
         {
