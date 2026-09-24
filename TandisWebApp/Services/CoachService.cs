@@ -16,7 +16,7 @@ namespace TandisWebApp.Services
             _helper = helper;
         }
 
-        // ========== داشبورد مربی ==========
+        // ========== داشبورد مربی (خواندنی) ==========
         public async Task<CoachDashboardDto> GetDashboardAsync(int coachMemberID)
         {
             var model = new CoachDashboardDto();
@@ -27,10 +27,13 @@ namespace TandisWebApp.Services
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
                 where m.MemberID == coachMemberID
                 select p.FullName
-            ).FirstOrDefaultAsync() ?? "";
+            )
+            .AsNoTracking()
+            .FirstOrDefaultAsync() ?? "";
 
             // سانس‌های فعال من
             var mySanse = await _db.Gen_SportSanses
+                .AsNoTracking()
                 .Where(s => s.CoachMemberID == coachMemberID && s.IsActive == true)
                 .Select(s => s.SportSanseID)
                 .ToListAsync();
@@ -41,8 +44,8 @@ namespace TandisWebApp.Services
             var todayLatin = DateTime.Now.DayOfWeek.ToString();
             var nowTime = DateTime.Now.TimeOfDay;
 
-            // ✅ فیکس CS1503: فیلتر null + .Value
             model.ActiveStudents = mySanse.Count == 0 ? 0 : await _db.Acc_MemberSports
+                .AsNoTracking()
                 .Where(a => a.SportSanseID != null && mySanse.Contains(a.SportSanseID.Value) && a.IsActive == true)
                 .Select(a => a.MemberID)
                 .Distinct()
@@ -68,10 +71,11 @@ namespace TandisWebApp.Services
                     EndTime = d.EndTime,
                     ClassCapacity = s.ClassCapacity,
                     RegCount = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID && a.IsActive == true),
-                    // ✅ فیکس CS0019: مقایسه رشته شمسی با string.Compare
                     RegValidCount = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID && a.IsActive == true && string.Compare(a.EndDate, todayStr) >= 0)
                 }
-            ).ToListAsync();
+            )
+            .AsNoTracking()
+            .ToListAsync();
 
             // حضور امروز هر کلاس
             var sanseIds = classes.Select(c => c.SportSanseID).Distinct().ToList();
@@ -86,9 +90,11 @@ namespace TandisWebApp.Services
                     where a.SportSanseID != null && sanseIds.Contains(a.SportSanseID.Value)
                           && t.EntryDateTime != null
                           && t.EntryDateTime.Value.Date == today
-                    group t by (a.SportSanseID ?? 0) into g   // ✅ فیکس Warning CS8714
+                    group t by (a.SportSanseID ?? 0) into g
                     select new { SanseID = g.Key, Cnt = g.Count() }
-                ).ToDictionaryAsync(x => x.SanseID, x => x.Cnt);
+                )
+                .AsNoTracking()
+                .ToDictionaryAsync(x => x.SanseID, x => x.Cnt);
             }
 
             // وضعیت هر کلاس
@@ -125,7 +131,7 @@ namespace TandisWebApp.Services
             return model;
         }
 
-        // ========== لیست همه کلاس‌های مربی ==========
+        // ========== لیست همه کلاس‌های مربی (خواندنی) ==========
         public async Task<List<CoachClassListDto>> GetMyClassesAsync(int coachMemberID)
         {
             var todayStr = _helper.GetToday();
@@ -141,12 +147,13 @@ namespace TandisWebApp.Services
                     SanseName = s.SanseName,
                     ClassCapacity = s.ClassCapacity,
                     TotalStudents = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID),
-                    // ✅ فیکس CS0019
                     ActiveStudents = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID && a.IsActive == true && string.Compare(a.EndDate, todayStr) >= 0)
                 }
-            ).ToListAsync();
+            )
+            .AsNoTracking()
+            .ToListAsync();
 
-            // برنامه هفتگی همه کلاس‌ها (یک کوئری جدا)
+            // برنامه هفتگی همه کلاس‌ها
             var classIds = classes.Select(c => c.SportSanseID).ToList();
             var details = classIds.Count == 0
                 ? new List<CoachSchedulePartDto>()
@@ -163,7 +170,9 @@ namespace TandisWebApp.Services
                         StartTime = d.StartTime,
                         EndTime = d.EndTime
                     }
-                ).ToListAsync();
+                )
+                .AsNoTracking()
+                .ToListAsync();
 
             foreach (var c in classes)
             {
@@ -174,11 +183,11 @@ namespace TandisWebApp.Services
             return classes;
         }
 
-        // ========== شاگردان یک کلاس ==========
+        // ========== شاگردان یک کلاس (خواندنی) ==========
         public async Task<(string ClassName, List<CoachStudentDto> Students)> GetClassStudentsAsync(int coachMemberID, int sportSanseID)
         {
-            // چک مالکیت: سانس باید مال همین مربی باشه
             var sanse = await _db.Gen_SportSanses
+                .AsNoTracking()
                 .Where(s => s.SportSanseID == sportSanseID && s.CoachMemberID == coachMemberID && s.IsActive == true)
                 .Select(s => new { SportName = s.Gen_Sport_Category.SportName, s.SanseName })
                 .FirstOrDefaultAsync();
@@ -202,13 +211,13 @@ namespace TandisWebApp.Services
                     Mobile = p.Mobile,
                     StartDate = a.StartDate,
                     EndDate = a.EndDate,
-                    // ✅ فیکس CS1061: اسم درست ستون = SessionCount
                     TotalSessions = (int)(a.SessionCount ?? 0),
-                    // ✅ فیکس CS1061: جلسات مصرف‌شده = تعداد ترددهای همین ثبت‌نام
                     UsedSessions = _db.ACC_Traffics.Count(t => t.SportMemberID == a.SportMemberID),
                     IsActive = a.IsActive == true
                 }
-            ).ToListAsync();
+            )
+            .AsNoTracking()
+            .ToListAsync();
 
             foreach (var st in students)
             {
@@ -239,12 +248,13 @@ namespace TandisWebApp.Services
             return ($"{sanse.SportName} - {sanse.SanseName}", students);
         }
 
-        // ========== چک نقش مربی ==========
+        // ========== چک نقش مربی (خواندنی) ==========
         public async Task<bool> IsCoachAsync(int memberID)
         {
             if (memberID == 0) return false;
 
             var roleID = await _db.Gen_Members
+                .AsNoTracking()
                 .Where(m => m.MemberID == memberID)
                 .Select(m => m.RoleID)
                 .FirstOrDefaultAsync();
@@ -277,12 +287,10 @@ namespace TandisWebApp.Services
 
             return string.Join(" | ", parts);
         }
-        /// <summary>
-        /// کارت کامل شاگرد: اطلاعات دوره + تاریخچه حضور
-        /// </summary>
+
+        /// <summary>کارت کامل شاگرد (خواندنی)</summary>
         public async Task<CoachStudentDetailsDto?> GetStudentDetailsAsync(int coachMemberID, long sportMemberID)
         {
-            // چک مالکیت: ثبت‌نام باید مال یکی از کلاس‌های همین مربی باشه
             var reg = await (
                 from a in _db.Acc_MemberSports
                 join s in _db.Gen_SportSanses on a.SportSanseID equals s.SportSanseID
@@ -296,7 +304,9 @@ namespace TandisWebApp.Services
                     TotalSessions = (int)(a.SessionCount ?? 0),
                     ClassName = s.Gen_Sport_Category.SportName + " - " + s.SanseName
                 }
-            ).FirstOrDefaultAsync();
+            )
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
 
             if (reg == null || reg.MemberID == null)
                 return null;
@@ -306,10 +316,14 @@ namespace TandisWebApp.Services
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
                 where m.MemberID == reg.MemberID
                 select new { p.FullName, p.Mobile }
-            ).FirstOrDefaultAsync();
+            )
+            .AsNoTracking()
+            .FirstOrDefaultAsync();
 
             var todayStr = _helper.GetToday();
-            var used = await _db.ACC_Traffics.CountAsync(t => t.SportMemberID == sportMemberID);
+            var used = await _db.ACC_Traffics
+                .AsNoTracking()
+                .CountAsync(t => t.SportMemberID == sportMemberID);
 
             var dto = new CoachStudentDetailsDto
             {
@@ -325,7 +339,6 @@ namespace TandisWebApp.Services
                 IsActive = reg.IsActive == true
             };
 
-            // وضعیت دوره
             if (dto.IsActive && dto.EndDate != null && string.Compare(dto.EndDate, todayStr) >= 0 && dto.RemainingSessions > 0)
             { dto.StatusLabel = "فعال"; dto.StatusClass = "success"; }
             else if (dto.EndDate != null && string.Compare(dto.EndDate, todayStr) < 0)
@@ -337,6 +350,7 @@ namespace TandisWebApp.Services
 
             // تاریخچه حضور
             dto.Attendances = await _db.ACC_Traffics
+                .AsNoTracking()
                 .Where(t => t.SportMemberID == sportMemberID)
                 .OrderByDescending(t => t.TrafficID)
                 .Select(t => new CoachAttendanceDto
@@ -352,15 +366,12 @@ namespace TandisWebApp.Services
 
             return dto;
         }
-        /// <summary>
-        /// گزارش پورسانت مربی (با فیلتر بازه زمانی)
-        /// </summary>
+
+        /// <summary>گزارش پورسانت مربی (خواندنی)</summary>
         public async Task<CoachCommissionSummaryDto> GetCommissionReportAsync(int coachMemberID, string? fromDate = null, string? toDate = null)
         {
             var todayStr = _helper.GetToday();
 
-            // پیش‌فرض: ماه جاری (۳۰ روز اخیر)
-            // ✅ درست: تبدیل مستقیم با PersianCalendar
             if (string.IsNullOrEmpty(fromDate))
             {
                 var pc = new System.Globalization.PersianCalendar();
@@ -393,15 +404,16 @@ namespace TandisWebApp.Services
                     CoachRevivalAmount = a.CoachRevivalAmount ?? 0,
                     IsRevival = a.IsRevival == true
                 }
-            ).ToListAsync();
+            )
+            .AsNoTracking()
+            .ToListAsync();
 
-            // محاسبه ماه جاری (همین ماه شمسی)
-            var thisMonthPrefix = todayStr.Substring(0, 7); // "1405/06"
+            var thisMonthPrefix = todayStr.Substring(0, 7);
             var thisMonthRows = rows.Where(r => r.StartDate != null && r.StartDate.StartsWith(thisMonthPrefix)).ToList();
 
             return new CoachCommissionSummaryDto
             {
-                FromDate = fromDate,     
+                FromDate = fromDate,
                 ToDate = toDate,
                 ThisMonthAmount = thisMonthRows.Sum(r => r.TotalCommission),
                 ThisMonthCount = thisMonthRows.Count,
@@ -410,13 +422,12 @@ namespace TandisWebApp.Services
                 Rows = rows
             };
         }
-        /// <summary>
-        /// لیست شاگردان با آخرین پیام‌ها (برای مربی)
-        /// </summary>
+
+        /// <summary>لیست شاگردان با آخرین پیام‌ها (خواندنی)</summary>
         public async Task<List<CoachMessageSummaryDto>> GetMessageSummariesAsync(int coachMemberID)
         {
-            // شاگردان فعلی مربی
             var mySanseIds = await _db.Gen_SportSanses
+                .AsNoTracking()
                 .Where(s => s.CoachMemberID == coachMemberID && s.IsActive == true)
                 .Select(s => s.SportSanseID)
                 .ToListAsync();
@@ -425,7 +436,7 @@ namespace TandisWebApp.Services
                 return new List<CoachMessageSummaryDto>();
 
             var students = await (
-                from a in _db.Acc_MemberSports             
+                from a in _db.Acc_MemberSports
                 where a.SportSanseID != null && mySanseIds.Contains(a.SportSanseID.Value) && a.IsActive == true && a.MemberID != null
                 join m in _db.Gen_Members on a.MemberID.Value equals m.MemberID
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
@@ -436,22 +447,24 @@ namespace TandisWebApp.Services
                     g.Key.FullName,
                     g.Key.Mobile
                 }
-            ).ToListAsync();
+            )
+            .AsNoTracking()
+            .ToListAsync();
 
             var result = new List<CoachMessageSummaryDto>();
 
             foreach (var st in students)
             {
-                // پیام‌های بین مربی و این شاگرد
                 var messages = await _db.MsgMessages
+                    .AsNoTracking()
                     .Where(m => m.IsActive &&
                                 ((m.SenderMemberID == coachMemberID && m.TargetMemberID == st.MemberID) ||
                                  (m.SenderMemberID == st.MemberID && m.TargetMemberID == coachMemberID)))
                     .OrderByDescending(m => m.CreationDateTime)
                     .FirstOrDefaultAsync();
 
-                // تعداد خوانده‌نشده (پیام‌های شاگرد به مربی)
                 var unread = await _db.MsgMessages
+                    .AsNoTracking()
                     .CountAsync(m => m.IsActive &&
                                      m.SenderMemberID == st.MemberID &&
                                      m.TargetMemberID == coachMemberID &&
@@ -472,19 +485,18 @@ namespace TandisWebApp.Services
             return result.OrderByDescending(r => r.LastMessageDate).ThenByDescending(r => r.LastMessageTime).ToList();
         }
 
-        /// <summary>
-        /// چت با یک شاگرد
-        /// </summary>
+        /// <summary>چت با یک شاگرد (خواندنی + mark as read)</summary>
         public async Task<CoachChatDto?> GetChatAsync(int coachMemberID, int studentMemberID)
         {
-            // چک مالکیت: شاگرد باید در یکی از کلاس‌های مربی باشه
             var mySanseIds = await _db.Gen_SportSanses
+                .AsNoTracking()
                 .Where(s => s.CoachMemberID == coachMemberID && s.IsActive == true)
                 .Select(s => s.SportSanseID)
                 .ToListAsync();
 
             var isValidStudent = await _db.Acc_MemberSports
-                .AnyAsync(a => a.SportSanseID !=null && mySanseIds.Contains(a.SportSanseID.Value) && a.MemberID == studentMemberID && a.IsActive == true);
+                .AsNoTracking()
+                .AnyAsync(a => a.SportSanseID != null && mySanseIds.Contains(a.SportSanseID.Value) && a.MemberID == studentMemberID && a.IsActive == true);
 
             if (!isValidStudent)
                 return null;
@@ -494,9 +506,12 @@ namespace TandisWebApp.Services
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
                 where m.MemberID == studentMemberID
                 select p.FullName
-            ).FirstOrDefaultAsync() ?? "";
+            )
+            .AsNoTracking()
+            .FirstOrDefaultAsync() ?? "";
 
             var messages = await _db.MsgMessages
+                .AsNoTracking()
                 .Where(m => m.IsActive &&
                             ((m.SenderMemberID == coachMemberID && m.TargetMemberID == studentMemberID) ||
                              (m.SenderMemberID == studentMemberID && m.TargetMemberID == coachMemberID)))
@@ -512,8 +527,9 @@ namespace TandisWebApp.Services
                 })
                 .ToListAsync();
 
-            // علامت‌گذاری پیام‌های خوانده‌نشده به عنوان خوانده‌شده
+            // علامت‌گذاری پیام‌های خوانده‌نشده (نوشتن MsgReads جدید)
             var unreadIds = await _db.MsgMessages
+                .AsNoTracking()
                 .Where(m => m.IsActive &&
                             m.SenderMemberID == studentMemberID &&
                             m.TargetMemberID == coachMemberID &&
@@ -543,19 +559,18 @@ namespace TandisWebApp.Services
             };
         }
 
-        /// <summary>
-        /// ارسال پیام از مربی به شاگرد
-        /// </summary>
+        /// <summary>ارسال پیام (نوشتن - بدون AsNoTracking)</summary>
         public async Task<bool> SendMessageToStudentAsync(int coachMemberID, int studentMemberID, string? title, string body)
         {
-            // چک مالکیت
             var mySanseIds = await _db.Gen_SportSanses
+                .AsNoTracking()
                 .Where(s => s.CoachMemberID == coachMemberID && s.IsActive == true)
                 .Select(s => s.SportSanseID)
                 .ToListAsync();
 
             var isValid = await _db.Acc_MemberSports
-                .AnyAsync(a => a.SportSanseID !=null && mySanseIds.Contains(a.SportSanseID.Value) && a.MemberID == studentMemberID);
+                .AsNoTracking()
+                .AnyAsync(a => a.SportSanseID != null && mySanseIds.Contains(a.SportSanseID.Value) && a.MemberID == studentMemberID);
 
             if (!isValid)
                 return false;
@@ -569,7 +584,7 @@ namespace TandisWebApp.Services
             {
                 Title = title,
                 Body = body,
-                TargetType = 4,  // پیام به عضو خاص
+                TargetType = 4,
                 TargetMemberID = studentMemberID,
                 SenderMemberID = coachMemberID,
                 IsActive = true,
@@ -581,12 +596,12 @@ namespace TandisWebApp.Services
             await _db.SaveChangesAsync();
             return true;
         }
-        /// <summary>
-        /// تعداد پیام‌های خوانده‌نشده مربی (پیام‌های شاگردان به مربی)
-        /// </summary>
+
+        /// <summary>تعداد پیام‌های خوانده‌نشده (خواندنی)</summary>
         public async Task<int> GetCoachUnreadCountAsync(int coachMemberID)
         {
             return await _db.MsgMessages
+                .AsNoTracking()
                 .Where(m => m.IsActive &&
                             m.TargetType == 4 &&
                             m.TargetMemberID == coachMemberID &&
@@ -594,6 +609,5 @@ namespace TandisWebApp.Services
                             !_db.MsgReads.Any(r => r.MessageID == m.MessageID && r.MemberID == coachMemberID))
                 .CountAsync();
         }
-
     }
 }

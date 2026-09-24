@@ -7,8 +7,7 @@ using TandisWebApp.Models;
 namespace TandisWebApp.Services
 {
     /// <summary>
-    /// گزارش‌های مدیریتی — هر گزارش فقط داده‌های شیفت مربوطه را برمی‌گرداند.
-    /// تمام کوئری‌ها بر اساس ShiftID فیلتر می‌شوند.
+    /// گزارش‌های مدیریتی — همه کوئری‌ها AsNoTracking (خواندنی)
     /// </summary>
     public class AdminReportService
     {
@@ -24,12 +23,12 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
-        //  گزارش ترددها
+        //  گزارش ترددها (خواندنی)
         // ============================================================
-
         public async Task<AdminReportResponse<AdminTrafficRowDto, TrafficReportSummaryDto>> GetTrafficReportAsync(short shiftID, string? from, string? to)
         {
             var query = _db.ACC_Traffics
+                .AsNoTracking()
                 .Where(t => t.ShiftID == shiftID);
 
             if (!string.IsNullOrWhiteSpace(from))
@@ -37,8 +36,6 @@ namespace TandisWebApp.Services
             if (!string.IsNullOrWhiteSpace(to))
                 query = query.Where(t => t.EntryDate != null && t.EntryDate.CompareTo(to) <= 0);
 
-            // Join با Gen_Members و Gen_Persons برای دریافت نام کامل و کد عضویت
-            // ابتدا داده‌های خام را می‌گیریم، بعد در حافظه فرمت می‌کنیم
             var rawRows = await (
                  from t in query
                  join m in _db.Gen_Members on t.MemberID equals m.MemberID into memJoin
@@ -73,10 +70,8 @@ namespace TandisWebApp.Services
                 EntryDesc = x.EntryDesc,
                 IsGuest = x.IsGuest,
                 BoxID = x.BoxID,
-                
             }).ToList();
 
-            // محاسبه خلاصه
             var summary = new TrafficReportSummaryDto
             {
                 TotalCount = rows.Count,
@@ -92,12 +87,12 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
-        //  گزارش ثبت‌نام و تمدید
+        //  گزارش ثبت‌نام و تمدید (خواندنی)
         // ============================================================
-
         public async Task<AdminReportResponse<AdminRegisterRowDto, RegisterReportSummaryDto>> GetRegisterReportAsync(short shiftID, string? from, string? to, string mode)
         {
             var query = _db.Acc_MemberSports
+                .AsNoTracking()
                 .Where(ms => ms.Gen_SportSanse != null && ms.Gen_SportSanse.ShiftID == shiftID);
 
             if (!string.IsNullOrWhiteSpace(from))
@@ -110,30 +105,20 @@ namespace TandisWebApp.Services
             else if (mode == "renew")
                 query = query.Where(ms => ms.IsRevival == true);
 
-            // ✅ همه join ها در یک کوئری — بدون N+1
             var rawRows = await (
                 from ms in query
                 join sanse in _db.Gen_SportSanses on ms.SportSanseID equals sanse.SportSanseID into sj
                 from sanse in sj.DefaultIfEmpty()
-
-                    // Join برای SportName
                 join sportCat in _db.Gen_Sport_Categories on sanse.SportCatID equals sportCat.SportCatID into sportCatJoin
                 from sportCat in sportCatJoin.DefaultIfEmpty()
-
-                    // Join برای CoachName (از طریق CoachMemberID → Gen_Members → Gen_Persons)
                 join coachM in _db.Gen_Members on sanse.CoachMemberID equals coachM.MemberID into coachMJoin
                 from coachM in coachMJoin.DefaultIfEmpty()
                 join coachP in _db.Gen_Persons on coachM.PersonID equals coachP.PersonID into coachPJoin
                 from coachP in coachPJoin.DefaultIfEmpty()
-
-                    // Join برای MembershipType
                 join memType in _db.Gen_MembershipTypes on sanse.MembershipTypeID equals memType.MembershipTypeID into memTypeJoin
                 from memType in memTypeJoin.DefaultIfEmpty()
-
-                    // Join برای Period
                 join period in _db.Gen_Periods on sanse.PeriodID equals period.PeriodID into periodJoin
                 from period in periodJoin.DefaultIfEmpty()
-
                 orderby ms.SportMemberID descending
                 select new
                 {
@@ -152,7 +137,6 @@ namespace TandisWebApp.Services
                     PeriodDesc = period != null ? period.Description : ""
                 }).ToListAsync();
 
-            // بهینه‌سازی: همه MemberIDها را یک‌جا بگیریم
             var memberIDs = rawRows
                 .Where(x => x.MemberID.HasValue && x.MemberID.Value > 0)
                 .Select(x => x.MemberID.GetValueOrDefault())
@@ -167,7 +151,9 @@ namespace TandisWebApp.Services
                     join p in _db.Gen_Persons on m.PersonID equals p.PersonID
                     where memberIDs.Contains(m.MemberID)
                     select new { m.MemberID, p.FullName }
-                ).ToDictionaryAsync(
+                )
+                .AsNoTracking()
+                .ToDictionaryAsync(
                     x => x.MemberID,
                     x => (x.FullName ?? "", _helper.SetSeprator(x.MemberID))
                 );
@@ -230,12 +216,12 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
-        //  گزارش تک‌جلسه‌ها
+        //  گزارش تک‌جلسه‌ها (خواندنی)
         // ============================================================
-
         public async Task<AdminReportResponse<AdminOneSessionRowDto, OneSessionReportSummaryDto>> GetOneSessionReportAsync(short shiftID, string? from, string? to)
         {
             var query = _db.ACC_Tickets
+                .AsNoTracking()
                 .Where(t => t.ShiftID == shiftID);
 
             if (!string.IsNullOrWhiteSpace(from))
@@ -286,22 +272,19 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
-        //  گزارش صندوق (فقط دریافتی‌ها)
+        //  گزارش صندوق (خواندنی)
         // ============================================================
-
         public async Task<AdminReportResponse<AdminFinanceRowDto, FinanceReportSummaryDto>> GetFinanceReportAsync(short shiftID, string? from, string? to)
         {
             var result = new List<AdminFinanceRowDto>();
 
-            // --- فقط بستانکارها (دریافتی‌ها) ---
-            var creditQuery = _db.Cash_CreditStatments.AsQueryable();
+            var creditQuery = _db.Cash_CreditStatments.AsNoTracking().AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(from))
                 creditQuery = creditQuery.Where(c => c.CreationDate != null && c.CreationDate.CompareTo(from) >= 0);
             if (!string.IsNullOrWhiteSpace(to))
                 creditQuery = creditQuery.Where(c => c.CreationDate != null && c.CreationDate.CompareTo(to) <= 0);
 
-            // به جای Contains با لیست در حافظه، از Join استفاده می‌کنیم تا خطای SQL و محدودیت پارامتر پیش نیاید
             var credits = await (
                 from c in creditQuery
                 join m in _db.Gen_Members.Where(m => m.ShiftID == shiftID) on c.MemberID equals m.MemberID
@@ -328,7 +311,6 @@ namespace TandisWebApp.Services
                 });
             }
 
-            // مرتب‌سازی نزولی بر اساس تاریخ
             var finalResult = result.OrderByDescending(r => r.DateDisplay).ToList();
 
             var summary = new FinanceReportSummaryDto
@@ -359,11 +341,12 @@ namespace TandisWebApp.Services
         {
             if (memberID <= 0) return null;
             return await (
-                from m in _db.Gen_Members
-                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
-                where m.MemberID == memberID
-                select p.FullName
-            ).FirstOrDefaultAsync();
+        from m in _db.Gen_Members.AsNoTracking()
+        join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+        where m.MemberID == memberID
+        select p.FullName
+)
+.FirstOrDefaultAsync();
         }
 
         private static string GetCreditTypeDesc(byte? typeId)
@@ -392,10 +375,10 @@ namespace TandisWebApp.Services
                 _ => $"نوع {typeId}"
             };
         }
-        // ============================================================
-        //  آمار داشبورد مدیریت
-        // ============================================================
 
+        // ============================================================
+        //  آمار داشبورد مدیریت (خواندنی)
+        // ============================================================
         public async Task<DashboardStatsResult> GetDashboardStatsAsync(short shiftID, string period)
         {
             var pc = new System.Globalization.PersianCalendar();
@@ -429,7 +412,6 @@ namespace TandisWebApp.Services
             var prevFromS = ToShamsi(prevFrom);
             var prevToS = ToShamsi(prevTo);
 
-            // ✅ لیبل‌ها با تاریخ دقیق شمسی
             string curLabel, prevLabel;
             if (period == "day")
             {
@@ -450,6 +432,7 @@ namespace TandisWebApp.Services
 
             var todayS = ToShamsi(today);
             var insideRows = await _db.ACC_Traffics
+                .AsNoTracking()
                 .Where(t => t.ShiftID == shiftID && t.EntryDate == todayS
                           && (t.TrafficStatus == 1 || t.TrafficStatus == 100))
                 .Select(t => t.MemberID)
@@ -473,7 +456,6 @@ namespace TandisWebApp.Services
             };
         }
 
-        // ✅ جمع مبالغ دریافتی دوره (Cash_CreditStatment) با فیلتر شیفت
         private async Task<(long sum, int count)> SumCredits(short shiftID, string fromDate, string toDate)
         {
             var amounts = await (
@@ -486,9 +468,9 @@ namespace TandisWebApp.Services
                 join t in _db.ACC_Traffics on c.TrafficID equals t.TrafficID into tj
                 from t in tj.DefaultIfEmpty()
                 where m.ShiftID == shiftID || t.ShiftID == shiftID
-                select c.Amount).ToListAsync();
+                select c.Amount)               
+                .ToListAsync();
 
-            // ✅ فیلتر + تبدیل امن به long معمولی (غیر nullable)
             var filtered = amounts.Where(a => a.HasValue).Select(a => a!.Value).ToList();
             return (filtered.Sum(), filtered.Count);
         }
@@ -496,6 +478,7 @@ namespace TandisWebApp.Services
         private async Task<(int, int)> CountRegisters(short shiftID, string from, string to)
         {
             var flags = await _db.Acc_MemberSports
+                .AsNoTracking()
                 .Where(ms => ms.Gen_SportSanse != null && ms.Gen_SportSanse.ShiftID == shiftID
                           && ms.CreationDate != null
                           && ms.CreationDate.CompareTo(from) >= 0
@@ -535,7 +518,8 @@ namespace TandisWebApp.Services
                     SportName = ms != null && ms.Gen_SportSanse != null
                                 ? (ms.Gen_SportSanse.Gen_Sport_Category != null ? ms.Gen_SportSanse.Gen_Sport_Category.SportName + " " : "") + (ms.Gen_SportSanse.SanseName ?? "")
                                 : ""
-                }).ToListAsync();
+                })                
+                .ToListAsync();
 
             return raw.Select(x => new AdminInsideRowDto
             {
@@ -548,11 +532,12 @@ namespace TandisWebApp.Services
                 IsGuest = x.MemberID == null || x.IsGuest == true
             }).ToList();
         }
-       
-        /// <summary>گزارش نظارت: پیام‌های بین مربی و شاگرد</summary>
+
+        /// <summary>گزارش نظارت پیام‌ها (خواندنی)</summary>
         public async Task<List<AdminCoachMessageRowDto>> GetCoachStudentMessagesReportAsync(short shiftID, string? from, string? to, int? coachMemberID = null)
         {
             var query = _db.MsgMessages
+                .AsNoTracking()
                 .Where(m => m.IsActive && m.TargetType == 4 && m.SenderMemberID != null && m.TargetMemberID != null);
 
             if (!string.IsNullOrWhiteSpace(from))
@@ -561,14 +546,12 @@ namespace TandisWebApp.Services
             if (!string.IsNullOrWhiteSpace(to))
                 query = query.Where(m => m.CreationDate != null && m.CreationDate.CompareTo(to) <= 0);
 
-            // ✅ فیلتر صحیح روی مربی خاص — سمت SQL (نه در حافظه)
             if (coachMemberID.HasValue && coachMemberID.Value > 0)
             {
                 var cid = coachMemberID.Value;
                 query = query.Where(m => m.SenderMemberID == cid || m.TargetMemberID == cid);
             }
 
-            // ✅ همه‌چیز در یک کوئری SQL — بدون materialize اضافی
             return await (
                 from m in query
                 join sm in _db.Gen_Members on m.SenderMemberID equals sm.MemberID

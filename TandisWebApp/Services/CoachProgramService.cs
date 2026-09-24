@@ -73,7 +73,7 @@ namespace TandisWebApp.Services
             return newItem.ItemID;
         }
 
-        /// <summary>لیست برنامه‌های یک مربی</summary>
+        /// <summary>لیست برنامه‌های یک مربی (خواندنی)</summary>
         public async Task<List<CoachProgramRowDto>> GetProgramListAsync(int coachMemberID)
         {
             var raw = await (
@@ -92,7 +92,9 @@ namespace TandisWebApp.Services
                     p.StartDate,
                     p.EndDate,
                     ItemCount = _db.SportPrgDtls.Count(d => d.PrgID == p.PrgID)
-                }).ToListAsync();
+                })
+                .AsNoTracking()
+                .ToListAsync();
 
             return raw.Select(x => new CoachProgramRowDto
             {
@@ -106,7 +108,7 @@ namespace TandisWebApp.Services
             }).ToList();
         }
 
-        /// <summary>شاگردان فعال مربی</summary>
+        /// <summary>شاگردان فعال مربی (خواندنی)</summary>
         public async Task<List<StudentOptionDto>> GetStudentOptionsAsync(int coachMemberID)
         {
             var today = ToShamsi(DateTime.Now.Date);
@@ -126,22 +128,26 @@ namespace TandisWebApp.Services
                     SportName = ss.Gen_Sport_Category != null ? ss.Gen_Sport_Category.SportName ?? "" : "",
                     SanseName = ss.SanseName ?? ""
                 })
+                .AsNoTracking()
                 .Distinct()
                 .OrderBy(x => x.FullName)
                 .ToListAsync();
         }
 
-        /// <summary>بانک حرکات</summary>
+        /// <summary>بانک حرکات (خواندنی)</summary>
         public async Task<List<ProgramItemEditDto>> GetItemOptionsAsync()
             => await _db.Gen_PrgmItems
+                .AsNoTracking()
                 .OrderBy(x => x.ItemDesc)
                 .Select(x => new ProgramItemEditDto { ItemID = x.ItemID, ItemDesc = x.ItemDesc ?? "" })
                 .ToListAsync();
 
-        /// <summary>خواندن برنامه برای فرم ویرایش</summary>
+        /// <summary>خواندن برنامه برای فرم ویرایش (خواندنی)</summary>
         public async Task<CoachProgramEditDto?> GetProgramEditAsync(int prgID, int coachMemberID)
         {
-            var head = await _db.SportPrgs.FirstOrDefaultAsync(p => p.PrgID == prgID && p.CoachID == coachMemberID);
+            var head = await _db.SportPrgs
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.PrgID == prgID && p.CoachID == coachMemberID);
             if (head == null) return null;
 
             var rawItems = await (
@@ -170,14 +176,17 @@ namespace TandisWebApp.Services
                     PauseCount = d.PauseCount,
                     PauseRest = d.PauseRest,
                     Tempo = d.Tempo
-                }).ToListAsync();
+                })
+                .AsNoTracking()
+                .ToListAsync();
 
             var studentName = await (
                 from m in _db.Gen_Members
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
                 where m.MemberID == head.MemberID
-                select (p.FirstName + " " + p.LastName)
-            ).FirstOrDefaultAsync();
+                select (p.FirstName + " " + p.LastName))
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
 
             return new CoachProgramEditDto
             {
@@ -190,7 +199,7 @@ namespace TandisWebApp.Services
             };
         }
 
-        /// <summary>ذخیره برنامه با اعتبارسنجی کامل هر تکنیک</summary>
+        /// <summary>ذخیره برنامه با اعتبارسنجی کامل هر تکنیک (نوشتن - بدون AsNoTracking)</summary>
         public async Task<(bool ok, string msg, int prgID)> SaveProgramAsync(int coachMemberID, SaveProgramRequest req)
         {
             if (req.MemberID <= 0) return (false, "شاگرد را انتخاب کنید", 0);
@@ -236,7 +245,6 @@ namespace TandisWebApp.Services
             {
                 var type = it.ExerciseType ?? 1;
 
-                // ===== ✅ اعتبارسنجی بر اساس نوع تکنیک =====
                 if (type == 2)
                 {
                     if (it.DropCount == null || it.DropCount < 1 || it.DropCount > 6)
@@ -269,7 +277,6 @@ namespace TandisWebApp.Services
                         return (false, "تمپو نامعتبر است (نمونه درست: 3-1-2-0)", 0);
                 }
 
-                // ===== حرکت اصلی =====
                 var itemID = await ResolveItemIDAsync(it.ItemID, it.NewItemDesc);
                 if (itemID == 0) continue;
 
@@ -299,7 +306,6 @@ namespace TandisWebApp.Services
                     Tempo = it.Tempo
                 });
 
-                // ===== حرکت‌های هم‌گروه (combo) =====
                 if (isCombo && it.ExtraItems != null)
                 {
                     byte seq = 2;
@@ -327,7 +333,7 @@ namespace TandisWebApp.Services
             return (true, "برنامه با موفقیت ذخیره شد", head.PrgID);
         }
 
-        /// <summary>حذف برنامه</summary>
+        /// <summary>حذف برنامه (نوشتن - بدون AsNoTracking)</summary>
         public async Task<(bool ok, string msg)> DeleteProgramAsync(int prgID, int coachMemberID)
         {
             var head = await _db.SportPrgs.FirstOrDefaultAsync(p => p.PrgID == prgID && p.CoachID == coachMemberID);
@@ -337,7 +343,7 @@ namespace TandisWebApp.Services
             return (true, "برنامه حذف شد");
         }
 
-        /// <summary>جزئیات برنامه + گروه‌بندی روزها</summary>
+        /// <summary>جزئیات برنامه + گروه‌بندی روزها (خواندنی)</summary>
         public async Task<CoachProgramDetailsDto?> GetProgramDetailsAsync(int prgID, int coachMemberID)
         {
             var head = await (
@@ -347,8 +353,9 @@ namespace TandisWebApp.Services
                 from m in mj.DefaultIfEmpty()
                 join pr in _db.Gen_Persons on m.PersonID equals pr.PersonID into pj
                 from pr in pj.DefaultIfEmpty()
-                select new { p.PrgID, p.StartDate, p.EndDate, Name = (pr.FirstName + " " + pr.LastName) }
-            ).FirstOrDefaultAsync();
+                select new { p.PrgID, p.StartDate, p.EndDate, Name = (pr.FirstName + " " + pr.LastName) })
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
 
             if (head == null) return null;
 
@@ -378,7 +385,9 @@ namespace TandisWebApp.Services
                     PauseCount = d.PauseCount,
                     PauseRest = d.PauseRest,
                     Tempo = d.Tempo
-                }).ToListAsync();
+                })
+                .AsNoTracking()
+                .ToListAsync();
 
             var result = new CoachProgramDetailsDto
             {
@@ -399,7 +408,7 @@ namespace TandisWebApp.Services
             return result;
         }
 
-        /// <summary>برنامه‌های فعال عضو</summary>
+        /// <summary>برنامه‌های فعال عضو (خواندنی)</summary>
         public async Task<List<MemberProgramDto>> GetMemberProgramsAsync(int memberID)
         {
             var heads = await (
@@ -410,8 +419,9 @@ namespace TandisWebApp.Services
                 join cp in _db.Gen_Persons on cm.PersonID equals cp.PersonID into cpj
                 from cp in cpj.DefaultIfEmpty()
                 orderby p.PrgID descending
-                select new { p.PrgID, p.StartDate, p.EndDate, Coach = (cp.FirstName + " " + cp.LastName) }
-            ).ToListAsync();
+                select new { p.PrgID, p.StartDate, p.EndDate, Coach = (cp.FirstName + " " + cp.LastName) })
+                .AsNoTracking()
+                .ToListAsync();
 
             var result = new List<MemberProgramDto>();
             foreach (var h in heads)
@@ -442,7 +452,9 @@ namespace TandisWebApp.Services
                         PauseCount = d.PauseCount,
                         PauseRest = d.PauseRest,
                         Tempo = d.Tempo
-                    }).ToListAsync();
+                    })
+                    .AsNoTracking()
+                    .ToListAsync();
 
                 result.Add(new MemberProgramDto
                 {
@@ -456,7 +468,7 @@ namespace TandisWebApp.Services
             return result;
         }
 
-        /// <summary>برنامه تکی عضو</summary>
+        /// <summary>برنامه تکی عضو (خواندنی)</summary>
         public async Task<MemberProgramDto?> GetMemberProgramAsync(int memberID, int prgID)
         {
             var head = await (
@@ -466,8 +478,9 @@ namespace TandisWebApp.Services
                 from cm in cmj.DefaultIfEmpty()
                 join cp in _db.Gen_Persons on cm.PersonID equals cp.PersonID into cpj
                 from cp in cpj.DefaultIfEmpty()
-                select new { p.PrgID, Coach = (cp.FirstName + " " + cp.LastName), p.StartDate, p.EndDate }
-            ).FirstOrDefaultAsync();
+                select new { p.PrgID, Coach = (cp.FirstName + " " + cp.LastName), p.StartDate, p.EndDate })
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
 
             if (head == null) return null;
 
@@ -497,7 +510,9 @@ namespace TandisWebApp.Services
                     PauseCount = d.PauseCount,
                     PauseRest = d.PauseRest,
                     Tempo = d.Tempo
-                }).ToListAsync();
+                })
+                .AsNoTracking()
+                .ToListAsync();
 
             return new MemberProgramDto
             {
@@ -509,7 +524,7 @@ namespace TandisWebApp.Services
             };
         }
 
-        /// <summary>همه شاگردان فعال مربی</summary>
+        /// <summary>همه شاگردان فعال مربی (خواندنی)</summary>
         public async Task<List<CoachStudentRowDto>> GetAllStudentsAsync(int coachMemberID)
         {
             var today = ToShamsi(DateTime.Now.Date);
@@ -531,7 +546,9 @@ namespace TandisWebApp.Services
                     SportName = ss.Gen_Sport_Category != null ? ss.Gen_Sport_Category.SportName ?? "" : "",
                     SanseName = ss.SanseName ?? "",
                     EndDate = ams.EndDate ?? ""
-                }).ToListAsync();
+                })
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }
