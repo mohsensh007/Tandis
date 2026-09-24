@@ -1,14 +1,37 @@
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.IO.Compression;
+using System.Text;
 using TandisWebApp.Data;
 using TandisWebApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ============================================================
-// 1) Database Context - اتصال به همون SQL Server فعلی کیوسک
+// 0) فشرده‌سازی پاسخ (Brotli + Gzip)
+// ============================================================
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+    options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[]
+    {
+        "text/html", "text/css", "text/javascript", "application/javascript",
+        "application/json", "text/xml", "application/xml",
+        "image/svg+xml", "font/woff2"
+    });
+});
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+    options.Level = CompressionLevel.SmallestSize);
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+    options.Level = CompressionLevel.SmallestSize);
+
+// ============================================================
+// 1) Database Context
 // ============================================================
 builder.Services.AddDbContext<FullSportDbContext>(options =>
     options.UseSqlServer(
@@ -17,7 +40,7 @@ builder.Services.AddDbContext<FullSportDbContext>(options =>
     ));
 
 // ============================================================
-// 2) JWT Authentication - احراز هویت با توکن برای موبایل اپ
+// 2) JWT Authentication
 // ============================================================
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JwtSettings:SecretKey missing");
@@ -45,8 +68,6 @@ builder.Services.AddAuthentication(options =>
         ClockSkew = TimeSpan.Zero
     };
 
-    // JWT از کوکی "X-Access-Token" (اعضا) یا "X-Admin-Token" (مدیران) خوانده شود.
-    // اولویت با کوکی ادمین است تا در صورت ورود مدیر، توکن عضو نادیده گرفته شود.
     options.Events = new JwtBearerEvents
     {
         OnMessageReceived = ctx =>
@@ -62,12 +83,9 @@ builder.Services.AddAuthentication(options =>
                 ctx.Token = memberToken;
             return Task.CompletedTask;
         },
-        // وقتی توکن منقضی شده یا معتبر نیست (401)، برای درخواست‌های MVC به صفحه لاگین ریدایرکت کن
-        // برای درخواست‌های AJAX/API کد 401 برگردان تا سمت کلاینت هندل شود
         OnChallenge = async ctx =>
         {
-            ctx.HandleResponse(); // پیش‌فرض 401 را متوقف می‌کند
-
+            ctx.HandleResponse();
             var request = ctx.Request;
             var isAjax = request.Headers["X-Requested-With"] == "XMLHttpRequest" ||
                          request.Headers["Accept"].ToString().Contains("application/json") ||
@@ -81,7 +99,6 @@ builder.Services.AddAuthentication(options =>
             }
             else
             {
-                // درخواست معمولی (مشاهده صفحه) -> به لاگین ریدایرکت
                 var returnUrl = request.Path + request.QueryString;
                 ctx.Response.Redirect($"/Account/Login?returnUrl={Uri.EscapeDataString(returnUrl)}");
             }
@@ -92,7 +109,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // ============================================================
-// 3) Business Services - لایه منطق برنامه
+// 3) Business Services
 // ============================================================
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<MemberAuthService>();
@@ -109,22 +126,18 @@ builder.Services.AddScoped<CoachProgramService>();
 builder.Services.AddScoped<IAdminUserProvider, DbAdminUserProvider>();
 builder.Services.AddScoped<AdminAuthService>();
 builder.Services.AddScoped<AdminReportService>();
-//messages
 builder.Services.AddScoped<MessageService>();
-//Coach
 builder.Services.AddScoped<CoachService>();
 
-// HttpContextAccessor برای استفاده در Service‌ها
 builder.Services.AddHttpContextAccessor();
 
 // ============================================================
-// 4) CORS - برای دسترسی موبایل اپ + وب‌اپ (با پشتیبانی کوکی/Authentication)
+// 4) CORS
 // ============================================================
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        // برای credentials (HttpOnly cookies) باید origin مشخص شود
         policy.WithOrigins("http://localhost:5500", "http://localhost:5104", "http://localhost:5200", "http://localhost:5300", "http://localhost:5400", "http://localhost:5501")
               .AllowAnyMethod()
               .AllowAnyHeader()
@@ -133,40 +146,83 @@ builder.Services.AddCors(options =>
 });
 
 // ============================================================
-// 5) MVC + API
+// 5) MVC + API + کش + Rate Limiting
 // ============================================================
 builder.Services.AddControllersWithViews();
 
 builder.Services.Configure<Microsoft.AspNetCore.Http.Features.FormOptions>(options =>
 {
-    options.MultipartBodyLengthLimit = 10 * 1024 * 1024; // 10MB برای آپلود عکس
+    options.MultipartBodyLengthLimit = 10 * 1024 * 1024;
 });
+
 builder.Services.AddMemoryCache();
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddFixedWindowLimiter("login", opt =>
+    {
+        opt.PermitLimit = 5;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueLimit = 0;
+    });
+
+    options.OnRejected = (ctx, _) =>
+    {
+        ctx.HttpContext.Response.StatusCode = 429;
+        ctx.HttpContext.Response.WriteAsJsonAsync(new
+        {
+            success = false,
+            message = "تعداد درخواست‌ها زیاد است. لطفاً ۱ دقیقه صبر کنید."
+        });
+        return ValueTask.CompletedTask;
+    };
+});
+
 var app = builder.Build();
 
 // ============================================================
-// 5) Middleware Pipeline
+// 6) Middleware Pipeline
 // ============================================================
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
+    app.UseHsts();
 }
 
-app.UseStaticFiles();
+// ✅ فشرده‌سازی
+app.UseResponseCompression();
+
+// ✅ فایل‌های استاتیک با کش ۱ ساله
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000,immutable");
+        ctx.Context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    }
+});
+
 app.UseRouting();
 app.UseCors("AllowAll");
-
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// ============================================================
-// 6) Routes
-// ============================================================
+// ✅ Security Headers
+app.Use(async (context, next) =>
+{
+    context.Response.Headers.Append("X-Frame-Options", "SAMEORIGIN");
+    context.Response.Headers.Append("X-XSS-Protection", "1; mode=block");
+    context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+    context.Response.Headers.Append("Referrer-Policy", "strict-origin-when-cross-origin");
+    await next();
+});
 
-// مسیر ریشه: ریدایرکت به صفحه لاگین
+// ============================================================
+// 7) Routes
+// ============================================================
 app.MapGet("/", () => Results.Redirect("/Account/Login"));
 
-// مسیر پیش‌فرض: اگر URL فقط controller باشه، action پیش‌فرض Index اجرا میشه
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
