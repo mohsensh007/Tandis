@@ -1,0 +1,1537 @@
+﻿/* =====================================================
+   panels.css — استایل‌های مشترک پنل‌های تندیس
+   فاز ۱: کامپوننت‌های سراسری
+   ===================================================== */
+
+/* ===== آیکن‌های فیروزه‌ای در عنوان‌ها ===== */
+.hd-icon {
+    color: #66d3e8;
+    margin-left: 6px;
+    font-size: 1rem;
+}
+
+/* ===== Pill برگشت شیشه‌ای ===== */
+.coach-back-pill,
+.btn-back-glass,
+.mp-back-pill,
+.pd-back-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.18);
+    color: #dce9ff;
+    border-radius: 999px;
+    padding: 7px 18px;
+    font-size: .82rem;
+    font-weight: 700;
+    text-decoration: none;
+    backdrop-filter: blur(8px);
+    transition: all .25s;
+}
+
+    .coach-back-pill i,
+    .btn-back-glass i,
+    .mp-back-pill i,
+    .pd-back-pill i {
+        color: #66d3e8;
+        transition: transform .25s;
+    }
+
+    .coach-back-pill:hover,
+    .btn-back-glass:hover,
+    .mp-back-pill:hover,
+    .pd-back-pill:hover {
+        background: rgba(255,255,255,.14);
+        color: #fff;
+    }
+
+        .coach-back-pill:hover i,
+        .btn-back-glass:hover i,
+        .mp-back-pill:hover i,
+        .pd-back-pill:hover i {
+            transform: translateX(3px);
+        }
+
+/* ===== اینپوت جستجوی شیشه‌ای ===== */
+.glass-search {
+    width: 100%;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.18);
+    color: #fff;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font-size: .85rem;
+}
+
+    .glass-search:focus {
+        outline: none;
+        border-color: rgba(102,211,232,.5);
+        background: rgba(255,255,255,.12);
+    }
+
+/* ===== Badge سراسری ===== */
+.badge-glass {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: .7rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.badge-active,
+.badge-on {
+    background: rgba(56,217,169,.18);
+    color: #38d9a9;
+    border: 1px solid rgba(56,217,169,.45);
+}
+
+.badge-inactive,
+.badge-off {
+    background: rgba(255,255,255,.12);
+    color: #cbd3da;
+    border: 1px solid rgba(255,255,255,.25);
+}
+
+/* ===== Empty State (وقتی لیست خالیه) ===== */
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #9fb3c8;
+    font-size: .9rem;
+}
+
+    .empty-state .empty-icon {
+        font-size: 3rem;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+/* ===== کارت عمومی شیشه‌ای ===== */
+.glass-card {
+    background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 20px;
+    padding: 18px;
+    backdrop-filter: blur(8px);
+}
+
+/* ===== هدر کارت با گرادیان بنفش ===== */
+.card-head-purple {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-weight: 800;
+    font-size: 1rem;
+    padding: 13px 20px;
+    border-radius: 14px 14px 0 0;
+}
+
+/* ===== جدول تیره عمومی ===== */
+.dark-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+    .dark-table thead th {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #fff;
+        font-weight: 600;
+        font-size: .8rem;
+        padding: 10px 14px;
+        border: none;
+        white-space: nowrap;
+    }
+
+        .dark-table thead th:first-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .dark-table thead th:last-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+    .dark-table tbody td {
+        padding: 10px 14px;
+        font-size: .85rem;
+        color: #e9ecef;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+
+    .dark-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .dark-table tbody tr:hover {
+        background: rgba(102,211,232,.06);
+    }
+
+/* ===== Chip‌های چندانتخابی ===== */
+.chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.chip {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.16);
+    color: #cbd3da;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: .76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+    .chip:hover {
+        background: rgba(255,255,255,.13);
+        color: #fff;
+    }
+
+    .chip.chip-active {
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        border-color: transparent;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(30,111,217,.35);
+    }
+
+/* ===== Label کوچک برای input ها ===== */
+.lbl-small {
+    display: block;
+    font-size: .72rem;
+    color: #9fb3c8;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+    .lbl-small i {
+        color: #66d3e8;
+    }
+
+/* ===== دکمه اصلی بنفش (ذخیره/ثبت) ===== */
+.btn-purple-main {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: #fff;
+    font-weight: 800;
+    font-size: .9rem;
+    border-radius: 14px;
+    padding: 10px 26px;
+    box-shadow: 0 6px 16px rgba(118,75,162,.4);
+    transition: all .25s;
+    cursor: pointer;
+}
+
+    .btn-purple-main:hover {
+        filter: brightness(1.1);
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+/* ===== دکمه آبی روشن (افزودن/اقدام) ===== */
+.btn-blue-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: linear-gradient(135deg, #1E6FD9, #667eea);
+    border: none;
+    color: #fff;
+    border-radius: 12px;
+    padding: 8px 18px;
+    font-size: .82rem;
+    font-weight: 700;
+    box-shadow: 0 5px 14px rgba(30,111,217,.3);
+    transition: all .25s;
+    cursor: pointer;
+}
+
+    .btn-blue-action:hover {
+        filter: brightness(1.12);
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    .btn-blue-action:disabled {
+        opacity: .4;
+        pointer-events: none;
+        filter: grayscale(.5);
+        box-shadow: none;
+    }
+
+/* ===== Pill کوچک (ست/تکرار/وزن/...) ===== */
+.pill-mini {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(13,110,253,.14);
+    border: 1px solid rgba(13,110,253,.30);
+    color: #dce9ff;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: .72rem;
+    font-weight: 700;
+}
+
+    .pill-mini i {
+        color: #66d3e8;
+        font-size: .78rem;
+    }
+
+/* ===== باکس نکته / یادداشت ===== */
+.note-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: .74rem;
+    color: #cbd3da;
+    background: rgba(255,193,7,.08);
+    border: 1px solid rgba(255,193,7,.22);
+    border-radius: 10px;
+    padding: 6px 10px;
+    line-height: 1.7;
+}
+
+    .note-box i {
+        color: #ffd200;
+        font-size: .8rem;
+        margin-top: 2px;
+        flex: 0 0 auto;
+    }
+
+/* ===== Responsive برای موبایل ===== */
+@media (max-width: 576px) {
+    .dark-table {
+        display: block;
+    }
+
+        .dark-table thead {
+            display: none;
+        }
+
+        .dark-table tbody,
+        .dark-table tr,
+        .dark-table td {
+            display: block;
+            width: 100%;
+        }
+
+        .dark-table tr {
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 8px;
+        }
+
+        .dark-table td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 4px;
+            border-bottom: 1px solid rgba(255,255,255,.05);
+        }
+
+            .dark-table td:last-child {
+                border-bottom: none;
+            }
+
+            .dark-table td::before {
+                content: attr(data-label);
+                font-weight: 700;
+                color: #66d3e8;
+                font-size: .72rem;
+            }
+}
+/* =====================================================
+   فاز ۲ - ProgramEdit.cshtml (ویرایش برنامه تمرینی)
+   ===================================================== */
+
+/* ===== کارت اصلی ویرایش برنامه ===== */
+.pe-card {
+    background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 20px;
+    padding: 18px;
+}
+
+.pe-lbl {
+    display: block;
+    font-size: .72rem;
+    color: #9fb3c8;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+    .pe-lbl i {
+        color: #66d3e8;
+    }
+
+.pe-input {
+    width: 100%;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.18);
+    color: #fff;
+    border-radius: 12px;
+    padding: 9px 12px;
+    font-size: .85rem;
+}
+
+    .pe-input:focus {
+        outline: none;
+        background: rgba(255,255,255,.12);
+        border-color: rgba(102,211,232,.5);
+    }
+
+    .pe-input[readonly] {
+        cursor: pointer;
+    }
+
+select.pe-input option {
+    background: #101424;
+    color: #fff;
+}
+
+.pe-cal-btn {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.16);
+    color: #66d3e8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .pe-cal-btn:hover {
+        background: rgba(102,211,232,.2);
+        color: #fff;
+    }
+
+/* ===== باکس انتخاب روز ===== */
+.day-select-box {
+    background: rgba(13,110,253,.10);
+    border: 1px dashed rgba(102,211,232,.45);
+    border-radius: 16px;
+    padding: 12px 14px;
+}
+
+.ds-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: .8rem;
+    font-weight: 800;
+    color: #66d3e8;
+    margin-bottom: 10px;
+}
+
+.ds-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ds-chip {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.16);
+    color: #cbd3da;
+    border-radius: 999px;
+    padding: 7px 15px;
+    font-size: .78rem;
+    font-weight: 700;
+    transition: all .2s;
+}
+
+    .ds-chip:hover {
+        background: rgba(255,255,255,.13);
+        color: #fff;
+    }
+
+    .ds-chip.ds-on {
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        border-color: transparent;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(30,111,217,.35);
+    }
+
+.ds-hint {
+    margin-top: 9px;
+    font-size: .72rem;
+    color: #ffd200;
+}
+
+.ds-selected {
+    margin-top: 9px;
+    font-size: .75rem;
+    color: #9fb3c8;
+}
+
+    .ds-selected b {
+        color: #66d3e8;
+    }
+
+/* ===== کارت حرکت ===== */
+.pe-item-card {
+    position: relative;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 16px;
+    padding: 14px;
+    margin-bottom: 12px;
+}
+
+    .pe-item-card::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        bottom: 12px;
+        right: 0;
+        width: 3px;
+        border-radius: 3px;
+        background: linear-gradient(180deg, #66d3e8, #667eea);
+        opacity: .6;
+    }
+
+.pe-day-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(102,211,232,.14);
+    border: 1px solid rgba(102,211,232,.35);
+    color: #66d3e8;
+    border-radius: 999px;
+    padding: 4px 13px;
+    font-size: .72rem;
+    font-weight: 800;
+}
+
+.pe-del-item {
+    background: rgba(255,107,129,.12);
+    border: 1px solid rgba(255,107,129,.35);
+    color: #ff8fa3;
+    border-radius: 10px;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .25s;
+}
+
+    .pe-del-item:hover {
+        background: rgba(255,107,129,.25);
+        color: #fff;
+    }
+
+/* ===== فیلدهای تکنیک‌ها ===== */
+.tech-fields {
+    margin-top: 6px;
+}
+
+.tech-head {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(118,75,162,.14);
+    border: 1px solid rgba(118,75,162,.35);
+    border-radius: 10px;
+    padding: 7px 12px;
+    color: #c9b9f9;
+    font-size: .76rem;
+    font-weight: 800;
+    margin-bottom: 8px;
+}
+
+    .tech-head i {
+        color: #c9b9f9;
+    }
+
+/* ===== اسلات‌های combo ===== */
+.combo-slots {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.combo-slot {
+    position: relative;
+    background: rgba(102,211,232,.06);
+    border: 1px dashed rgba(102,211,232,.35);
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.combo-del {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    background: rgba(255,107,129,.12);
+    border: 1px solid rgba(255,107,129,.35);
+    color: #ff8fa3;
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .7rem;
+}
+
+    .combo-del:hover {
+        background: rgba(255,107,129,.25);
+        color: #fff;
+    }
+
+.combo-add-btn {
+    background: rgba(102,211,232,.12);
+    border: 1px solid rgba(102,211,232,.40);
+    color: #66d3e8;
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-size: .76rem;
+    font-weight: 700;
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+    .combo-add-btn:hover {
+        background: rgba(102,211,232,.22);
+        color: #fff;
+    }
+
+/* ===== اورلی انتخاب شاگرد ===== */
+.stu-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1080;
+    background: rgba(8,12,22,.55);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.stu-panel {
+    width: 100%;
+    max-width: 560px;
+    max-height: 82vh;
+    display: flex;
+    flex-direction: column;
+    background: rgba(16,20,36,.97);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+}
+
+.stu-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #1E6FD9, #667eea);
+    color: #fff;
+    font-weight: 800;
+    font-size: .92rem;
+    padding: 12px 16px;
+}
+
+.stu-close {
+    background: rgba(255,255,255,.15);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .stu-close:hover {
+        background: rgba(255,107,129,.4);
+    }
+
+.stu-body {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 0;
+}
+
+.stu-list {
+    overflow-y: auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 46vh;
+}
+
+.stu-row {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 12px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+    .stu-row:hover {
+        border-color: rgba(102,211,232,.5);
+        background: rgba(102,211,232,.10);
+    }
+
+.stu-name {
+    color: #fff;
+    font-weight: 800;
+    font-size: .88rem;
+}
+
+.stu-sub {
+    color: #9fb3c8;
+    font-size: .72rem;
+    margin-top: 3px;
+}
+
+.stu-empty {
+    text-align: center;
+    color: #9fb3c8;
+    padding: 26px 0;
+    font-size: .85rem;
+}
+/* ===== جامانده‌های ProgramEdit (دکمه‌ها + مودال تقویم) ===== */
+.pe-add-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: linear-gradient(135deg, #1E6FD9, #667eea);
+    border: none;
+    color: #fff;
+    border-radius: 12px;
+    padding: 8px 18px;
+    font-size: .82rem;
+    font-weight: 700;
+    box-shadow: 0 5px 14px rgba(30,111,217,.3);
+    transition: all .25s;
+}
+
+    .pe-add-btn:hover {
+        filter: brightness(1.12);
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    .pe-add-btn:disabled {
+        opacity: .4;
+        pointer-events: none;
+        filter: grayscale(.5);
+        box-shadow: none;
+    }
+
+.pe-save-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: #fff;
+    font-weight: 800;
+    font-size: .9rem;
+    border-radius: 14px;
+    padding: 10px 26px;
+    box-shadow: 0 6px 16px rgba(118,75,162,.4);
+    transition: all .25s;
+}
+
+    .pe-save-btn:hover {
+        filter: brightness(1.1);
+        color: #fff;
+    }
+
+.pe-modal {
+    background: rgba(16,20,36,.97);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 18px;
+    color: #fff;
+    backdrop-filter: blur(14px);
+}
+
+.pe-modal-head {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-weight: 800;
+}
+/* =====================================================
+   فاز ۳ - جزئیات برنامه (مربی pd-* / عضو mp-*)
+   ===================================================== */
+
+/* ===== بج وضعیت ===== */
+.mp-badge, .pd-badge {
+    border-radius: 999px;
+    padding: 4px 12px;
+    font-size: .68rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.mp-on, .pd-on {
+    background: rgba(56,217,169,.18);
+    color: #38d9a9;
+    border: 1px solid rgba(56,217,169,.45);
+}
+
+.mp-off, .pd-off {
+    background: rgba(255,255,255,.12);
+    color: #cbd3da;
+    border: 1px solid rgba(255,255,255,.25);
+}
+
+/* ===== کارت اطلاعات برنامه ===== */
+.mp-info, .pd-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 16px;
+    padding: 12px 16px;
+    color: #fff;
+}
+
+.mp-coach {
+    font-weight: 800;
+    font-size: .9rem;
+}
+
+.mp-period {
+    font-size: .72rem;
+    opacity: .85;
+    margin-top: 3px;
+}
+
+.mp-hd-icon {
+    color: #66d3e8;
+    margin-left: 6px;
+}
+
+/* ===== حالت خالی ===== */
+.mp-empty {
+    background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 20px;
+    text-align: center;
+    padding: 40px 16px;
+    color: #9fb3c8;
+    font-size: .9rem;
+}
+
+/* ===== فیلتر روزها (عضو) ===== */
+.mpf-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+    background: rgba(13,110,253,.08);
+    border: 1px dashed rgba(102,211,232,.40);
+    border-radius: 16px;
+    padding: 10px 12px;
+}
+
+.mpf-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.16);
+    color: #cbd3da;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: .76rem;
+    font-weight: 700;
+    transition: all .2s;
+}
+
+    .mpf-chip:hover {
+        background: rgba(255,255,255,.13);
+        color: #fff;
+    }
+
+    .mpf-chip.mpf-on {
+        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        border-color: transparent;
+        color: #fff;
+        box-shadow: 0 4px 12px rgba(30,111,217,.35);
+    }
+
+/* ===== باکس روز ===== */
+.mp-day, .pd-day {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 14px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.mp-day-head, .pd-day-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(102,211,232,.10);
+    border-bottom: 1px solid rgba(102,211,232,.25);
+    padding: 9px 12px;
+}
+
+.mp-day-icon, .pd-day-icon {
+    font-size: 1.1rem;
+}
+
+.mp-day-title, .pd-day-title {
+    flex-grow: 1;
+    color: #66d3e8;
+    font-weight: 800;
+    font-size: .85rem;
+}
+
+.mp-day-count, .pd-day-count {
+    background: rgba(102,211,232,.14);
+    border: 1px solid rgba(102,211,232,.35);
+    color: #66d3e8;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: .64rem;
+    font-weight: 800;
+}
+
+.mp-day-body, .pd-day-body {
+    padding: 10px;
+}
+
+/* ===== کارت حرکت ===== */
+.mp-ex, .pd-ex {
+    position: relative;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+}
+
+    .mp-ex:last-child, .pd-ex:last-child {
+        margin-bottom: 0;
+    }
+
+    .mp-ex::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        bottom: 10px;
+        right: 0;
+        width: 3px;
+        border-radius: 3px;
+        background: linear-gradient(180deg, #66d3e8, #667eea);
+        opacity: .6;
+    }
+
+.mp-ex-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.mp-ex-name, .pd-ex-name {
+    color: #fff;
+    font-weight: 800;
+    font-size: .88rem;
+    line-height: 1.6;
+    word-break: break-word;
+}
+
+.mp-type, .pd-type {
+    flex: 0 0 auto;
+    background: rgba(118,75,162,.22);
+    border: 1px solid rgba(118,75,162,.5);
+    color: #c9b9f9;
+    border-radius: 999px;
+    padding: 2px 10px;
+    font-size: .64rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* ===== pillها ===== */
+.mp-ex-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.mp-pill, .pd-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(13,110,253,.14);
+    border: 1px solid rgba(13,110,253,.30);
+    color: #dce9ff;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: .7rem;
+    font-weight: 700;
+}
+
+    .mp-pill i, .pd-pill i {
+        color: #66d3e8;
+        font-size: .78rem;
+    }
+
+.mp-pill-sm, .pd-pill-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.15);
+    color: #cbd3da;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: .66rem;
+    font-weight: 700;
+}
+
+    .mp-pill-sm i, .pd-pill-sm i {
+        color: #9fb3c8;
+        font-size: .68rem;
+    }
+
+/* ===== combo ===== */
+.mp-combo, .pd-combo {
+    margin-top: 10px;
+    background: rgba(102,211,232,.07);
+    border: 1px dashed rgba(102,211,232,.40);
+    border-radius: 10px;
+    padding: 10px 12px;
+}
+
+.mp-combo-title, .pd-combo-title {
+    color: #66d3e8;
+    font-size: .74rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.mp-combo-row, .pd-combo-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 6px 0;
+    border-top: 1px solid rgba(255,255,255,.06);
+}
+
+    .mp-combo-row:first-of-type, .pd-combo-row:first-of-type {
+        border-top: none;
+    }
+
+.mp-combo-num, .pd-combo-num {
+    flex: 0 0 auto;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    font-size: .68rem;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mp-combo-name, .pd-combo-name {
+    color: #fff;
+    font-weight: 700;
+    font-size: .82rem;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+/* ===== تنظیمات تکنیک ===== */
+.mp-tech, .pd-tech {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    background: rgba(118,75,162,.12);
+    border: 1px solid rgba(118,75,162,.35);
+    border-radius: 10px;
+    padding: 7px 12px;
+    font-size: .74rem;
+    font-weight: 700;
+    color: #e0d6ff;
+    line-height: 1.5;
+}
+
+    .mp-tech > i, .pd-tech > i {
+        color: #c9b9f9;
+        font-size: .9rem;
+        flex: 0 0 auto;
+    }
+
+    .mp-tech b, .pd-tech b {
+        color: #fff;
+    }
+
+.mp-tech-sep, .pd-tech-sep {
+    color: rgba(255,255,255,.30);
+    margin: 0 2px;
+}
+
+.mp-tech-drop {
+    background: rgba(255,107,129,.10);
+    border-color: rgba(255,107,129,.30);
+    color: #ffd0d8;
+}
+
+    .mp-tech-drop > i {
+        color: #ff8fa3;
+    }
+
+.mp-tech-pyramid {
+    background: rgba(255,169,77,.10);
+    border-color: rgba(255,169,77,.30);
+    color: #ffdfb8;
+}
+
+    .mp-tech-pyramid > i {
+        color: #ffa94d;
+    }
+
+.mp-tech-pause {
+    background: rgba(102,211,232,.10);
+    border-color: rgba(102,211,232,.35);
+    color: #c8edf6;
+}
+
+    .mp-tech-pause > i {
+        color: #66d3e8;
+    }
+
+.mp-tech-tempo {
+    background: rgba(56,217,169,.10);
+    border-color: rgba(56,217,169,.30);
+    color: #c8f5e7;
+}
+
+    .mp-tech-tempo > i {
+        color: #38d9a9;
+    }
+
+.mp-tempo-code {
+    font-family: 'Courier New', monospace;
+    background: rgba(0,0,0,.25);
+    border-radius: 6px;
+    padding: 1px 8px;
+    letter-spacing: 1px;
+}
+
+.mp-tempo-desc {
+    font-size: .66rem;
+    color: rgba(200,245,231,.75);
+    font-weight: 600;
+}
+
+/* ===== یادداشت ===== */
+.mp-note, .pd-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: .74rem;
+    color: #cbd3da;
+    background: rgba(255,193,7,.08);
+    border: 1px solid rgba(255,193,7,.22);
+    border-radius: 10px;
+    padding: 6px 10px;
+    line-height: 1.7;
+}
+
+    .mp-note i, .pd-note i {
+        color: #ffd200;
+        font-size: .8rem;
+        margin-top: 2px;
+        flex: 0 0 auto;
+    }
+
+/* ===== دکمه ویرایش (مربی) ===== */
+.pd-edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #1E6FD9, #667eea);
+    border: none;
+    color: #fff;
+    border-radius: 999px;
+    padding: 7px 16px;
+    font-size: .78rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+    .pd-edit-btn:hover {
+        filter: brightness(1.1);
+        color: #fff;
+    }
+.mp-combo-body {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+/* =====================================================
+   فاز ۴ - گزارش‌های عضو (trf-*) + هدرهای مشترک
+   ===================================================== */
+
+/* ===== هدر بنفش لیست‌ها ===== */
+.coach-list-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-weight: 800;
+    font-size: 1rem;
+    padding: 13px 20px;
+}
+
+/* ===== بج کنار عنوان ===== */
+.hd-badge {
+    background: rgba(13,110,253,.25);
+    border: 1px solid rgba(102,211,232,.45);
+    color: #dce9ff;
+    font-weight: 700;
+}
+
+/* ===== کارت تردد (بازشو) ===== */
+.trf-card {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 14px;
+    margin-bottom: 10px;
+    overflow: hidden;
+}
+
+.trf-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    cursor: pointer;
+}
+
+.trf-num {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .78rem;
+    box-shadow: 0 4px 10px rgba(30,111,217,.35);
+}
+
+.trf-mid {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.trf-line {
+    font-size: .8rem;
+    color: #cbd3da;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+    .trf-line b {
+        color: #fff;
+    }
+
+.trf-toggle {
+    flex: 0 0 auto;
+    background: rgba(255,255,255,.08);
+    border: none;
+    color: #9bd7f7;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    transition: transform .25s, background .25s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.trf-card.open .trf-toggle {
+    transform: rotate(-90deg);
+    background: rgba(13,110,253,.35);
+    color: #fff;
+}
+
+.trf-details {
+    display: none;
+    padding: 10px 12px 12px;
+    border-top: 1px dashed rgba(255,255,255,.15);
+    background: rgba(0,0,0,.15);
+}
+
+.trf-drow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: .78rem;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(255,255,255,.06);
+}
+
+    .trf-drow:last-child {
+        border-bottom: none;
+    }
+
+    .trf-drow span {
+        color: #8a93a6;
+    }
+
+    .trf-drow b {
+        color: #e9ecef;
+        font-weight: 700;
+    }
+/* =====================================================
+   فاز ۴ - تقویم حضور عضو (att-*)
+   ===================================================== */
+
+/* ===== دکمه تقویم روی هدر بنفش ===== */
+.att-cal-btn {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.30);
+    color: #fff;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: all .25s;
+}
+
+    .att-cal-btn:hover {
+        background: rgba(255,255,255,.28);
+        transform: translateY(-1px);
+    }
+
+    .att-cal-btn:active {
+        transform: scale(.92);
+    }
+
+/* ===== بلور کل صفحه وقتی تقویم بازه ===== */
+body > * {
+    transition: filter .35s ease;
+}
+
+body.att-open {
+    overflow: hidden;
+}
+
+    body.att-open > *:not(#attCalOverlay) {
+        filter: blur(10px) saturate(.85);
+        pointer-events: none;
+    }
+
+/* ===== اورلی تقویم ===== */
+#attCalOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1080;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.att-cal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(8,12,24,.45);
+    opacity: 0;
+    transition: opacity .3s;
+}
+
+#attCalOverlay.open .att-cal-backdrop {
+    opacity: 1;
+}
+
+.att-cal-panel {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.15);
+    box-shadow: 0 20px 60px rgba(0,0,0,.6);
+    transform: scale(.85) translateY(24px);
+    opacity: 0;
+    transition: transform .4s cubic-bezier(.22,.9,.35,1.15), opacity .3s;
+}
+
+#attCalOverlay.open .att-cal-panel {
+    transform: none;
+    opacity: 1;
+}
+
+.att-cal-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 10px 14px;
+    color: #fff;
+}
+
+.att-cal-title {
+    flex: 1 1 auto;
+    text-align: center;
+    font-weight: 800;
+    font-size: .95rem;
+}
+
+.att-nav,
+.att-close {
+    background: rgba(255,255,255,.15);
+    border: none;
+    color: #fff;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .2s;
+}
+
+    .att-nav:hover,
+    .att-close:hover {
+        background: rgba(255,255,255,.3);
+    }
+
+.att-cal-body {
+    padding: 14px;
+}
+
+.att-week {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+    .att-week span {
+        text-align: center;
+        font-size: .68rem;
+        color: #9fb3c8;
+        font-weight: 700;
+    }
+
+.att-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+}
+
+.att-day {
+    border-radius: 10px;
+    padding: 8px 0;
+    text-align: center;
+    font-size: .78rem;
+    font-weight: 700;
+}
+
+/* ===== روزها: سبز / قرمز / خاکستری ===== */
+.att-on {
+    background: rgba(56,217,169,.18);
+    border: 1px solid rgba(56,217,169,.45);
+    color: #38d9a9;
+}
+
+.att-off {
+    background: rgba(255,107,129,.14);
+    border: 1px solid rgba(255,107,129,.40);
+    color: #ff8fa3;
+}
+
+.att-future {
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.10);
+    color: #8a93a6;
+}
+
+.att-empty {
+    background: transparent;
+    border: none;
+}
+
+/* ===== راهنما و آمار ===== */
+.att-legend {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.att-lg {
+    border-radius: 999px;
+    padding: 3px 12px;
+    font-size: .68rem;
+    font-weight: 800;
+}
+
+.att-stats {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.att-chip {
+    border-radius: 999px;
+    padding: 4px 14px;
+    font-size: .72rem;
+    font-weight: 800;
+}
+
+.att-chip-on {
+    background: rgba(56,217,169,.14);
+    border: 1px solid rgba(56,217,169,.35);
+    color: #38d9a9;
+}
+
+.att-chip-off {
+    background: rgba(255,107,129,.12);
+    border: 1px solid rgba(255,107,129,.35);
+    color: #ff8fa3;
+}
+

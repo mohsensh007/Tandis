@@ -132,16 +132,44 @@ builder.Services.AddScoped<CoachService>();
 builder.Services.AddHttpContextAccessor();
 
 // ============================================================
-// 4) CORS
+// 4) CORS - خواندن از appsettings (متناسب با محیط)
 // ============================================================
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
     {
-        policy.WithOrigins("http://localhost:5500", "http://localhost:5104", "http://localhost:5200", "http://localhost:5300", "http://localhost:5400", "http://localhost:5501")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .AllowCredentials();
+        // ✅ اولویت ۱: لیست Current (که توی Development گذاشتی)
+        var origins = builder.Configuration
+            .GetSection("AllowedOrigins:Current")
+            .Get<string[]>()
+            ?? Array.Empty<string>();
+
+        // ✅ اولویت ۲: اگه Current نبود، از Development یا Production بخون
+        if (origins.Length == 0)
+        {
+            var env = builder.Environment.IsDevelopment() ? "Development" : "Production";
+            origins = builder.Configuration
+                .GetSection($"AllowedOrigins:{env}")
+                .Get<string[]>()
+                ?? Array.Empty<string>();
+        }
+
+        // ✅ اعمال policy
+        if (origins.Length > 0)
+        {
+            policy.WithOrigins(origins)
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        }
+        else if (builder.Environment.IsDevelopment())
+        {
+            // Fallback اضطراری فقط در development
+            policy.WithOrigins("http://localhost:5104", "http://localhost:5500")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader()
+                  .AllowCredentials();
+        }
     });
 });
 

@@ -1,12 +1,12 @@
-// ============================
-// جلوگیری از اجرای دوباره
-// ============================
+// ============================================================
+// تندیس — توابع سراسری (نسخه ادغام‌شده site.js + site-functions.js)
+// ============================================================
 if (typeof window.__SITE_LOADED__ === 'undefined') {
-
     window.__SITE_LOADED__ = true;
-    window.__SITE_JS_VERSION__ = "4.1.0-tandis-toast";
+    window.__SITE_FUNCTIONS_LOADED__ = true; // ✅ اگه فایل قدیمی site-functions هم لود شد، غیرفعال بشه
+    window.__SITE_JS_VERSION__ = "5.0.0-unified";
 
-    // ===== ✅ تزریق استایل توست (کلاس‌های جدید تا CSS قدیمی نبینتشون) =====
+    // ===== ✅ تزریق پوسته توست (یک‌بار در هر صفحه) =====
     if (typeof window.__TOAST_SKIN__ === 'undefined') {
         window.__TOAST_SKIN__ = true;
         (function () {
@@ -37,7 +37,7 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
         })();
     }
 
-    // --- متغیرها ---
+    // ===== اعداد فارسی / فرمت / escape =====
     var FaDigits = ['\u06F0', '\u06F1', '\u06F2', '\u06F3', '\u06F4', '\u06F5', '\u06F6', '\u06F7', '\u06F8', '\u06F9'];
 
     function toFa(n) {
@@ -51,26 +51,21 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     function esc(str) {
         if (str === null || str === undefined) return '';
         return String(str)
-            .replace(/&/g, '\u0026\u0061\u006D\u0070\u003B')
-            .replace(/</g, '\u0026\u006C\u0074\u003B')
-            .replace(/>/g, '\u0026\u0067\u0074\u003B')
-            .replace(/"/g, '\u0026\u0071\u0075\u006F\u0074\u003B')
-            .replace(/'/g, '\u0026\u0023\u0033\u0039\u003B');
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
-    // ===== آیکن‌ها با رنگ تم تندیس =====
+    // ===== آیکن‌های توست با رنگ تم تندیس =====
     var ICON_SUCCESS = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="#38d9a9" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
     var ICON_ERROR = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="#ff6b81" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
     var ICON_WARNING = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="#ffd200" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
     var ICON_INFO = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="#66d3e8" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
     var ICON_CLOSE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
 
-    var ICONS = {
-        success: ICON_SUCCESS,
-        error: ICON_ERROR,
-        warning: ICON_WARNING,
-        info: ICON_INFO
-    };
+    var ICONS = { success: ICON_SUCCESS, error: ICON_ERROR, warning: ICON_WARNING, info: ICON_INFO };
 
     // ===== نمایش توست =====
     function showToast(message, type) {
@@ -132,17 +127,10 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
         hideLoading();
     }
 
-    window.showLoading = showLoading;
-    window.hideLoading = hideLoading;
-    window.forceHideLoading = forceHideLoading;
-
-    // ============================================================
-    // API CALL
-    // ============================================================
+    // ===== فراخوانی API =====
     function apiCall(url, method, data, onSuccess, onFail) {
         forceHideLoading();
         showLoading();
-        console.log('📡 API Call:', url);
 
         var token = localStorage.getItem('token') || sessionStorage.getItem('token');
         var headers = { 'Content-Type': 'application/json' };
@@ -184,35 +172,22 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
             });
     }
 
+    // ===== پروفایل / لاگین =====
     function loadUserProfile() {
-        console.log('🔄 loadUserProfile called');
-
         if (window.location.pathname.includes('login') ||
             window.location.pathname.includes('register')) {
-            console.log('⏭️ Skipping: on login page');
             return;
         }
-
         var token = localStorage.getItem('token') || sessionStorage.getItem('token');
-        if (!token) {
-            console.log('⏭️ Skipping: no token found');
-            return;
-        }
-
-        console.log('✅ Token found, calling API...');
+        if (!token) return;
 
         apiCall('/api/user/profile', 'GET', null,
             function (data) {
-                console.log('✅ Profile data received:', data);
                 hideLoading();
                 displayUserData(data);
-                setTimeout(function () {
-                    forceHideLoading();
-                    console.log('🧹 Fallback: force hide loading');
-                }, 500);
+                setTimeout(function () { forceHideLoading(); }, 500);
             },
             function (error) {
-                console.error('❌ Profile load failed:', error);
                 hideLoading();
                 forceHideLoading();
                 if (error.response && error.response.status !== 404) {
@@ -223,7 +198,6 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     }
 
     function displayUserData(data) {
-        console.log('👤 Displaying user data:', data);
         try {
             if (document.getElementById('userName')) {
                 document.getElementById('userName').textContent = data.name || data.fullName || data.username || 'کاربر';
@@ -234,17 +208,12 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
             if (document.getElementById('userPhone')) {
                 document.getElementById('userPhone').textContent = data.phone || data.mobile || '';
             }
-        } catch (e) {
-            console.error('Error displaying user data:', e);
-        }
+        } catch (e) { }
     }
 
     function handleLogin(username, password) {
-        console.log('🔐 Login started');
-
         apiCall('/api/login', 'POST', { username: username, password: password },
             function (response) {
-                console.log('✅ Login success:', response);
                 if (response.token) {
                     localStorage.setItem('token', response.token);
                     sessionStorage.setItem('token', response.token);
@@ -259,7 +228,6 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
                 }
             },
             function (error) {
-                console.error('❌ Login failed:', error);
                 hideLoading();
                 showToast('ورود ناموفق بود', 'error');
             }
@@ -267,13 +235,11 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     }
 
     function checkAuthStatus() {
-        console.log('🔍 Checking auth status...');
-        console.log('ℹ️ Cookie-based auth, skipping profile load');
+        // احراز هویت کوکی‌محور هست — نیازی به چک localStorage نیست
     }
 
-    // --- Auto-run ---
+    // ===== اجرای خودکار =====
     document.addEventListener('DOMContentLoaded', function () {
-        console.log('🚀 Site JS loaded v4.1 (tandis toast)');
         hideLoading();
 
         if (!window.location.pathname.includes('login') &&
@@ -296,10 +262,12 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
         }
     });
 
-    // --- Export ---
+    // ===== Export سراسری =====
     window.showToast = showToast;
+    window.dismissToast = dismissToast;
     window.showLoading = showLoading;
     window.hideLoading = hideLoading;
+    window.forceHideLoading = forceHideLoading;
     window.apiCall = apiCall;
     window.loadUserProfile = loadUserProfile;
     window.handleLogin = handleLogin;
@@ -308,7 +276,4 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     window.toFa = toFa;
     window.fmtNum = fmtNum;
     window.esc = esc;
-
-    console.log('✅ All functions exported');
-
-} // پایان if
+}
