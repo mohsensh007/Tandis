@@ -21,8 +21,7 @@ namespace TandisWebApp.Controllers
         [HttpGet]
         public IActionResult Index() => View();
 
-        [HttpGet]
-        public IActionResult AddMoney() => View();
+       
 
         [HttpGet]
         public IActionResult Traffic() => View();
@@ -55,24 +54,6 @@ namespace TandisWebApp.Controllers
             return Ok(new { success = true, data = list });
         }
 
-        [HttpPost]
-        [Route("api/Accounting/AddMoney")]
-        public async Task<IActionResult> AddMoneyApi([FromBody] AddMoneyRequest req)
-        {
-            var memberID = User.GetMemberID();
-            var shiftID = User.GetShiftID();
-            var result = await _accounting.AddMoneyAsync(memberID, req, shiftID);
-            if (!result.Success)
-                return BadRequest(result);
-            return Ok(result);
-        }
 
-        [HttpGet]
-        [Route("api/Accounting/CreditTypes")]
-        public async Task<IActionResult> CreditTypes()
-        {
-            var list = await _accounting.GetCreditTypesAsync();
-            return Ok(new { success = true, data = list });
-        }
     }
 }

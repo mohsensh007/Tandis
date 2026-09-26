@@ -131,15 +131,7 @@ namespace TandisWebApp.DTOs
         public bool IsBuffet { get; set; } = false;
     }
 
-    public class AddMoneyRequest
-    {
-        [Required]
-        [Range(10000, long.MaxValue, ErrorMessage = "حداقل مبلغ ۱۰٬۰۰۰ ریال است")]
-        public long Amount { get; set; }
-
-        [Required]
-        public byte CreditTypeID { get; set; } // 11=ریالی، 2=فروشگاه، 3=سرویس
-    }
+   
 
     // ============================================================
     //  پروفایل / گزارش‌ها

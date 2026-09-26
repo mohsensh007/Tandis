@@ -75,23 +75,62 @@ namespace TandisWebApp.Services
                 if (req.Items == null || !req.Items.Any())
                     return new SimpleResponse { Success = false, Message = "سبد خرید خالی است" };
 
-                // جمع کل
-                long total = req.Items.Sum(i => i.TotalPrice);
+                // ✅ اعتبارسنجی تعداد (مثبت و کمتر از ۱۰۰)
+                if (req.Items.Any(i => i.Count <= 0 || i.Count > 100))
+                    return new SimpleResponse { Success = false, Message = "تعداد کالا نامعتبر است" };
+
+                // ✅ ۱) همه کالاها رو یک‌جا از دیتابیس بخون (نه N+1)
+                var requestedStuffIds = req.Items.Select(i => i.StuffID).Distinct().ToList();
+                var stuffs = await _db.Gen_Stuffs
+                    .AsNoTracking()
+                    .Where(s => requestedStuffIds.Contains(s.StuffID))
+                    .ToListAsync();
+
+                var stuffMap = stuffs.ToDictionary(s => s.StuffID);
+
+                // ✅ ۲) چک اینکه همه کالاها وجود دارن
+                if (stuffMap.Count != requestedStuffIds.Count)
+                    return new SimpleResponse { Success = false, Message = "برخی کالاها یافت نشدند" };
+
+                // ✅ ۳) محاسبه مبلغ کل از دیتابیس (نه از کلاینت)
+                long total = 0;
+                var validatedItems = new List<(Gen_Stuff Stuff, int Count)>();
+
+                foreach (var item in req.Items)
+                {
+                    var stuff = stuffMap[item.StuffID];
+
+                    // چک: قیمت کالا نباید null یا صفر باشه
+                    if (stuff.StuffAmount == null || stuff.StuffAmount <= 0)
+                        return new SimpleResponse { Success = false, Message = $"قیمت کالا «{stuff.StuffDesc}» نامعتبر است" };
+
+                    // ✅ چک تطابق نوع فروشگاه/بوفه
+                    if (stuff.IsBuffet != req.IsBuffet)
+                    {
+                        var type = req.IsBuffet ? "بوفه" : "فروشگاه";
+                        return new SimpleResponse { Success = false, Message = $"کالا «{stuff.StuffDesc}» متعلق به {type} نیست" };
+                    }
+
+                    long lineTotal = stuff.StuffAmount.Value * item.Count;
+                    total += lineTotal;
+                    validatedItems.Add((stuff, item.Count));
+                }
+
                 if (total <= 0)
                     return new SimpleResponse { Success = false, Message = "مبلغ خرید نامعتبر است" };
 
-                // اعتبار فروشگاه
+                // ✅ ۴) چک اعتبار عضو
                 long shopCredit = await _helper.GetBuffetCreditAmountAsync(memberID);
                 if (shopCredit < total)
                 {
                     return new SimpleResponse
                     {
                         Success = false,
-                        Message = $"اعتبار فروشگاه کافی نیست. اعتبار فعلی: {_helper.SetSeprator(shopCredit)} ریال"
+                        Message = $"اعتبار کافی نیست. اعتبار فعلی: {_helper.SetSeprator(shopCredit)} ریال"
                     };
                 }
 
-                // ساخت فاکتور (هدر)
+                // ✅ ۵) ساخت فاکتور (هدر)
                 var factor = new Acc_BuffetFactor
                 {
                     MemberID = memberID,
@@ -107,26 +146,23 @@ namespace TandisWebApp.Services
                     CreationTime = _helper.GetThisTime()
                 };
                 _db.Acc_BuffetFactors.Add(factor);
-                await _db.SaveChangesAsync();
+                await _db.SaveChangesAsync(); // برای گرفتن BuffetFactorID
 
-                // ردیف‌های فاکتور
-                foreach (var item in req.Items)
+                // ✅ ۶) ردیف‌های فاکتور (با قیمت واقعی از دیتابیس)
+                foreach (var (stuff, count) in validatedItems)
                 {
-                    var stuff = await _db.Gen_Stuffs.FirstOrDefaultAsync(s => s.StuffID == item.StuffID);
-                    if (stuff == null) continue;
-
                     _db.Acc_BuffetFactorDetails.Add(new Acc_BuffetFactorDetail
                     {
                         BuffetFactorID = factor.BuffetFactorID,
-                        StuffID = item.StuffID,
-                        Amount = item.UnitPrice,
-                        SCount = item.Count,
+                        StuffID = stuff.StuffID,
+                        Amount = stuff.StuffAmount!.Value,  // ✅ قیمت از دیتابیس
+                        SCount = count,
                         CreationDate = _helper.GetToday(),
                         CreationTime = _helper.GetThisTime()
                     });
                 }
 
-                // ثبت بدهی فروشگاه
+                // ✅ ۷) ثبت بدهی فروشگاه
                 _db.Cash_DebitStatements.Add(new Cash_DebitStatement
                 {
                     MemberID = memberID,
@@ -150,7 +186,7 @@ namespace TandisWebApp.Services
             catch (Exception ex)
             {
                 await tx.RollbackAsync();
-                _logger.LogError(ex, "خطا در ثبت خرید");
+                _logger.LogError(ex, "خطا در ثبت خرید برای عضو {MemberID}", memberID);
                 return new SimpleResponse { Success = false, Message = "خطا در ثبت اطلاعات" };
             }
         }
