@@ -147,12 +147,11 @@ namespace TandisWebApp.Services
             if (memberIDs.Count > 0)
             {
                 memberInfos = await (
-                    from m in _db.Gen_Members
+                    from m in _db.Gen_Members.AsNoTracking()
                     join p in _db.Gen_Persons on m.PersonID equals p.PersonID
                     where memberIDs.Contains(m.MemberID)
                     select new { m.MemberID, p.FullName }
                 )
-                .AsNoTracking()
                 .ToDictionaryAsync(
                     x => x.MemberID,
                     x => (x.FullName ?? "", _helper.SetSeprator(x.MemberID))
@@ -341,12 +340,11 @@ namespace TandisWebApp.Services
         {
             if (memberID <= 0) return null;
             return await (
-        from m in _db.Gen_Members.AsNoTracking()
-        join p in _db.Gen_Persons on m.PersonID equals p.PersonID
-        where m.MemberID == memberID
-        select p.FullName
-)
-.FirstOrDefaultAsync();
+                from m in _db.Gen_Members.AsNoTracking()
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                where m.MemberID == memberID
+                select p.FullName
+            ).FirstOrDefaultAsync();
         }
 
         private static string GetCreditTypeDesc(byte? typeId)
@@ -459,7 +457,7 @@ namespace TandisWebApp.Services
         private async Task<(long sum, int count)> SumCredits(short shiftID, string fromDate, string toDate)
         {
             var amounts = await (
-                from c in _db.Cash_CreditStatments
+                from c in _db.Cash_CreditStatments.AsNoTracking()
                 where c.CreationDate != null
                    && c.CreationDate.CompareTo(fromDate) >= 0
                    && c.CreationDate.CompareTo(toDate) <= 0
@@ -468,7 +466,7 @@ namespace TandisWebApp.Services
                 join t in _db.ACC_Traffics on c.TrafficID equals t.TrafficID into tj
                 from t in tj.DefaultIfEmpty()
                 where m.ShiftID == shiftID || t.ShiftID == shiftID
-                select c.Amount)               
+                select c.Amount)
                 .ToListAsync();
 
             var filtered = amounts.Where(a => a.HasValue).Select(a => a!.Value).ToList();
@@ -497,7 +495,7 @@ namespace TandisWebApp.Services
             var todayS = $"{pc.GetYear(now):0000}/{pc.GetMonth(now):00}/{pc.GetDayOfMonth(now):00}";
 
             var raw = await (
-                from t in _db.ACC_Traffics
+                from t in _db.ACC_Traffics.AsNoTracking()
                 where t.ShiftID == shiftID && t.EntryDate == todayS
                    && (t.TrafficStatus == 1 || t.TrafficStatus == 100)
                 join m in _db.Gen_Members on t.MemberID equals m.MemberID into memJoin
@@ -518,7 +516,7 @@ namespace TandisWebApp.Services
                     SportName = ms != null && ms.Gen_SportSanse != null
                                 ? (ms.Gen_SportSanse.Gen_Sport_Category != null ? ms.Gen_SportSanse.Gen_Sport_Category.SportName + " " : "") + (ms.Gen_SportSanse.SanseName ?? "")
                                 : ""
-                })                
+                })
                 .ToListAsync();
 
             return raw.Select(x => new AdminInsideRowDto

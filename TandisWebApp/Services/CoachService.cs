@@ -23,13 +23,11 @@ namespace TandisWebApp.Services
 
             // نام مربی
             model.CoachName = await (
-                from m in _db.Gen_Members
+                from m in _db.Gen_Members.AsNoTracking()
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
                 where m.MemberID == coachMemberID
                 select p.FullName
-            )
-            .AsNoTracking()
-            .FirstOrDefaultAsync() ?? "";
+            ).FirstOrDefaultAsync() ?? "";
 
             // سانس‌های فعال من
             var mySanse = await _db.Gen_SportSanses
@@ -53,7 +51,7 @@ namespace TandisWebApp.Services
 
             // کلاس‌های امروز
             var classes = await (
-                from s in _db.Gen_SportSanses
+                from s in _db.Gen_SportSanses.AsNoTracking()
                 join d in _db.Set<Gen_SportSanseDetail>() on s.SportSanseID equals d.SportSanseID
                 join w in _db.Set<Gen_DayOfWeek>() on d.DayID equals w.DayID
                 where s.CoachMemberID == coachMemberID
@@ -73,9 +71,7 @@ namespace TandisWebApp.Services
                     RegCount = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID && a.IsActive == true),
                     RegValidCount = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID && a.IsActive == true && string.Compare(a.EndDate, todayStr) >= 0)
                 }
-            )
-            .AsNoTracking()
-            .ToListAsync();
+            ).ToListAsync();
 
             // حضور امروز هر کلاس
             var sanseIds = classes.Select(c => c.SportSanseID).Distinct().ToList();
@@ -85,16 +81,14 @@ namespace TandisWebApp.Services
             if (sanseIds.Count > 0)
             {
                 attendanceMap = await (
-                    from t in _db.ACC_Traffics
+                    from t in _db.ACC_Traffics.AsNoTracking()
                     join a in _db.Acc_MemberSports on t.SportMemberID equals a.SportMemberID
                     where a.SportSanseID != null && sanseIds.Contains(a.SportSanseID.Value)
                           && t.EntryDateTime != null
                           && t.EntryDateTime.Value.Date == today
                     group t by (a.SportSanseID ?? 0) into g
                     select new { SanseID = g.Key, Cnt = g.Count() }
-                )
-                .AsNoTracking()
-                .ToDictionaryAsync(x => x.SanseID, x => x.Cnt);
+                ).ToDictionaryAsync(x => x.SanseID, x => x.Cnt);
             }
 
             // وضعیت هر کلاس
@@ -137,7 +131,7 @@ namespace TandisWebApp.Services
             var todayStr = _helper.GetToday();
 
             var classes = await (
-                from s in _db.Gen_SportSanses
+                from s in _db.Gen_SportSanses.AsNoTracking()
                 where s.CoachMemberID == coachMemberID && s.IsActive == true
                 orderby s.Gen_Sport_Category.SportName, s.SanseName
                 select new CoachClassListDto
@@ -149,16 +143,14 @@ namespace TandisWebApp.Services
                     TotalStudents = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID),
                     ActiveStudents = _db.Acc_MemberSports.Count(a => a.SportSanseID == s.SportSanseID && a.IsActive == true && string.Compare(a.EndDate, todayStr) >= 0)
                 }
-            )
-            .AsNoTracking()
-            .ToListAsync();
+            ).ToListAsync();
 
             // برنامه هفتگی همه کلاس‌ها
             var classIds = classes.Select(c => c.SportSanseID).ToList();
             var details = classIds.Count == 0
                 ? new List<CoachSchedulePartDto>()
                 : await (
-                    from d in _db.Set<Gen_SportSanseDetail>()
+                    from d in _db.Set<Gen_SportSanseDetail>().AsNoTracking()
                     join w in _db.Set<Gen_DayOfWeek>() on d.DayID equals w.DayID
                     where d.SportSanseID != null && classIds.Contains(d.SportSanseID.Value)
                           && (d.IsActive == true || d.IsActive == null)
@@ -170,9 +162,7 @@ namespace TandisWebApp.Services
                         StartTime = d.StartTime,
                         EndTime = d.EndTime
                     }
-                )
-                .AsNoTracking()
-                .ToListAsync();
+                ).ToListAsync();
 
             foreach (var c in classes)
             {
@@ -198,7 +188,7 @@ namespace TandisWebApp.Services
             var todayStr = _helper.GetToday();
 
             var students = await (
-                from a in _db.Acc_MemberSports
+                from a in _db.Acc_MemberSports.AsNoTracking()
                 where a.SportSanseID == sportSanseID && a.MemberID != null
                 join m in _db.Gen_Members on a.MemberID.Value equals m.MemberID
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
@@ -215,9 +205,7 @@ namespace TandisWebApp.Services
                     UsedSessions = _db.ACC_Traffics.Count(t => t.SportMemberID == a.SportMemberID),
                     IsActive = a.IsActive == true
                 }
-            )
-            .AsNoTracking()
-            .ToListAsync();
+            ).ToListAsync();
 
             foreach (var st in students)
             {
@@ -292,7 +280,7 @@ namespace TandisWebApp.Services
         public async Task<CoachStudentDetailsDto?> GetStudentDetailsAsync(int coachMemberID, long sportMemberID)
         {
             var reg = await (
-                from a in _db.Acc_MemberSports
+                from a in _db.Acc_MemberSports.AsNoTracking()
                 join s in _db.Gen_SportSanses on a.SportSanseID equals s.SportSanseID
                 where a.SportMemberID == sportMemberID && s.CoachMemberID == coachMemberID
                 select new
@@ -304,21 +292,17 @@ namespace TandisWebApp.Services
                     TotalSessions = (int)(a.SessionCount ?? 0),
                     ClassName = s.Gen_Sport_Category.SportName + " - " + s.SanseName
                 }
-            )
-            .AsNoTracking()
-            .FirstOrDefaultAsync();
+            ).FirstOrDefaultAsync();
 
             if (reg == null || reg.MemberID == null)
                 return null;
 
             var info = await (
-                from m in _db.Gen_Members
+                from m in _db.Gen_Members.AsNoTracking()
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
                 where m.MemberID == reg.MemberID
                 select new { p.FullName, p.Mobile }
-            )
-            .AsNoTracking()
-            .FirstOrDefaultAsync();
+            ).FirstOrDefaultAsync();
 
             var todayStr = _helper.GetToday();
             var used = await _db.ACC_Traffics
@@ -382,7 +366,7 @@ namespace TandisWebApp.Services
                 toDate = todayStr;
 
             var rows = await (
-                from a in _db.Acc_MemberSports
+                from a in _db.Acc_MemberSports.AsNoTracking()
                 join s in _db.Gen_SportSanses on a.SportSanseID equals s.SportSanseID
                 join m in _db.Gen_Members on a.MemberID equals m.MemberID
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
@@ -404,9 +388,7 @@ namespace TandisWebApp.Services
                     CoachRevivalAmount = a.CoachRevivalAmount ?? 0,
                     IsRevival = a.IsRevival == true
                 }
-            )
-            .AsNoTracking()
-            .ToListAsync();
+            ).ToListAsync();
 
             var thisMonthPrefix = todayStr.Substring(0, 7);
             var thisMonthRows = rows.Where(r => r.StartDate != null && r.StartDate.StartsWith(thisMonthPrefix)).ToList();
@@ -436,7 +418,7 @@ namespace TandisWebApp.Services
                 return new List<CoachMessageSummaryDto>();
 
             var students = await (
-                from a in _db.Acc_MemberSports
+                from a in _db.Acc_MemberSports.AsNoTracking()
                 where a.SportSanseID != null && mySanseIds.Contains(a.SportSanseID.Value) && a.IsActive == true && a.MemberID != null
                 join m in _db.Gen_Members on a.MemberID.Value equals m.MemberID
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
@@ -447,9 +429,7 @@ namespace TandisWebApp.Services
                     g.Key.FullName,
                     g.Key.Mobile
                 }
-            )
-            .AsNoTracking()
-            .ToListAsync();
+            ).ToListAsync();
 
             var result = new List<CoachMessageSummaryDto>();
 
@@ -502,13 +482,11 @@ namespace TandisWebApp.Services
                 return null;
 
             var studentName = await (
-                from m in _db.Gen_Members
+                from m in _db.Gen_Members.AsNoTracking()
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
                 where m.MemberID == studentMemberID
                 select p.FullName
-            )
-            .AsNoTracking()
-            .FirstOrDefaultAsync() ?? "";
+            ).FirstOrDefaultAsync() ?? "";
 
             var messages = await _db.MsgMessages
                 .AsNoTracking()

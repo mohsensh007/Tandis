@@ -26,7 +26,6 @@ namespace TandisWebApp.Services
             return Pc.ToDateTime(y, m, d, 0, 0, 0, 0);
         }
 
-        /// <summary>ردیف‌های combo رو به یک آیتم با ExtraItems تبدیل می‌کنه</summary>
         private static List<ProgramItemEditDto> AssembleComboItems(List<ProgramItemEditDto> raw)
         {
             var result = new List<ProgramItemEditDto>();
@@ -62,7 +61,6 @@ namespace TandisWebApp.Services
             return result;
         }
 
-        /// <summary>آیتم موجود یا ساخت آیتم جدید</summary>
         private async Task<int> ResolveItemIDAsync(int itemID, string? newDesc)
         {
             if (itemID > 0) return itemID;
@@ -77,7 +75,7 @@ namespace TandisWebApp.Services
         public async Task<List<CoachProgramRowDto>> GetProgramListAsync(int coachMemberID)
         {
             var raw = await (
-                from p in _db.SportPrgs
+                from p in _db.SportPrgs.AsNoTracking()
                 where p.CoachID == coachMemberID
                 join m in _db.Gen_Members on p.MemberID equals m.MemberID into mj
                 from m in mj.DefaultIfEmpty()
@@ -93,7 +91,6 @@ namespace TandisWebApp.Services
                     p.EndDate,
                     ItemCount = _db.SportPrgDtls.Count(d => d.PrgID == p.PrgID)
                 })
-                .AsNoTracking()
                 .ToListAsync();
 
             return raw.Select(x => new CoachProgramRowDto
@@ -113,7 +110,7 @@ namespace TandisWebApp.Services
         {
             var today = ToShamsi(DateTime.Now.Date);
             return await (
-                from ams in _db.Acc_MemberSports
+                from ams in _db.Acc_MemberSports.AsNoTracking()
                 join ss in _db.Gen_SportSanses on ams.SportSanseID equals ss.SportSanseID
                 where ss.CoachMemberID == coachMemberID
                    && ams.IsActive == true
@@ -128,7 +125,6 @@ namespace TandisWebApp.Services
                     SportName = ss.Gen_Sport_Category != null ? ss.Gen_Sport_Category.SportName ?? "" : "",
                     SanseName = ss.SanseName ?? ""
                 })
-                .AsNoTracking()
                 .Distinct()
                 .OrderBy(x => x.FullName)
                 .ToListAsync();
@@ -151,7 +147,7 @@ namespace TandisWebApp.Services
             if (head == null) return null;
 
             var rawItems = await (
-                from d in _db.SportPrgDtls
+                from d in _db.SportPrgDtls.AsNoTracking()
                 where d.PrgID == prgID
                 join i in _db.Gen_PrgmItems on d.ItemID equals i.ItemID into ij
                 from i in ij.DefaultIfEmpty()
@@ -177,15 +173,13 @@ namespace TandisWebApp.Services
                     PauseRest = d.PauseRest,
                     Tempo = d.Tempo
                 })
-                .AsNoTracking()
                 .ToListAsync();
 
             var studentName = await (
-                from m in _db.Gen_Members
+                from m in _db.Gen_Members.AsNoTracking()
                 join p in _db.Gen_Persons on m.PersonID equals p.PersonID
                 where m.MemberID == head.MemberID
                 select (p.FirstName + " " + p.LastName))
-                .AsNoTracking()
                 .FirstOrDefaultAsync();
 
             return new CoachProgramEditDto
@@ -199,7 +193,7 @@ namespace TandisWebApp.Services
             };
         }
 
-        /// <summary>ذخیره برنامه با اعتبارسنجی کامل هر تکنیک (نوشتن - بدون AsNoTracking)</summary>
+        /// <summary>ذخیره برنامه (نوشتن - بدون AsNoTracking)</summary>
         public async Task<(bool ok, string msg, int prgID)> SaveProgramAsync(int coachMemberID, SaveProgramRequest req)
         {
             if (req.MemberID <= 0) return (false, "شاگرد را انتخاب کنید", 0);
@@ -347,20 +341,19 @@ namespace TandisWebApp.Services
         public async Task<CoachProgramDetailsDto?> GetProgramDetailsAsync(int prgID, int coachMemberID)
         {
             var head = await (
-                from p in _db.SportPrgs
+                from p in _db.SportPrgs.AsNoTracking()
                 where p.PrgID == prgID && p.CoachID == coachMemberID
                 join m in _db.Gen_Members on p.MemberID equals m.MemberID into mj
                 from m in mj.DefaultIfEmpty()
                 join pr in _db.Gen_Persons on m.PersonID equals pr.PersonID into pj
                 from pr in pj.DefaultIfEmpty()
                 select new { p.PrgID, p.StartDate, p.EndDate, Name = (pr.FirstName + " " + pr.LastName) })
-                .AsNoTracking()
                 .FirstOrDefaultAsync();
 
             if (head == null) return null;
 
             var rawItems = await (
-                from d in _db.SportPrgDtls
+                from d in _db.SportPrgDtls.AsNoTracking()
                 where d.PrgID == prgID
                 join i in _db.Gen_PrgmItems on d.ItemID equals i.ItemID into ij
                 from i in ij.DefaultIfEmpty()
@@ -386,7 +379,6 @@ namespace TandisWebApp.Services
                     PauseRest = d.PauseRest,
                     Tempo = d.Tempo
                 })
-                .AsNoTracking()
                 .ToListAsync();
 
             var result = new CoachProgramDetailsDto
@@ -412,7 +404,7 @@ namespace TandisWebApp.Services
         public async Task<List<MemberProgramDto>> GetMemberProgramsAsync(int memberID)
         {
             var heads = await (
-                from p in _db.SportPrgs
+                from p in _db.SportPrgs.AsNoTracking()
                 where p.MemberID == memberID && p.EndDate != null && p.EndDate >= DateTime.Now.Date
                 join cm in _db.Gen_Members on p.CoachID equals cm.MemberID into cmj
                 from cm in cmj.DefaultIfEmpty()
@@ -420,14 +412,13 @@ namespace TandisWebApp.Services
                 from cp in cpj.DefaultIfEmpty()
                 orderby p.PrgID descending
                 select new { p.PrgID, p.StartDate, p.EndDate, Coach = (cp.FirstName + " " + cp.LastName) })
-                .AsNoTracking()
                 .ToListAsync();
 
             var result = new List<MemberProgramDto>();
             foreach (var h in heads)
             {
                 var rawItems = await (
-                    from d in _db.SportPrgDtls
+                    from d in _db.SportPrgDtls.AsNoTracking()
                     where d.PrgID == h.PrgID
                     join i in _db.Gen_PrgmItems on d.ItemID equals i.ItemID into ij
                     from i in ij.DefaultIfEmpty()
@@ -453,7 +444,6 @@ namespace TandisWebApp.Services
                         PauseRest = d.PauseRest,
                         Tempo = d.Tempo
                     })
-                    .AsNoTracking()
                     .ToListAsync();
 
                 result.Add(new MemberProgramDto
@@ -472,20 +462,19 @@ namespace TandisWebApp.Services
         public async Task<MemberProgramDto?> GetMemberProgramAsync(int memberID, int prgID)
         {
             var head = await (
-                from p in _db.SportPrgs
+                from p in _db.SportPrgs.AsNoTracking()
                 where p.PrgID == prgID && p.MemberID == memberID
                 join cm in _db.Gen_Members on p.CoachID equals cm.MemberID into cmj
                 from cm in cmj.DefaultIfEmpty()
                 join cp in _db.Gen_Persons on cm.PersonID equals cp.PersonID into cpj
                 from cp in cpj.DefaultIfEmpty()
                 select new { p.PrgID, Coach = (cp.FirstName + " " + cp.LastName), p.StartDate, p.EndDate })
-                .AsNoTracking()
                 .FirstOrDefaultAsync();
 
             if (head == null) return null;
 
             var rawItems = await (
-                from d in _db.SportPrgDtls
+                from d in _db.SportPrgDtls.AsNoTracking()
                 where d.PrgID == prgID
                 join i in _db.Gen_PrgmItems on d.ItemID equals i.ItemID into ij
                 from i in ij.DefaultIfEmpty()
@@ -511,7 +500,6 @@ namespace TandisWebApp.Services
                     PauseRest = d.PauseRest,
                     Tempo = d.Tempo
                 })
-                .AsNoTracking()
                 .ToListAsync();
 
             return new MemberProgramDto
@@ -529,7 +517,7 @@ namespace TandisWebApp.Services
         {
             var today = ToShamsi(DateTime.Now.Date);
             return await (
-                from ams in _db.Acc_MemberSports
+                from ams in _db.Acc_MemberSports.AsNoTracking()
                 join ss in _db.Gen_SportSanses on ams.SportSanseID equals ss.SportSanseID
                 where ss.CoachMemberID == coachMemberID
                    && ams.IsActive == true
@@ -547,7 +535,6 @@ namespace TandisWebApp.Services
                     SanseName = ss.SanseName ?? "",
                     EndDate = ams.EndDate ?? ""
                 })
-                .AsNoTracking()
                 .ToListAsync();
         }
     }
