@@ -178,21 +178,10 @@ namespace TandisWebApp.Services
                 if (sanse == null)
                     return new ApiResponse<RegisterResponse> { Success = false, Message = "سانس یافت نشد" };
 
-                // محاسبه تاریخ پایان
-                string endDate;
-                try
-                {
-                    int dayCount = sanse.Gen_Period?.DayCount ?? 30;
-                    endDate = _helper.AddDaysToPersian(req.StartDate, dayCount);
-                }
-                catch
-                {
-                    return new ApiResponse<RegisterResponse>
-                    {
-                        Success = false,
-                        Message = "فرمت تاریخ شروع نامعتبر است. نمونه صحیح: 1405/03/20"
-                    };
-                }
+                // ✅ SecFix #17: تاریخ شروع همیشه از سرور — ورودی کلاینت نادیده گرفته می‌شه
+                var startDate = _helper.GetToday();
+                int dayCount = sanse.Gen_Period?.DayCount ?? 30;
+                string endDate = _helper.AddDaysToPersian(startDate, dayCount);
 
                 var rec = new Acc_MemberSport
                 {
@@ -208,7 +197,7 @@ namespace TandisWebApp.Services
                     RegDiscountAmount = 0,
                     FinalPayment = sanse.TotalAmount,
                     PeriodID = 1,
-                    StartDate = req.StartDate,
+                    StartDate = startDate,          // ✅ تاریخ سرور
                     EndDate = endDate,
                     IsActive = true,
                     IsRevival = false,
@@ -232,20 +221,20 @@ namespace TandisWebApp.Services
                 // (EF Core به‌طور پیش‌فرض از OUTPUT INSERTED استفاده می‌کنه که با trigger سازگار نیست)
                 // نکته: RegDiscountPercent و RegDiscountAmount باید 0 باشند (نه NULL) تا Trigger درست کار کنه
                 await _db.Database.ExecuteSqlInterpolatedAsync($@"
-                    INSERT INTO Acc_MemberSports (MemberID, SportSanseID, MembershipTypeID, ContractID, SessionCount,
-                        Amount, Tax, DiscountAmount, RegDiscountPercent, RegDiscountAmount, FinalPayment,
-                        CoachPercent, CoachAmount, CoachPercentForRevival, CoachRevivalAmount,
-                        PeriodID, StartDate, EndDate, IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
-                    VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.ContractID}, {rec.SessionCount},
-                        {rec.Amount}, {rec.Tax}, {rec.DiscountAmount}, {rec.RegDiscountPercent ?? 0}, {rec.RegDiscountAmount ?? 0},
-                        {rec.FinalPayment}, {rec.CoachPercent}, {rec.CoachAmount},
-                        {rec.CoachPercentForRevival}, {rec.CoachRevivalAmount}, {rec.PeriodID}, {rec.StartDate}, {rec.EndDate},
-                        {rec.IsActive}, {rec.IsRevival}, {rec.CommentText}, {rec.UserID}, {rec.CreationDate}, {rec.CreationTime})");
+            INSERT INTO Acc_MemberSports (MemberID, SportSanseID, MembershipTypeID, ContractID, SessionCount,
+                Amount, Tax, DiscountAmount, RegDiscountPercent, RegDiscountAmount, FinalPayment,
+                CoachPercent, CoachAmount, CoachPercentForRevival, CoachRevivalAmount,
+                PeriodID, StartDate, EndDate, IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
+            VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.ContractID}, {rec.SessionCount},
+                {rec.Amount}, {rec.Tax}, {rec.DiscountAmount}, {rec.RegDiscountPercent ?? 0}, {rec.RegDiscountAmount ?? 0},
+                {rec.FinalPayment}, {rec.CoachPercent}, {rec.CoachAmount},
+                {rec.CoachPercentForRevival}, {rec.CoachRevivalAmount}, {rec.PeriodID}, {rec.StartDate}, {rec.EndDate},
+                {rec.IsActive}, {rec.IsRevival}, {rec.CommentText}, {rec.UserID}, {rec.CreationDate}, {rec.CreationTime})");
 
                 // خواندن ID رکورد درج شده (داخل تراکنش، قبل از commit)
                 var insertedId = await _db.Acc_MemberSports
                     .AsNoTracking()
-                    .Where(x => x.MemberID == memberID && x.StartDate == req.StartDate && x.CommentText == "ثبت‌نام از طریق وب‌اپ")
+                    .Where(x => x.MemberID == memberID && x.StartDate == startDate && x.CommentText == "ثبت‌نام از طریق وب‌اپ")
                     .OrderByDescending(x => x.SportMemberID)
                     .Select(x => x.SportMemberID)
                     .FirstOrDefaultAsync();
@@ -312,9 +301,10 @@ namespace TandisWebApp.Services
                     };
                 }
 
-                // محاسبه تاریخ پایان
+                // ✅ SecFix #17: تاریخ شروع همیشه از سرور
+                var startDate = _helper.GetToday();
                 int dayCount = sanse.Gen_Period?.DayCount ?? 30;
-                string endDate = _helper.AddDaysToPersian(req.StartDate, dayCount);
+                string endDate = _helper.AddDaysToPersian(startDate, dayCount);
 
                 // غیرفعال کردن ثبت‌نام قبلی فعال در همین سانس
                 var prevActiveIds = await _db.Acc_MemberSports
@@ -347,7 +337,7 @@ namespace TandisWebApp.Services
                     RegDiscountAmount = 0,
                     FinalPayment = finalPayment,
                     PeriodID = 1,
-                    StartDate = req.StartDate,
+                    StartDate = startDate,
                     EndDate = endDate,
                     IsActive = true,
                     IsRevival = isRevival,
@@ -387,7 +377,7 @@ VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.Contrac
 
                 var insertedId = await _db.Acc_MemberSports
                     .AsNoTracking()
-                    .Where(x => x.MemberID == memberID && x.StartDate == req.StartDate && x.CommentText == "تمدید با وب‌اپ")
+                    .Where(x => x.MemberID == memberID && x.StartDate == startDate && x.CommentText == "تمدید با وب‌اپ")
                     .OrderByDescending(x => x.SportMemberID)
                     .Select(x => x.SportMemberID)
                     .FirstOrDefaultAsync();

@@ -192,10 +192,50 @@ namespace TandisWebApp.Services
                 Items = AssembleComboItems(rawItems)
             };
         }
+        /// <summary>SecFix #4: اعتبارسنجی یک حرکت — اگه سالم بود null، وگرنه پیام خطا برمی‌گردونه</summary>
+        private static string? ValidateItemDto(SaveProgramItemRequest it)
+        {
+            var type = it.ExerciseType ?? 1;
 
+            if (type == 2)
+            {
+                if (it.DropCount == null || it.DropCount < 1 || it.DropCount > 6)
+                    return "دراپ ست: تعداد دراپ (۱ تا ۶) الزامی است";
+                if (it.DropWeightPct != null && (it.DropWeightPct < 5 || it.DropWeightPct > 50))
+                    return "دراپ ست: درصد کاهش وزن باید بین ۵ تا ۵۰ باشد";
+            }
+            else if (type == 3 || type == 4 || type == 5)
+            {
+                var cnt = it.ExtraItems?.Count ?? 0;
+                if (type == 3 && cnt != 1) return "سوپرست: دقیقاً ۲ حرکت لازم است";
+                if (type == 4 && cnt != 2) return "تری‌ست: دقیقاً ۳ حرکت لازم است";
+                if (type == 5 && (cnt < 3 || cnt > 5)) return "ست غول: بین ۴ تا  حرکت لازم است";
+            }
+            else if (type == 6)
+            {
+                if (it.PyramidDir == null || it.PyramidDir < 1 || it.PyramidDir > 3)
+                    return "پیرامید: جهت (صعودی/معکوس/کامل) الزامی است";
+            }
+            else if (type == 7)
+            {
+                if (it.PauseCount == null || it.PauseCount < 1 || it.PauseCount > 5)
+                    return "استراحت-مکث: تعداد مینی‌ست (۱ تا ۵) الزامی است";
+                if (it.PauseRest != null && (it.PauseRest < 5 || it.PauseRest > 60))
+                    return "استراحت-مکث: مکث باید بین ۵ تا ۶۰ ثانیه باشد";
+            }
+            else if (type == 8)
+            {
+                if (string.IsNullOrWhiteSpace(it.Tempo) || !Regex.IsMatch(it.Tempo.Trim(), @"^\d(-\d){2,3}$"))
+                    return "تمپو نامعتبر است (نمونه درست: 3-1-2-0)";
+            }
+
+            return null;
+        }
         /// <summary>ذخیره برنامه (نوشتن - بدون AsNoTracking)</summary>
+        /// <summary>ذخیره برنامه — SecFix #4: اعتبارسنجی کامل قبل از هر تغییر + تراکنش</summary>
         public async Task<(bool ok, string msg, int prgID)> SaveProgramAsync(int coachMemberID, SaveProgramRequest req)
         {
+            // ===== ۱) اعتبارسنجی پایه =====
             if (req.MemberID <= 0) return (false, "شاگرد را انتخاب کنید", 0);
             if (req.Items == null || req.Items.Count == 0) return (false, "حداقل یک حرکت اضافه کنید", 0);
 
@@ -204,127 +244,126 @@ namespace TandisWebApp.Services
             if (start == null || end == null) return (false, "تاریخ شروع و پایان را درست وارد کنید", 0);
             if (end < start) return (false, "تاریخ پایان باید بعد از تاریخ شروع باشد", 0);
 
-            SportPrg head;
-            if (req.PrgID > 0)
-            {
-                head = await _db.SportPrgs.FirstOrDefaultAsync(p => p.PrgID == req.PrgID && p.CoachID == coachMemberID);
-                if (head == null) return (false, "برنامه یافت نشد", 0);
-                head.MemberID = req.MemberID;
-                head.StartDate = start;
-                head.EndDate = end;
-                head.Modificationtime = DateTime.Now;
-
-                var oldDetails = await _db.SportPrgDtls.Where(d => d.PrgID == head.PrgID).ToListAsync();
-                _db.SportPrgDtls.RemoveRange(oldDetails);
-            }
-            else
-            {
-                head = new SportPrg
-                {
-                    MemberID = req.MemberID,
-                    CoachID = coachMemberID,
-                    StartDate = start,
-                    EndDate = end,
-                    CreationTime = DateTime.Now
-                };
-                _db.SportPrgs.Add(head);
-            }
-
-            await _db.SaveChangesAsync();
-
-            int order = 1;
-            int comboSeq = 1;
-
+            // ===== ۲) ✅ SecFix #4: اعتبارسنجی همه حرکت‌ها قبل از هر تغییر دیتابیس =====
             foreach (var it in req.Items)
             {
-                var type = it.ExerciseType ?? 1;
+                var err = ValidateItemDto(it);
+                if (err != null) return (false, err, 0);
 
-                if (type == 2)
+                // حرکت‌های داخل combo هم چک بشن
+                if (it.ExtraItems != null)
                 {
-                    if (it.DropCount == null || it.DropCount < 1 || it.DropCount > 6)
-                        return (false, "دراپ ست: تعداد دراپ (۱ تا ۶) الزامی است", 0);
-                    if (it.DropWeightPct != null && (it.DropWeightPct < 5 || it.DropWeightPct > 50))
-                        return (false, "دراپ ست: درصد کاهش وزن باید بین ۵ تا ۵۰ باشد", 0);
-                }
-                else if (type == 3 || type == 4 || type == 5)
-                {
-                    var cnt = it.ExtraItems?.Count ?? 0;
-                    if (type == 3 && cnt != 1) return (false, "سوپرست: دقیقاً ۲ حرکت لازم است", 0);
-                    if (type == 4 && cnt != 2) return (false, "تری‌ست: دقیقاً ۳ حرکت لازم است", 0);
-                    if (type == 5 && (cnt < 3 || cnt > 5)) return (false, "ست غول: بین ۴ تا ۶ حرکت لازم است", 0);
-                }
-                else if (type == 6)
-                {
-                    if (it.PyramidDir == null || it.PyramidDir < 1 || it.PyramidDir > 3)
-                        return (false, "پیرامید: جهت (صعودی/معکوس/کامل) الزامی است", 0);
-                }
-                else if (type == 7)
-                {
-                    if (it.PauseCount == null || it.PauseCount < 1 || it.PauseCount > 5)
-                        return (false, "استراحت-مکث: تعداد مینی‌ست (۱ تا ۵) الزامی است", 0);
-                    if (it.PauseRest != null && (it.PauseRest < 5 || it.PauseRest > 60))
-                        return (false, "استراحت-مکث: مکث باید بین ۵ تا ۶۰ ثانیه باشد", 0);
-                }
-                else if (type == 8)
-                {
-                    if (string.IsNullOrWhiteSpace(it.Tempo) || !Regex.IsMatch(it.Tempo.Trim(), @"^\d(-\d){2,3}$"))
-                        return (false, "تمپو نامعتبر است (نمونه درست: 3-1-2-0)", 0);
-                }
-
-                var itemID = await ResolveItemIDAsync(it.ItemID, it.NewItemDesc);
-                if (itemID == 0) continue;
-
-                var isCombo = type == 3 || type == 4 || type == 5;
-                int? group = isCombo ? comboSeq++ : null;
-
-                _db.SportPrgDtls.Add(new SportPrgDtl
-                {
-                    PrgID = head.PrgID,
-                    ItemID = itemID,
-                    SetCount = it.SetCount,
-                    WCount = it.WCount,
-                    RepCount = it.RepCount,
-                    RestSeconds = it.RestSeconds,
-                    ExerciseType = type,
-                    DayTitle = it.DayTitle,
-                    Note = it.Note,
-                    SortOrder = order++,
-                    ComboGroup = group,
-                    SeqInCombo = isCombo ? (byte)1 : null,
-                    DropCount = it.DropCount,
-                    DropWeightPct = it.DropWeightPct,
-                    PyramidDir = it.PyramidDir,
-                    WeightStep = it.WeightStep,
-                    PauseCount = it.PauseCount,
-                    PauseRest = it.PauseRest,
-                    Tempo = it.Tempo
-                });
-
-                if (isCombo && it.ExtraItems != null)
-                {
-                    byte seq = 2;
                     foreach (var ex in it.ExtraItems)
                     {
-                        var exID = await ResolveItemIDAsync(ex.ItemID, ex.NewItemDesc);
-                        if (exID == 0) continue;
-                        _db.SportPrgDtls.Add(new SportPrgDtl
-                        {
-                            PrgID = head.PrgID,
-                            ItemID = exID,
-                            RepCount = ex.RepCount,
-                            WCount = ex.WCount,
-                            ExerciseType = type,
-                            DayTitle = it.DayTitle,
-                            SortOrder = order++,
-                            ComboGroup = group,
-                            SeqInCombo = seq++
-                        });
+                        if (ex.ItemID <= 0 && string.IsNullOrWhiteSpace(ex.NewItemDesc))
+                            return (false, "یکی از حرکت‌های combo انتخاب نشده است", 0);
                     }
                 }
             }
 
-            await _db.SaveChangesAsync();
-            return (true, "برنامه با موفقیت ذخیره شد", head.PrgID);
+            // ===== ۳) ✅ همه تغییرات داخل تراکنش =====
+            using var tx = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                SportPrg head;
+                if (req.PrgID > 0)
+                {
+                    head = await _db.SportPrgs.FirstOrDefaultAsync(p => p.PrgID == req.PrgID && p.CoachID == coachMemberID);
+                    if (head == null)
+                    {
+                        await tx.RollbackAsync();
+                        return (false, "برنامه یافت نشد", 0);
+                    }
+                    head.MemberID = req.MemberID;
+                    head.StartDate = start;
+                    head.EndDate = end;
+                    head.Modificationtime = DateTime.Now;
+
+                    var oldDetails = await _db.SportPrgDtls.Where(d => d.PrgID == head.PrgID).ToListAsync();
+                    _db.SportPrgDtls.RemoveRange(oldDetails);
+                }
+                else
+                {
+                    head = new SportPrg
+                    {
+                        MemberID = req.MemberID,
+                        CoachID = coachMemberID,
+                        StartDate = start,
+                        EndDate = end,
+                        CreationTime = DateTime.Now
+                    };
+                    _db.SportPrgs.Add(head);
+                }
+
+                await _db.SaveChangesAsync();
+
+                int order = 1;
+                int comboSeq = 1;
+
+                foreach (var it in req.Items)
+                {
+                    var type = it.ExerciseType ?? 1;
+                    var itemID = await ResolveItemIDAsync(it.ItemID, it.NewItemDesc);
+                    if (itemID == 0) continue;
+
+                    var isCombo = type == 3 || type == 4 || type == 5;
+                    int? group = isCombo ? comboSeq++ : null;
+
+                    _db.SportPrgDtls.Add(new SportPrgDtl
+                    {
+                        PrgID = head.PrgID,
+                        ItemID = itemID,
+                        SetCount = it.SetCount,
+                        WCount = it.WCount,
+                        RepCount = it.RepCount,
+                        RestSeconds = it.RestSeconds,
+                        ExerciseType = type,
+                        DayTitle = it.DayTitle,
+                        Note = it.Note,
+                        SortOrder = order++,
+                        ComboGroup = group,
+                        SeqInCombo = isCombo ? (byte)1 : null,
+                        DropCount = it.DropCount,
+                        DropWeightPct = it.DropWeightPct,
+                        PyramidDir = it.PyramidDir,
+                        WeightStep = it.WeightStep,
+                        PauseCount = it.PauseCount,
+                        PauseRest = it.PauseRest,
+                        Tempo = it.Tempo
+                    });
+
+                    if (isCombo && it.ExtraItems != null)
+                    {
+                        byte seq = 2;
+                        foreach (var ex in it.ExtraItems)
+                        {
+                            var exID = await ResolveItemIDAsync(ex.ItemID, ex.NewItemDesc);
+                            if (exID == 0) continue;
+                            _db.SportPrgDtls.Add(new SportPrgDtl
+                            {
+                                PrgID = head.PrgID,
+                                ItemID = exID,
+                                RepCount = ex.RepCount,
+                                WCount = ex.WCount,
+                                ExerciseType = type,
+                                DayTitle = it.DayTitle,
+                                SortOrder = order++,
+                                ComboGroup = group,
+                                SeqInCombo = seq++
+                            });
+                        }
+                    }
+                }
+
+                await _db.SaveChangesAsync();
+                await tx.CommitAsync();
+                return (true, "برنامه با موفقیت ذخیره شد", head.PrgID);
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                return (false, "خطا در ذخیره برنامه", 0);
+            }
         }
 
         /// <summary>حذف برنامه (نوشتن - بدون AsNoTracking)</summary>
