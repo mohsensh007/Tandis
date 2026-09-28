@@ -172,5 +172,20 @@ namespace TandisWebApp.Services
 
             return bytes != null && bytes.Length > 0;
         }
+        /// <summary>دریافت نام باشگاه از جدول Sec_Systems (SystemID=1)</summary>
+        public async Task<string> GetClubNameAsync()
+        {
+            try
+            {
+                var sys = await _db.Sec_Systems
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.SystemID == 1);
+                return sys?.ClubName ?? "باشگاه تندیس";
+            }
+            catch
+            {
+                return "باشگاه تندیس";
+            }
+        }
     }
 }

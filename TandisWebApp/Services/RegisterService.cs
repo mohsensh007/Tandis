@@ -111,6 +111,7 @@ namespace TandisWebApp.Services
                         select new
                         {
                             s.SportSanseID,
+                            SportCatID = s.SportCatID ?? 0,  
                             SportName = s.Gen_Sport_Category.SportName ?? "",
                             SanseName = s.SanseName ?? "",
                             CoachName = s.Gen_Member.Gen_Person.FullName,
@@ -133,6 +134,7 @@ namespace TandisWebApp.Services
                 var dto = new SportSanseDto
                 {
                     SportSanseID = s.SportSanseID,
+                    SportCatID = s.SportCatID,  
                     SportName = s.SportName,
                     SanseName = s.SanseName,
                     CoachName = s.CoachName,

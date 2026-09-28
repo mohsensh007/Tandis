@@ -164,5 +164,173 @@ namespace TandisWebApp.Services
                 return new SimpleResponse { Success = false, Message = "خطا در ثبت اطلاعات" };
             }
         }
+        // ========================
+        // ✅ تک جلسه (Single Session)
+        // ========================
+
+        /// <summary>لیست سانس‌های تک‌جلسه‌ای — daysAhead=0 فقط امروز، daysAhead=7 فردا تا ۷ روز بعد</summary>
+        public async Task<List<SingleSessionSanseDto>> GetSingleSessionSansesAsync(short shiftID, int daysAhead = 0)
+        {
+            // ✅ ساخت نگاشت روزها: (LatinName میلادی ↔ تاریخ شمسی)
+            var dayMap = new List<(string Latin, string Shamsi)>();
+            int from = daysAhead > 0 ? 1 : 0;
+            int to = daysAhead > 0 ? daysAhead : 0;
+            for (int i = from; i <= to; i++)
+            {
+                var dt = DateTime.Now.AddDays(i);
+                dayMap.Add((dt.DayOfWeek.ToString(), _helper.AddDaysToPersian(_helper.GetToday(), i)));
+            }
+            var latins = dayMap.Select(x => x.Latin).ToList();
+
+            var list = await (
+                from s in _db.Gen_SportSanses
+                join d in _db.Gen_SportSanseDetails on s.SportSanseID equals d.SportSanseID
+                join w in _db.Gen_DayOfWeeks on d.DayID equals w.DayID
+                join cat in _db.Gen_Sport_Categories on s.SportCatID equals cat.SportCatID into catJoin
+                from cat in catJoin.DefaultIfEmpty()
+                join coachM in _db.Gen_Members on s.CoachMemberID equals coachM.MemberID into coachJoin
+                from coachM in coachJoin.DefaultIfEmpty()
+                join coachP in _db.Gen_Persons on coachM.PersonID equals coachP.PersonID into cpJoin
+                from coachP in cpJoin.DefaultIfEmpty()
+                where s.IsActive == true
+                   && s.ShowInKiosk == true
+                   && s.ShiftID == shiftID
+                   && s.SessionAmount != null && s.SessionAmount > 0
+                   && d.IsActive == true
+                   && latins.Contains(w.LatinName ?? "")
+                orderby d.StartTime
+                select new SingleSessionSanseDto
+                {
+                    SportSanseID = s.SportSanseID,
+                    SportName = cat != null ? (cat.SportName ?? "") : "",
+                    SanseName = s.SanseName ?? "",
+                    CoachName = coachP != null ? coachP.FullName : "",
+                    SessionAmount = s.SessionAmount ?? 0,
+                    StartTime = d.StartTime.HasValue ? d.StartTime.Value.ToString(@"hh\:mm") : "",
+                    EndTime = d.EndTime.HasValue ? d.EndTime.Value.ToString(@"hh\:mm") : "",
+                    DayName = w.DayName ?? "",
+                    LatinName = w.LatinName ?? ""
+                }
+            ).AsNoTracking().ToListAsync();
+
+            // ✅ نگاشت تاریخ شمسی + فرمت مبلغ
+            foreach (var s in list)
+            {
+                var match = dayMap.FirstOrDefault(x => x.Latin == s.LatinName);
+                s.SessionDateShamsi = match.Shamsi;
+                s.SessionAmountDisplay = _helper.SetSeprator(s.SessionAmount) + " ریال";
+            }
+
+            return list
+                .OrderBy(x => x.SessionDateShamsi)
+                .ThenBy(x => x.StartTime)
+                .ToList();
+        }
+
+        /// <summary>خرید تک جلسه — امروز یا تا ۷ روز آینده</summary>
+        public async Task<SimpleResponse> BuySingleSessionAsync(int memberID, SingleSessionBuyRequest req, short shiftID)
+        {
+            using var tx = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                var sanse = await _db.Gen_SportSanses
+                    .FirstOrDefaultAsync(s => s.SportSanseID == req.SportSanseID);
+
+                if (sanse == null)
+                    return new SimpleResponse { Success = false, Message = "سانس یافت نشد" };
+
+                if (sanse.SessionAmount == null || sanse.SessionAmount <= 0)
+                    return new SimpleResponse { Success = false, Message = "این سانس تک‌جلسه ندارد" };
+
+                // ✅ تعیین تاریخ مقصد: امروز (پیش‌فرض) یا یکی از ۷ روز آینده (با اعتبارسنجی سرور)
+                string targetDate = _helper.GetToday();
+                string targetLatin = DateTime.Now.DayOfWeek.ToString();
+
+                if (!string.IsNullOrWhiteSpace(req.SessionDateShamsi))
+                {
+                    var reqDate = req.SessionDateShamsi.Trim();
+                    bool found = false;
+                    for (int i = 1; i <= 7; i++)
+                    {
+                        if (_helper.AddDaysToPersian(_helper.GetToday(), i) == reqDate)
+                        {
+                            targetDate = reqDate;
+                            targetLatin = DateTime.Now.AddDays(i).DayOfWeek.ToString();
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found)
+                        return new SimpleResponse { Success = false, Message = "تاریخ انتخاب‌شده معتبر نیست (فقط تا ۷ روز آینده)" };
+                }
+
+                // ✅ چک اینکه سانس در روز مقصد جلسه داشته باشه
+                var hasSession = await (
+                    from d in _db.Gen_SportSanseDetails
+                    join w in _db.Gen_DayOfWeeks on d.DayID equals w.DayID
+                    where d.SportSanseID == sanse.SportSanseID
+                       && d.IsActive == true
+                       && w.LatinName == targetLatin
+                    select d
+                ).AsNoTracking().AnyAsync();
+
+                if (!hasSession)
+                    return new SimpleResponse { Success = false, Message = "این سانس در تاریخ انتخاب‌شده جلسه ندارد" };
+
+                long amount = sanse.SessionAmount.Value;
+
+                // ✅ چک اعتبار ورزشی
+                long sportCredit = await _helper.GetSportCreditAmountAsync(memberID);
+                if (sportCredit < amount)
+                {
+                    return new SimpleResponse
+                    {
+                        Success = false,
+                        Message = $"اعتبار کافی نیست. اعتبار فعلی: {_helper.SetSeprator(sportCredit)} ریال"
+                    };
+                }
+
+                // ✅ ثبت رکورد تک‌جلسه (SessionCount=1, StartDate=EndDate=تاریخ مقصد)
+                await _db.Database.ExecuteSqlInterpolatedAsync($@"
+            INSERT INTO Acc_MemberSports (MemberID, SportSanseID, MembershipTypeID, ContractID, SessionCount,
+                Amount, Tax, DiscountAmount, RegDiscountPercent, RegDiscountAmount, FinalPayment,
+                CoachPercent, CoachAmount, CoachPercentForRevival, CoachRevivalAmount,
+                PeriodID, StartDate, EndDate, IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
+            VALUES ({memberID}, {sanse.SportSanseID}, {sanse.MembershipTypeID}, 1, 1,
+                {amount}, 0, 0, 0, 0,
+                {amount}, {sanse.CoachMoneyPercent ?? 0}, 0, {sanse.CoachPercentForRevival ?? 0}, 0,
+                1, {targetDate}, {targetDate}, 1, 0,
+                {"تک جلسه از وب‌اپ"}, {WEB_USER_ID}, {_helper.GetToday()}, {_helper.GetThisTime()})");
+
+                
+                // ✅ ثبت بدهی (کسر از اعتبار ورزشی) — شرح شامل تاریخِ خودِ جلسه است
+                _db.Cash_DebitStatements.Add(new Cash_DebitStatement
+                {
+                    MemberID = memberID,
+                    DebitTypeID = DEBIT_RIALI,
+                    RefID = 0,
+                    Amount = amount,
+                    DebitDesc = $"بابت تک جلسه روز {targetDate} از وب‌اپ",
+                    UserID = WEB_USER_ID,
+                    CreationTime = DateTime.Now
+                });
+
+                await _db.SaveChangesAsync();
+                await tx.CommitAsync();
+
+                var dateMsg = targetDate == _helper.GetToday() ? "امروز" : targetDate;
+                return new SimpleResponse
+                {
+                    Success = true,
+                    Message = $"تک جلسه {dateMsg} با موفقیت ثبت شد. مبلغ: {_helper.SetSeprator(amount)} ریال"
+                };
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                _logger.LogError(ex, "خطا در خرید تک جلسه");
+                return new SimpleResponse { Success = false, Message = "خطا در ثبت اطلاعات" };
+            }
+        }
     }
 }

@@ -19,13 +19,16 @@
             <i class="bi bi-calendar2-week-fill"></i>
         </button>
     </div>
-    <div class="card-body">
+    <div class="purple-style card-body">
         <ul class="nav nav-tabs nav-tabs-custom mb-3" id="reportTabs" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="finance-tab" data-bs-toggle="tab" data-bs-target="#financePane" type="button" role="tab"><i class="bi bi-cash-coin hd-icon"></i> گزارش مالی</button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="traffic-tab" data-bs-toggle="tab" data-bs-target="#trafficPane" type="button" role="tab"><i class="bi bi-door-closed-fill hd-icon"></i> گزارش تردد</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#registerPane" type="button" role="tab"><i class="bi bi-card-list hd-icon"></i> سوابق ثبت‌نام</button>
             </li>
         </ul>
 
@@ -52,6 +55,21 @@
             <!-- ========== تب تردد ========== -->
             <div class="tab-pane fade" id="trafficPane" role="tabpanel">
                 <div id="trafficRows">
+                    <div class="text-center text-muted py-4">⏳ در حال بارگذاری...</div>
+                </div>
+            </div>
+
+            <!-- ========== ✅ تب سوابق ثبت‌نام ========== -->
+            <div class="tab-pane fade" id="registerPane" role="tabpanel">
+                <!-- ✅ گزارش کلی (خلاصه) -->
+                <div class="rgh-summary">
+                    <div class="rgh-stat"><span class="rgh-num" id="rghTotal">۰</span><span class="rgh-lbl">کل ثبت‌نام‌ها</span></div>
+                    <div class="rgh-stat"><span class="rgh-num rgh-green" id="rghActive">۰</span><span class="rgh-lbl">فعال</span></div>
+                    <div class="rgh-stat"><span class="rgh-num rgh-red" id="rghExpired">۰</span><span class="rgh-lbl">منقضی</span></div>
+                    <div class="rgh-stat"><span class="rgh-num rgh-blue" id="rghSum">۰</span><span class="rgh-lbl">مجموع پرداخت (ریال)</span></div>
+                </div>
+                <!-- ✅ لیست کارت‌ها (کلیک = جزئیات) -->
+                <div id="registerRows">
                     <div class="text-center text-muted py-4">⏳ در حال بارگذاری...</div>
                 </div>
             </div>
@@ -87,11 +105,109 @@
     </div>
 </div>
 
+<style>
+    /* ===== ✅ خلاصه سوابق ثبت‌نام ===== */
+    .rgh-summary {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+    }
 
+    @@media (max-width: 576px) {
+        .rgh-summary {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    .rgh-stat {
+        background: rgba(255,255,255,.07);
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 14px;
+        padding: 10px 8px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .rgh-num {
+        font-weight: 800;
+        font-size: 1.05rem;
+        color: #fff;
+        font-variant-numeric: tabular-nums;
+        word-break: break-all;
+    }
+
+    .rgh-green {
+        color: #8fe3b0;
+    }
+
+    .rgh-red {
+        color: #ff8f98;
+    }
+
+    .rgh-blue {
+        color: #66d3e8;
+    }
+
+    .rgh-lbl {
+        font-size: .7rem;
+        color: #9fb3c8;
+        font-weight: 700;
+    }
+
+    /* ===== ✅ تب‌ها: همیشه کنار هم در هر عرض صفحه ===== */
+    .nav-tabs-custom {
+        flex-wrap: nowrap !important;
+        width: 100%;
+    }
+
+        .nav-tabs-custom .nav-item {
+            flex: 1 1 0;
+            min-width: 0;
+        }
+
+        .nav-tabs-custom .nav-link {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+    @@media (max-width: 576px) {
+        .nav-tabs-custom .nav-link {
+            font-size: .74rem;
+            padding: 8px 4px;
+        }
+
+            .nav-tabs-custom .nav-link i {
+                font-size: .8rem;
+                margin-left: 3px !important;
+            }
+    }
+
+    @@media (max-width: 380px) {
+        .nav-tabs-custom .nav-link {
+            font-size: .66rem;
+            padding: 7px 2px;
+        }
+
+            .nav-tabs-custom .nav-link i {
+                display: none;
+            }
+    }
+
+    /* ===== ✅ آیکن‌های جزئیات: سایز مناسب داخل ردیف‌ها ===== */
+    .trf-drow .hd-icon {
+        font-size: .85rem;
+        margin-left: 5px;
+    }
+</style>
 
 @section Scripts {
     <script>
-                
+
         (function () {
             var ov = document.getElementById('attCalOverlay');
             if (ov && ov.parentNode !== document.body) document.body.appendChild(ov);
@@ -268,9 +384,72 @@
         }
         loadTraffic();
 
-        // ========== باز/بسته کردن جزئیات تردد ==========
+        // ========== ✅ سوابق ثبت‌نام: گزارش کلی + لیست با جزئیات ==========
+        function loadRegisterHistory() {
+            apiCall('/api/Register/History', 'GET', null, function (res) {
+                var $box = $('#registerRows');
+                var data = (res && res.success && res.data) ? res.data : [];
+
+                // ----- ✅ گزارش کلی (خلاصه) -----
+                var total = data.length;
+                var active = data.filter(function (x) { return x.isActive; }).length;
+                var expired = total - active;
+                var sum = 0;
+                $.each(data, function (i, x) { sum += Number(x.finalPayment || 0); });
+
+                $('#rghTotal').text(toFa(total));
+                $('#rghActive').text(toFa(active));
+                $('#rghExpired').text(toFa(expired));
+                $('#rghSum').text(fmtNum(sum));
+
+                if (total === 0) {
+                    $box.html('<div class="text-center text-muted py-4"><div style="font-size:2.5rem">📋</div>هیچ سابقه ثبت‌نامی یافت نشد</div>');
+                    return;
+                }
+
+                // ----- ✅ لیست کارت‌ها (مثل گزارش تردد) -----
+                var html = '';
+                $.each(data, function (i, r) {
+                    var rowNo = toFa(i + 1);
+                    var statusBadge = r.isActive
+                        ? '<span class="badge-credit">فعال</span>'
+                        : '<span class="badge-debit">منقضی</span>';
+                    var totalS = Number(r.sessionCount || 0);
+                    var remainS = (r.remainingSessions == null) ? totalS : Number(r.remainingSessions);
+                    var usedS = Math.max(0, totalS - remainS);
+
+                    html +=
+                        '<div class="trf-card">' +
+                            '<div class="trf-head">' +
+                                '<div class="trf-num">' + rowNo + '</div>' +
+                                '<div class="trf-mid">' +
+                                    '<div class="trf-line"><b>' + esc(r.sportSanseName) + '</b> ' + statusBadge + '</div>' +
+                                    '<div class="trf-line"><i class="bi bi-calendar3 hd-icon"></i> ' + esc(r.startDate || '-') + ' تا ' + esc(r.endDate || '-') + '</div>' +
+                                '</div>' +
+                                '<button type="button" class="trf-toggle"><i class="bi bi-chevron-left"></i></button>' +
+                            '</div>' +
+                            '<div class="trf-details">' +
+                                '<div class="trf-drow"><span><i class="bi bi-trophy-fill hd-icon"></i> ورزش / سانس</span><b>' + esc(r.sportSanseName) + '</b></div>' +
+                                '<div class="trf-drow"><span><i class="bi bi-person-fill hd-icon"></i> مربی</span><b>' + esc(r.coachName || '-') + '</b></div>' +
+                                '<div class="trf-drow"><span><i class="bi bi-info-circle-fill hd-icon"></i> وضعیت</span><b>' + (r.isActive ? 'فعال' : 'منقضی') + '</b></div>' +
+                                '<div class="trf-drow"><span><i class="bi bi-calendar3 hd-icon"></i> تاریخ شروع</span><b>' + esc(r.startDate || '-') + '</b></div>' +
+                                '<div class="trf-drow"><span><i class="bi bi-calendar3 hd-icon"></i> تاریخ پایان</span><b>' + esc(r.endDate || '-') + '</b></div>' +
+                                '<div class="trf-drow"><span><i class="bi bi-list-ol hd-icon"></i> کل جلسات</span><b>' + toFa(totalS) + '</b></div>' +
+                                '<div class="trf-drow"><span><i class="bi bi-check2-circle hd-icon"></i> جلسات مصرف‌شده</span><b>' + toFa(usedS) + '</b></div>' +
+                                '<div class="trf-drow"><span><i class="bi bi-hourglass-split hd-icon"></i> جلسات باقی‌مانده</span><b>' + toFa(remainS) + '</b></div>' +
+                                '<div class="trf-drow"><span><i class="bi bi-cash-coin hd-icon"></i> مبلغ پرداختی</span><b>' + fmtNum(r.finalPayment || 0) + ' ریال</b></div>' +
+                                '<div class="trf-drow"><span><i class="bi bi-calendar2-plus hd-icon"></i> تاریخ ثبت‌نام</span><b>' + esc(r.creationDate || '-') + '</b></div>' +
+                            '</div>' +
+                        '</div>';
+                });
+                $box.html(html);
+            });
+        }
+        loadRegisterHistory();
+
+        // ========== باز/بسته کردن جزئیات (تردد + سوابق ثبت‌نام) ==========
         $(function () {
-            $('#trafficRows').off('click', '.trf-head').on('click', '.trf-head', function () {
+            $('#trafficRows, #registerRows').off('click', '.trf-head').on('click', '.trf-head', function () {
                 var $card = $(this).closest('.trf-card');
                 $card.toggleClass('open');
                 $card.find('.trf-details').slideToggle(200);

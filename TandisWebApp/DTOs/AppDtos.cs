@@ -27,6 +27,7 @@ namespace TandisWebApp.DTOs
         public string? ActiveStatus { get; set; }
         public string? EndDate { get; set; }
         public int? RemainingSessions { get; set; }
+        public int SportCatID { get; set; }  
     }
 
     public class RegisterRequest
@@ -205,5 +206,30 @@ namespace TandisWebApp.DTOs
         public string? LastName { get; set; }
         public string? Mobile { get; set; }
         public string? BirthDate { get; set; }
+    }
+    // ============================================================
+    //  تک جلسه (Single Session)
+    // ============================================================
+
+    public class SingleSessionSanseDto
+    {
+        public int SportSanseID { get; set; }
+        public string SportName { get; set; } = string.Empty;
+        public string SanseName { get; set; } = string.Empty;
+        public string? CoachName { get; set; }
+        public long SessionAmount { get; set; }
+        public string SessionAmountDisplay { get; set; } = string.Empty;
+        public string StartTime { get; set; } = string.Empty;
+        public string EndTime { get; set; } = string.Empty;
+        public string DayName { get; set; } = string.Empty;
+        public string LatinName { get; set; } = string.Empty;          
+        public string SessionDateShamsi { get; set; } = string.Empty;  
+    }
+
+    public class SingleSessionBuyRequest
+    {
+        [Required]
+        public int SportSanseID { get; set; }
+        public string? SessionDateShamsi { get; set; }  
     }
 }

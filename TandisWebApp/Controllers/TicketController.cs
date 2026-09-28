@@ -42,5 +42,30 @@ namespace TandisWebApp.Controllers
                 return BadRequest(result);
             return Ok(result);
         }
+        // ========================
+        // ✅ تک جلسه (Single Session)
+        // ========================
+
+        [HttpGet]
+        [Route("api/Ticket/SingleSessionList")]
+        public async Task<IActionResult> SingleSessionList(int days = 0)
+        {
+            var shiftID = User.GetShiftID();
+            var list = await _ticket.GetSingleSessionSansesAsync(shiftID, days);
+            return Ok(new { success = true, data = list });
+        }
+
+        [HttpPost]
+        [Route("api/Ticket/BuySingleSession")]
+        public async Task<IActionResult> BuySingleSession([FromBody] SingleSessionBuyRequest req)
+        {
+            var memberID = User.GetMemberID();
+            var shiftID = User.GetShiftID();
+            var result = await _ticket.BuySingleSessionAsync(memberID, req, shiftID);
+            if (!result.Success)
+                return BadRequest(result);
+            return Ok(result);
+        }
     }
+
 }

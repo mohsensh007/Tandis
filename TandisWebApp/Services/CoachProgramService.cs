@@ -366,14 +366,36 @@ namespace TandisWebApp.Services
             }
         }
 
-        /// <summary>حذف برنامه (نوشتن - بدون AsNoTracking)</summary>
+        /// <summary>حذف برنامه — SecFix #5: حذف جزئیات + تراکنش</summary>
         public async Task<(bool ok, string msg)> DeleteProgramAsync(int prgID, int coachMemberID)
         {
-            var head = await _db.SportPrgs.FirstOrDefaultAsync(p => p.PrgID == prgID && p.CoachID == coachMemberID);
-            if (head == null) return (false, "برنامه یافت نشد");
-            _db.SportPrgs.Remove(head);
-            await _db.SaveChangesAsync();
-            return (true, "برنامه حذف شد");
+            using var tx = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                var head = await _db.SportPrgs.FirstOrDefaultAsync(p => p.PrgID == prgID && p.CoachID == coachMemberID);
+                if (head == null)
+                {
+                    await tx.RollbackAsync();
+                    return (false, "برنامه یافت نشد");
+                }
+
+                // ✅ SecFix #5: حذف همه جزئیات قبل از header (جلوگیری از orphan records)
+                var details = await _db.SportPrgDtls.Where(d => d.PrgID == prgID).ToListAsync();
+                if (details.Any())
+                    _db.SportPrgDtls.RemoveRange(details);
+
+                _db.SportPrgs.Remove(head);
+
+                await _db.SaveChangesAsync();
+                await tx.CommitAsync();
+
+                return (true, "برنامه با موفقیت حذف شد");
+            }
+            catch (Exception)
+            {
+                await tx.RollbackAsync();
+                return (false, "خطا در حذف برنامه");
+            }
         }
 
         /// <summary>جزئیات برنامه + گروه‌بندی روزها (خواندنی)</summary>
