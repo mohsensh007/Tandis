@@ -1,0 +1,991 @@
+@{
+    ViewData["Title"] = "نمودارها";
+    Layout = "_AdminLayout";
+}
+
+<!-- ========== کارت اصلی نمودار ========== -->
+<div class="purple-style dash-card ch-main-card mb-3">
+    <div class="ch-main-head">
+        <div>
+            <div class="ch-main-title"><i class="bi bi-activity hd-icon"></i> <span id="chMainTitle">فعالیت باشگاه</span></div>
+            <div class="ch-main-sub" id="chMainSub">نمای کلی همه بخش‌ها</div>
+        </div>
+        <!-- انتخاب سری فعال -->
+        <div class="ch-pills" id="chSeriePills">
+            <button type="button" class="ch-pill" data-serie="traffic">ترددها</button>
+            <button type="button" class="ch-pill" data-serie="register">ثبت‌نام و تمدید</button>
+            <button type="button" class="ch-pill" data-serie="ticket">بلیط</button>
+            <button type="button" class="ch-pill" data-serie="service">خدمات</button>
+            <button type="button" class="ch-pill" data-serie="finance">دریافتی‌ها</button>
+        </div>
+    </div>
+
+    <!-- دلتا + انتخاب دوره -->
+    <div class="ch-toolbar">
+        <div class="ch-delta" id="chDelta">-</div>
+        <div class="ch-pills ch-period" id="chPeriodPills">
+            <button type="button" class="ch-pill" data-period="day">روزانه</button>
+            <button type="button" class="ch-pill" data-period="week">هفتگی</button>
+            <button type="button" class="ch-pill" data-period="month">ماهانه</button>
+            <button type="button" class="ch-pill" data-period="year">سالانه</button>
+        </div>
+    </div>
+
+    <!-- نوار پیمایش + بازه تاریخ‌ها -->
+    <div class="ch-rangebar">
+        <button type="button" class="ch-navbtn" id="chPrev" title="دوره قبل"><i class="bi bi-chevron-right"></i></button>
+        <div class="ch-ranges">
+            <div class="ch-range cur"><span class="ch-range-dot"></span><span id="chRangeCur">-</span></div>
+            <div class="ch-range prev"><span class="ch-range-dot"></span><span id="chRangePrev">-</span></div>
+        </div>
+        <button type="button" class="ch-navbtn" id="chNext" title="دوره بعد" disabled><i class="bi bi-chevron-left"></i></button>
+    </div>
+
+    <!-- نمودار خطی SVG -->
+    <div class="ch-chart-wrap">
+        <svg id="chChart" viewBox="0 0 900 320" preserveAspectRatio="none" class="ch-chart">
+            <defs>
+                <linearGradient id="chAreaGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="rgba(13,110,253,.35)"/>
+                    <stop offset="100%" stop-color="rgba(13,110,253,0)"/>
+                </linearGradient>
+            </defs>
+            <g id="chGrid"></g>
+            <g id="chAxisY"></g>
+            <g id="chAxisX"></g>
+            <path id="chAreaPrev" fill="none" stroke="rgba(159,179,200,.55)" stroke-width="1.8" stroke-dasharray="5 5"/>
+            <path id="chLinePrev" fill="none" stroke="rgba(159,179,200,.75)" stroke-width="1.6"/>
+            <path id="chArea" fill="url(#chAreaGrad)" stroke="none"/>
+            <path id="chLine" fill="none" stroke="#4d8df6" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+            <line id="chCursor" x1="0" y1="0" x2="0" y2="320" stroke="rgba(255,255,255,.55)" stroke-width="1.2" style="display:none"/>
+            <circle id="chDot" r="4.5" fill="#4d8df6" stroke="#0e1a30" stroke-width="2" style="display:none"/>
+            <circle id="chDotPrev" r="3.5" fill="rgba(159,179,200,.9)" stroke="#0e1a30" stroke-width="1.6" style="display:none"/>
+        </svg>
+        <div class="ch-tooltip" id="chTooltip" style="display:none"></div>
+    </div>
+
+    <div class="ch-legend">
+        <span><i style="background:#4d8df6"></i> دوره جاری</span>
+        <span><i style="background:#9fb3c8"></i> دوره قبل</span>
+    </div>
+</div>
+
+<!-- ========== نمودارهای دایره‌ای سهم سانس‌ها (فقط سری فعال نمایش داده می‌شود) ========== -->
+<div class="row g-3 mb-3">
+    <div class="col-12 col-md-6 col-xl-4 ch-share-col" data-serie="traffic">
+        <div class="purple-style ch-share-card">
+            <div class="ch-share-title"><i class="bi bi-people-fill hd-icon"></i> سهم سانس‌ها از ترددها</div>
+            <div class="ch-share-body" data-share="traffic">
+                <svg viewBox="0 0 42 42" class="ch-donut"><g class="ch-donut-segs" transform="rotate(-90 21 21)"></g><text class="ch-donut-center" x="21" y="22.5" text-anchor="middle">0</text></svg>
+                <div class="ch-share-legend"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-4 ch-share-col" data-serie="register">
+        <div class="purple-style ch-share-card">
+            <div class="ch-share-title"><i class="bi bi-person-plus-fill hd-icon"></i> سهم سانس‌ها از ثبت‌نام و تمدید</div>
+            <div class="ch-share-body" data-share="register">
+                <svg viewBox="0 0 42 42" class="ch-donut"><g class="ch-donut-segs" transform="rotate(-90 21 21)"></g><text class="ch-donut-center" x="21" y="22.5" text-anchor="middle">0</text></svg>
+                <div class="ch-share-legend"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-4 ch-share-col" data-serie="ticket">
+        <div class="purple-style ch-share-card">
+            <div class="ch-share-title"><i class="bi bi-ticket-perforated-fill hd-icon"></i> سهم سانس‌ها از فروش بلیط</div>
+            <div class="ch-share-body" data-share="ticket">
+                <svg viewBox="0 0 42 42" class="ch-donut"><g class="ch-donut-segs" transform="rotate(-90 21 21)"></g><text class="ch-donut-center" x="21" y="22.5" text-anchor="middle">0</text></svg>
+                <div class="ch-share-legend"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-4 ch-share-col" data-serie="service">
+        <div class="purple-style ch-share-card">
+            <div class="ch-share-title"><i class="bi bi-gift-fill hd-icon"></i> سهم خدمات از هر نوع خدمت</div>
+            <div class="ch-share-body" data-share="service">
+                <svg viewBox="0 0 42 42" class="ch-donut"><g class="ch-donut-segs" transform="rotate(-90 21 21)"></g><text class="ch-donut-center" x="21" y="22.5" text-anchor="middle">0</text></svg>
+                <div class="ch-share-legend"></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-4 ch-share-col" data-serie="finance">
+        <div class="purple-style ch-share-card">
+            <div class="ch-share-title"><i class="bi bi-cash-coin hd-icon"></i> سهم انواع دریافت</div>
+            <div class="ch-share-body" data-share="finance">
+                <svg viewBox="0 0 42 42" class="ch-donut"><g class="ch-donut-segs" transform="rotate(-90 21 21)"></g><text class="ch-donut-center" x="21" y="22.5" text-anchor="middle">0</text></svg>
+                <div class="ch-share-legend"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== کارت‌های کناری بخش‌ها ========== -->
+<div class="row g-3">
+    <div class="col-12 col-md-6 col-xl-4 ch-side-col" data-serie="traffic">
+        <div class="purple-style ch-side-card" data-serie="traffic">
+            <div class="ch-side-head"><span>ترددها</span><i class="bi bi-arrow-up-right"></i></div>
+            <div class="ch-side-nums">
+                <div><b id="chTrafficTotal">-</b><small>ورود</small></div>
+                <div><b id="chTrafficPrev">-</b><small>دوره قبل</small></div>
+            </div>
+            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#4d8df6" stroke-width="2"/></svg></div>
+            <div class="ch-side-foot"><i class="bi bi-people-fill"></i> ورود اعضا و مهمان‌ها</div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-4 ch-side-col" data-serie="register">
+        <div class="purple-style ch-side-card" data-serie="register">
+            <div class="ch-side-head"><span>ثبت‌نام و تمدید</span><i class="bi bi-arrow-up-right"></i></div>
+            <div class="ch-side-nums">
+                <div><b id="chRegisterTotal">-</b><small>نفر</small></div>
+                <div><b id="chRegisterPrev">-</b><small>دوره قبل</small></div>
+            </div>
+            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#4d8df6" stroke-width="2"/></svg></div>
+            <div class="ch-side-foot"><i class="bi bi-person-plus-fill"></i> عضویت‌های جدید و تمدید دوره</div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-4 ch-side-col" data-serie="ticket">
+        <div class="purple-style ch-side-card" data-serie="ticket">
+            <div class="ch-side-head"><span>فروش بلیط</span><i class="bi bi-arrow-up-right"></i></div>
+            <div class="ch-side-nums">
+                <div><b id="chTicketTotal">-</b><small>بلیط</small></div>
+                <div><b id="chTicketPrev">-</b><small>دوره قبل</small></div>
+            </div>
+            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#4d8df6" stroke-width="2"/></svg></div>
+            <div class="ch-side-foot"><i class="bi bi-ticket-perforated-fill"></i> بلیط‌های تک‌جلسه فروخته‌شده</div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-4 ch-side-col" data-serie="service">
+        <div class="purple-style ch-side-card" data-serie="service">
+            <div class="ch-side-head"><span>خدمات</span><i class="bi bi-arrow-up-right"></i></div>
+            <div class="ch-side-nums">
+                <div><b id="chServiceTotal">-</b><small>سرویس</small></div>
+                <div><b id="chServicePrev">-</b><small>دوره قبل</small></div>
+            </div>
+            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#4d8df6" stroke-width="2"/></svg></div>
+            <div class="ch-side-foot"><i class="bi bi-gift-fill"></i> خدمات ارائه‌شده (ماساژ، مربی و…)</div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-4 ch-side-col" data-serie="finance">
+        <div class="purple-style ch-side-card" data-serie="finance">
+            <div class="ch-side-head"><span>دریافتی‌ها</span><i class="bi bi-arrow-up-right"></i></div>
+            <div class="ch-side-nums">
+                <div><b id="chFinanceTotal">-</b><small>ریال</small></div>
+                <div><b id="chFinancePrev">-</b><small>دوره قبل</small></div>
+            </div>
+            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#4d8df6" stroke-width="2"/></svg></div>
+            <div class="ch-side-foot"><i class="bi bi-cash-coin"></i> جمع اسناد دریافت</div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6 col-xl-4 ch-side-col" data-serie="__always">
+        <div class="purple-style ch-side-card ch-info-card">
+            <div class="ch-side-head"><span>راهنما</span><i class="bi bi-info-circle"></i></div>
+            <div class="ch-help">
+                <p><i class="bi bi-hand-index-thumb-fill"></i> از دکمه‌های بالا (ترددها، ثبت‌نام و…) بخش موردنظر را انتخاب کنید؛ فقط کارت و نمودار سهم همان بخش نمایش داده می‌شود.</p>
+                <p><i class="bi bi-calendar3"></i> دکمه‌های روزانه/هفتگی/ماهانه/سالانه بازه نمودار را عوض می‌کنند و با دکمه‌های ‹ › بین دوره‌ها حرکت کنید.</p>
+                <p><i class="bi bi-mouse2"></i> با بردن ماوس (یا انگشت) روی نمودار، مقدار هر نقطه را می‌بینید.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* ===== کارت اصلی نمودار ===== */
+    .ch-main-card {
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        padding: 18px;
+        overflow: hidden;
+    }
+
+    .ch-main-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .ch-main-title {
+        font-weight: 800;
+        color: #fff;
+        font-size: 1rem;
+    }
+
+    .ch-main-sub {
+        font-size: .75rem;
+        color: #9fb3c8;
+        margin-top: 2px;
+    }
+
+    .ch-pills {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+
+    .ch-pill {
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.14);
+        color: #9fb3c8;
+        border-radius: 999px;
+        padding: 7px 16px;
+        font-size: .78rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .25s;
+        white-space: nowrap;
+    }
+
+        .ch-pill:hover {
+            color: #fff;
+            background: rgba(255,255,255,.10);
+        }
+
+        .ch-pill.active {
+            background: linear-gradient(135deg, #1E6FD9, #667eea);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 6px 16px rgba(30,111,217,.35);
+        }
+
+    /* ===== نوار ابزار: دلتا + دوره ===== */
+    .ch-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 14px 0 6px;
+    }
+
+    .ch-delta {
+        display: inline-flex;
+        align-items: baseline;
+        gap: 7px;
+        font-weight: 800;
+        font-size: 1.35rem;
+        color: #fff;
+        direction: ltr;
+    }
+
+        .ch-delta .up { color: #38d9a9; }
+        .ch-delta .down { color: #ff6b81; }
+        .ch-delta small {
+            font-size: .68rem;
+            font-weight: 700;
+            color: #9fb3c8;
+            direction: rtl;
+        }
+
+    /* ===== نوار پیمایش و بازه‌ها ===== */
+    .ch-rangebar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .ch-navbtn {
+        flex: 0 0 auto;
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        background: rgba(255,255,255,.07);
+        border: 1px solid rgba(255,255,255,.16);
+        color: #dce9ff;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all .2s;
+    }
+
+        .ch-navbtn:hover:not(:disabled) {
+            background: rgba(102,211,232,.16);
+            color: #fff;
+            border-color: rgba(102,211,232,.45);
+        }
+
+        .ch-navbtn:disabled {
+            opacity: .3;
+            cursor: not-allowed;
+        }
+
+    .ch-ranges {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+    }
+
+    .ch-range {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        font-size: .74rem;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+        .ch-range.cur {
+            color: #fff;
+        }
+
+        .ch-range.prev {
+            color: #9fb3c8;
+            font-size: .68rem;
+        }
+
+    .ch-range-dot {
+        flex: 0 0 auto;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+    }
+
+    .ch-range.cur .ch-range-dot {
+        background: #4d8df6;
+        box-shadow: 0 0 8px rgba(77,141,246,.9);
+    }
+
+    .ch-range.prev .ch-range-dot {
+        background: #9fb3c8;
+    }
+
+    /* ===== نمودار ===== */
+    .ch-chart-wrap {
+        position: relative;
+        margin-top: 8px;
+    }
+
+    .ch-chart {
+        width: 100%;
+        height: 320px;
+        display: block;
+    }
+
+    /* ===== موبایل: نمودار خوانا ===== */
+    @@media (max-width: 767.98px) {
+        .ch-chart {
+            height: 240px;
+        }
+
+        .ch-axlabel {
+            font-size: 16px;
+        }
+
+        .ch-main-card {
+            padding: 14px 10px;
+        }
+
+        .ch-pill {
+            padding: 6px 12px;
+            font-size: .72rem;
+        }
+
+        .ch-delta {
+            font-size: 1.1rem;
+        }
+
+        .ch-navbtn {
+            width: 42px;
+            height: 42px;
+        }
+
+        .ch-range {
+            font-size: .7rem;
+        }
+
+        .ch-range.prev {
+            font-size: .64rem;
+        }
+
+        .ch-tooltip {
+            font-size: .82rem;
+            padding: 8px 12px;
+        }
+    }
+
+    .ch-gridline {
+        stroke: rgba(255,255,255,.07);
+        stroke-width: 1;
+    }
+
+    .ch-gridline-main {
+        stroke: rgba(255,255,255,.14);
+        stroke-width: 1;
+    }
+
+    .ch-axlabel {
+        fill: #9fb3c8;
+        font-size: 11px;
+        font-family: Tahoma, sans-serif;
+        font-weight: 600;
+    }
+
+    .ch-tooltip {
+        position: absolute;
+        pointer-events: none;
+        background: rgba(10,15,30,.94);
+        border: 1px solid rgba(102,211,232,.35);
+        border-radius: 10px;
+        padding: 7px 11px;
+        font-size: .74rem;
+        color: #fff;
+        white-space: nowrap;
+        z-index: 5;
+        box-shadow: 0 8px 22px rgba(0,0,0,.45);
+        transform: translate(14px,-110%);
+    }
+
+        .ch-tooltip .tt-date {
+            color: #66d3e8;
+            font-weight: 800;
+            margin-bottom: 2px;
+        }
+
+        .ch-tooltip .tt-prev {
+            color: #9fb3c8;
+        }
+
+    .ch-legend {
+        display: flex;
+        justify-content: center;
+        gap: 22px;
+        margin-top: 10px;
+        font-size: .78rem;
+        color: #9fb3c8;
+    }
+
+        .ch-legend i {
+            display: inline-block;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            margin-left: 5px;
+        }
+
+    /* ===== کارت‌های کناری ===== */
+    .ch-side-card {
+        position: relative;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        padding: 16px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform .25s, border-color .25s, box-shadow .25s;
+        height: 100%;
+    }
+
+        .ch-side-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(102,211,232,.45);
+            box-shadow: 0 10px 28px rgba(13,110,253,.18);
+        }
+
+        .ch-side-card.serie-on {
+            border-color: rgba(102,211,232,.65);
+            box-shadow: 0 10px 28px rgba(13,110,253,.25);
+        }
+
+            .ch-side-card.serie-on::after {
+                content: '';
+                position: absolute;
+                inset: 0 0 auto 0;
+                height: 3px;
+                background: linear-gradient(90deg, #1E6FD9, #667eea);
+            }
+
+    .ch-side-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 800;
+        color: #fff;
+        font-size: .9rem;
+    }
+
+        .ch-side-head i {
+            color: #66d3e8;
+            font-size: .9rem;
+        }
+
+    .ch-side-nums {
+        display: flex;
+        gap: 26px;
+        margin-top: 10px;
+    }
+
+        .ch-side-nums b {
+            display: block;
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1.2;
+        }
+
+        .ch-side-nums small {
+            font-size: .68rem;
+            color: #9fb3c8;
+            font-weight: 600;
+        }
+
+    .ch-spark {
+        margin-top: 10px;
+        height: 56px;
+    }
+
+        .ch-spark svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+    .ch-side-foot {
+        margin-top: 10px;
+        font-size: .72rem;
+        color: #9fb3c8;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .ch-side-foot i {
+            color: #667eea;
+        }
+
+    .ch-help p {
+        font-size: .76rem;
+        color: #9fb3c8;
+        margin-bottom: 8px;
+        display: flex;
+        gap: 7px;
+        align-items: baseline;
+    }
+
+        .ch-help p i {
+            color: #66d3e8;
+            flex: 0 0 auto;
+        }
+
+    .ch-info-card {
+        cursor: default;
+    }
+
+        .ch-info-card:hover {
+            transform: none;
+        }
+
+    /* ===== نمودار دایره‌ای سهم سانس‌ها ===== */
+    .ch-share-card {
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        padding: 16px;
+        height: 100%;
+    }
+
+    .ch-share-title {
+        font-weight: 800;
+        color: #fff;
+        font-size: .9rem;
+        margin-bottom: 12px;
+    }
+
+    .ch-share-body {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+
+    .ch-donut {
+        flex: 0 0 auto;
+        width: 120px;
+        height: 120px;
+    }
+
+    .ch-donut circle {
+        fill: none;
+        stroke-width: 5.5;
+    }
+
+    .ch-donut-center {
+        fill: #fff;
+        font-size: 7px;
+        font-weight: 800;
+    }
+
+    .ch-share-legend {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        font-size: .72rem;
+        color: #cbd3da;
+    }
+
+    .ch-lg-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .ch-lg-row i {
+            flex: 0 0 auto;
+            width: 9px;
+            height: 9px;
+            border-radius: 3px;
+        }
+
+        .ch-lg-row .ch-lg-name {
+            flex: 1 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ch-lg-row .ch-lg-pct {
+            flex: 0 0 auto;
+            font-weight: 800;
+            color: #fff;
+        }
+
+    .ch-lg-others {
+        color: #9fb3c8;
+        font-size: .68rem;
+    }
+
+    .ch-share-empty {
+        width: 100%;
+        text-align: center;
+        color: #9fb3c8;
+        font-size: .78rem;
+        padding: 20px 0;
+    }
+
+    @@media (max-width: 575.98px) {
+        .ch-share-body {
+            flex-direction: column;
+        }
+
+        .ch-share-legend {
+            width: 100%;
+        }
+    }
+</style>
+
+@section Scripts {
+    <script>
+        var chState = { period: 'day', serie: 'traffic', offset: 0, cur: [], prev: [] };
+        var chSerieKeys = {
+            traffic:  { title: 'ترددها',            field: 'trafficCount' },
+            register: { title: 'ثبت‌نام و تمدید',    field: 'registerCount' },
+            ticket:   { title: 'فروش بلیط',          field: 'ticketCount' },
+            service:  { title: 'خدمات',              field: 'serviceCount' },
+            finance:  { title: 'دریافتی‌ها',          field: 'financeAmount' }
+        };
+
+        function chVal(p, field) { return Number(p[field] || 0); }
+
+        // ===== رندر نمودار خطی =====
+        function chRender() {
+            var svg = $('#chChart');
+            var isMobile = window.matchMedia('(max-width: 767.98px)').matches;
+            var W = 900, H = 320, padT = 14, padB = 26, padX = isMobile ? 74 : 44;
+            var innerW = W - padX * 2, innerH = H - padT - padB;
+            var cfg = chSerieKeys[chState.serie];
+            var cur = chState.cur, prev = chState.prev;
+            var n = cur.length;
+
+            var maxV = 1;
+            cur.forEach(function (p) { maxV = Math.max(maxV, chVal(p, cfg.field)); });
+            prev.forEach(function (p) { maxV = Math.max(maxV, chVal(p, cfg.field)); });
+            var niceMax = maxV;
+            var mag = Math.pow(10, Math.floor(Math.log10(maxV)));
+            niceMax = Math.ceil(maxV / mag) * mag;
+            if (niceMax === 0) niceMax = 1;
+
+            var x = function (i) { return padX + (n <= 1 ? innerW / 2 : i * innerW / (n - 1)); };
+            var y = function (v) { return padT + innerH - (v / niceMax) * innerH; };
+            var yPrev = function (v) {
+                // دوره قبل ممکن است طول متفاوت داشته باشد → بر اساس ایندکس از انتها تراز می‌کنیم
+                var off = prev.length - n;
+                return padT + innerH - (v / niceMax) * innerH;
+            };
+
+            // --- گرید + محور Y ---
+            var gridHtml = '', axY = '';
+            var steps = 4;
+            for (var g = 0; g <= steps; g++) {
+                var gy = padT + innerH * g / steps;
+                var gv = Math.round(niceMax * (1 - g / steps));
+                gridHtml += '<line class="' + (g === steps ? 'ch-gridline-main' : 'ch-gridline') + '" x1="' + padX + '" y1="' + gy + '" x2="' + (W - padX) + '" y2="' + gy + '"/>';
+                axY += '<text class="ch-axlabel" x="' + (padX - 8) + '" y="' + (gy + 4) + '" text-anchor="end">' + faNum(gv) + '</text>';
+            }
+            $('#chGrid').html(gridHtml);
+            $('#chAxisY').html(axY);
+
+            // --- برچسب‌های X: سالانه/هفتگی همه، ماهانه هر چند روز یکی؛ بدون عدد روی خط نمودار ---
+            var axX = '';
+            var labelEvery = (n <= 12) ? 1 : (n <= 31 ? 5 : Math.ceil(n / 8));
+            cur.forEach(function (p, i) {
+                if (i % labelEvery !== 0 && i !== n - 1) return;
+                // آخرین نقطه اگر خیلی به برچسب قبلی چسبیده، نمایش داده نمی‌شود
+                if (i === n - 1 && n > 12 && (n - 1) % labelEvery !== 0 && (n - 1) % labelEvery < labelEvery * 0.5) return;
+                axX += '<text class="ch-axlabel" x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle">' + (p.shortLabel || p.bucketKey) + '</text>';
+            });
+            $('#chAxisX').html(axX);
+
+            // --- مسیر خطوط ---
+            function linePath(arr, field) {
+                var d = '';
+                arr.forEach(function (p, i) {
+                    d += (i === 0 ? 'M' : 'L') + x(i).toFixed(1) + ' ' + y(chVal(p, field)).toFixed(1) + ' ';
+                });
+                return d;
+            }
+            var lineD = linePath(cur, cfg.field);
+            $('#chLine').attr('d', lineD);
+            $('#chArea').attr('d', lineD + 'L' + x(n - 1).toFixed(1) + ' ' + (padT + innerH) + ' L' + x(0).toFixed(1) + ' ' + (padT + innerH) + ' Z');
+
+            // دوره قبل: تراز از انتها (هم‌پوشان با تقویم جاری)
+            var off = Math.max(0, prev.length - n);
+            var prevD = '';
+            var prevPts = [];
+            for (var i = 0; i < n; i++) {
+                var pp = prev[i + off];
+                if (pp) prevPts.push([x(i), y(chVal(pp, cfg.field))]);
+            }
+            if (prevPts.length) {
+                prevD = prevPts.map(function (pt, i) { return (i === 0 ? 'M' : 'L') + pt[0].toFixed(1) + ' ' + pt[1].toFixed(1); }).join(' ');
+            }
+            $('#chLinePrev').attr('d', prevD).toggle(prevPts.length > 0);
+            $('#chAreaPrev').attr('d', '').hide();
+
+            chState._x = x; chState._y = y; chState._padT = padT; chState._innerH = innerH; chState._padX = padX; chState._W = W; chState._H = H;
+        }
+
+        // ===== اسپارک‌لاین کارت‌ها =====
+        function chSpark($card, arr, field) {
+            var W = 220, H = 56, pad = 3;
+            var maxV = 1;
+            arr.forEach(function (p) { maxV = Math.max(maxV, chVal(p, field)); });
+            var x = function (i) { return pad + (arr.length <= 1 ? (W - 2 * pad) / 2 : i * (W - 2 * pad) / (arr.length - 1)); };
+            var y = function (v) { return pad + (H - 2 * pad) - (v / maxV) * (H - 2 * pad); };
+            var d = '';
+            arr.forEach(function (p, i) { d += (i === 0 ? 'M' : 'L') + x(i).toFixed(1) + ' ' + y(chVal(p, field)).toFixed(1) + ' '; });
+            $card.find('.ch-spark-line').attr('d', d);
+            $card.find('.ch-spark-area').attr('d', d + 'L' + x(arr.length - 1).toFixed(1) + ' ' + (H - pad) + ' L' + x(0).toFixed(1) + ' ' + (H - pad) + ' Z');
+        }
+
+        // ===== درصد تغییر =====
+        function chDeltaPct(cur, prev) {
+            if (!prev) return cur > 0 ? 100 : 0;
+            return Math.round((cur - prev) * 100 / prev);
+        }
+
+        // ===== بارگذاری داده =====
+        function chLoad() {
+            apiCall('/api/Admin/ChartSeries?period=' + chState.period + '&offset=' + chState.offset, 'GET', null, function (res) {
+                if (!res.success || !res.data) return;
+                var d = res.data;
+                chState.cur = d.points || [];
+                chState.prev = d.pointsPrev || [];
+
+                $('#chMainTitle').text(chSerieKeys[chState.serie].title);
+                $('#chRangeCur').text(d.currentRangeLabel || '-');
+                $('#chRangePrev').text('دوره قبل: ' + (d.previousRangeLabel || '-'));
+                $('#chNext').prop('disabled', !d.canGoNext);
+                $('#chPeriodPills .ch-pill').removeClass('active')
+                    .filter('[data-period="' + chState.period + '"]').addClass('active');
+                $('#chSeriePills .ch-pill').removeClass('active')
+                    .filter('[data-serie="' + chState.serie + '"]').addClass('active');
+                $('.ch-side-card[data-serie]').removeClass('serie-on')
+                    .filter('[data-serie="' + chState.serie + '"]').addClass('serie-on');
+
+                // ✅ فقط کارت و دونات همان بخش دیده شود — بقیه مخفی
+                $('.ch-side-col, .ch-share-col').hide()
+                    .filter('[data-serie="' + chState.serie + '"], [data-serie="__always"]').show();
+
+                // --- کارت‌ها: هر کارت فقط اسپارک همان بخش را می‌گیرد ---
+                var series = {
+                    traffic:  { t: d.traffic,  el: '#chTraffic',  field: 'trafficCount',  isMoney: false, share: d.trafficShare },
+                    register: { t: d.register, el: '#chRegister', field: 'registerCount', isMoney: false, share: d.registerShare },
+                    ticket:   { t: d.ticket,   el: '#chTicket',   field: 'ticketCount',   isMoney: false, share: d.ticketShare },
+                    service:  { t: d.service,  el: '#chService',  field: 'serviceCount',  isMoney: false, share: d.serviceShare },
+                    finance:  { t: d.finance,  el: '#chFinance',  field: 'financeAmount', isMoney: true,  share: d.financeShare }
+                };
+                $.each(series, function (k, s) {
+                    $(s.el + 'Total').text(faNum(s.t.total));
+                    $(s.el + 'Prev').text(faNum(s.t.previousTotal));
+                    var pct = chDeltaPct(s.t.total, s.t.previousTotal);
+                    var arrow = pct >= 0 ? 'bi-caret-up-fill' : 'bi-caret-down-fill';
+                    var cls = pct >= 0 ? 'up' : 'down';
+                    $(s.el + 'Total').parent().find('.ch-delta-mini').remove();
+                    $(s.el + 'Total').after('<span class="ch-delta-mini ' + cls + '" style="font-size:.68rem;font-weight:800;margin-right:6px;">' +
+                        '<i class="bi ' + arrow + '"></i> ' + faNum(Math.abs(pct)) + '٪</span>');
+                    var card = $('.ch-side-card[data-serie="' + k + '"]');
+                    if (card.length) chSpark(card, chState.cur, s.field);
+                    // نمودار دایره‌ای همان بخش
+                    chDonut(k, s.share, s.isMoney);
+                });
+
+                // --- دلتای سری فعال ---
+                var active = series[chState.serie];
+                var pct = chDeltaPct(active.t.total, active.t.previousTotal);
+                $('#chDelta').html('<span class="' + (pct >= 0 ? 'up' : 'down') + '">' +
+                    (pct >= 0 ? '+' : '') + pct + '%</span> <small>نسبت به دوره قبل</small>');
+
+                chRender();
+            });
+        }
+
+        // ===== نمودار دایره‌ای سهم سانس‌ها =====
+        var chDonutColors = ['#4d8df6', '#38d9a9', '#ffa94d', '#c9a6ff', '#ff6b81', '#66d3e8', '#f7971e', '#51cf66'];
+        function chDonut(key, share, isMoney) {
+            var $body = $('.ch-share-body[data-share="' + key + '"]');
+            if (!$body.length) return;
+            var $segs = $body.find('.ch-donut-segs');
+            var $center = $body.find('.ch-donut-center');
+            var $legend = $body.find('.ch-share-legend');
+            $segs.empty();
+            $legend.empty();
+
+            var slices = (share && share.slices) ? share.slices : [];
+            if (!slices.length) {
+                $center.text('0');
+                $legend.html('<div class="ch-share-empty">داده‌ای برای این دوره نیست</div>');
+                return;
+            }
+
+            var r = 15.9155, total = 100, acc = 0;
+            var svgNS = 'http://www.w3.org/2000/svg';
+            slices.forEach(function (sl, i) {
+                var color = chDonutColors[i % chDonutColors.length];
+                var dash = sl.percent;
+                // ✅ ساخت عنصر SVG با namespace درست (jQuery.append در SVG کار نمی‌کند)
+                var c = document.createElementNS(svgNS, 'circle');
+                c.setAttribute('cx', '21'); c.setAttribute('cy', '21'); c.setAttribute('r', r);
+                c.setAttribute('stroke', color);
+                c.setAttribute('stroke-dasharray', dash + ' ' + (total - dash));
+                c.setAttribute('stroke-dashoffset', (25 - acc));
+                $segs[0].appendChild(c);
+                acc += dash;
+                $legend.append(
+                    '<div class="ch-lg-row"><i style="background:' + color + '"></i>' +
+                    '<span class="ch-lg-name" title="' + sl.label.replace(/"/g, '') + '">' + sl.label + '</span>' +
+                    '<span class="ch-lg-pct">' + sl.percentDisplay + '</span></div>'
+                );
+            });
+            if (share.othersValue > 0) {
+                $legend.append(
+                    '<div class="ch-lg-row ch-lg-others"><i style="background:rgba(255,255,255,.25)"></i>' +
+                    '<span class="ch-lg-name">سایر سانس‌ها</span>' +
+                    '<span class="ch-lg-pct">' + share.othersPercentDisplay + '</span></div>'
+                );
+            }
+            $center.text(slices[0].percentDisplay.replace('٪', ''));
+        }
+
+        // ===== تولتیپ با حرکت ماوس (همیشه داخل کادر نمودار) =====
+        $(document).on('mousemove', '#chChart', function (e) {
+            if (!chState._x || !chState.cur.length) return;
+            var rect = this.getBoundingClientRect();
+            var relX = (e.clientX - rect.left) / rect.width * chState._W;
+            var n = chState.cur.length;
+            var innerW = chState._W - chState._padX * 2;
+            var idx = Math.round((relX - chState._padX) / (innerW / Math.max(1, n - 1)));
+            idx = Math.max(0, Math.min(n - 1, idx));
+
+            var cx = chState._x(idx), cy = chState._y(chVal(chState.cur[idx], chSerieKeys[chState.serie].field));
+            $('#chCursor').attr({ x1: cx, x2: cx, y1: chState._padT, y2: chState._padT + chState._innerH }).show();
+            $('#chDot').attr({ cx: cx, cy: cy }).show();
+
+            var off = Math.max(0, chState.prev.length - n);
+            var pp = chState.prev[idx + off];
+            if (pp) {
+                $('#chDotPrev').attr({ cx: cx, cy: chState._y(chVal(pp, chSerieKeys[chState.serie].field)) }).show();
+            } else {
+                $('#chDotPrev').hide();
+            }
+
+            var field = chSerieKeys[chState.serie].field;
+            var isMoney = field === 'financeAmount';
+            var val = chVal(chState.cur[idx], field);
+            var html = '<div class="tt-date">' + (chState.cur[idx].fullLabel || chState.cur[idx].bucketKey) + '</div>' +
+                '<div>' + (isMoney ? faNum(val) + ' ریال' : faNum(val)) + '</div>';
+            if (pp) {
+                var pv = chVal(pp, field);
+                html += '<div class="tt-prev">دوره قبل: ' + (isMoney ? faNum(pv) + ' ریال' : faNum(pv)) + '</div>';
+            }
+            var $tt = $('#chTooltip').html(html).show();
+
+            // قرار دادن تولتیپ همیشه داخل کادر (با احتساب اندازه واقعی خودش)
+            var wrapOff = $(this).parent().offset();
+            var px = e.clientX - wrapOff.left, py = e.clientY - wrapOff.top;
+            var tw = $tt.outerWidth() || 120, th = $tt.outerHeight() || 50;
+            var ww = $(this).parent().width();
+            var left = px + 14;
+            if (left + tw > ww - 4) left = px - tw - 14;      // اگر از راست می‌زند بیرون → سمت چپ ماوس
+            if (left < 4) left = 4;
+            var top = py - th - 8;
+            if (top < 4) top = py + 16;                        // اگر از بالا می‌زند بیرون → زیر ماوس
+            $tt.css({ left: left, top: top });
+        });
+
+        $(document).on('mouseleave', '#chChart', function () {
+            $('#chCursor, #chDot, #chDotPrev, #chTooltip').hide();
+        });
+
+        // ===== رویدادها =====
+        $(document).on('click', '#chPeriodPills .ch-pill', function () {
+            chState.period = $(this).data('period');
+            chState.offset = 0;
+            chLoad();
+        });
+        $(document).on('click', '#chSeriePills .ch-pill', function () {
+            chState.serie = $(this).data('serie');
+            chLoad();
+        });
+        $(document).on('click', '.ch-side-card[data-serie]', function () {
+            chState.serie = $(this).data('serie');
+            chLoad();
+        });
+        // پیمایش دوره قبل/بعد
+        $(document).on('click', '#chPrev', function () {
+            chState.offset--;
+            chLoad();
+        });
+        $(document).on('click', '#chNext', function () {
+            if (chState.offset < 0) { chState.offset++; chLoad(); }
+        });
+        // سوایپ لمسی روی نمودار در موبایل
+        (function () {
+            var sx = null, sy = null;
+            var el = document.getElementById('chChart');
+            if (!el) return;
+            el.addEventListener('touchstart', function (e) {
+                sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+            }, { passive: true });
+            el.addEventListener('touchend', function (e) {
+                if (sx === null) return;
+                var dx = e.changedTouches[0].clientX - sx;
+                var dy = e.changedTouches[0].clientY - sy;
+                if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                    if (dx > 0) { chState.offset--; chLoad(); }       // سوایپ راست → گذشته
+                    else if (chState.offset < 0) { chState.offset++; chLoad(); } // سوایپ چپ → جلو
+                }
+                sx = null;
+            }, { passive: true });
+        })();
+
+        $(function () { chLoad(); });
+    </script>
+}

@@ -15,8 +15,13 @@
                      onerror="this.style.display='none';" />
             </div>
             <div class="flex-grow-1" style="min-width:0">
-                <h5 class="mb-1 text-truncate" id="dashFullName">در حال بارگذاری...</h5>
-                <div class="text-muted small mb-2" id="dashMemberId"></div>
+                <h5 class="mb-2 text-truncate" id="dashFullName">در حال بارگذاری...</h5>
+                <div class="mb-2">
+                    <span class="membership-chip">
+                        <i class="bi bi-person-vcard-fill"></i>
+                        <span id="dashMemberId">کد عضویت: -</span>
+                    </span>
+                </div>
                 <!-- ✅ چیپ‌های وضعیت -->
                 <div class="d-flex gap-2 flex-wrap">
                     <span class="status-chip status-active">
@@ -275,6 +280,26 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+        }
+
+    /* ===== ✅ کادر کد عضویت (مثل چیپ‌های وضعیت) ===== */
+    .membership-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 5px 14px;
+        font-size: .78rem;
+        font-weight: 700;
+        background: rgba(13,110,253,.14);
+        border: 1px solid rgba(13,110,253,.35);
+        color: #dce9ff;
+        white-space: nowrap;
+    }
+
+        .membership-chip i {
+            color: #66d3e8;
+            font-size: .95rem;
         }
 
     /* ===== ✅ چیپ‌های وضعیت (جایگزین چیپ‌های اعتبار) ===== */

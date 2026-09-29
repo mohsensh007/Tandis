@@ -59,6 +59,28 @@ namespace TandisWebApp.Controllers
         public IActionResult FinanceReport() => View();
 
         // ============================================================
+        //  صفحه نمودارها (سبک Twitch) + API سری‌زمانی
+        // ============================================================
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("Admin/Charts")]
+        public IActionResult Charts()
+        {
+            ViewData["Title"] = "نمودارها";
+            return View();
+        }
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/ChartSeries")]
+        public async Task<IActionResult> ChartSeriesApi(string period = "day", int offset = 0)
+        {
+            var data = await _reports.GetChartSeriesAsync(AdminShiftID, period, offset);
+            return Ok(new { success = true, data });
+        }
+
+        // ============================================================
         //  API — احراز هویت مدیر (با قفل + پیام عمومی)
         // ============================================================
 

@@ -4,6 +4,7 @@
 # Build folders
 **/bin/
 **/obj/
+**/.freebuff/
 
 # User files
 *.user

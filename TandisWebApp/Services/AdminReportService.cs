@@ -531,6 +531,422 @@ namespace TandisWebApp.Services
             }).ToList();
         }
 
+        // ============================================================
+        //  سری‌زمانی نمودارها (روزانه/هفتگی/ماهانه/سالانه) — خواندنی
+        // ============================================================
+
+        private static readonly string[] PersianMonthNames =
+            { "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند" };
+
+        private static readonly string[] PersianDayNames =
+            { "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنجشنبه", "جمعه" };
+
+        private static string PersianDayName(DateTime d)
+            => PersianDayNames[((int)d.DayOfWeek + 1) % 7];
+
+        /// <summary>نقطه صفر تاریخ شمسی (۱ فروردین سال معین) به میلادی</summary>
+        private static DateTime JalaliYearStart(int jYear)
+        {
+            var pc = new System.Globalization.PersianCalendar();
+            return pc.ToDateTime(jYear, 1, 1, 0, 0, 0, 0);
+        }
+
+        /// <summary>
+        /// آمار همه بخش‌ها برای صفحه نمودارها.
+        /// period: day(ساعت‌های یک روز) | week(۷ روز با نام روز) | month(روزهای یک ماه) | year(۱۲ ماه شمسی)
+        /// offset: ۰ = دوره جاری، منفی = عقب‌تر در گذشته (پیمایش)
+        /// </summary>
+        public async Task<ChartSeriesResponseDto> GetChartSeriesAsync(short shiftID, string period, int offset = 0)
+        {
+            var pc = new System.Globalization.PersianCalendar();
+            string ToShamsi(DateTime d) => $"{pc.GetYear(d):0000}/{pc.GetMonth(d):00}/{pc.GetDayOfMonth(d):00}";
+            var now = DateTime.Now;
+            var today = now.Date;
+
+            // --- محاسبه بازه‌ها بر اساس نوع دوره + پیمایش ---
+            DateTime curFrom, curTo, prevFrom, prevTo;
+            string rangeTitle;
+            bool canGoNext;
+
+            if (period == "day")
+            {
+                var day = today.AddDays(offset);
+                curFrom = day; curTo = day;
+                prevFrom = day.AddDays(-1); prevTo = day.AddDays(-1);
+                rangeTitle = offset == 0 ? "امروز" : PersianDayName(day) + " «" + ToShamsi(day) + "»";
+                canGoNext = offset < 0;
+            }
+            else if (period == "week")
+            {
+                // هفته شمسی: از شنبه تا جمعه. offset=0 → هفته جاری
+                var daysFromSat = ((int)today.DayOfWeek + 1) % 7; // شنبه = 0
+                var satThis = today.AddDays(-daysFromSat);
+                curFrom = satThis.AddDays(offset * 7);
+                curTo = curFrom.AddDays(6);
+                prevFrom = curFrom.AddDays(-7); prevTo = prevFrom.AddDays(6);
+                rangeTitle = "هفته " + ToShamsi(curFrom);
+                canGoNext = curTo < today;
+            }
+            else if (period == "month")
+            {
+                var jy = pc.GetYear(now);
+                var jm = pc.GetMonth(now) + offset;
+                int jy2 = jy;
+                while (jm < 1) { jm += 12; jy2--; }
+                while (jm > 12) { jm -= 12; jy2++; }
+                curFrom = pc.ToDateTime(jy2, jm, 1, 0, 0, 0, 0);
+                var daysInMonth = pc.GetDaysInMonth(jy2, jm);
+                curTo = pc.ToDateTime(jy2, jm, daysInMonth, 0, 0, 0, 0);
+                var pm = jm - 1;
+                var py = jy2;
+                if (pm < 1) { pm = 12; py--; }
+                prevFrom = pc.ToDateTime(py, pm, 1, 0, 0, 0, 0);
+                prevTo = pc.ToDateTime(py, pm, pc.GetDaysInMonth(py, pm), 0, 0, 0, 0);
+                rangeTitle = PersianMonthNames[jm - 1] + " " + jy2;
+                canGoNext = curTo < today;
+            }
+            else // year
+            {
+                var jy = pc.GetYear(now) + offset;
+                curFrom = JalaliYearStart(jy);
+                curTo = JalaliYearStart(jy + 1).AddDays(-1);
+                prevFrom = JalaliYearStart(jy - 1);
+                prevTo = JalaliYearStart(jy).AddDays(-1);
+                rangeTitle = "سال " + jy;
+                canGoNext = curTo < today;
+            }
+
+            var curFromS = ToShamsi(curFrom);
+            var curToS = ToShamsi(curTo);
+            var prevFromS = ToShamsi(prevFrom);
+            var prevToS = ToShamsi(prevTo);
+            var rangeFromS = prevFromS; // کل بازه بارگذاری: از ابتدای دوره قبل تا انتهای دوره جاری
+            var rangeToS = curToS;
+
+            // --- ترددها. نکته مهم شیفت بانوان: در این دیتابیس ۳۵۲ هزار ردیف ShiftID=2 همه
+            //     TrafficStatus=0 دارند (فرمت قدیمی کیوسک) و EntryDate/EntryTime آنها زمان ورود واقعی است.
+            //     پس «ورود» = هر ردیف با EntryDate معتبر (صرف‌نظر از Status)، همان کاری که گزارش تردد UI انجام می‌دهد.
+            var trafficRows = await _db.ACC_Traffics.AsNoTracking()
+                .Where(t => t.ShiftID == shiftID && t.EntryDate != null
+                         && t.EntryDate.CompareTo(rangeFromS) >= 0
+                         && t.EntryDate.CompareTo(rangeToS) <= 0)
+                .Select(t => new { t.EntryDate, t.EntryTime, t.TrafficStatus, t.SportMemberID })
+                .ToListAsync();
+
+            // --- ثبت‌نام/تمدید ---
+            var registerRows = await _db.Acc_MemberSports.AsNoTracking()
+                .Where(ms => ms.CreationDate != null
+                          && ms.Gen_SportSanse != null && ms.Gen_SportSanse.ShiftID == shiftID
+                          && ms.CreationDate.CompareTo(rangeFromS) >= 0
+                          && ms.CreationDate.CompareTo(rangeToS) <= 0)
+                .Select(ms => new
+                {
+                    ms.CreationDate,
+                    ms.SportSanseID,
+                    SanseName = ms.Gen_SportSanse.SanseName,
+                    SportName = ms.Gen_SportSanse.Gen_Sport_Category.SportName
+                })
+                .ToListAsync();
+
+            // --- بلیط تک‌جلسه ---
+            var ticketRows = await _db.ACC_Tickets.AsNoTracking()
+                .Where(t => t.ShiftID == shiftID && t.CreationDate != null
+                         && t.CreationDate.CompareTo(rangeFromS) >= 0
+                         && t.CreationDate.CompareTo(rangeToS) <= 0)
+                .Select(t => new { t.CreationDate, SansName = t.Gen_Tarefe.Gen_San.Sans })
+                .ToListAsync();
+
+            // --- خدمات ---
+            var serviceRows = await _db.ACC_MemberServices.AsNoTracking()
+                .Where(s => s.ShiftID == shiftID && s.CreationDate != null
+                         && s.CreationDate.CompareTo(rangeFromS) >= 0
+                         && s.CreationDate.CompareTo(rangeToS) <= 0)
+                .Select(s => new { s.CreationDate, ServiceName = s.Gen_Service.ServiceDesc, s.ServiceAmount })
+                .ToListAsync();
+
+            // --- دریافتی‌ها (سند اعتبار، هماهنگ با GetDashboardStatsAsync) ---
+            var financeRows = await (
+                from c in _db.Cash_CreditStatments.AsNoTracking()
+                where c.CreationDate != null
+                   && c.CreationDate.CompareTo(rangeFromS) >= 0
+                   && c.CreationDate.CompareTo(rangeToS) <= 0
+                join m in _db.Gen_Members on c.MemberID equals m.MemberID into mj
+                from m in mj.DefaultIfEmpty()
+                join t in _db.ACC_Traffics on c.TrafficID equals t.TrafficID into tj
+                from t in tj.DefaultIfEmpty()
+                where m.ShiftID == shiftID || t.ShiftID == shiftID
+                select new { c.CreationDate, Amount = c.Amount ?? 0, c.CreditTypeID })
+                .ToListAsync();
+
+            // --- ساخت باکِت‌ها + برچسب‌ها بر اساس نوع دوره ---
+            Dictionary<string, ChartSeriesPointDto> BuildBuckets(DateTime from, DateTime to)
+            {
+                var dict = new Dictionary<string, ChartSeriesPointDto>();
+
+                if (period == "year")
+                {
+                    // ۱۲ ماه شمسی سال — همه از ابتدای ماه
+                    var jy = pc.GetYear(from);
+                    for (var m = 1; m <= 12; m++)
+                    {
+                        var key = $"{jy:0000}/{m:00}";
+                        dict[key] = new ChartSeriesPointDto
+                        {
+                            BucketKey = key,
+                            ShortLabel = PersianMonthNames[m - 1],
+                            FullLabel = PersianMonthNames[m - 1] + " " + jy
+                        };
+                    }
+                }
+                else if (period == "day")
+                {
+                    // ۲۴ ساعت همان روز — برچسب فقط ساعت
+                    for (var h = 0; h < 24; h++)
+                    {
+                        var key = h.ToString("00");
+                        dict[key] = new ChartSeriesPointDto
+                        {
+                            BucketKey = key,
+                            ShortLabel = h.ToString("00") + ":00",
+                            FullLabel = ToShamsi(from) + " ساعت " + h.ToString("00") + ":00"
+                        };
+                    }
+                }
+                else
+                {
+                    // روزهای بازه (هفته/ماه) — برچسب: نام روز هفته یا روز ماه
+                    for (var d = from; d <= to; d = d.AddDays(1))
+                    {
+                        var key = ToShamsi(d);
+                        var lbl = period == "week" ? PersianDayName(d) : pc.GetDayOfMonth(d).ToString("00");
+                        dict[key] = new ChartSeriesPointDto
+                        {
+                            BucketKey = key,
+                            ShortLabel = lbl,
+                            FullLabel = PersianDayName(d) + " «" + key + "»"
+                        };
+                    }
+                }
+                return dict;
+            }
+
+            var dictCur = BuildBuckets(curFrom, curTo);
+            var dictPrev = BuildBuckets(prevFrom, prevTo);
+
+            void Add(DateTime shamsiDate, int hour, Action<ChartSeriesPointDto> add)
+            {
+                string? key;
+                if (period == "year")
+                {
+                    var s = ToShamsi(shamsiDate);
+                    key = s.Substring(0, 7);
+                }
+                else if (period == "day")
+                {
+                    key = hour.ToString("00");
+                }
+                else
+                {
+                    key = ToShamsi(shamsiDate);
+                }
+
+                if (dictCur.TryGetValue(key, out var c)) add(c);
+                else if (dictPrev.TryGetValue(key, out var p)) add(p);
+            }
+
+            // --- توزیع ترددها: هر ردیف با EntryDate معتبر یک ورود است ---
+            foreach (var t in trafficRows)
+            {
+                if (t.EntryDate == null || t.EntryDate.Length < 10) continue;
+                var parts = t.EntryDate.Substring(0, 10).Split('/');
+                if (parts.Length != 3) continue;
+                DateTime gd;
+                try
+                {
+                    gd = pc.ToDateTime(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), 0, 0, 0, 0);
+                }
+                catch { continue; }
+
+                // ساعت ورود برای باکِت‌های «روزانه»
+                var hour = 0;
+                var timeStr = (t.EntryTime ?? "").Trim();
+                if (timeStr.Length >= 2 && int.TryParse(timeStr.Substring(0, 2), out var hh))
+                    hour = Math.Clamp(hh, 0, 23);
+
+                Add(gd, hour, p => p.TrafficCount++);
+            }
+
+            foreach (var r in registerRows)
+            {
+                if (r.CreationDate == null || r.CreationDate.Length < 10) continue;
+                var parts = r.CreationDate.Substring(0, 10).Split('/');
+                if (parts.Length != 3) continue;
+                try
+                {
+                    var gd = pc.ToDateTime(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), 0, 0, 0, 0);
+                    Add(gd, 0, p => p.RegisterCount++);
+                }
+                catch { }
+            }
+
+            foreach (var t in ticketRows)
+            {
+                if (t.CreationDate == null || t.CreationDate.Length < 10) continue;
+                var parts = t.CreationDate.Substring(0, 10).Split('/');
+                if (parts.Length != 3) continue;
+                try
+                {
+                    var gd = pc.ToDateTime(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), 0, 0, 0, 0);
+                    Add(gd, 0, p => p.TicketCount++);
+                }
+                catch { }
+            }
+
+            foreach (var s in serviceRows)
+            {
+                if (s.CreationDate == null || s.CreationDate.Length < 10) continue;
+                var parts = s.CreationDate.Substring(0, 10).Split('/');
+                if (parts.Length != 3) continue;
+                try
+                {
+                    var gd = pc.ToDateTime(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), 0, 0, 0, 0);
+                    Add(gd, 0, p => p.ServiceCount++);
+                }
+                catch { }
+            }
+
+            foreach (var f in financeRows)
+            {
+                if (f.CreationDate == null || f.CreationDate.Length < 10) continue;
+                var parts = f.CreationDate.Substring(0, 10).Split('/');
+                if (parts.Length != 3) continue;
+                try
+                {
+                    var gd = pc.ToDateTime(int.Parse(parts[0]), int.Parse(parts[1]), int.Parse(parts[2]), 0, 0, 0, 0);
+                    Add(gd, 0, p => p.FinanceAmount += f.Amount);
+                }
+                catch { }
+            }
+
+            // --- خلاصه هر سری (جاری / قبل) — با کلید باکِت تا هم‌ساخت باشد ---
+            long SumFromDict(Dictionary<string, ChartSeriesPointDto> dict, Func<ChartSeriesPointDto, long> sel)
+                => dict.Values.Sum(sel);
+
+            // --- سهم سانس‌ها از هر بخش (نمودار دایره‌ای) ---
+            // ترددها: نگاشت SportMemberID → سانس از ثبت‌نام‌ها + جدول Acc_MemberSports
+            var sanseNameById = registerRows
+                .Where(r => r.SportSanseID.HasValue)
+                .GroupBy(r => r.SportSanseID.Value)
+                .ToDictionary(g => g.Key, g =>
+                    (g.First().SportName ?? "") + " - " + (g.First().SanseName ?? "").Trim());
+
+            var trafficSanses = await _db.ACC_Traffics.AsNoTracking()
+                .Where(t => t.ShiftID == shiftID && t.EntryDate != null
+                         && t.EntryDate.CompareTo(rangeFromS) >= 0
+                         && t.EntryDate.CompareTo(rangeToS) <= 0
+                         && t.SportMemberID != null)
+                .Join(_db.Acc_MemberSports,
+                    t => t.SportMemberID!,
+                    ms => ms.SportMemberID,
+                    (t, ms) => new { ms.SportSanseID })
+                .ToListAsync();
+
+            ChartShareDto BuildShare(Dictionary<string, long> raw, string unit)
+            {
+                var share = new ChartShareDto();
+                var grandTotal = raw.Values.Sum();
+                if (grandTotal <= 0) return share;
+
+                // برش‌های ≥ ۲٪ جدا، بقیه در «سایر سانس‌ها»
+                var big = raw.Where(kv => kv.Value * 100.0 / grandTotal >= 2.0)
+                             .OrderByDescending(kv => kv.Value).ToList();
+                long others = 0;
+                foreach (var kv in raw.Where(kv => kv.Value * 100.0 / grandTotal < 2.0)) others += kv.Value;
+
+                foreach (var kv in big)
+                {
+                    var pct = Math.Round(kv.Value * 100.0 / grandTotal, 1);
+                    share.Slices.Add(new ChartShareSliceDto
+                    {
+                        Label = kv.Key,
+                        Value = kv.Value,
+                        Percent = pct,
+                        PercentDisplay = pct.ToString("0.#") + "٪"
+                    });
+                }
+                if (others > 0)
+                {
+                    var opct = Math.Round(others * 100.0 / grandTotal, 1);
+                    share.OthersValue = others;
+                    share.OthersPercentDisplay = opct.ToString("0.#") + "٪";
+                }
+                return share;
+            }
+
+            // تردد بر اساس سانس
+            var trafficBySanse = new Dictionary<string, long>();
+            foreach (var t in trafficSanses)
+            {
+                if (t.SportSanseID == null) continue;
+                var name = sanseNameById.TryGetValue(t.SportSanseID.Value, out var n) ? n : "سانس نامشخص";
+                trafficBySanse[name] = trafficBySanse.GetValueOrDefault(name) + 1;
+            }
+
+            // ثبت‌نام بر اساس سانس (ثبت‌نام + تمدید = هر ردیف)
+            var registerBySanse = new Dictionary<string, long>();
+            foreach (var r in registerRows)
+            {
+                if (r.SportSanseID == null) continue;
+                var name = sanseNameById.TryGetValue(r.SportSanseID.Value, out var n) ? n : "سانس نامشخص";
+                registerBySanse[name] = registerBySanse.GetValueOrDefault(name) + 1;
+            }
+
+            // بلیط بر اساس سانس
+            var ticketBySanse = new Dictionary<string, long>();
+            foreach (var t in ticketRows)
+            {
+                var name = string.IsNullOrWhiteSpace(t.SansName) ? "بدون سانس" : t.SansName!.Trim();
+                ticketBySanse[name] = ticketBySanse.GetValueOrDefault(name) + 1;
+            }
+
+            // خدمات بر اساس نوع خدمت
+            var serviceByType = new Dictionary<string, long>();
+            foreach (var s in serviceRows)
+            {
+                var name = string.IsNullOrWhiteSpace(s.ServiceName) ? "خدمات متفرقه" : s.ServiceName!.Trim();
+                serviceByType[name] = serviceByType.GetValueOrDefault(name) + 1;
+            }
+
+            // دریافتی‌ها بر اساس نوع سند
+            var financeByType = new Dictionary<string, long>();
+            foreach (var f in financeRows)
+            {
+                var name = GetCreditTypeDesc(f.CreditTypeID);
+                financeByType[name] = financeByType.GetValueOrDefault(name) + f.Amount;
+            }
+
+            var res = new ChartSeriesResponseDto
+            {
+                Points = dictCur.Values.OrderBy(p => p.BucketKey).ToList(),
+                PointsPrev = dictPrev.Values.OrderBy(p => p.BucketKey).ToList(),
+                CurrentRangeLabel = rangeTitle + " («" + curFromS + "» تا «" + curToS + "»)",
+                PreviousRangeLabel = "«" + prevFromS + "» تا «" + prevToS + "»",
+                CanGoNext = canGoNext,
+                Traffic = new ChartSerieSummaryDto { Total = SumFromDict(dictCur, p => p.TrafficCount), PreviousTotal = SumFromDict(dictPrev, p => p.TrafficCount) },
+                Register = new ChartSerieSummaryDto { Total = SumFromDict(dictCur, p => p.RegisterCount), PreviousTotal = SumFromDict(dictPrev, p => p.RegisterCount) },
+                Ticket = new ChartSerieSummaryDto { Total = SumFromDict(dictCur, p => p.TicketCount), PreviousTotal = SumFromDict(dictPrev, p => p.TicketCount) },
+                Service = new ChartSerieSummaryDto { Total = SumFromDict(dictCur, p => p.ServiceCount), PreviousTotal = SumFromDict(dictPrev, p => p.ServiceCount) },
+                Finance = new ChartSerieSummaryDto { Total = SumFromDict(dictCur, p => p.FinanceAmount), PreviousTotal = SumFromDict(dictPrev, p => p.FinanceAmount) },
+                TrafficShare = BuildShare(trafficBySanse, "ورود"),
+                RegisterShare = BuildShare(registerBySanse, "نفر"),
+                TicketShare = BuildShare(ticketBySanse, "بلیط"),
+                ServiceShare = BuildShare(serviceByType, "سرویس"),
+                FinanceShare = BuildShare(financeByType, "ریال")
+            };
+            res.Finance.TotalDisplay = _helper.SetSeprator(res.Finance.Total) + " ریال";
+            return res;
+        }
+
         /// <summary>گزارش نظارت پیام‌ها (خواندنی)</summary>
         public async Task<List<AdminCoachMessageRowDto>> GetCoachStudentMessagesReportAsync(short shiftID, string? from, string? to, int? coachMemberID = null)
         {

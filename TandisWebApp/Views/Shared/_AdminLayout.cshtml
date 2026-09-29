@@ -322,6 +322,10 @@
                     <a class="nav-link @(currentPath.StartsWith("/admin/messages") ? "nav-active" : "")"
                        href="/Admin/Messages"><i class="bi bi-chat-dots-fill me-1"></i>پیام‌ها</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link @(currentPath.StartsWith("/admin/charts") ? "nav-active" : "")"
+                       href="/Admin/Charts"><i class="bi bi-activity me-1"></i>نمودارها</a>
+                </li>
             </ul>
 
             <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end">
@@ -383,6 +387,10 @@
         <a href="/Admin/Reports" class="abn-item" data-key="reports">
             <i class="bi bi-graph-up-arrow"></i>
             <span>گزارش‌ها</span>
+        </a>
+        <a href="/Admin/Charts" class="abn-item" data-key="charts">
+            <i class="bi bi-activity"></i>
+            <span>نمودارها</span>
         </a>
         <a href="/Admin/Messages" class="abn-item" data-key="messages">
             <i class="bi bi-chat-dots-fill"></i>
@@ -618,6 +626,8 @@
                 path.indexOf('/admin/onesessionreport') === 0 ||
                 path.indexOf('/admin/financereport') === 0) {
                 currentKey = 'reports';
+            } else if (path.indexOf('/admin/charts') === 0) {
+                currentKey = 'charts';
             } else if (path.indexOf('/admin/messages') === 0) {
                 currentKey = 'messages';
             }
