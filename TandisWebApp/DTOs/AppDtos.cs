@@ -240,4 +240,24 @@ namespace TandisWebApp.DTOs
     {
         public string RulesText { get; set; } = "";
     }
+    // ============================================================
+    //  ثبت‌نام عضو جدید
+    // ============================================================
+
+    public class RegisterMemberRequest
+    {
+        public string FirstName { get; set; } = "";
+        public string LastName { get; set; } = "";
+        public string NationalCode { get; set; } = "";
+        public string BirthDate { get; set; } = "";   // 1375/04/12
+        public string Mobile { get; set; } = "";
+        public bool Gender { get; set; }              // true = آقا، false = خانم
+    }
+
+    public class RegisterMemberResponse
+    {
+        public int MemberID { get; set; }
+        public string NationalCode { get; set; } = "";
+        public string DefaultPassword { get; set; } = "";
+    }
 }

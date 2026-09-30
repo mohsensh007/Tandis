@@ -15,13 +15,15 @@ namespace TandisWebApp.Controllers
         private readonly CommonHelperService _helper;
         private readonly MessageService _messages;
         private readonly ClubRuleService _rules;
+        private readonly MemberRegistrationService _register;
 
-        public AccountController(MemberAuthService auth, CommonHelperService helper, MessageService messages, ClubRuleService rules)
+        public AccountController(MemberAuthService auth, CommonHelperService helper, MessageService messages, ClubRuleService rules, MemberRegistrationService register)
         {
             _auth = auth;
             _helper = helper;
             _messages = messages;
             _rules = rules;
+            _register = register;
         }
 
         // ============================================================
@@ -93,6 +95,14 @@ namespace TandisWebApp.Controllers
         {
             var text = await _rules.GetActiveRulesAsync();
             return Ok(new { success = true, data = text });
+        }
+        /// <summary>ثبت‌نام عضو جدید (مرحله نهایی)</summary>
+        [HttpPost]
+        [Route("api/Account/Register")]
+        public async Task<IActionResult> RegisterApi([FromBody] RegisterMemberRequest req)
+        {
+            var result = await _register.RegisterAsync(req);
+            return Ok(new { success = result.Success, message = result.Message, data = result.Data });
         }
 
         /// <summary>تغییر رمز عبور</summary>

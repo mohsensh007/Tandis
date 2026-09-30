@@ -129,6 +129,7 @@ builder.Services.AddScoped<AdminReportService>();
 builder.Services.AddScoped<MessageService>();
 builder.Services.AddScoped<CoachService>();
 builder.Services.AddScoped<ClubRuleService>();
+builder.Services.AddScoped<MemberRegistrationService>();
 builder.Services.AddHttpContextAccessor();
 
 // ============================================================

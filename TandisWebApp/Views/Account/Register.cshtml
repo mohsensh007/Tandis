@@ -51,6 +51,31 @@
         gap: 6px;
     }
     .reg-title i { color: #66d3e8; }
+        .done-info-box {
+        background: rgba(13,110,253,.10);
+        border: 1px solid rgba(13,110,253,.30);
+        border-radius: 14px;
+        padding: 12px;
+        margin-bottom: 10px;
+    }
+    .done-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 6px 0;
+        font-size: .82rem;
+        color: #dce9ff;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .done-row:last-child { border-bottom: none; }
+    .done-row b { font-weight: 800; color: #fff; }
+    .alert-warning-text {
+        font-size: .74rem;
+        color: #ffa94d;
+        padding: 8px;
+        background: rgba(255,169,77,.08);
+        border: 1px solid rgba(255,169,77,.25);
+        border-radius: 8px;
+    }
 </style>
 
 <!-- ✅ نشانگر مراحل -->
@@ -87,9 +112,20 @@
         <label class="form-label">تاریخ تولد (شمسی) <span class="text-danger">*</span></label>
         <input type="text" id="txtBirthDate" class="form-control" maxlength="10" placeholder="مثال: 1375/04/12" inputmode="numeric" />
     </div>
-    <div class="mb-3">
+    <div class="mb-2">
         <label class="form-label">شماره موبایل <span class="text-danger">*</span></label>
         <input type="text" id="txtMobile" class="form-control" maxlength="11" placeholder="مثال: 09123456789" inputmode="numeric" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">جنسیت <span class="text-danger">*</span></label>
+        <div class="d-flex gap-3">
+            <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;">
+                <input type="radio" name="gender" value="true" checked /> <span>آقا</span>
+            </label>
+            <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;">
+                <input type="radio" name="gender" value="false" /> <span>خانم</span>
+            </label>
+        </div>
     </div>
     <button id="btnNextStep" class="btn btn-primary w-100 py-2">
         مرحله بعد <i class="bi bi-arrow-left"></i>
@@ -99,27 +135,30 @@
     </button>
 </div>
 
-<!-- ========== ✅ اطلاعات تأیید شد (جای مرحله بعد — به‌زودی) ========== -->
-<div id="stepDone" style="display:none;" class="text-center py-4">
-    <div style="font-size:3rem;">✅</div>
-    <div class="fw-bold text-white mb-2">اطلاعات شما با موفقیت ثبت شد</div>
-    <div class="small" style="color:#9fb3c8;">مرحله بعدی به‌زودی فعال می‌شود.</div>
-    <button id="btnBackToInfo" class="btn btn-outline-secondary w-100 py-2 mt-3">
-        <i class="bi bi-arrow-right"></i> ویرایش اطلاعات
-    </button>
+<!-- ========== ✅ اطلاعات ثبت شد (مرحله نهایی) ========== -->
+<div id="stepDone" style="display:none;" class="text-center py-3">
+    <div style="font-size:3rem; color:#6aeaa2;">✅</div>
+    <div class="fw-bold text-white mb-2" style="font-size:1.1rem;">ثبت‌نام با موفقیت انجام شد</div>
+    <div class="mb-3 small" style="color:#9fb3c8;">اطلاعات ورود شما:</div>
+    <div class="done-info-box">
+        <div class="done-row"><span>کد عضویت:</span><b id="doneMemberID">-</b></div>
+        <div class="done-row"><span>نام کاربری:</span><b id="doneNationalCode">-</b></div>
+        <div class="done-row"><span>رمز عبور اولیه:</span><b id="donePassword" style="color:#ffa94d;">-</b></div>
+    </div>
+    <div class="alert-warning-text mt-2">
+        ⚠️ در اولین ورود، <b>مجبور به تغییر رمز عبور</b> خواهید بود.
+    </div>
+    <a href="/Account/Login" class="btn btn-primary w-100 py-2 mt-3">
+        <i class="bi bi-box-arrow-in-right"></i> ورود به حساب
+    </a>
 </div>
 
 @section Scripts {
     <script>
-        // ========== اعتبارسنجی کد ملی (الگوریتم کنترلی) ==========
+        
+                // ========== اعتبارسنجی کد ملی: فقط ۱۰ رقم ==========
         function isValidNationalCode(code) {
-            if (!/^\d{10}$/.test(code)) return false;
-            if (/^(\d)\1{9}$/.test(code)) return false;
-            var sum = 0;
-            for (var i = 0; i < 9; i++) sum += parseInt(code[i]) * (10 - i);
-            var r = sum % 11;
-            var check = parseInt(code[9]);
-            return (r < 2 && check === r) || (r >= 2 && check === 11 - r);
+            return /^\d{10}$/.test(code);
         }
 
         // ========== اعتبارسنجی تاریخ شمسی (ساده) ==========
@@ -163,15 +202,14 @@
             $('#stepInfo').show();
         });
 
-        // ========== مرحله ۲: اعتبارسنجی + نگهداری موقت داده ==========
-        window.registerData = null;
-
+               // ========== مرحله ۲: اعتبارسنجی + ارسال به API ==========
         $('#btnNextStep').click(function () {
             var fn = $.trim($('#txtFirstName').val());
             var ln = $.trim($('#txtLastName').val());
             var nc = $.trim($('#txtRegNationalCode').val());
             var bd = $.trim($('#txtBirthDate').val());
             var mb = $.trim($('#txtMobile').val());
+            var gender = $('input[name="gender"]:checked').val() === 'true';
 
             if (!fn) { showToast('نام را وارد کنید', 'error'); return; }
             if (!ln) { showToast('نام خانوادگی را وارد کنید', 'error'); return; }
@@ -179,18 +217,31 @@
             if (!isValidJalali(bd)) { showToast('تاریخ تولد را به صورت 1375/04/12 وارد کنید', 'error'); return; }
             if (!/^09\d{9}$/.test(mb)) { showToast('شماره موبایل باید با 09 شروع و ۱ رقم باشد', 'error'); return; }
 
-            // ✅ نگهداری موقت تا مرحله نهایی
-            window.registerData = {
+            // ✅ غیرفعال کردن دکمه برای جلوگیری از دابل کلیک
+            var $btn = $('#btnNextStep');
+            $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> در حال ثبت...');
+
+            apiCall('/api/Account/Register', 'POST', {
                 firstName: fn,
                 lastName: ln,
                 nationalCode: nc,
                 birthDate: bd,
-                mobile: mb
-            };
-
-            $('#stepInfo').hide();
-            $('#stepDone').show();
-            showToast('اطلاعات با موفقیت ثبت شد', 'success');
+                mobile: mb,
+                gender: gender
+            }, function (res) {
+                if (res.success) {
+                    // ✅ نمایش اطلاعات عضو جدید (MemberID + رمز)
+                    $('#doneMemberID').text(toFa(res.data.memberID));
+                    $('#doneNationalCode').text(res.data.nationalCode);
+                    $('#donePassword').text(res.data.defaultPassword);
+                    $('#stepInfo').hide();
+                    $('#stepDone').show();
+                    showToast('ثبت‌نام با موفقیت انجام شد', 'success');
+                } else {
+                    showToast(res.message, 'error');
+                    $btn.prop('disabled', false).html('ثبت‌نام و ورود <i class="bi bi-arrow-left"></i>');
+                }
+            });
         });
     </script>
 }
