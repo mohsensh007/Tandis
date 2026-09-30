@@ -9,6 +9,7 @@
         gap: 6px;
         margin-bottom: 16px;
     }
+
     .reg-step {
         flex: 1;
         text-align: center;
@@ -20,11 +21,13 @@
         border-radius: 999px;
         padding: 5px 8px;
     }
-    .reg-step.on {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-color: transparent;
-        color: #fff;
-    }
+
+        .reg-step.on {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: #fff;
+        }
+
     .rules-box {
         background: rgba(255,255,255,.06);
         border: 1px solid rgba(102,211,232,.30);
@@ -40,7 +43,11 @@
         color: #dce9ff;
         margin-bottom: 14px;
     }
-    .rules-box::-webkit-scrollbar { display: none; }
+
+        .rules-box::-webkit-scrollbar {
+            display: none;
+        }
+
     .reg-title {
         font-weight: 800;
         font-size: .95rem;
@@ -50,14 +57,19 @@
         align-items: center;
         gap: 6px;
     }
-    .reg-title i { color: #66d3e8; }
-        .done-info-box {
+
+        .reg-title i {
+            color: #66d3e8;
+        }
+
+    .done-info-box {
         background: rgba(13,110,253,.10);
         border: 1px solid rgba(13,110,253,.30);
         border-radius: 14px;
         padding: 12px;
         margin-bottom: 10px;
     }
+
     .done-row {
         display: flex;
         justify-content: space-between;
@@ -66,8 +78,16 @@
         color: #dce9ff;
         border-bottom: 1px solid rgba(255,255,255,.06);
     }
-    .done-row:last-child { border-bottom: none; }
-    .done-row b { font-weight: 800; color: #fff; }
+
+        .done-row:last-child {
+            border-bottom: none;
+        }
+
+        .done-row b {
+            font-weight: 800;
+            color: #fff;
+        }
+
     .alert-warning-text {
         font-size: .74rem;
         color: #ffa94d;
@@ -75,6 +95,345 @@
         background: rgba(255,169,77,.08);
         border: 1px solid rgba(255,169,77,.25);
         border-radius: 8px;
+    }
+
+    /* ===== ✅ تقویم لمسی: پنل کاشی‌ها ===== */
+    .bd-picker {
+        position: relative;
+        display: flex;
+        gap: 6px;
+    }
+
+        .bd-picker .form-control {
+            flex: 1;
+        }
+
+    .bd-cal-btn {
+        flex: 0 0 auto;
+        width: 46px;
+        border-radius: 10px;
+        border: 1px solid rgba(102,211,232,.35);
+        background: rgba(13,110,253,.12);
+        font-size: 1.15rem;
+    }
+
+    .bd-panel {
+        position: absolute;
+        top: calc(100% + 8px);
+        right: 0;
+        left: 0;
+        z-index: 80;
+        background: rgba(20,24,42,.98);
+        border: 1px solid rgba(102,211,232,.35);
+        border-radius: 16px;
+        padding: 14px 10px 12px;
+        box-shadow: 0 18px 50px rgba(0,0,0,.55);
+    }
+
+    /* کاشی‌های روز/ماه/سال */
+    .bd-tiles {
+        display: flex;
+        gap: 8px;
+    }
+
+    .bd-tile {
+        flex: 1;
+        background: rgba(255,255,255,.07);
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 14px;
+        padding: 12px 6px;
+        text-align: center;
+        transition: all .2s;
+    }
+
+        .bd-tile:active {
+            transform: scale(.96);
+        }
+
+        .bd-tile:hover {
+            border-color: rgba(102,211,232,.5);
+        }
+
+    .bd-tile-val {
+        display: block;
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #fff;
+    }
+
+    .bd-tile-lbl {
+        display: block;
+        font-size: .68rem;
+        color: #9fb3c8;
+        font-weight: 700;
+        margin-top: 3px;
+    }
+
+    .bd-selected {
+        text-align: center;
+        margin-top: 10px;
+        font-size: .82rem;
+        font-weight: 800;
+        color: #66d3e8;
+        direction: ltr;
+    }
+
+    .bd-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .bd-ok {
+        flex: 1;
+        background: linear-gradient(135deg,#667eea,#764ba2);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 9px;
+        font-weight: 700;
+    }
+
+    .bd-cancel {
+        flex: 1;
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.18);
+        color: #dce9ff;
+        border-radius: 10px;
+        padding: 9px;
+        font-weight: 700;
+    }
+
+    /* ===== ✅ نمای تمام‌صفحه قوس (overlay با blur) ===== */
+    .bd-fs {
+        position: fixed;
+        inset: 0;
+        z-index: 1080;
+        display: none;
+        flex-direction: column;
+        overflow: hidden; /* ✅ هیچ اسکرولی نداره */
+        background: rgba(6,9,18,.80);
+        backdrop-filter: blur(30px) saturate(.8);
+        -webkit-backdrop-filter: blur(30px) saturate(.8);
+        --arcR: min(350px, 46vh); /* ✅ شعاع قوس نسبت به ارتفاع صفحه */
+    }
+
+        .bd-fs.open {
+            display: flex;
+            animation: bdFsIn .28s ease;
+        }
+
+            .bd-fs.open .bd-fs-head {
+                animation: bdFsDown .34s cubic-bezier(.22,.9,.35,1.15);
+            }
+
+            .bd-fs.open .bd-fs-arc {
+                animation: bdFsZoom .38s cubic-bezier(.22,.9,.35,1.15);
+            }
+
+            .bd-fs.open .bd-hint {
+                animation: bdFsUp .34s cubic-bezier(.22,.9,.35,1.15);
+            }
+
+        .bd-fs.closing {
+            animation: bdFsOut .18s ease forwards;
+        }
+
+    @@keyframes bdFsIn {
+        from {
+            opacity: 0;
+        }
+
+        to {
+            opacity: 1;
+        }
+    }
+
+    @@keyframes bdFsOut {
+        from {
+            opacity: 1;
+        }
+
+        to {
+            opacity: 0;
+        }
+    }
+
+    @@keyframes bdFsDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    @@keyframes bdFsUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    @@keyframes bdFsZoom {
+        from {
+            opacity: 0;
+            transform: scale(.86);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .bd-fs-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: calc(12px + env(safe-area-inset-top)) 16px 0;
+    }
+
+        .bd-fs-head .bd-back,
+        .bd-fs-head .bd-done {
+            background: rgba(255,255,255,.10);
+            border: 1px solid rgba(255,255,255,.22);
+            color: #fff;
+            padding: 10px 18px;
+            font-size: .88rem;
+            font-weight: 700;
+            border-radius: 12px;
+        }
+
+        .bd-fs-head .bd-s2-title {
+            font-weight: 800;
+            color: #66d3e8;
+            font-size: 1.05rem;
+        }
+
+    .bd-fs-arc {
+        flex: 1;
+        min-height: 0; /* ✅ اجازه جمع‌شدن در صفحه کوچک */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bd-fs .arc-wrap {
+        height: calc(var(--arcR) - 10px);
+        width: 100%;
+        max-width: 560px;
+    }
+
+    .bd-fs .arc-pivot {
+        bottom: -40px;
+    }
+
+    .bd-fs .arc-it {
+        height: var(--arcR);
+        width: 96px;
+        margin-left: -48px;
+    }
+
+        .bd-fs .arc-it b {
+            font-size: 1.1rem;
+        }
+
+        .bd-fs .arc-it.on b {
+            font-size: clamp(1.7rem, 6.5vh, 2.4rem);
+        }
+
+    .bd-fs .arc-marker {
+        top: 6px;
+        width: 84px;
+        margin-left: -42px;
+        height: 5px;
+    }
+
+    .bd-fs .bd-hint {
+        text-align: center;
+        font-size: .72rem;
+        color: #8fa6c4;
+        padding-bottom: calc(14px + env(safe-area-inset-bottom));
+    }
+
+    /* ===== قوس چرخان (مشترک) ===== */
+    .arc-wrap {
+        position: relative;
+        height: 205px;
+        overflow: hidden;
+        touch-action: none;
+        user-select: none;
+        -webkit-user-select: none;
+        cursor: grab;
+    }
+
+    .arc-pivot {
+        position: absolute;
+        left: 50%;
+        bottom: -60px;
+        width: 0;
+        height: 0;
+    }
+
+    .arc-it {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 70px;
+        margin-left: -35px;
+        height: 240px;
+        transform-origin: 50% 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        will-change: transform, opacity;
+        cursor: pointer;
+        opacity: 0;
+    }
+
+        .arc-it b {
+            display: block;
+            font-size: .95rem;
+            font-weight: 700;
+            color: #7d92b0;
+            transition: color .15s, font-size .15s;
+        }
+
+        .arc-it.on b {
+            color: #fff;
+            font-size: 1.6rem;
+            font-weight: 800;
+            text-shadow: 0 0 18px rgba(102,211,232,.65);
+        }
+
+    .arc-marker {
+        position: absolute;
+        top: 4px;
+        left: 50%;
+        width: 60px;
+        height: 4px;
+        margin-left: -30px;
+        border-radius: 2px;
+        background: linear-gradient(90deg, #66d3e8, #667eea);
+        box-shadow: 0 0 12px rgba(102,211,232,.7);
+        pointer-events: none;
+        z-index: 5;
+    }
+
+    .bd-hint {
+        text-align: center;
+        font-size: .66rem;
+        color: #6d82a0;
+        margin-top: 2px;
     }
 </style>
 
@@ -110,7 +469,34 @@
     </div>
     <div class="mb-2">
         <label class="form-label">تاریخ تولد (شمسی) <span class="text-danger">*</span></label>
-        <input type="text" id="txtBirthDate" class="form-control" maxlength="10" placeholder="مثال: 1375/04/12" inputmode="numeric" />
+        <div class="bd-picker">
+            <input type="text" id="txtBirthDate" class="form-control" maxlength="10" placeholder="مثال: 1368/04/12" inputmode="numeric" />
+            <button type="button" class="bd-cal-btn" id="btnBirthCal" title="انتخاب تاریخ">📅</button>
+            <!-- ✅ پنل کاشی‌ها (داخل bd-picker) -->
+            <div class="bd-panel" id="bdPanel" style="display:none;">
+                <div class="bd-stage" id="bdStage1">
+                    <div class="bd-tiles">
+                        <button type="button" class="bd-tile" data-unit="day">
+                            <span class="bd-tile-val" id="bdTileDay">15</span>
+                            <span class="bd-tile-lbl">روز</span>
+                        </button>
+                        <button type="button" class="bd-tile" data-unit="month">
+                            <span class="bd-tile-val" id="bdTileMonth">مرداد</span>
+                            <span class="bd-tile-lbl">ماه</span>
+                        </button>
+                        <button type="button" class="bd-tile" data-unit="year">
+                            <span class="bd-tile-val" id="bdTileYear">1368</span>
+                            <span class="bd-tile-lbl">سال</span>
+                        </button>
+                    </div>
+                    <div class="bd-selected" id="bdSelected">-</div>
+                    <div class="bd-actions">
+                        <button type="button" class="bd-ok" id="bdOk">تأیید</button>
+                        <button type="button" class="bd-cancel" id="bdCancel">انصراف</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="mb-2">
         <label class="form-label">شماره موبایل <span class="text-danger">*</span></label>
@@ -130,9 +516,25 @@
     <button id="btnNextStep" class="btn btn-primary w-100 py-2">
         مرحله بعد <i class="bi bi-arrow-left"></i>
     </button>
-    <button id="btnBackToRules" class="btn btn-outline-secondary w-100 py-2 mt-2">
+    <button id="btnBackToRules" class="purple-style btn btn-outline-secondary w-100 py-2 mt-2">
         <i class="bi bi-arrow-right"></i> بازگشت
     </button>
+</div>
+
+<!-- ========== ✅ نمای تمام‌صفحه قوس (بیرون از bd-picker — overlay blur) ========== -->
+<div class="bd-fs" id="bdStage2">
+    <div class="bd-fs-head">
+        <button type="button" class="purple-style bd-back" id="bdBack">→ بازگشت</button>
+        <span class="bd-s2-title" id="bdS2Title">ماه</span>
+        <button type="button" class="purple-style bd-done" id="bdDone">✓ تایید</button>
+    </div>
+    <div class="bd-fs-arc">
+        <div class="arc-wrap" id="arcWrap">
+            <div class="arc-pivot" id="arcPivot"></div>
+            <div class="arc-marker"></div>
+        </div>
+    </div>
+    <div class="bd-hint">با انگشت بکشید ← → یا روی عدد بزنید</div>
 </div>
 
 <!-- ========== ✅ اطلاعات ثبت شد (مرحله نهایی) ========== -->
@@ -155,13 +557,15 @@
 
 @section Scripts {
     <script>
-        
-                // ========== اعتبارسنجی کد ملی: فقط ۱۰ رقم ==========
+        var faDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
+        function toFa(n) { return String(n).replace(/[0-9]/g, function (d) { return faDigits[d]; }); }
+
+        // ========== اعتبارسنجی کد ملی: فقط ۱۰ رقم ==========
         function isValidNationalCode(code) {
             return /^\d{10}$/.test(code);
         }
 
-        // ========== اعتبارسنجی تاریخ شمسی (ساده) ==========
+        // ========== اعتبارسنجی تاریخ شمسی ==========
         function isValidJalali(d) {
             var m = /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.exec(d);
             if (!m) return false;
@@ -197,12 +601,7 @@
             $('#stepBadge1').addClass('on');
         });
 
-        $('#btnBackToInfo').click(function () {
-            $('#stepDone').hide();
-            $('#stepInfo').show();
-        });
-
-               // ========== مرحله ۲: اعتبارسنجی + ارسال به API ==========
+        // ========== مرحله ۲: اعتبارسنجی + ارسال به API ==========
         $('#btnNextStep').click(function () {
             var fn = $.trim($('#txtFirstName').val());
             var ln = $.trim($('#txtLastName').val());
@@ -215,9 +614,8 @@
             if (!ln) { showToast('نام خانوادگی را وارد کنید', 'error'); return; }
             if (!isValidNationalCode(nc)) { showToast('کد ملی معتبر نیست', 'error'); return; }
             if (!isValidJalali(bd)) { showToast('تاریخ تولد را به صورت 1375/04/12 وارد کنید', 'error'); return; }
-            if (!/^09\d{9}$/.test(mb)) { showToast('شماره موبایل باید با 09 شروع و ۱ رقم باشد', 'error'); return; }
+            if (!/^09\d{9}$/.test(mb)) { showToast('شماره موبایل باید با 09 شروع و ۱۱ رقم باشد', 'error'); return; }
 
-            // ✅ غیرفعال کردن دکمه برای جلوگیری از دابل کلیک
             var $btn = $('#btnNextStep');
             $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> در حال ثبت...');
 
@@ -230,7 +628,6 @@
                 gender: gender
             }, function (res) {
                 if (res.success) {
-                    // ✅ نمایش اطلاعات عضو جدید (MemberID + رمز)
                     $('#doneMemberID').text(toFa(res.data.memberID));
                     $('#doneNationalCode').text(res.data.nationalCode);
                     $('#donePassword').text(res.data.defaultPassword);
@@ -239,9 +636,190 @@
                     showToast('ثبت‌نام با موفقیت انجام شد', 'success');
                 } else {
                     showToast(res.message, 'error');
-                    $btn.prop('disabled', false).html('ثبت‌نام و ورود <i class="bi bi-arrow-left"></i>');
+                    $btn.prop('disabled', false).html('مرحله بعد <i class="bi bi-arrow-left"></i>');
                 }
             });
         });
+
+        // ========== ✅ تقویم لمسی: کاشی‌ها + قوس چرخان تمام‌صفحه ==========
+        (function () {
+            function faToEn(s) { return String(s).replace(/[۰-۹]/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); }); }
+            var curJY = parseInt(faToEn(new Date().toLocaleDateString('fa-IR', { year: 'numeric' })));
+            var monthNames = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
+            function pad2(x) { x = +x; return (x < 10 ? '0' : '') + x; }
+            function maxDay(m) { return m <= 6 ? 31 : (m <= 11 ? 30 : 29); }
+
+            var sel = { day: 15, month: 5, year: 1368 };
+
+            function refreshTiles() {
+                $('#bdTileDay').text(String(sel.day));
+                $('#bdTileMonth').text(monthNames[sel.month - 1]);
+                $('#bdTileYear').text(String(sel.year));
+                $('#bdSelected').text(sel.year + '/' + pad2(sel.month) + '/' + pad2(sel.day));
+            }
+
+            // ---------- قوس چرخان ----------
+            var STEP = 14, PXI = 60;
+            var arc = { unit: null, items: [], pos: 0, idx: -1, raf: 0, dragging: false };
+            var $wrap = $('#arcWrap'), $pivot = $('#arcPivot');
+
+            function itemsFor(unit) {
+                if (unit === 'year') { var a = []; for (var y = 1300; y <= curJY + 1; y++) a.push(String(y)); return a; }
+                if (unit === 'month') return monthNames.slice();
+                var arr = []; for (var d = 1; d <= maxDay(sel.month); d++) arr.push(String(d)); return arr;
+            }
+            function clampPos(p) { return Math.min(Math.max(p, 0), arc.items.length - 1); }
+
+            function buildArc(unit) {
+                arc.unit = unit;
+                arc.items = itemsFor(unit);
+                var html = '';
+                for (var i = 0; i < arc.items.length; i++) html += '<span class="arc-it"><b>' + arc.items[i] + '</b></span>';
+                $pivot.html(html);
+                arc.idx = -1;
+                arc.pos = clampPos(unit === 'year' ? arc.items.indexOf(String(sel.year))
+                           : unit === 'month' ? sel.month - 1
+                           : sel.day - 1);
+                stopAnim();
+                paintArc(true);
+            }
+
+            function paintArc(force) {
+                var n = arc.items.length;
+                var lo = Math.max(0, Math.floor(arc.pos) - 4);
+                var hi = Math.min(n - 1, Math.ceil(arc.pos) + 4);
+                var $its = $pivot.children();
+                for (var i = lo; i <= hi; i++) {
+                    var rel = i - arc.pos;
+                    var theta = rel * STEP;
+                    var op = Math.max(0, 1 - Math.abs(rel) * 0.28);
+                    var $it = $its.eq(i);
+                    $it.css({ transform: 'rotate(' + theta + 'deg)', opacity: op });
+                    $it.children('b').css('transform', 'rotate(' + (-theta) + 'deg)');
+                }
+                var ci = clampPos(Math.round(arc.pos));
+                if (force || ci !== arc.idx) {
+                    arc.idx = ci;
+                    $its.removeClass('on').eq(ci).addClass('on');
+                    commitIdx();
+                }
+            }
+
+            function commitIdx() {
+                var v = arc.items[arc.idx];
+                if (arc.unit === 'year') sel.year = +v;
+                else if (arc.unit === 'month') { sel.month = arc.idx + 1; if (sel.day > maxDay(sel.month)) sel.day = maxDay(sel.month); }
+                else sel.day = +v;
+                refreshTiles();
+            }
+
+            function stopAnim() { if (arc.raf) { cancelAnimationFrame(arc.raf); arc.raf = 0; } }
+
+            // ---------- فیزیک لمس: درگ ۱:۱ + اینرسی + اسنپ ----------
+            var startX = 0, basePos = 0, lastX = 0, lastT = 0, vel = 0, movedFar = false;
+            function onDown(x) {
+                stopAnim();
+                arc.dragging = true; movedFar = false;
+                startX = x; basePos = arc.pos; lastX = x; lastT = performance.now(); vel = 0;
+                $wrap.css('cursor', 'grabbing');
+            }
+            function onMove(x) {
+                if (!arc.dragging) return;
+                if (Math.abs(x - startX) > 8) movedFar = true;
+                var p = basePos - (x - startX) / PXI;
+                var maxP = arc.items.length - 1;
+                if (p < 0) p = p * 0.35;
+                if (p > maxP) p = maxP + (p - maxP) * 0.35;
+                arc.pos = p;
+                var now = performance.now(), dt = now - lastT;
+                if (dt > 0) vel = 0.8 * vel + 0.2 * (-(x - lastX) / PXI / dt);
+                lastX = x; lastT = now;
+                paintArc();
+            }
+            function onUp() {
+                if (!arc.dragging) return;
+                arc.dragging = false;
+                $wrap.css('cursor', 'grab');
+                var v = vel * 16;
+                function frame() {
+                    if (Math.abs(v) > 0.004) {
+                        arc.pos += v;
+                        v *= 0.94;
+                        if (arc.pos < 0) { arc.pos = 0; v = 0; }
+                        if (arc.pos > arc.items.length - 1) { arc.pos = arc.items.length - 1; v = 0; }
+                        paintArc();
+                        arc.raf = requestAnimationFrame(frame);
+                    } else snap();
+                }
+                arc.raf = requestAnimationFrame(frame);
+            }
+            function snap(target) {
+                var t = (target == null) ? clampPos(Math.round(arc.pos)) : target;
+                var from = arc.pos, t0 = performance.now(), dur = 280;
+                function ease(x) { return 1 - Math.pow(1 - x, 3); }
+                function frame() {
+                    var k = Math.min(1, (performance.now() - t0) / dur);
+                    arc.pos = from + (t - from) * ease(k);
+                    paintArc();
+                    if (k < 1) arc.raf = requestAnimationFrame(frame); else arc.raf = 0;
+                }
+                arc.raf = requestAnimationFrame(frame);
+            }
+
+            $wrap.on('touchstart', function (e) { onDown(e.originalEvent.touches[0].clientX); });
+            $wrap.on('touchmove', function (e) { e.preventDefault(); onMove(e.originalEvent.touches[0].clientX); });
+            $wrap.on('touchend touchcancel', onUp);
+            $wrap.on('mousedown', function (e) { e.preventDefault(); onDown(e.clientX); });
+            $(document).on('mousemove.bdarc', function (e) { onMove(e.clientX); });
+            $(document).on('mouseup.bdarc', onUp);
+
+            // کلیک روی عدد → چرخش نرم به اون
+            $(document).on('click', '.arc-it', function () {
+                if (movedFar) return;
+                snap($pivot.children().index(this));
+            });
+
+            // ---------- جابه‌جایی بین کاشی‌ها و قوس تمام‌صفحه ----------
+            function openUnit(unit) {
+                $('#bdS2Title').text(unit === 'year' ? 'سال' : (unit === 'month' ? 'ماه' : 'روز'));
+                buildArc(unit);
+                $('#bdPanel').hide();
+                $('#bdStage2').addClass('open');
+            }
+            function backToTiles() {
+                commitIdx();
+                var $fs = $('#bdStage2');
+                $fs.addClass('closing');                 
+                setTimeout(function () {
+                    $fs.removeClass('open closing');
+                    $('#bdPanel').show();
+                }, 180);
+            }
+            $(document).on('click', '.bd-tile', function () { openUnit($(this).data('unit')); });
+            $(document).on('click', '#bdBack, #bdDone', backToTiles);
+
+            // ---------- باز/بسته پنل ----------
+            $(document).on('click', '#btnBirthCal', function (e) {
+                e.stopPropagation();
+                refreshTiles();
+                $('#bdPanel').toggle();
+            });
+            $(document).on('click', '#bdCancel', function () { $('#bdPanel').hide(); });
+            $(document).on('click', '#bdOk', function () {
+                $('#txtBirthDate').val(sel.year + '/' + pad2(sel.month) + '/' + pad2(sel.day));
+                $('#bdPanel').hide();
+            });
+            $(document).on('click', function (e) {
+                // اگه تمام‌صفحه بازه، بسته نشه
+                if ($('#bdStage2').hasClass('open')) return;
+                // کلیک روی دکمه‌های خودِ تقویم (تأیید/بازگشت/کاشی‌ها) پنل رو نبندد
+                if (!$(e.target).closest('#bdPanel, #btnBirthCal, #bdStage2').length) $('#bdPanel').hide();
+            });       
+            $('#bdStage2').appendTo(document.body);
+            refreshTiles();
+        })();
     </script>
 }
+
+
+

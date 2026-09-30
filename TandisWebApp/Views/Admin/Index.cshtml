@@ -98,6 +98,36 @@
     </div>
 </div>
 
+<!-- ========== ✅ بخش تنظیمات سیستم (جدا از داشبورد آماری) ========== -->
+<div class="admin-settings-section mt-4">
+    <div class="admin-settings-title">
+        <i class="bi bi-gear-fill"></i>
+        تنظیمات سیستم
+    </div>
+    <div class="row g-3">
+        <!-- ✅ کارت شرایط باشگاه -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="/Admin/Rules" class="admin-setting-card">
+                <div class="asc-icon">
+                    <i class="bi bi-shield-check"></i>
+                </div>
+                <div class="asc-body">
+                    <div class="asc-title">شرایط و تعهدات باشگاه</div>
+                    <div class="asc-desc">متن نمایش‌داده‌شده در صفحه ثبت‌نام اعضا را تنظیم کنید</div>
+                </div>
+                <div class="asc-arrow">
+                    <i class="bi bi-chevron-left"></i>
+                </div>
+            </a>
+        </div>
+
+        <!-- (بعداً می‌تونی کارت‌های تنظیمات دیگه رو اینجا اضافه کنیم) -->
+        <!--
+       
+        -->
+    </div>
+</div>
+
 <!-- مودال لیست افراد حاضر -->
 <div class="modal fade" id="insideModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-scrollable modal-lg">
@@ -420,10 +450,127 @@
         color: #fff;
         font-weight: 800;
     }
+
+    /* ===== ✅ بخش تنظیمات سیستم (جدا از داشبورد آماری) ===== */
+    .admin-settings-section {
+        margin-top: 40px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(102,211,232,.15);
+    }
+
+    .admin-settings-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: .9rem;
+        font-weight: 800;
+        color: #9fb3c8;
+        margin-bottom: 16px;
+        letter-spacing: .5px;
+    }
+
+        .admin-settings-title i {
+            color: #66d3e8;
+            font-size: 1rem;
+        }
+
+    .admin-setting-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 16px 18px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, rgba(102,126,234,.10), rgba(118,75,162,.08));
+        border: 1px solid rgba(102,211,232,.25);
+        text-decoration: none;
+        color: inherit;
+        transition: all .25s ease;
+        height: 100%;
+    }
+
+        .admin-setting-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(102,211,232,.55);
+            box-shadow: 0 8px 24px rgba(118,75,162,.22);
+            background: linear-gradient(135deg, rgba(102,126,234,.18), rgba(118,75,162,.14));
+        }
+
+    .asc-icon {
+        flex: 0 0 48px;
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.4rem;
+        box-shadow: 0 6px 14px rgba(118,75,162,.35);
+    }
+
+    .asc-body {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .asc-title {
+        font-weight: 800;
+        font-size: .92rem;
+        color: #fff;
+        margin-bottom: 3px;
+    }
+
+    .asc-desc {
+        font-size: .74rem;
+        color: #9fb3c8;
+        line-height: 1.4;
+    }
+
+    .asc-arrow {
+        flex: 0 0 auto;
+        color: #66d3e8;
+        font-size: 1.1rem;
+        transition: transform .2s;
+    }
+
+    .admin-setting-card:hover .asc-arrow {
+        transform: translateX(-3px);
+    }
+
+    @@media (max-width: 576px) {
+        .admin-setting-card {
+            padding: 14px;
+            gap: 10px;
+        }
+
+        .asc-icon {
+            width: 42px;
+            height: 42px;
+            font-size: 1.2rem;
+        }
+
+        .asc-title {
+            font-size: .84rem;
+        }
+
+        .asc-desc {
+            font-size: .68rem;
+        }
+    }
 </style>
 
 @section Scripts {
     <script>
+        function faNum(n) {
+            return String(n).replace(/[0-9]/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; });
+        }
+
+        function esc(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
         function loadInsidePreview() {
             apiCall('/api/Admin/InsideList', 'GET', null, function (res) {
                 if (!res.success) return;
@@ -469,7 +616,7 @@
                 svg.find('.seg-reg').attr('stroke-dasharray', pReg + ' ' + (100 - pReg)).attr('stroke-dashoffset', 25);
                 svg.find('.seg-ren').attr('stroke-dasharray', (100 - pReg) + ' ' + pReg).attr('stroke-dashoffset', 25 - pReg);
             }
-            svg.find('.donut-center').text(center);
+            svg.find('.donut-center').text(faNum(center));
         }
 
         function setDelta(sel, delta) {
@@ -487,8 +634,8 @@
                 $('#prevLabel').text(d.previousLabel);
                 $('#curReg').text(faNum(d.currentRegister));
                 $('#curRen').text(faNum(d.currentRenew));
-                renderDonut('#donutCur', d.currentRegister, d.currentRenew, faNum(d.currentRegister + d.currentRenew));
-                renderDonut('#donutPrev', d.previousRegister, d.previousRenew, faNum(d.previousRegister + d.previousRenew));
+                renderDonut('#donutCur', d.currentRegister, d.currentRenew, d.currentRegister + d.currentRenew);
+                renderDonut('#donutPrev', d.previousRegister, d.previousRenew, d.previousRegister + d.previousRenew);
 
                 var curT = d.currentRegister + d.currentRenew;
                 var prevT = d.previousRegister + d.previousRenew;

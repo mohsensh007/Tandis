@@ -103,7 +103,10 @@ namespace TandisWebApp.Services
                     MembershipDate = _helper.GetToday(),
                     MembershipTime = _helper.GetThisTime(),
                     IsBlackList = false,
-                    HasFinger = false
+                    HasFinger = false,
+                    RegDiscount = 0,     
+                    BoxRadifNo = 0
+                    
                 };
                 _db.Gen_Members.Add(member);
 

@@ -257,6 +257,16 @@ namespace TandisWebApp.DTOs
         public long OthersValue { get; set; }
         public string OthersPercentDisplay { get; set; } = string.Empty;
     }
-   
+    // ============================================================
+    //  شرایط باشگاه (فقط ادمین)
+    // ============================================================
+
+    /// <summary>درخواست ذخیره متن شرایط باشگاه — فقط ادمین دسترسی دارد</summary>
+    public class AdminSaveRulesRequest
+    {
+        [Required(ErrorMessage = "متن شرایط نمی‌تواند خالی باشد")]
+        [MaxLength(5000, ErrorMessage = "حداکثر ۵۰۰۰ کاراکتر")]
+        public string RulesText { get; set; } = "";
+    }
 }
 
