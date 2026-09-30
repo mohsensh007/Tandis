@@ -14,15 +14,14 @@ namespace TandisWebApp.Controllers
         private readonly MemberAuthService _auth;
         private readonly CommonHelperService _helper;
         private readonly MessageService _messages;
+        private readonly ClubRuleService _rules;
 
-        
-
-
-        public AccountController(MemberAuthService auth, CommonHelperService helper ,MessageService messages)
+        public AccountController(MemberAuthService auth, CommonHelperService helper, MessageService messages, ClubRuleService rules)
         {
             _auth = auth;
             _helper = helper;
             _messages = messages;
+            _rules = rules;
         }
 
         // ============================================================
@@ -82,6 +81,18 @@ namespace TandisWebApp.Controllers
                 ? defaultUrl
                 : returnUrl;
             return Ok(result);
+        }
+        /// <summary>صفحه ثبت‌نام عضو جدید (ویزارد)</summary>
+        [HttpGet]
+        public IActionResult Register() => View();
+
+        /// <summary>متن شرایط باشگاه (عمومی — برای صفحه ثبت‌نام)</summary>
+        [HttpGet]
+        [Route("api/Account/ClubRules")]
+        public async Task<IActionResult> ClubRulesApi()
+        {
+            var text = await _rules.GetActiveRulesAsync();
+            return Ok(new { success = true, data = text });
         }
 
         /// <summary>تغییر رمز عبور</summary>

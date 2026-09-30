@@ -232,4 +232,12 @@ namespace TandisWebApp.DTOs
         public int SportSanseID { get; set; }
         public string? SessionDateShamsi { get; set; }  
     }
+    // ============================================================
+    //  شرایط باشگاه (تنظیم توسط ادمین)
+    // ============================================================
+
+    public class AdminSaveRulesRequest
+    {
+        public string RulesText { get; set; } = "";
+    }
 }

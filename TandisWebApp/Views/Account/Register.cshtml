@@ -1,0 +1,196 @@
+﻿@{
+    ViewData["Title"] = "ثبت‌نام";
+    Layout = "_LoginLayout";
+}
+
+<style>
+    .reg-steps {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 16px;
+    }
+    .reg-step {
+        flex: 1;
+        text-align: center;
+        font-size: .72rem;
+        font-weight: 700;
+        color: #9fb3c8;
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(255,255,255,.12);
+        border-radius: 999px;
+        padding: 5px 8px;
+    }
+    .reg-step.on {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-color: transparent;
+        color: #fff;
+    }
+    .rules-box {
+        background: rgba(255,255,255,.06);
+        border: 1px solid rgba(102,211,232,.30);
+        border-radius: 14px;
+        padding: 14px;
+        max-height: 260px;
+        overflow-y: auto;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        white-space: pre-wrap;
+        font-size: .82rem;
+        line-height: 1.9;
+        color: #dce9ff;
+        margin-bottom: 14px;
+    }
+    .rules-box::-webkit-scrollbar { display: none; }
+    .reg-title {
+        font-weight: 800;
+        font-size: .95rem;
+        color: #fff;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .reg-title i { color: #66d3e8; }
+</style>
+
+<!-- ✅ نشانگر مراحل -->
+<div class="reg-steps">
+    <span class="reg-step on" id="stepBadge1">۱. شرایط باشگاه</span>
+    <span class="reg-step" id="stepBadge2">۲. اطلاعات شخصی</span>
+</div>
+
+<!-- ========== مرحله ۱: شرایط و تعهدات ========== -->
+<div id="stepRules">
+    <div class="reg-title"><i class="bi bi-shield-check"></i> شرایط و تعهدات باشگاه</div>
+    <div class="rules-box" id="rulesBox">در حال بارگذاری...</div>
+    <button id="btnAcceptRules" class="btn btn-primary w-100 py-2" disabled>
+        <i class="bi bi-check2-circle"></i> شرایط را می‌پذیرم و ادامه می‌دهم
+    </button>
+</div>
+
+<!-- ========== مرحله ۲: اطلاعات شخصی ========== -->
+<div id="stepInfo" style="display:none;">
+    <div class="reg-title"><i class="bi bi-person-vcard"></i> اطلاعات شخصی</div>
+    <div class="mb-2">
+        <label class="form-label">نام <span class="text-danger">*</span></label>
+        <input type="text" id="txtFirstName" class="form-control" placeholder="نام" />
+    </div>
+    <div class="mb-2">
+        <label class="form-label">نام خانوادگی <span class="text-danger">*</span></label>
+        <input type="text" id="txtLastName" class="form-control" placeholder="نام خانوادگی" />
+    </div>
+    <div class="mb-2">
+        <label class="form-label">کد ملی <span class="text-danger">*</span></label>
+        <input type="text" id="txtRegNationalCode" class="form-control" maxlength="10" placeholder="کد ملی ۱۰ رقم" inputmode="numeric" />
+    </div>
+    <div class="mb-2">
+        <label class="form-label">تاریخ تولد (شمسی) <span class="text-danger">*</span></label>
+        <input type="text" id="txtBirthDate" class="form-control" maxlength="10" placeholder="مثال: 1375/04/12" inputmode="numeric" />
+    </div>
+    <div class="mb-3">
+        <label class="form-label">شماره موبایل <span class="text-danger">*</span></label>
+        <input type="text" id="txtMobile" class="form-control" maxlength="11" placeholder="مثال: 09123456789" inputmode="numeric" />
+    </div>
+    <button id="btnNextStep" class="btn btn-primary w-100 py-2">
+        مرحله بعد <i class="bi bi-arrow-left"></i>
+    </button>
+    <button id="btnBackToRules" class="btn btn-outline-secondary w-100 py-2 mt-2">
+        <i class="bi bi-arrow-right"></i> بازگشت
+    </button>
+</div>
+
+<!-- ========== ✅ اطلاعات تأیید شد (جای مرحله بعد — به‌زودی) ========== -->
+<div id="stepDone" style="display:none;" class="text-center py-4">
+    <div style="font-size:3rem;">✅</div>
+    <div class="fw-bold text-white mb-2">اطلاعات شما با موفقیت ثبت شد</div>
+    <div class="small" style="color:#9fb3c8;">مرحله بعدی به‌زودی فعال می‌شود.</div>
+    <button id="btnBackToInfo" class="btn btn-outline-secondary w-100 py-2 mt-3">
+        <i class="bi bi-arrow-right"></i> ویرایش اطلاعات
+    </button>
+</div>
+
+@section Scripts {
+    <script>
+        // ========== اعتبارسنجی کد ملی (الگوریتم کنترلی) ==========
+        function isValidNationalCode(code) {
+            if (!/^\d{10}$/.test(code)) return false;
+            if (/^(\d)\1{9}$/.test(code)) return false;
+            var sum = 0;
+            for (var i = 0; i < 9; i++) sum += parseInt(code[i]) * (10 - i);
+            var r = sum % 11;
+            var check = parseInt(code[9]);
+            return (r < 2 && check === r) || (r >= 2 && check === 11 - r);
+        }
+
+        // ========== اعتبارسنجی تاریخ شمسی (ساده) ==========
+        function isValidJalali(d) {
+            var m = /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.exec(d);
+            if (!m) return false;
+            var mm = +m[2], dd = +m[3];
+            if (mm < 1 || mm > 12) return false;
+            if (dd < 1 || dd > 31) return false;
+            if (mm > 6 && dd > 30) return false;
+            return true;
+        }
+
+        // ========== مرحله ۱: بارگذاری شرایط ==========
+        apiCall('/api/Account/ClubRules', 'GET', null, function (res) {
+            var text = (res && res.success && res.data) ? res.data : '';
+            if (!text) {
+                $('#rulesBox').text('شرایطی از سمت باشگاه ثبت نشده است.');
+            } else {
+                $('#rulesBox').text(text);
+            }
+            $('#btnAcceptRules').prop('disabled', false);
+        });
+
+        $('#btnAcceptRules').click(function () {
+            $('#stepRules').hide();
+            $('#stepInfo').show();
+            $('#stepBadge1').removeClass('on');
+            $('#stepBadge2').addClass('on');
+        });
+
+        $('#btnBackToRules').click(function () {
+            $('#stepInfo').hide();
+            $('#stepRules').show();
+            $('#stepBadge2').removeClass('on');
+            $('#stepBadge1').addClass('on');
+        });
+
+        $('#btnBackToInfo').click(function () {
+            $('#stepDone').hide();
+            $('#stepInfo').show();
+        });
+
+        // ========== مرحله ۲: اعتبارسنجی + نگهداری موقت داده ==========
+        window.registerData = null;
+
+        $('#btnNextStep').click(function () {
+            var fn = $.trim($('#txtFirstName').val());
+            var ln = $.trim($('#txtLastName').val());
+            var nc = $.trim($('#txtRegNationalCode').val());
+            var bd = $.trim($('#txtBirthDate').val());
+            var mb = $.trim($('#txtMobile').val());
+
+            if (!fn) { showToast('نام را وارد کنید', 'error'); return; }
+            if (!ln) { showToast('نام خانوادگی را وارد کنید', 'error'); return; }
+            if (!isValidNationalCode(nc)) { showToast('کد ملی معتبر نیست', 'error'); return; }
+            if (!isValidJalali(bd)) { showToast('تاریخ تولد را به صورت 1375/04/12 وارد کنید', 'error'); return; }
+            if (!/^09\d{9}$/.test(mb)) { showToast('شماره موبایل باید با 09 شروع و ۱ رقم باشد', 'error'); return; }
+
+            // ✅ نگهداری موقت تا مرحله نهایی
+            window.registerData = {
+                firstName: fn,
+                lastName: ln,
+                nationalCode: nc,
+                birthDate: bd,
+                mobile: mb
+            };
+
+            $('#stepInfo').hide();
+            $('#stepDone').show();
+            showToast('اطلاعات با موفقیت ثبت شد', 'success');
+        });
+    </script>
+}

@@ -332,4 +332,20 @@ namespace TandisWebApp.Models
 
         public bool? CardReaderPlus { get; set; }
     }
+    /// <summary>معادل dbo.Gen_ClubRules - شرایط و تعهدات باشگاه (قابل تنظیم توسط ادمین)</summary>
+    [Table("Gen_ClubRules")]
+    public class Gen_ClubRule
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int RulesID { get; set; }
+
+        public string? RulesText { get; set; }
+
+        public bool? IsActive { get; set; }
+        public short? UserID { get; set; }
+        public DateTime? CreationTime { get; set; }
+        public short? Modifier { get; set; }
+        public DateTime? ModificationTime { get; set; }
+    }
 }

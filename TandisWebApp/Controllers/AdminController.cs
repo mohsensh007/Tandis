@@ -13,6 +13,7 @@ namespace TandisWebApp.Controllers
         private readonly AdminReportService _reports;
         private readonly MessageService _messages;
         private readonly ProfileService _profile;
+        private readonly ClubRuleService _rules;
 
         private short? CurrentAdminUserID
         {
@@ -24,12 +25,13 @@ namespace TandisWebApp.Controllers
             }
         }
 
-        public AdminController(AdminAuthService auth, AdminReportService reports, MessageService message, ProfileService profile)
+        public AdminController(AdminAuthService auth, AdminReportService reports, MessageService message, ProfileService profile, ClubRuleService rules)
         {
             _auth = auth;
             _reports = reports;
             _messages = message;
             _profile = profile;
+            _rules = rules;
         }
 
         private short AdminShiftID => User.GetAdminShiftID();
@@ -339,6 +341,36 @@ namespace TandisWebApp.Controllers
         {
             ViewData["Title"] = "گزارش‌ها";
             return View();
+        }
+        // ============================================================
+        //  ✅ شرایط و تعهدات باشگاه (تنظیم توسط ادمین)
+        // ============================================================
+
+        [AdminAuthorize]
+        [Route("Admin/Rules")]
+        public IActionResult Rules()
+        {
+            ViewData["Title"] = "شرایط باشگاه";
+            return View();
+        }
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/Rules")]
+        public async Task<IActionResult> RulesApi()
+        {
+            var text = await _rules.GetActiveRulesAsync();
+            return Ok(new { success = true, data = text });
+        }
+
+        [AdminAuthorize]
+        [HttpPost]
+        [Route("api/Admin/Rules")]
+        public async Task<IActionResult> SaveRulesApi([FromBody] AdminSaveRulesRequest req)
+        {
+            var uid = CurrentAdminUserID;
+            var (ok, msg) = await _rules.SaveRulesAsync(req.RulesText ?? "", uid ?? 1);
+            return Ok(new { success = ok, message = msg });
         }
     }
 }
