@@ -97,6 +97,56 @@
         border-radius: 8px;
     }
 
+    /* ===== تشخیص چهره (ارسال دستور به دستگاه) ===== */
+    .face-box {
+        background: rgba(255,169,77,.08);
+        border: 1px solid rgba(255,169,77,.30);
+        border-radius: 14px;
+        padding: 12px;
+        margin-top: 12px;
+        text-align: right;
+    }
+
+    .face-title {
+        font-weight: 800;
+        font-size: .9rem;
+        color: #fff;
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+        .face-title i {
+            color: #ffa94d;
+        }
+
+    .face-result {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 10px;
+        font-size: .8rem;
+        line-height: 1.9;
+    }
+
+        .face-result.face-ok {
+            color: #6aeaa2;
+            background: rgba(106,234,162,.10);
+            border: 1px solid rgba(106,234,162,.30);
+        }
+
+        .face-result.face-err {
+            color: #ff9aa2;
+            background: rgba(255,107,129,.10);
+            border: 1px solid rgba(255,107,129,.30);
+        }
+
+        .face-result.face-wait {
+            color: #ffd28a;
+            background: rgba(255,210,138,.08);
+            border: 1px solid rgba(255,210,138,.28);
+        }
+
     /* ===== ✅ تقویم لمسی: پنل کاشی‌ها ===== */
     .bd-picker {
         position: relative;
@@ -550,6 +600,16 @@
     <div class="alert-warning-text mt-2">
         ⚠️ در اولین ورود، <b>مجبور به تغییر رمز عبور</b> خواهید بود.
     </div>
+    <!-- ========== ✅ مرحله بعد: تشخیص چهره در دستگاه ========== -->
+    <div id="faceSection" class="face-box">
+        <div class="face-title"><i class="bi bi-emoji-smile"></i> ثبت چهره در دستگاه</div>
+        <div class="small mb-2" style="color:#9fb3c8;">برای ثبت چهره، روی دکمه زیر بزنید و چند ثانیه مقابل دستگاه بایستید تا چهره شما ثبت شود.</div>
+        <button type="button" id="btnFaceDetect" class="btn btn-warning w-100 py-2 fw-bold">
+            <i class="bi bi-camera"></i> تشخیص چهره
+        </button>
+        <div id="faceResult" class="face-result" style="display:none;"></div>
+    </div>
+
     <a href="/Account/Login" class="btn btn-primary w-100 py-2 mt-3">
         <i class="bi bi-box-arrow-in-right"></i> ورود به حساب
     </a>
@@ -628,6 +688,7 @@
                 gender: gender
             }, function (res) {
                 if (res.success) {
+                    registeredMemberID = res.data.memberID;
                     $('#doneMemberID').text(toFa(res.data.memberID));
                     $('#doneNationalCode').text(res.data.nationalCode);
                     $('#donePassword').text(res.data.defaultPassword);
@@ -638,6 +699,128 @@
                     showToast(res.message, 'error');
                     $btn.prop('disabled', false).html('مرحله بعد <i class="bi bi-arrow-left"></i>');
                 }
+            });
+        });
+
+        // ========== ✅ مرحله ۳: ارسال دستور ثبت چهره + بررسی نتیجه ========== 
+        var registeredMemberID = 0;
+        var faceHadBefore = false;
+        var facePollTimer = null;
+        var faceDeadline = 0;
+        var faceSentAt = 0;
+        var faceDone = false;
+
+        function stopFacePoll() {
+            if (facePollTimer) { clearInterval(facePollTimer); facePollTimer = null; }
+        }
+
+        function enableFaceBtn() {
+            $('#btnFaceDetect').prop('disabled', false).html('<i class="bi bi-camera"></i> تشخیص چهره');
+        }
+
+        function showFaceBox(state, html) {
+            $('#faceResult').show().removeClass('face-ok face-err face-wait').addClass(state).html(html);
+        }
+
+        function faceDeviceInfo(d) {
+            return '<div class="small mt-1">دستگاه: ' + (d.deviceIp || '-') +
+                ' | پورت: ' + (d.devicePort || '-') +
+                ' | سریال: ' + (d.serialNo || '-') + '</div>';
+        }
+
+        // --- بررسی دوره‌ای وضعیت ثبت چهره تا حداکثر ۶۰ ثانیه ---
+        function checkFaceStatus() {
+            if (faceDone) { stopFacePoll(); return; }
+
+            if (Date.now() > faceDeadline) {
+                stopFacePoll();
+                enableFaceBtn();
+                showFaceBox('face-err',
+                    '<div class="fw-bold">⚠️ چهره در مهلت مقرر ثبت نشد</div>' +
+                    '<div class="small mt-1">جلوی دستگاه بایستید و دکمه را دوباره بزنید.</div>');
+                showToast('چهره ثبت نشد؛ لطفاً دوباره تلاش کنید', 'error');
+                return;
+            }
+
+            apiCall('/api/Account/FaceStatus?memberID=' + registeredMemberID, 'GET', null, function (res) {
+                if (!res.success || !res.data) return;
+                var d = res.data;
+
+                // ✅ سیگنال ۱: چهره در Gen_Members ثبت شد
+                var newRegisteredAt = d.registeredToDeviceAt
+                    ? new Date(d.registeredToDeviceAt).getTime() : 0;
+
+                if ((d.hasFace && !faceHadBefore) || (newRegisteredAt && newRegisteredAt >= faceSentAt - 15000)) {
+                    faceDone = true;
+                    stopFacePoll();
+                    enableFaceBtn();
+                    showFaceBox('face-ok',
+                        '<div class="fw-bold">✅ چهره با موفقیت ثبت شد</div>' +
+                        '<div class="small mt-1">اطلاعات عضو در سامانه ذخیره شد.</div>');
+                    showToast('چهره با موفقیت ثبت شد', 'success');
+                    return;
+                }
+
+                // عضو از قبل چهره داشت و دستور هم به دستگاه رسید
+                if (faceHadBefore && d.commandConsumed) {
+                    faceDone = true;
+                    stopFacePoll();
+                    enableFaceBtn();
+                    showFaceBox('face-ok',
+                        '<div class="fw-bold">✅ چهره قبلاً برای این عضو ثبت شده بود</div>' +
+                        '<div class="small mt-1">دستور مجدداً به دستگاه ارسال شد.</div>');
+                    showToast('چهره قبلاً ثبت شده بود', 'success');
+                    return;
+                }
+
+                // دستور برداشته شده ولی هنوز چهره نیامده
+                if (d.commandConsumed) {
+                    showFaceBox('face-wait',
+                        '<div class="fw-bold">📡 دستور به دستگاه رسید</div>' +
+                        '<div class="small mt-1">در انتظار ثبت چهره... لطفاً مقابل دستگاه بایستید</div>');
+                } else {
+                    showFaceBox('face-wait',
+                        '<div class="fw-bold">⏳ دستور در صف ارسال است</div>' +
+                        '<div class="small mt-1">در انتظار برداشته شدن دستور توسط سرویس تردد...</div>');
+                }
+            });
+        }
+
+        $('#btnFaceDetect').click(function () {
+            if (!registeredMemberID) {
+                showToast('ابتدا ثبت‌نام را انجام دهید', 'error');
+                return;
+            }
+
+            stopFacePoll();
+            faceDone = false;
+
+            var $btn = $(this);
+            $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> در حال ارسال دستور...');
+            showFaceBox('face-wait', '<div class="fw-bold">⏳ در حال ارسال دستور به دستگاه...</div>');
+
+            apiCall('/api/Account/SendFaceCommand', 'POST', { memberID: registeredMemberID }, function (res) {
+                if (!res.success) {
+                    enableFaceBtn();
+                    showFaceBox('face-err', '<div class="fw-bold">❌ ' + res.message + '</div>');
+                    showToast(res.message, 'error');
+                    return;
+                }
+
+                faceHadBefore = !!(res.data && res.data.hadFaceBefore);
+
+                showFaceBox('face-wait',
+                    '<div class="fw-bold">✅ دستور ارسال شد — لطفاً مقابل دستگاه بایستید</div>' +
+                    faceDeviceInfo(res.data) +
+                    (res.data.deviceReachable
+                        ? ''
+                        : '<div class="small mt-1" style="color:#ffa94d;">⚠️ دستگاه در شبکه پاسخ نمی‌دهد؛ آدرس IP را بررسی کنید.</div>'));
+                showToast('دستور ثبت چهره ارسال شد', 'success');
+
+                faceDeadline = Date.now() + 60000;
+                faceSentAt = Date.now();
+                facePollTimer = setInterval(checkFaceStatus, 2500);
+                setTimeout(checkFaceStatus, 1200);
             });
         });
 

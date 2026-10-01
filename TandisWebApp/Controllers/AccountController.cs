@@ -16,14 +16,16 @@ namespace TandisWebApp.Controllers
         private readonly MessageService _messages;
         private readonly ClubRuleService _rules;
         private readonly MemberRegistrationService _register;
+        private readonly FaceDeviceService _face;
 
-        public AccountController(MemberAuthService auth, CommonHelperService helper, MessageService messages, ClubRuleService rules, MemberRegistrationService register)
+        public AccountController(MemberAuthService auth, CommonHelperService helper, MessageService messages, ClubRuleService rules, MemberRegistrationService register, FaceDeviceService face)
         {
             _auth = auth;
             _helper = helper;
             _messages = messages;
             _rules = rules;
             _register = register;
+            _face = face;
         }
 
         // ============================================================
@@ -102,6 +104,24 @@ namespace TandisWebApp.Controllers
         public async Task<IActionResult> RegisterApi([FromBody] RegisterMemberRequest req)
         {
             var result = await _register.RegisterAsync(req);
+            return Ok(new { success = result.Success, message = result.Message, data = result.Data });
+        }
+
+        /// <summary>ارسال دستور «ثبت چهره» به دستگاه تشخیص چهره (مرحله بعد از ثبت‌نام)</summary>
+        [HttpPost]
+        [Route("api/Account/SendFaceCommand")]
+        public async Task<IActionResult> SendFaceCommandApi([FromBody] FaceCommandRequest req)
+        {
+            var result = await _face.SendFaceCaptureAsync(req.MemberID);
+            return Ok(new { success = result.Success, message = result.Message, data = result.Data });
+        }
+
+        /// <summary>بررسی وضعیت ثبت چهره عضو (برای اطمینان از ثبت موفق چهره)</summary>
+        [HttpGet]
+        [Route("api/Account/FaceStatus")]
+        public async Task<IActionResult> FaceStatusApi(int memberID)
+        {
+            var result = await _face.GetFaceStatusAsync(memberID);
             return Ok(new { success = result.Success, message = result.Message, data = result.Data });
         }
 

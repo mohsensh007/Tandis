@@ -253,4 +253,59 @@ namespace TandisWebApp.DTOs
         public string NationalCode { get; set; } = "";
         public string DefaultPassword { get; set; } = "";
     }
+
+    // ============================================================
+    //  ارسال دستور ثبت چهره به دستگاه تشخیص چهره
+    // ============================================================
+
+    public class FaceCommandRequest
+    {
+        public int MemberID { get; set; }
+    }
+
+    public class FaceCommandResponse
+    {
+        public int MemberID { get; set; }
+        public int GateDeviceID { get; set; }
+        public string? DeviceIp { get; set; }
+        public string? DevicePort { get; set; }
+        public string? SerialNo { get; set; }
+        public short? TerminalNo { get; set; }
+        public bool DeviceReachable { get; set; }
+        public DateTime? ValidUntil { get; set; }
+
+        /// <summary>آیا قبل از ارسال دستور، چهره این عضو قبلاً ثبت شده بود؟</summary>
+        public bool HadFaceBefore { get; set; }
+
+        /// <summary>آیا Traffic.exe (یا پورت 8085) در دسترس بود؟</summary>
+        public bool TrafficRunning { get; set; }
+
+        /// <summary>آیا FullSport.exe در حال اجرا بود؟</summary>
+        public bool FullSportRunning { get; set; }
+
+        /// <summary>آیا پورت 8085 روی سرور باز بود؟</summary>
+        public bool Port8085Open { get; set; }
+
+        /// <summary>سروری که دستگاه/Traffic روی آن است (ServerIP دستگاه)</summary>
+        public string? ServiceHost { get; set; }
+    }
+
+    /// <summary>وضعیت ثبت چهره (برای بررسی نتیجه بعد از ارسال دستور)</summary>
+    public class FaceStatusResponse
+    {
+        public int MemberID { get; set; }
+        public bool MemberFound { get; set; }
+
+        /// <summary>چهره در دیتابیس ثبت شده (FaceTmpl1..3 پر باشد)</summary>
+        public bool HasFace { get; set; }
+
+        /// <summary>دستور addface هنوز در Gen_Setting پابرجاست (هنوز برداشته نشده)</summary>
+        public bool CommandPending { get; set; }
+
+        /// <summary>دستور قبلاً برداشته شده (فلگ پاک شده یا مال عضو دیگری است)</summary>
+        public bool CommandConsumed { get; set; }
+
+        /// <summary>زمان ثبت روی دستگاه (TmpMembersTbl.RegisterToDeviceTime) در صورت وجود</summary>
+        public DateTime? RegisteredToDeviceAt { get; set; }
+    }
 }

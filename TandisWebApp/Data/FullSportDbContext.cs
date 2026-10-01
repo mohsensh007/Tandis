@@ -34,6 +34,7 @@ namespace TandisWebApp.Data
         public DbSet<Gen_DayOfWeek> Gen_DayOfWeeks { get; set; } = null!;
         public DbSet<Gen_PosTbl> Gen_PosTbls { get; set; } = null!;
         public DbSet<Gen_Setting> Gen_Settings { get; set; } = null!;
+        public DbSet<Gen_GateDevice> Gen_GateDevices { get; set; } = null!;
         public DbSet<Gen_ClubRule> Gen_ClubRules { get; set; } = null!;
         public DbSet<Gen_Box> Gen_Boxes { get; set; } = null!;
         public DbSet<Gen_LockerRoom> Gen_LockerRooms { get; set; }
