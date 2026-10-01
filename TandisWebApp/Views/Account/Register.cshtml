@@ -3,6 +3,8 @@
     Layout = "_LoginLayout";
 }
 
+<link rel="stylesheet" href="~/css/register.css?v=1" />
+
 <style>
     .reg-steps {
         display: flex;
@@ -24,6 +26,12 @@
 
         .reg-step.on {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            color: #fff;
+        }
+
+        .reg-step.done {
+            background: linear-gradient(135deg, #38d9a9 0%, #2bbfa0 100%);
             border-color: transparent;
             color: #fff;
         }
@@ -97,57 +105,7 @@
         border-radius: 8px;
     }
 
-    /* ===== تشخیص چهره (ارسال دستور به دستگاه) ===== */
-    .face-box {
-        background: rgba(255,169,77,.08);
-        border: 1px solid rgba(255,169,77,.30);
-        border-radius: 14px;
-        padding: 12px;
-        margin-top: 12px;
-        text-align: right;
-    }
-
-    .face-title {
-        font-weight: 800;
-        font-size: .9rem;
-        color: #fff;
-        margin-bottom: 6px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-        .face-title i {
-            color: #ffa94d;
-        }
-
-    .face-result {
-        margin-top: 10px;
-        padding: 10px;
-        border-radius: 10px;
-        font-size: .8rem;
-        line-height: 1.9;
-    }
-
-        .face-result.face-ok {
-            color: #6aeaa2;
-            background: rgba(106,234,162,.10);
-            border: 1px solid rgba(106,234,162,.30);
-        }
-
-        .face-result.face-err {
-            color: #ff9aa2;
-            background: rgba(255,107,129,.10);
-            border: 1px solid rgba(255,107,129,.30);
-        }
-
-        .face-result.face-wait {
-            color: #ffd28a;
-            background: rgba(255,210,138,.08);
-            border: 1px solid rgba(255,210,138,.28);
-        }
-
-    /* ===== ✅ تقویم لمسی: پنل کاشی‌ها ===== */
+    /* ===== تقویم لمسی ===== */
     .bd-picker {
         position: relative;
         display: flex;
@@ -180,7 +138,6 @@
         box-shadow: 0 18px 50px rgba(0,0,0,.55);
     }
 
-    /* کاشی‌های روز/ماه/سال */
     .bd-tiles {
         display: flex;
         gap: 8px;
@@ -254,18 +211,18 @@
         font-weight: 700;
     }
 
-    /* ===== ✅ نمای تمام‌صفحه قوس (overlay با blur) ===== */
+    /* ===== قوس تمام‌صفحه ===== */
     .bd-fs {
         position: fixed;
         inset: 0;
         z-index: 1080;
         display: none;
         flex-direction: column;
-        overflow: hidden; /* ✅ هیچ اسکرولی نداره */
+        overflow: hidden;
         background: rgba(6,9,18,.80);
         backdrop-filter: blur(30px) saturate(.8);
         -webkit-backdrop-filter: blur(30px) saturate(.8);
-        --arcR: min(350px, 46vh); /* ✅ شعاع قوس نسبت به ارتفاع صفحه */
+        --arcR: min(350px, 46vh);
     }
 
         .bd-fs.open {
@@ -352,8 +309,7 @@
         padding: calc(12px + env(safe-area-inset-top)) 16px 0;
     }
 
-        .bd-fs-head .bd-back,
-        .bd-fs-head .bd-done {
+        .bd-fs-head .bd-back, .bd-fs-head .bd-done {
             background: rgba(255,255,255,.10);
             border: 1px solid rgba(255,255,255,.22);
             color: #fff;
@@ -371,7 +327,7 @@
 
     .bd-fs-arc {
         flex: 1;
-        min-height: 0; /* ✅ اجازه جمع‌شدن در صفحه کوچک */
+        min-height: 0;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -415,7 +371,6 @@
         padding-bottom: calc(14px + env(safe-area-inset-bottom));
     }
 
-    /* ===== قوس چرخان (مشترک) ===== */
     .arc-wrap {
         position: relative;
         height: 205px;
@@ -485,15 +440,115 @@
         color: #6d82a0;
         margin-top: 2px;
     }
+
+    /* ===== باکس وضعیت چهره ===== */
+    .face-status-box {
+        background: rgba(255,169,77,.08);
+        border: 1px solid rgba(255,169,77,.30);
+        border-radius: 14px;
+        padding: 16px;
+        margin: 14px 0 8px;
+        text-align: center;
+        transition: all .4s;
+    }
+
+        .face-status-box.done {
+            background: rgba(106,234,162,.10);
+            border-color: rgba(106,234,162,.35);
+        }
+
+        .face-status-box.existed {
+            background: rgba(102,211,232,.08);
+            border-color: rgba(102,211,232,.35);
+        }
+
+        .face-status-box.timeout {
+            background: rgba(255,107,129,.08);
+            border-color: rgba(255,107,129,.35);
+        }
+
+    .face-icon-pending {
+        font-size: 2.5rem;
+        color: #ffa94d;
+        margin-bottom: 8px;
+        animation: pulse 1.6s ease-in-out infinite;
+    }
+
+    .face-status-box.done .face-icon-pending, .face-status-box.existed .face-icon-pending, .face-status-box.timeout .face-icon-pending {
+        animation: none;
+    }
+
+    .face-status-box.done .face-icon-pending {
+        color: #6aeaa2;
+    }
+
+    .face-status-box.existed .face-icon-pending {
+        color: #66d3e8;
+    }
+
+    .face-status-box.timeout .face-icon-pending {
+        color: #ff6b81;
+    }
+
+    .face-status-text {
+        font-size: .88rem;
+        font-weight: 700;
+        color: #ffa94d;
+        margin-bottom: 4px;
+    }
+
+    .face-status-box.done .face-status-text {
+        color: #6aeaa2;
+    }
+
+    .face-status-box.existed .face-status-text {
+        color: #66d3e8;
+    }
+
+    .face-status-box.timeout .face-status-text {
+        color: #ff6b81;
+    }
+
+    .face-hint {
+        font-size: .72rem;
+        color: #9fb3c8;
+        margin-bottom: 6px;
+    }
+
+    .face-device-info {
+        font-size: .66rem;
+        color: #6d82a0;
+        margin-top: 4px;
+    }
+
+    .face-timer {
+        font-size: .68rem;
+        color: #ffa94d;
+        margin-top: 4px;
+        font-variant-numeric: tabular-nums;
+    }
+
+    @@keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        50% {
+            transform: scale(1.08);
+            opacity: .7;
+        }
+    }
 </style>
 
 <!-- ✅ نشانگر مراحل -->
 <div class="reg-steps">
     <span class="reg-step on" id="stepBadge1">۱. شرایط باشگاه</span>
     <span class="reg-step" id="stepBadge2">۲. اطلاعات شخصی</span>
+    <span class="reg-step" id="stepBadge3">۳. ثبت چهره</span>
 </div>
 
-<!-- ========== مرحله ۱: شرایط و تعهدات ========== -->
+<!-- ========== مرحله ۱ ========== -->
 <div id="stepRules">
     <div class="reg-title"><i class="bi bi-shield-check"></i> شرایط و تعهدات باشگاه</div>
     <div class="rules-box" id="rulesBox">در حال بارگذاری...</div>
@@ -502,7 +557,7 @@
     </button>
 </div>
 
-<!-- ========== مرحله ۲: اطلاعات شخصی ========== -->
+<!-- ========== مرحله ۲ ========== -->
 <div id="stepInfo" style="display:none;">
     <div class="reg-title"><i class="bi bi-person-vcard"></i> اطلاعات شخصی</div>
     <div class="mb-2">
@@ -522,22 +577,12 @@
         <div class="bd-picker">
             <input type="text" id="txtBirthDate" class="form-control" maxlength="10" placeholder="مثال: 1368/04/12" inputmode="numeric" />
             <button type="button" class="bd-cal-btn" id="btnBirthCal" title="انتخاب تاریخ">📅</button>
-            <!-- ✅ پنل کاشی‌ها (داخل bd-picker) -->
             <div class="bd-panel" id="bdPanel" style="display:none;">
                 <div class="bd-stage" id="bdStage1">
                     <div class="bd-tiles">
-                        <button type="button" class="bd-tile" data-unit="day">
-                            <span class="bd-tile-val" id="bdTileDay">15</span>
-                            <span class="bd-tile-lbl">روز</span>
-                        </button>
-                        <button type="button" class="bd-tile" data-unit="month">
-                            <span class="bd-tile-val" id="bdTileMonth">مرداد</span>
-                            <span class="bd-tile-lbl">ماه</span>
-                        </button>
-                        <button type="button" class="bd-tile" data-unit="year">
-                            <span class="bd-tile-val" id="bdTileYear">1368</span>
-                            <span class="bd-tile-lbl">سال</span>
-                        </button>
+                        <button type="button" class="bd-tile" data-unit="day"><span class="bd-tile-val" id="bdTileDay">15</span><span class="bd-tile-lbl">روز</span></button>
+                        <button type="button" class="bd-tile" data-unit="month"><span class="bd-tile-val" id="bdTileMonth">مرداد</span><span class="bd-tile-lbl">ماه</span></button>
+                        <button type="button" class="bd-tile" data-unit="year"><span class="bd-tile-val" id="bdTileYear">1368</span><span class="bd-tile-lbl">سال</span></button>
                     </div>
                     <div class="bd-selected" id="bdSelected">-</div>
                     <div class="bd-actions">
@@ -555,28 +600,20 @@
     <div class="mb-3">
         <label class="form-label">جنسیت <span class="text-danger">*</span></label>
         <div class="d-flex gap-3">
-            <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;">
-                <input type="radio" name="gender" value="true" checked /> <span>آقا</span>
-            </label>
-            <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;">
-                <input type="radio" name="gender" value="false" /> <span>خانم</span>
-            </label>
+            <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;"><input type="radio" name="gender" value="true" checked /> <span>آقا</span></label>
+            <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;"><input type="radio" name="gender" value="false" /> <span>خانم</span></label>
         </div>
     </div>
-    <button id="btnNextStep" class="btn btn-primary w-100 py-2">
-        مرحله بعد <i class="bi bi-arrow-left"></i>
-    </button>
-    <button id="btnBackToRules" class="purple-style btn btn-outline-secondary w-100 py-2 mt-2">
-        <i class="bi bi-arrow-right"></i> بازگشت
-    </button>
+    <button id="btnNextStep" class="btn btn-primary w-100 py-2">مرحله بعد <i class="bi bi-arrow-left"></i></button>
+    <button id="btnBackToRules" class="btn btn-outline-secondary w-100 py-2 mt-2"><i class="bi bi-arrow-right"></i> بازگشت</button>
 </div>
 
-<!-- ========== ✅ نمای تمام‌صفحه قوس (بیرون از bd-picker — overlay blur) ========== -->
+<!-- ========== قوس تمام‌صفحه ========== -->
 <div class="bd-fs" id="bdStage2">
     <div class="bd-fs-head">
-        <button type="button" class="purple-style bd-back" id="bdBack">→ بازگشت</button>
+        <button type="button" class="bd-back" id="bdBack">→ بازگشت</button>
         <span class="bd-s2-title" id="bdS2Title">ماه</span>
-        <button type="button" class="purple-style bd-done" id="bdDone">✓ تایید</button>
+        <button type="button" class="bd-done" id="bdDone">✓ تأیید</button>
     </div>
     <div class="bd-fs-arc">
         <div class="arc-wrap" id="arcWrap">
@@ -587,7 +624,7 @@
     <div class="bd-hint">با انگشت بکشید ← → یا روی عدد بزنید</div>
 </div>
 
-<!-- ========== ✅ اطلاعات ثبت شد (مرحله نهایی) ========== -->
+<!-- ========== مرحله ۳ ========== -->
 <div id="stepDone" style="display:none;" class="text-center py-3">
     <div style="font-size:3rem; color:#6aeaa2;">✅</div>
     <div class="fw-bold text-white mb-2" style="font-size:1.1rem;">ثبت‌نام با موفقیت انجام شد</div>
@@ -597,20 +634,25 @@
         <div class="done-row"><span>نام کاربری:</span><b id="doneNationalCode">-</b></div>
         <div class="done-row"><span>رمز عبور اولیه:</span><b id="donePassword" style="color:#ffa94d;">-</b></div>
     </div>
-    <div class="alert-warning-text mt-2">
-        ⚠️ در اولین ورود، <b>مجبور به تغییر رمز عبور</b> خواهید بود.
-    </div>
-    <!-- ========== ✅ مرحله بعد: تشخیص چهره در دستگاه ========== -->
-    <div id="faceSection" class="face-box">
-        <div class="face-title"><i class="bi bi-emoji-smile"></i> ثبت چهره در دستگاه</div>
-        <div class="small mb-2" style="color:#9fb3c8;">برای ثبت چهره، روی دکمه زیر بزنید و چند ثانیه مقابل دستگاه بایستید تا چهره شما ثبت شود.</div>
-        <button type="button" id="btnFaceDetect" class="btn btn-warning w-100 py-2 fw-bold">
-            <i class="bi bi-camera"></i> تشخیص چهره
-        </button>
-        <div id="faceResult" class="face-result" style="display:none;"></div>
+
+    <!-- ✅ دکمه ثبت چهره (دستی) -->
+    <button id="btnSendFace" class="btn btn-primary w-100 py-2 mt-2">
+        <i class="bi bi-camera-fill"></i> ثبت چهره با دستگاه
+    </button>
+
+    <!-- ✅ باکس وضعیت چهره -->
+    <div id="faceStatusBox" class="face-status-box" style="display:none;">
+        <div class="face-icon-pending" id="faceIcon"><i class="bi bi-hourglass-split"></i></div>
+        <div class="face-status-text" id="faceStatusText"></div>
+        <div class="face-hint" id="faceHint"></div>
+        <div class="face-device-info" id="faceDeviceInfo"></div>
+        <div class="face-timer" id="faceTimer"></div>
     </div>
 
-    <a href="/Account/Login" class="btn btn-primary w-100 py-2 mt-3">
+    <div class="alert-warning-text mt-2">⚠️ در اولین ورود، <b>مجبور به تغییر رمز عبور</b> خواهید بود.</div>
+
+    <!-- ✅ دکمه ورود — فقط بعد از ثبت چهره -->
+    <a id="btnGoLogin" href="/Account/Login" class="btn btn-primary w-100 py-2 mt-3" style="display:none;">
         <i class="bi bi-box-arrow-in-right"></i> ورود به حساب
     </a>
 </div>
@@ -619,13 +661,7 @@
     <script>
         var faDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
         function toFa(n) { return String(n).replace(/[0-9]/g, function (d) { return faDigits[d]; }); }
-
-        // ========== اعتبارسنجی کد ملی: فقط ۱۰ رقم ==========
-        function isValidNationalCode(code) {
-            return /^\d{10}$/.test(code);
-        }
-
-        // ========== اعتبارسنجی تاریخ شمسی ==========
+        function isValidNationalCode(code) { return /^\d{10}$/.test(code); }
         function isValidJalali(d) {
             var m = /^(\d{4})\/(\d{1,2})\/(\d{1,2})$/.exec(d);
             if (!m) return false;
@@ -636,32 +672,24 @@
             return true;
         }
 
-        // ========== مرحله ۱: بارگذاری شرایط ==========
+        // ========== مرحله ۱ ==========
         apiCall('/api/Account/ClubRules', 'GET', null, function (res) {
             var text = (res && res.success && res.data) ? res.data : '';
-            if (!text) {
-                $('#rulesBox').text('شرایطی از سمت باشگاه ثبت نشده است.');
-            } else {
-                $('#rulesBox').text(text);
-            }
+            $('#rulesBox').text(text || 'شرایطی از سمت باشگاه ثبت نشده است.');
             $('#btnAcceptRules').prop('disabled', false);
         });
-
         $('#btnAcceptRules').click(function () {
-            $('#stepRules').hide();
-            $('#stepInfo').show();
-            $('#stepBadge1').removeClass('on');
+            $('#stepRules').hide(); $('#stepInfo').show();
+            $('#stepBadge1').removeClass('on').addClass('done');
             $('#stepBadge2').addClass('on');
         });
-
         $('#btnBackToRules').click(function () {
-            $('#stepInfo').hide();
-            $('#stepRules').show();
+            $('#stepInfo').hide(); $('#stepRules').show();
             $('#stepBadge2').removeClass('on');
-            $('#stepBadge1').addClass('on');
+            $('#stepBadge1').removeClass('done').addClass('on');
         });
 
-        // ========== مرحله ۲: اعتبارسنجی + ارسال به API ==========
+        // ========== مرحله ۲ ==========
         $('#btnNextStep').click(function () {
             var fn = $.trim($('#txtFirstName').val());
             var ln = $.trim($('#txtLastName').val());
@@ -679,22 +707,17 @@
             var $btn = $('#btnNextStep');
             $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> در حال ثبت...');
 
-            apiCall('/api/Account/Register', 'POST', {
-                firstName: fn,
-                lastName: ln,
-                nationalCode: nc,
-                birthDate: bd,
-                mobile: mb,
-                gender: gender
-            }, function (res) {
+            apiCall('/api/Account/Register', 'POST', { firstName: fn, lastName: ln, nationalCode: nc, birthDate: bd, mobile: mb, gender: gender }, function (res) {
                 if (res.success) {
                     registeredMemberID = res.data.memberID;
                     $('#doneMemberID').text(toFa(res.data.memberID));
                     $('#doneNationalCode').text(res.data.nationalCode);
                     $('#donePassword').text(res.data.defaultPassword);
-                    $('#stepInfo').hide();
-                    $('#stepDone').show();
+                    $('#stepInfo').hide(); $('#stepDone').show();
+                    $('#stepBadge2').removeClass('on').addClass('done');
+                    $('#stepBadge3').addClass('on');
                     showToast('ثبت‌نام با موفقیت انجام شد', 'success');
+                    // ✅ منتظر کلیک کاربر روی «ثبت چهره» می‌مونیم
                 } else {
                     showToast(res.message, 'error');
                     $btn.prop('disabled', false).html('مرحله بعد <i class="bi bi-arrow-left"></i>');
@@ -702,192 +725,152 @@
             });
         });
 
-        // ========== ✅ مرحله ۳: ارسال دستور ثبت چهره + بررسی نتیجه ========== 
+        // ========== ✅ مرحله ۳: ثبت چهره (دستی + مهلت ۲۰ ثانیه) ==========
         var registeredMemberID = 0;
-        var faceHadBefore = false;
-        var facePollTimer = null;
-        var faceDeadline = 0;
-        var faceSentAt = 0;
-        var faceDone = false;
+        var facePollTimer = null, faceTimerInterval = null;
+        var faceDeadline = 0, faceDone = false;
+        var FACE_TIMEOUT_MS = 20000;
 
         function stopFacePoll() {
             if (facePollTimer) { clearInterval(facePollTimer); facePollTimer = null; }
+            if (faceTimerInterval) { clearInterval(faceTimerInterval); faceTimerInterval = null; }
         }
-
-        function enableFaceBtn() {
-            $('#btnFaceDetect').prop('disabled', false).html('<i class="bi bi-camera"></i> تشخیص چهره');
+        function setFaceBox(state, icon, text, hint, deviceInfo) {
+            $('#faceStatusBox').show().removeClass('done existed timeout').addClass(state);
+            $('#faceIcon').html('<i class="bi ' + icon + '"></i>');
+            $('#faceStatusText').text(text);
+            $('#faceHint').text(hint || '');
+            $('#faceDeviceInfo').html(deviceInfo || '');
         }
-
-        function showFaceBox(state, html) {
-            $('#faceResult').show().removeClass('face-ok face-err face-wait').addClass(state).html(html);
+        function startFaceTimer() {
+            $('#faceTimer').show();
+            faceTimerInterval = setInterval(function () {
+                var remain = Math.max(0, Math.ceil((faceDeadline - Date.now()) / 1000));
+                $('#faceTimer').text('زمان باقی‌مانده: ' + toFa(remain) + ' ثانیه');
+                if (remain <= 0) { clearInterval(faceTimerInterval); faceTimerInterval = null; }
+            }, 1000);
         }
-
-        function faceDeviceInfo(d) {
-            return '<div class="small mt-1">دستگاه: ' + (d.deviceIp || '-') +
-                ' | پورت: ' + (d.devicePort || '-') +
-                ' | سریال: ' + (d.serialNo || '-') + '</div>';
-        }
-
-        // --- بررسی دوره‌ای وضعیت ثبت چهره تا حداکثر ۶۰ ثانیه ---
-        function checkFaceStatus() {
-            if (faceDone) { stopFacePoll(); return; }
-
-            if (Date.now() > faceDeadline) {
-                stopFacePoll();
-                enableFaceBtn();
-                showFaceBox('face-err',
-                    '<div class="fw-bold">⚠️ چهره در مهلت مقرر ثبت نشد</div>' +
-                    '<div class="small mt-1">جلوی دستگاه بایستید و دکمه را دوباره بزنید.</div>');
-                showToast('چهره ثبت نشد؛ لطفاً دوباره تلاش کنید', 'error');
-                return;
-            }
-
-            apiCall('/api/Account/FaceStatus?memberID=' + registeredMemberID, 'GET', null, function (res) {
-                if (!res.success || !res.data) return;
-                var d = res.data;
-
-                // ✅ سیگنال ۱: چهره در Gen_Members ثبت شد
-                var newRegisteredAt = d.registeredToDeviceAt
-                    ? new Date(d.registeredToDeviceAt).getTime() : 0;
-
-                if ((d.hasFace && !faceHadBefore) || (newRegisteredAt && newRegisteredAt >= faceSentAt - 15000)) {
-                    faceDone = true;
-                    stopFacePoll();
-                    enableFaceBtn();
-                    showFaceBox('face-ok',
-                        '<div class="fw-bold">✅ چهره با موفقیت ثبت شد</div>' +
-                        '<div class="small mt-1">اطلاعات عضو در سامانه ذخیره شد.</div>');
-                    showToast('چهره با موفقیت ثبت شد', 'success');
-                    return;
-                }
-
-                // عضو از قبل چهره داشت و دستور هم به دستگاه رسید
-                if (faceHadBefore && d.commandConsumed) {
-                    faceDone = true;
-                    stopFacePoll();
-                    enableFaceBtn();
-                    showFaceBox('face-ok',
-                        '<div class="fw-bold">✅ چهره قبلاً برای این عضو ثبت شده بود</div>' +
-                        '<div class="small mt-1">دستور مجدداً به دستگاه ارسال شد.</div>');
-                    showToast('چهره قبلاً ثبت شده بود', 'success');
-                    return;
-                }
-
-                // دستور برداشته شده ولی هنوز چهره نیامده
-                if (d.commandConsumed) {
-                    showFaceBox('face-wait',
-                        '<div class="fw-bold">📡 دستور به دستگاه رسید</div>' +
-                        '<div class="small mt-1">در انتظار ثبت چهره... لطفاً مقابل دستگاه بایستید</div>');
-                } else {
-                    showFaceBox('face-wait',
-                        '<div class="fw-bold">⏳ دستور در صف ارسال است</div>' +
-                        '<div class="small mt-1">در انتظار برداشته شدن دستور توسط سرویس تردد...</div>');
-                }
-            });
-        }
-
-        $('#btnFaceDetect').click(function () {
-            if (!registeredMemberID) {
-                showToast('ابتدا ثبت‌نام را انجام دهید', 'error');
-                return;
-            }
-
+        function faceSuccess(hadBefore) {
+            faceDone = true;
             stopFacePoll();
+            $('#btnSendFace').hide();
+            setFaceBox(hadBefore ? 'existed' : 'done', 'bi-check-circle-fill',
+                hadBefore ? 'چهره قبلاً ثبت شده بود' : 'چهره با موفقیت ثبت شد',
+                'اکنون می‌توانید وارد حساب خود شوید');
+            $('#faceTimer').hide();
+            $('#btnGoLogin').show(); // ✅ فقط اینجا دکمه ورود میاد
+            showToast('چهره با موفقیت ثبت شد', 'success');
+        }
+        function showSendFaceBtn() {
+            $('#btnSendFace').prop('disabled', false)
+                .html('<i class="bi bi-camera-fill"></i> ثبت چهره با دستگاه');
+        }
+        function sendFaceCommand() {
             faceDone = false;
+            $('#btnGoLogin').hide();
+            $('#btnSendFace').prop('disabled', true)
+                .html('<span class="spinner-border spinner-border-sm"></span> در حال ارسال...');
+            setFaceBox('', 'bi-hourglass-split', 'در حال ارسال دستور به دستگاه...', 'لطفاً صبر کنید');
 
-            var $btn = $(this);
-            $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm"></span> در حال ارسال دستور...');
-            showFaceBox('face-wait', '<div class="fw-bold">⏳ در حال ارسال دستور به دستگاه...</div>');
+            apiCall('/api/Face/Send?memberID=' + registeredMemberID, 'POST', {}, function (res) {
+                if (res.data && res.data.hadFaceBefore) { faceSuccess(true); return; }
 
-            apiCall('/api/Account/SendFaceCommand', 'POST', { memberID: registeredMemberID }, function (res) {
                 if (!res.success) {
-                    enableFaceBtn();
-                    showFaceBox('face-err', '<div class="fw-bold">❌ ' + res.message + '</div>');
+                    stopFacePoll();
+                    setFaceBox('timeout', 'bi-exclamation-triangle-fill', 'ارسال دستور با خطا مواجه شد', res.message || 'دوباره تلاش کنید');
+                    $('#faceTimer').hide();
+                    showSendFaceBtn();
                     showToast(res.message, 'error');
                     return;
                 }
 
-                faceHadBefore = !!(res.data && res.data.hadFaceBefore);
-
-                showFaceBox('face-wait',
-                    '<div class="fw-bold">✅ دستور ارسال شد — لطفاً مقابل دستگاه بایستید</div>' +
-                    faceDeviceInfo(res.data) +
-                    (res.data.deviceReachable
-                        ? ''
-                        : '<div class="small mt-1" style="color:#ffa94d;">⚠️ دستگاه در شبکه پاسخ نمی‌دهد؛ آدرس IP را بررسی کنید.</div>'));
+                faceDeadline = Date.now() + FACE_TIMEOUT_MS;
+                var devInfo = '';
+                if (res.data) {
+                    devInfo = 'دستگاه: ' + (res.data.deviceIp || '-') + ' | پورت: ' + (res.data.devicePort || '-');
+                    if (res.data.deviceReachable === false)
+                        devInfo += '<br><span style="color:#ffa94d;">⚠️ دستگاه در شبکه پاسخ نمی‌دهد</span>';
+                }
+                setFaceBox('', 'bi-person-bounding-box', 'دستور ارسال شد — مقابل دستگاه بایستید', 'چهره شما به‌صورت خودکار ثبت می‌شود', devInfo);
+                startFaceTimer();
                 showToast('دستور ثبت چهره ارسال شد', 'success');
-
-                faceDeadline = Date.now() + 60000;
-                faceSentAt = Date.now();
-                facePollTimer = setInterval(checkFaceStatus, 2500);
-                setTimeout(checkFaceStatus, 1200);
+                facePollTimer = setInterval(checkFaceStatus, 2000);
+                setTimeout(checkFaceStatus, 1000);
             });
+        }
+        function checkFaceStatus() {
+            if (faceDone) { stopFacePoll(); return; }
+
+            if (Date.now() > faceDeadline) {
+                faceDone = true;
+                stopFacePoll();
+                setFaceBox('timeout', 'bi-exclamation-triangle-fill', 'چهره در ۲۰ ثانیه ثبت نشد', 'دکمه ثبت چهره را دوباره بزنید');
+                $('#faceTimer').hide();
+                showSendFaceBtn(); // ✅ دکمه ثبت چهره دوباره میاد — دکمه ورود نه
+                showToast('مهلت ثبت چهره تمام شد؛ دوباره تلاش کنید', 'warning');
+                return;
+            }
+
+            apiCall('/api/Face/Status?memberID=' + registeredMemberID, 'GET', null, function (res) {
+                if (!res.success || !res.data) return;
+                if (res.data.hasFace) { faceSuccess(false); return; }
+                $('#faceHint').text(res.data.commandPending
+                    ? 'در انتظار سرویس تردد... مقابل دستگاه بایستید'
+                    : 'لطفاً مقابل دستگاه بایستید تا چهره ثبت شود');
+            });
+        }
+        $('#btnSendFace').click(function () {
+            if (!registeredMemberID) { showToast('ابتدا ثبت‌نام را انجام دهید', 'error'); return; }
+            sendFaceCommand();
         });
 
-        // ========== ✅ تقویم لمسی: کاشی‌ها + قوس چرخان تمام‌صفحه ==========
+        // ========== تقویم لمسی ==========
         (function () {
             function faToEn(s) { return String(s).replace(/[۰-۹]/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); }); }
             var curJY = parseInt(faToEn(new Date().toLocaleDateString('fa-IR', { year: 'numeric' })));
             var monthNames = ['فروردین','اردیبهشت','خرداد','تیر','مرداد','شهریور','مهر','آبان','آذر','دی','بهمن','اسفند'];
             function pad2(x) { x = +x; return (x < 10 ? '0' : '') + x; }
             function maxDay(m) { return m <= 6 ? 31 : (m <= 11 ? 30 : 29); }
-
             var sel = { day: 15, month: 5, year: 1368 };
-
             function refreshTiles() {
                 $('#bdTileDay').text(String(sel.day));
                 $('#bdTileMonth').text(monthNames[sel.month - 1]);
                 $('#bdTileYear').text(String(sel.year));
                 $('#bdSelected').text(sel.year + '/' + pad2(sel.month) + '/' + pad2(sel.day));
             }
-
-            // ---------- قوس چرخان ----------
             var STEP = 14, PXI = 60;
             var arc = { unit: null, items: [], pos: 0, idx: -1, raf: 0, dragging: false };
             var $wrap = $('#arcWrap'), $pivot = $('#arcPivot');
-
             function itemsFor(unit) {
                 if (unit === 'year') { var a = []; for (var y = 1300; y <= curJY + 1; y++) a.push(String(y)); return a; }
                 if (unit === 'month') return monthNames.slice();
                 var arr = []; for (var d = 1; d <= maxDay(sel.month); d++) arr.push(String(d)); return arr;
             }
             function clampPos(p) { return Math.min(Math.max(p, 0), arc.items.length - 1); }
-
             function buildArc(unit) {
-                arc.unit = unit;
-                arc.items = itemsFor(unit);
+                arc.unit = unit; arc.items = itemsFor(unit);
                 var html = '';
                 for (var i = 0; i < arc.items.length; i++) html += '<span class="arc-it"><b>' + arc.items[i] + '</b></span>';
                 $pivot.html(html);
                 arc.idx = -1;
-                arc.pos = clampPos(unit === 'year' ? arc.items.indexOf(String(sel.year))
-                           : unit === 'month' ? sel.month - 1
-                           : sel.day - 1);
-                stopAnim();
-                paintArc(true);
+                arc.pos = clampPos(unit === 'year' ? arc.items.indexOf(String(sel.year)) : unit === 'month' ? sel.month - 1 : sel.day - 1);
+                stopAnim(); paintArc(true);
             }
-
             function paintArc(force) {
                 var n = arc.items.length;
                 var lo = Math.max(0, Math.floor(arc.pos) - 4);
                 var hi = Math.min(n - 1, Math.ceil(arc.pos) + 4);
                 var $its = $pivot.children();
                 for (var i = lo; i <= hi; i++) {
-                    var rel = i - arc.pos;
-                    var theta = rel * STEP;
+                    var rel = i - arc.pos, theta = rel * STEP;
                     var op = Math.max(0, 1 - Math.abs(rel) * 0.28);
                     var $it = $its.eq(i);
                     $it.css({ transform: 'rotate(' + theta + 'deg)', opacity: op });
                     $it.children('b').css('transform', 'rotate(' + (-theta) + 'deg)');
                 }
                 var ci = clampPos(Math.round(arc.pos));
-                if (force || ci !== arc.idx) {
-                    arc.idx = ci;
-                    $its.removeClass('on').eq(ci).addClass('on');
-                    commitIdx();
-                }
+                if (force || ci !== arc.idx) { arc.idx = ci; $its.removeClass('on').eq(ci).addClass('on'); commitIdx(); }
             }
-
             function commitIdx() {
                 var v = arc.items[arc.idx];
                 if (arc.unit === 'year') sel.year = +v;
@@ -895,17 +878,9 @@
                 else sel.day = +v;
                 refreshTiles();
             }
-
             function stopAnim() { if (arc.raf) { cancelAnimationFrame(arc.raf); arc.raf = 0; } }
-
-            // ---------- فیزیک لمس: درگ ۱:۱ + اینرسی + اسنپ ----------
             var startX = 0, basePos = 0, lastX = 0, lastT = 0, vel = 0, movedFar = false;
-            function onDown(x) {
-                stopAnim();
-                arc.dragging = true; movedFar = false;
-                startX = x; basePos = arc.pos; lastX = x; lastT = performance.now(); vel = 0;
-                $wrap.css('cursor', 'grabbing');
-            }
+            function onDown(x) { stopAnim(); arc.dragging = true; movedFar = false; startX = x; basePos = arc.pos; lastX = x; lastT = performance.now(); vel = 0; $wrap.css('cursor', 'grabbing'); }
             function onMove(x) {
                 if (!arc.dragging) return;
                 if (Math.abs(x - startX) > 8) movedFar = true;
@@ -921,17 +896,14 @@
             }
             function onUp() {
                 if (!arc.dragging) return;
-                arc.dragging = false;
-                $wrap.css('cursor', 'grab');
+                arc.dragging = false; $wrap.css('cursor', 'grab');
                 var v = vel * 16;
                 function frame() {
                     if (Math.abs(v) > 0.004) {
-                        arc.pos += v;
-                        v *= 0.94;
+                        arc.pos += v; v *= 0.94;
                         if (arc.pos < 0) { arc.pos = 0; v = 0; }
                         if (arc.pos > arc.items.length - 1) { arc.pos = arc.items.length - 1; v = 0; }
-                        paintArc();
-                        arc.raf = requestAnimationFrame(frame);
+                        paintArc(); arc.raf = requestAnimationFrame(frame);
                     } else snap();
                 }
                 arc.raf = requestAnimationFrame(frame);
@@ -948,61 +920,34 @@
                 }
                 arc.raf = requestAnimationFrame(frame);
             }
-
             $wrap.on('touchstart', function (e) { onDown(e.originalEvent.touches[0].clientX); });
             $wrap.on('touchmove', function (e) { e.preventDefault(); onMove(e.originalEvent.touches[0].clientX); });
             $wrap.on('touchend touchcancel', onUp);
             $wrap.on('mousedown', function (e) { e.preventDefault(); onDown(e.clientX); });
             $(document).on('mousemove.bdarc', function (e) { onMove(e.clientX); });
             $(document).on('mouseup.bdarc', onUp);
-
-            // کلیک روی عدد → چرخش نرم به اون
-            $(document).on('click', '.arc-it', function () {
-                if (movedFar) return;
-                snap($pivot.children().index(this));
-            });
-
-            // ---------- جابه‌جایی بین کاشی‌ها و قوس تمام‌صفحه ----------
+            $(document).on('click', '.arc-it', function () { if (movedFar) return; snap($pivot.children().index(this)); });
             function openUnit(unit) {
                 $('#bdS2Title').text(unit === 'year' ? 'سال' : (unit === 'month' ? 'ماه' : 'روز'));
-                buildArc(unit);
-                $('#bdPanel').hide();
-                $('#bdStage2').addClass('open');
+                buildArc(unit); $('#bdPanel').hide(); $('#bdStage2').addClass('open');
             }
             function backToTiles() {
                 commitIdx();
                 var $fs = $('#bdStage2');
-                $fs.addClass('closing');                 
-                setTimeout(function () {
-                    $fs.removeClass('open closing');
-                    $('#bdPanel').show();
-                }, 180);
+                $fs.addClass('closing');
+                setTimeout(function () { $fs.removeClass('open closing'); $('#bdPanel').show(); }, 180);
             }
             $(document).on('click', '.bd-tile', function () { openUnit($(this).data('unit')); });
             $(document).on('click', '#bdBack, #bdDone', backToTiles);
-
-            // ---------- باز/بسته پنل ----------
-            $(document).on('click', '#btnBirthCal', function (e) {
-                e.stopPropagation();
-                refreshTiles();
-                $('#bdPanel').toggle();
-            });
+            $(document).on('click', '#btnBirthCal', function (e) { e.stopPropagation(); refreshTiles(); $('#bdPanel').toggle(); });
             $(document).on('click', '#bdCancel', function () { $('#bdPanel').hide(); });
-            $(document).on('click', '#bdOk', function () {
-                $('#txtBirthDate').val(sel.year + '/' + pad2(sel.month) + '/' + pad2(sel.day));
-                $('#bdPanel').hide();
-            });
+            $(document).on('click', '#bdOk', function () { $('#txtBirthDate').val(sel.year + '/' + pad2(sel.month) + '/' + pad2(sel.day)); $('#bdPanel').hide(); });
             $(document).on('click', function (e) {
-                // اگه تمام‌صفحه بازه، بسته نشه
                 if ($('#bdStage2').hasClass('open')) return;
-                // کلیک روی دکمه‌های خودِ تقویم (تأیید/بازگشت/کاشی‌ها) پنل رو نبندد
                 if (!$(e.target).closest('#bdPanel, #btnBirthCal, #bdStage2').length) $('#bdPanel').hide();
-            });       
+            });
             $('#bdStage2').appendTo(document.body);
             refreshTiles();
         })();
     </script>
 }
-
-
-

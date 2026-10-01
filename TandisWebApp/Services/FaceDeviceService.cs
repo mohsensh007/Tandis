@@ -61,7 +61,35 @@ namespace TandisWebApp.Services
                         Success = false,
                         Message = "دستگاه تشخیص چهره در Gen_GateDevice تعریف نشده است (TrafficType=9 و DeviceID=60070)"
                     };
+                // === ۱.۵. اگه عضو قبلاً چهره داره، اجازه ارسال نده ===
+                var existingFace = await _db.Gen_Members
+                    .Where(m => m.MemberID == memberID)
+                    .Select(m => new {
+                        m.FaceTmpl1,
+                        m.FaceTmpl2,
+                        m.FaceTmpl3,
+                        pName = m.Gen_Person != null ? m.Gen_Person.FirstName + " " + m.Gen_Person.LastName : ""
+                    })
+                    .FirstOrDefaultAsync();
 
+                bool alreadyHasFace = existingFace != null &&
+                    (existingFace.FaceTmpl1 != null || existingFace.FaceTmpl2 != null || existingFace.FaceTmpl3 != null);
+
+                if (alreadyHasFace)
+                {
+                    _logger.LogWarning("رد شد: عضو {MemberID} ({Name}) قبلاً چهره دارد",
+                        memberID, existingFace?.pName);
+                    return new ApiResponse<FaceCommandResponse>
+                    {
+                        Success = false,
+                        Message = "این عضو قبلاً چهره ثبت‌شده دارد. نیازی به ثبت مجدد نیست.",
+                        Data = new FaceCommandResponse
+                        {
+                            MemberID = memberID,
+                            HadFaceBefore = true
+                        }
+                    };
+                }
                 // === ۳. بررسی اجرای سرویس‌ها: اگر Traffic.exe یا FullSport.exe اجرا نباشند، ارسال انجام نمی‌شود ===
                 var (trafficOk, fullSportOk, portOpen, host) = CheckServices(device.ServerIP);
 
@@ -161,10 +189,11 @@ namespace TandisWebApp.Services
             bool fullSportProcess = IsProcessRunning("FullSport");
             bool portOpen = IsPortOpen(host, 8085).GetAwaiter().GetResult();
 
-            // سرویس تردد زنده است: یا پروسه Traffic بالاست یا پورت 8085 روی سرور باز است
+            // ✅ لوکال: پروسس‌ها دیده می‌شن | راه دور: پورت باز = کل استک زنده‌ست
             bool trafficOk = trafficProcess || portOpen;
+            bool fullSportOk = fullSportProcess || portOpen;   // ← fallback اضافه شد
 
-            return (trafficOk, fullSportProcess, portOpen, host);
+            return (trafficOk, fullSportOk, portOpen, host);
         }
 
         private static bool IsProcessRunning(string name)
@@ -224,6 +253,17 @@ namespace TandisWebApp.Services
                     && settings.ActionForTrafficApp == "addface"
                     && settings.MemberIDForTrafficApp == memberID;
                 bool anyPending = settings != null && settings.ActionForTrafficApp == "addface";
+
+                // ✅ اگر چهره ثبت شد و هنوز فلگ پاک نشده، خودکار پاک کن
+                if (hasFace && pending && settings != null)
+                {
+                    settings.ActionForTrafficApp = "";
+                    settings.MemberIDForTrafficApp = null;
+                    settings.ActionValidTime = null;
+                    await _db.SaveChangesAsync();
+                    pending = false;   // برای خروجی همین درخواست
+                    _logger.LogInformation("✅ فلگ دستور چهره پاک شد: MemberID={MemberID}", memberID);
+                }
 
                 DateTime? registeredAt = null;
                 try
@@ -297,6 +337,31 @@ namespace TandisWebApp.Services
             catch
             {
                 return false;
+            }
+        }
+        /// <summary>
+        /// پاک‌کردن دستور چهره پس از ثبت موفق — تا دستگاه از حالت ثبت خارج بشه
+        /// </summary>
+        public async Task<SimpleResponse> ClearFaceCommandAsync(int memberID)
+        {
+            try
+            {
+                var settings = await _db.Gen_Settings.FirstOrDefaultAsync();
+                if (settings == null)
+                    return new SimpleResponse { Success = false, Message = "رکورد Gen_Setting یافت نشد" };
+
+                settings.ActionForTrafficApp = "";          // ✅ دستور تموم شد
+                settings.MemberIDForTrafficApp = null;
+                settings.ActionValidTime = null;
+                await _db.SaveChangesAsync();
+
+                _logger.LogInformation("دستور چهره پاک شد: MemberID={MemberID}", memberID);
+                return new SimpleResponse { Success = true, Message = "دستور چهره با موفقیت پاک شد" };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "خطا در پاک‌کردن دستور چهره عضو {MemberID}", memberID);
+                return new SimpleResponse { Success = false, Message = "خطا در پاک‌کردن دستور" };
             }
         }
     }
