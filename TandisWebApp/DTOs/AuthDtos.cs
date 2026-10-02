@@ -51,11 +51,25 @@ namespace TandisWebApp.DTOs
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
         public T? Data { get; set; }
+
+        // ===== پرداخت با POS (وب‌اپ) =====
+        /// <summary>true یعنی مبلغ روی دستگاه POS ارسال شده و منتظر کشیدن کارتیم</summary>
+        public bool PaymentPending { get; set; }
+        public long? PosTxnId { get; set; }
+        public long? PosAmount { get; set; }
+        public string PosAmountDisplay { get; set; } = string.Empty;
     }
 
     public class SimpleResponse
     {
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
+
+        // ===== پرداخت با POS (وب‌اپ) =====
+        /// <summary>true یعنی مبلغ روی دستگاه POS ارسال شده و منتظر کشیدن کارتیم</summary>
+        public bool PaymentPending { get; set; }
+        public long? PosTxnId { get; set; }
+        public long? PosAmount { get; set; }
+        public string PosAmountDisplay { get; set; } = string.Empty;
     }
 }

@@ -13,15 +13,18 @@ namespace TandisWebApp.Services
     {
         private readonly FullSportDbContext _db;
         private readonly CommonHelperService _helper;
+        private readonly PosPaymentService _pos;
         private readonly ILogger<RegisterService> _logger;
 
         // UserID پیش‌فرض برای ثبت‌نام‌های وب
         private const short WEB_USER_ID = 1;
 
-        public RegisterService(FullSportDbContext db, CommonHelperService helper, ILogger<RegisterService> logger)
+        public RegisterService(FullSportDbContext db, CommonHelperService helper, PosPaymentService pos,
+                               ILogger<RegisterService> logger)
         {
             _db = db;
             _helper = helper;
+            _pos = pos;
             _logger = logger;
         }
 
@@ -272,6 +275,13 @@ namespace TandisWebApp.Services
         /// منطق معادل RenewRegister در UscRenewRegister    
         public async Task<ApiResponse<RegisterResponse>> RenewRegisterAsync(int memberID, RegisterRequest req, short shiftID)
         {
+            // credit = پرداخت از اعتبار | pos بدون PosTxnId = Prepare | pos با PosTxnId = Confirm
+            string mode = (req.Method ?? "credit").ToLowerInvariant();
+            bool posPrepare = mode == "pos" && req.PosTxnId == null;
+            bool posConfirm = mode == "pos" && req.PosTxnId != null;
+            long posTxnId = req.PosTxnId ?? 0;
+            long balanceBefore = 0;
+
             using var tx = await _db.Database.BeginTransactionAsync();
 
             try
@@ -292,15 +302,49 @@ namespace TandisWebApp.Services
                 if (regDiscount > 0)
                     finalPayment = finalPayment - (finalPayment * regDiscount / 100);
 
-                // ✅ بررسی اعتبار ورزشی قبل از تمدید
-                var sportCredit = await _helper.GetSportCreditAmountAsync(memberID);
-                if (sportCredit < finalPayment)
+                // ✅ روش پرداخت
+                if (mode == "credit")
                 {
-                    return new ApiResponse<RegisterResponse>
+                    // بررسی اعتبار ورزشی قبل از تمدید
+                    var sportCredit = await _helper.GetSportCreditAmountAsync(memberID);
+                    if (sportCredit < finalPayment)
                     {
-                        Success = false,
-                        Message = $"اعتبار ورزشی کافی نیست.\nاعتبار فعلی: {sportCredit} ریال\nمبلغ مورد نیاز: {finalPayment} ریال\n\nلطفاً ابتدا حساب خود را شارژ کنید."
-                    };
+                        return new ApiResponse<RegisterResponse>
+                        {
+                            Success = false,
+                            Message = $"اعتبار ورزشی کافی نیست.\nاعتبار فعلی: {sportCredit} ریال\nمبلغ مورد نیاز: {finalPayment} ریال\n\nلطفاً ابتدا حساب خود را شارژ کنید."
+                        };
+                    }
+                }
+                else
+                {
+                    balanceBefore = await _helper.GetSportCreditAmountAsync(memberID);
+
+                    if (posPrepare)
+                    {
+                        var intent = await _pos.CreateIntentAsync(memberID, finalPayment, PosPaymentService.REF_REGISTER);
+                        if (!intent.Success)
+                            return new ApiResponse<RegisterResponse> { Success = false, Message = intent.Message };
+
+                        await tx.CommitAsync();
+                        return new ApiResponse<RegisterResponse>
+                        {
+                            Success = true,
+                            PaymentPending = true,
+                            PosTxnId = intent.Data,
+                            PosAmount = finalPayment,
+                            PosAmountDisplay = _helper.SetSeprator(finalPayment) + " ریال",
+                            Message = "مبلغ روی دستگاه POS ارسال شد"
+                        };
+                    }
+
+                    bool claimed = await _pos.ClaimAsync(posTxnId, memberID, finalPayment, PosPaymentService.REF_REGISTER);
+                    if (!claimed)
+                        return new ApiResponse<RegisterResponse>
+                        {
+                            Success = false,
+                            Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است"
+                        };
                 }
 
                 // ✅ SecFix #17: تاریخ شروع همیشه از سرور
@@ -383,6 +427,20 @@ VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.Contrac
                     .OrderByDescending(x => x.SportMemberID)
                     .Select(x => x.SportMemberID)
                     .FirstOrDefaultAsync();
+
+                if (mode != "credit")
+                {
+                    // پرداخت POS: معادل بدهیِ ثبت‌نام (توسط Trigger جدول ساخته می‌شود) به‌صورت
+                    // سند بستانکار «پرداخت شهریه با POS» برمی‌گردد → مانده عضو بدون تغییر.
+                    // اگر بدهی‌ای ثبت نشده باشد (pairIfZero) زوج بدهکار/بستانکار ثبت می‌شود
+                    // تا رسید پرداخت در گزارش‌ها دیده شود.
+                    await _pos.NeutralizeAsync(memberID, CommonHelperService.CR_PAY_SHAHRIE,
+                        balanceBefore, finalPayment,
+                        "پرداخت با POS بابت " + (isRevival ? "تمدید" : "ثبت‌نام") + " دوره (وب‌اپ)",
+                        pairIfZero: true);
+                    if (posConfirm)
+                        await _pos.SettleRefAsync(posTxnId, insertedId);
+                }
 
                 await tx.CommitAsync();
 

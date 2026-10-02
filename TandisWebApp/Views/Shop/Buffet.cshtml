@@ -134,10 +134,31 @@
             $('#basketTotal').show();
         }
 
-        // ✅ دکمه ثبت خرید → باز کردن مودال
+        // ✅ دکمه ثبت خرید → مودال پرداخت دو حالته (اعتبار / POS)
         $('#btnBuyBasket').click(function () {
             if (basket.length === 0) return;
-            new bootstrap.Modal(document.getElementById('confirmBuyModal')).show();
+            var total = 0;
+            $.each(basket, function (i, b) { total += b.unitPrice * b.count; });
+            var items = basket.map(function(b) {
+                return { stuffID: b.stuffID, unitPrice: b.unitPrice, count: b.count };
+            });
+            openPaymentModal({
+                amount: total,
+                creditType: 'buffet',
+                buyUrl: '/api/Shop/Buy',
+                payload: { items: items, isBuffet: true },
+                title: 'پرداخت بوفه',
+                onDone: function (res) {
+                    showToast(res.message, 'success');
+                    basket = [];
+                    renderBasket();
+                    if (typeof refreshDashboardCredits === 'function') {
+                        refreshDashboardCredits();
+                    } else {
+                        setTimeout(function() { window.location.href = '/Home'; }, 2000);
+                    }
+                }
+            });
         });
 
         // ✅ دکمه تأیید در مودال

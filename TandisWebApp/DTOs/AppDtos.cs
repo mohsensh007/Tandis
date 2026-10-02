@@ -36,6 +36,10 @@ namespace TandisWebApp.DTOs
 
         [Required(ErrorMessage = "تاریخ شروع را وارد کنید")]
         public string StartDate { get; set; } = string.Empty;
+
+        // credit = پرداخت از اعتبار | pos = پرداخت با دستگاه کارخوان
+        public string Method { get; set; } = "credit";
+        public long? PosTxnId { get; set; }
     }
 
     public class RegisterResponse
@@ -81,6 +85,10 @@ namespace TandisWebApp.DTOs
     {
         [Required]
         public short TarefeID { get; set; }
+
+        // credit = پرداخت از اعتبار | pos = پرداخت با دستگاه کارخوان
+        public string Method { get; set; } = "credit";
+        public long? PosTxnId { get; set; }
     }
 
     public class ServiceDto
@@ -96,6 +104,10 @@ namespace TandisWebApp.DTOs
     {
         [Required]
         public short ServiceID { get; set; }
+
+        // credit = پرداخت از اعتبار | pos = پرداخت با دستگاه کارخوان
+        public string Method { get; set; } = "credit";
+        public long? PosTxnId { get; set; }
     }
 
     public class StuffDto
@@ -130,6 +142,10 @@ namespace TandisWebApp.DTOs
         [Required]
         public List<BasketItem> Items { get; set; } = new();
         public bool IsBuffet { get; set; } = false;
+
+        // credit = پرداخت از اعتبار | pos = پرداخت با دستگاه کارخوان
+        public string Method { get; set; } = "credit";
+        public long? PosTxnId { get; set; }
     }
 
    
@@ -231,6 +247,27 @@ namespace TandisWebApp.DTOs
         [Required]
         public int SportSanseID { get; set; }
         public string? SessionDateShamsi { get; set; }  
+
+        // credit = پرداخت از اعتبار | pos = پرداخت با دستگاه کارخوان
+        public string Method { get; set; } = "credit";
+        public long? PosTxnId { get; set; }
+    }
+
+    /// <summary>وضعیت تراکنش POS وب‌اپ (برای poll کردن از کلاینت)</summary>
+    public class PosPaymentStatusDto
+    {
+        // pending | success | failed | expired | notfound
+        public string Status { get; set; } = "pending";
+        public string Message { get; set; } = string.Empty;
+        public string Code { get; set; } = string.Empty;
+        public string TraceNumber { get; set; } = string.Empty;
+        public long Amount { get; set; }
+
+        /// <summary>true = Agent این تراکنش را هم‌روی دستگاه فرستاده → کارت بکشید</summary>
+        public bool Processing { get; set; }
+
+        /// <summary>تعداد تراکنش‌های در انتظار جلوتر از این تراکنش در صف</summary>
+        public int QueuePosition { get; set; }
     }
     
     // ============================================================

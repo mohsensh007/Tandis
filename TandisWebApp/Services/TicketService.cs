@@ -13,16 +13,19 @@ namespace TandisWebApp.Services
     {
         private readonly FullSportDbContext _db;
         private readonly CommonHelperService _helper;
+        private readonly PosPaymentService _pos;
         private readonly ILogger<TicketService> _logger;
         private const short WEB_USER_ID = 1;
 
         // انواع بدهی
         private const byte DEBIT_RIALI = 11;
 
-        public TicketService(FullSportDbContext db, CommonHelperService helper, ILogger<TicketService> logger)
+        public TicketService(FullSportDbContext db, CommonHelperService helper, PosPaymentService pos,
+                             ILogger<TicketService> logger)
         {
             _db = db;
             _helper = helper;
+            _pos = pos;
             _logger = logger;
         }
 
@@ -55,6 +58,13 @@ namespace TandisWebApp.Services
         /// </summary>
         public async Task<SimpleResponse> BuyTicketAsync(int memberID, TicketBuyRequest req, short shiftID)
         {
+            // credit = پرداخت از اعتبار | pos بدون PosTxnId = Prepare | pos با PosTxnId = Confirm
+            string mode = (req.Method ?? "credit").ToLowerInvariant();
+            bool posPrepare = mode == "pos" && req.PosTxnId == null;
+            bool posConfirm = mode == "pos" && req.PosTxnId != null;
+            long posTxnId = req.PosTxnId ?? 0;
+            long balanceBefore = 0;
+
             using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
@@ -77,18 +87,52 @@ namespace TandisWebApp.Services
                 if (member == null)
                     return new SimpleResponse { Success = false, Message = "عضو یافت نشد" };
 
-                // بررسی اعتبار کافی (اگر مبلغ > 0)
-                if (amount > 0)
+                // ✅ روش پرداخت
+                if (mode == "credit")
                 {
-                    long sportCredit = await _helper.GetSportCreditAmountAsync(memberID);
-                    if (sportCredit < amount)
+                    // بررسی اعتبار کافی (اگر مبلغ > 0)
+                    if (amount > 0)
                     {
+                        long sportCredit = await _helper.GetSportCreditAmountAsync(memberID);
+                        if (sportCredit < amount)
+                        {
+                            return new SimpleResponse
+                            {
+                                Success = false,
+                                Message = $"اعتبار کافی نیست. اعتبار فعلی: {_helper.SetSeprator(sportCredit)} ریال"
+                            };
+                        }
+                    }
+                }
+                else
+                {
+                    balanceBefore = await _helper.GetSportCreditAmountAsync(memberID);
+
+                    if (posPrepare)
+                    {
+                        var intent = await _pos.CreateIntentAsync(memberID, amount, PosPaymentService.REF_TICKET);
+                        if (!intent.Success)
+                            return new SimpleResponse { Success = false, Message = intent.Message };
+
+                        await tx.CommitAsync();
+                        return new SimpleResponse
+                        {
+                            Success = true,
+                            PaymentPending = true,
+                            PosTxnId = intent.Data,
+                            PosAmount = amount,
+                            PosAmountDisplay = _helper.SetSeprator(amount) + " ریال",
+                            Message = "مبلغ روی دستگاه POS ارسال شد"
+                        };
+                    }
+
+                    bool claimed = await _pos.ClaimAsync(posTxnId, memberID, amount, PosPaymentService.REF_TICKET);
+                    if (!claimed)
                         return new SimpleResponse
                         {
                             Success = false,
-                            Message = $"اعتبار کافی نیست. اعتبار فعلی: {_helper.SetSeprator(sportCredit)} ریال"
+                            Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است"
                         };
-                    }
                 }
 
                 // ساخت بلیت
@@ -149,6 +193,16 @@ namespace TandisWebApp.Services
                 _db.ACC_Traffics.Add(traffic);
 
                 await _db.SaveChangesAsync();
+
+                if (mode != "credit")
+                {
+                    // پرداخت POS: معادل بدهیِ ثبت‌شده به‌صورت سند بستانکار برمی‌گردد → مانده بدون تغییر
+                    await _pos.NeutralizeAsync(memberID, DEBIT_RIALI, balanceBefore, amount,
+                        "پرداخت با POS بابت خرید بلیت (وب‌اپ)");
+                    if (posConfirm)
+                        await _pos.SettleRefAsync(posTxnId, ticket.TicketID);
+                }
+
                 await tx.CommitAsync();
 
                 return new SimpleResponse
@@ -230,6 +284,13 @@ namespace TandisWebApp.Services
         /// <summary>خرید تک جلسه — امروز یا تا ۷ روز آینده</summary>
         public async Task<SimpleResponse> BuySingleSessionAsync(int memberID, SingleSessionBuyRequest req, short shiftID)
         {
+            // credit = پرداخت از اعتبار | pos بدون PosTxnId = Prepare | pos با PosTxnId = Confirm
+            string mode = (req.Method ?? "credit").ToLowerInvariant();
+            bool posPrepare = mode == "pos" && req.PosTxnId == null;
+            bool posConfirm = mode == "pos" && req.PosTxnId != null;
+            long posTxnId = req.PosTxnId ?? 0;
+            long balanceBefore = 0;
+
             using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
@@ -279,15 +340,49 @@ namespace TandisWebApp.Services
 
                 long amount = sanse.SessionAmount.Value;
 
-                // ✅ چک اعتبار ورزشی
-                long sportCredit = await _helper.GetSportCreditAmountAsync(memberID);
-                if (sportCredit < amount)
+                // ✅ روش پرداخت
+                if (mode == "credit")
                 {
-                    return new SimpleResponse
+                    // چک اعتبار ورزشی
+                    long sportCredit = await _helper.GetSportCreditAmountAsync(memberID);
+                    if (sportCredit < amount)
                     {
-                        Success = false,
-                        Message = $"اعتبار کافی نیست. اعتبار فعلی: {_helper.SetSeprator(sportCredit)} ریال"
-                    };
+                        return new SimpleResponse
+                        {
+                            Success = false,
+                            Message = $"اعتبار کافی نیست. اعتبار فعلی: {_helper.SetSeprator(sportCredit)} ریال"
+                        };
+                    }
+                }
+                else
+                {
+                    balanceBefore = await _helper.GetSportCreditAmountAsync(memberID);
+
+                    if (posPrepare)
+                    {
+                        var intent = await _pos.CreateIntentAsync(memberID, amount, PosPaymentService.REF_ONESESSION);
+                        if (!intent.Success)
+                            return new SimpleResponse { Success = false, Message = intent.Message };
+
+                        await tx.CommitAsync();
+                        return new SimpleResponse
+                        {
+                            Success = true,
+                            PaymentPending = true,
+                            PosTxnId = intent.Data,
+                            PosAmount = amount,
+                            PosAmountDisplay = _helper.SetSeprator(amount) + " ریال",
+                            Message = "مبلغ روی دستگاه POS ارسال شد"
+                        };
+                    }
+
+                    bool claimed = await _pos.ClaimAsync(posTxnId, memberID, amount, PosPaymentService.REF_ONESESSION);
+                    if (!claimed)
+                        return new SimpleResponse
+                        {
+                            Success = false,
+                            Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است"
+                        };
                 }
 
                 // ✅ ثبت رکورد تک‌جلسه (SessionCount=1, StartDate=EndDate=تاریخ مقصد)
@@ -316,6 +411,24 @@ namespace TandisWebApp.Services
                 });
 
                 await _db.SaveChangesAsync();
+
+                if (mode != "credit")
+                {
+                    // پرداخت POS: معادل کسرِ ثبت‌شده به‌صورت سند بستانکار برمی‌گردد → مانده بدون تغییر
+                    await _pos.NeutralizeAsync(memberID, DEBIT_RIALI, balanceBefore, amount,
+                        "پرداخت با POS بابت خرید تک جلسه (وب‌اپ)");
+
+                    if (posConfirm)
+                    {
+                        var insertedId = await _db.Acc_MemberSports.AsNoTracking()
+                            .Where(x => x.MemberID == memberID && x.StartDate == targetDate && x.CommentText == "تک جلسه از وب‌اپ")
+                            .OrderByDescending(x => x.SportMemberID)
+                            .Select(x => x.SportMemberID)
+                            .FirstOrDefaultAsync();
+                        await _pos.SettleRefAsync(posTxnId, insertedId);
+                    }
+                }
+
                 await tx.CommitAsync();
 
                 var dateMsg = targetDate == _helper.GetToday() ? "امروز" : targetDate;

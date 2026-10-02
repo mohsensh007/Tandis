@@ -1698,29 +1698,21 @@
 
         window.buySingleSession = function (sanseID, sessionDate, amountDisplay, btn) {
             var dateLabel = (!sessionDate || sessionDate === '') ? 'امروز' : sessionDate;
-            showSsConfirm(
-                'آیا از ثبت تک جلسه برای <strong class="text-white">' + esc(dateLabel) + '</strong> مطمئنید؟<br>' +
-                'مبلغ <span class="ss-confirm-amount">' + esc(amountDisplay) + '</span> از اعتبار ورزشی شما کسر می‌شود.',
-                function () {
-                    var $btn = $(btn);
-                    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status"></span> در حال ثبت...');
-                    apiCall('/api/Ticket/BuySingleSession', 'POST',
-                        { sportSanseID: sanseID, sessionDateShamsi: sessionDate || null },
-                        function (res) {
-                            if (res.success) {
-                                if (typeof showToast === 'function') showToast(res.message, 'success');
-                                else alert(res.message);
-                                if (singleSessionModal) singleSessionModal.hide();
-                                loadDashboardCredits();
-                                setTimeout(function () { location.reload(); }, 1500);
-                            } else {
-                                if (typeof showToast === 'function') showToast(res.message, 'error');
-                                else alert(res.message);
-                                $btn.prop('disabled', false).html('<i class="bi bi-lightning-charge-fill"></i> ثبت تک جلسه');
-                            }
-                        });
+            var amount = parseInt(String(amountDisplay || '0').replace(/[^0-9]/g, ''), 10) || 0;
+            openPaymentModal({
+                amount: amount,
+                creditType: 'sport',
+                buyUrl: '/api/Ticket/BuySingleSession',
+                payload: { sportSanseID: sanseID, sessionDateShamsi: sessionDate || null },
+                title: 'پرداخت تک جلسه (' + dateLabel + ')',
+                onDone: function (res) {
+                    if (typeof showToast === 'function') showToast(res.message, 'success');
+                    else alert(res.message);
+                    if (singleSessionModal) singleSessionModal.hide();
+                    loadDashboardCredits();
+                    setTimeout(function () { location.reload(); }, 1500);
                 }
-            );
+            });
         };
 
         $(document).on('click', '#navSingleSession', function (e) { e.preventDefault(); openSingleSessionModal(); });

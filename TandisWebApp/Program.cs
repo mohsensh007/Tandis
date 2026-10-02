@@ -120,6 +120,7 @@ builder.Services.AddScoped<ServicePurchaseService>();
 builder.Services.AddScoped<AccountingService>();
 builder.Services.AddScoped<ProfileService>();
 builder.Services.AddScoped<CommonHelperService>();
+builder.Services.AddScoped<PosPaymentService>();
 builder.Services.AddScoped<TandisWebApp.Services.QrService>();
 builder.Services.AddScoped<CoachProgramService>();
 

@@ -13,15 +13,18 @@ namespace TandisWebApp.Services
     {
         private readonly FullSportDbContext _db;
         private readonly CommonHelperService _helper;
+        private readonly PosPaymentService _pos;
         private readonly ILogger<ServicePurchaseService> _logger;
         private const short WEB_USER_ID = 1;
 
         private const byte CREDIT_SERVICE = 3; // بستانکار سرویس
 
-        public ServicePurchaseService(FullSportDbContext db, CommonHelperService helper, ILogger<ServicePurchaseService> logger)
+        public ServicePurchaseService(FullSportDbContext db, CommonHelperService helper, PosPaymentService pos,
+                                      ILogger<ServicePurchaseService> logger)
         {
             _db = db;
             _helper = helper;
+            _pos = pos;
             _logger = logger;
         }
 
@@ -53,6 +56,13 @@ namespace TandisWebApp.Services
         /// </summary>
         public async Task<SimpleResponse> BuyServiceAsync(int memberID, ServiceBuyRequest req, short shiftID)
         {
+            // credit = پرداخت از اعتبار | pos بدون PosTxnId = Prepare | pos با PosTxnId = Confirm
+            string mode = (req.Method ?? "credit").ToLowerInvariant();
+            bool posPrepare = mode == "pos" && req.PosTxnId == null;
+            bool posConfirm = mode == "pos" && req.PosTxnId != null;
+            long posTxnId = req.PosTxnId ?? 0;
+            long balanceBefore = 0;
+
             using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
@@ -62,15 +72,48 @@ namespace TandisWebApp.Services
 
                 long amount = service.Amount ?? 0;
 
-                // اعتبار سرویس کافی است؟
-                long serviceCredit = await _helper.GetServiceCreditAmountAsync(memberID);
-                if (serviceCredit < amount)
+                if (mode == "credit")
                 {
-                    return new SimpleResponse
+                    // اعتبار سرویس کافی است؟
+                    long serviceCredit = await _helper.GetServiceCreditAmountAsync(memberID);
+                    if (serviceCredit < amount)
                     {
-                        Success = false,
-                        Message = $"اعتبار سرویس کافی نیست. اعتبار فعلی: {_helper.SetSeprator(serviceCredit)} ریال"
-                    };
+                        return new SimpleResponse
+                        {
+                            Success = false,
+                            Message = $"اعتبار سرویس کافی نیست. اعتبار فعلی: {_helper.SetSeprator(serviceCredit)} ریال"
+                        };
+                    }
+                }
+                else
+                {
+                    balanceBefore = await _helper.GetServiceCreditAmountAsync(memberID);
+
+                    if (posPrepare)
+                    {
+                        var intent = await _pos.CreateIntentAsync(memberID, amount, PosPaymentService.REF_SERVICE);
+                        if (!intent.Success)
+                            return new SimpleResponse { Success = false, Message = intent.Message };
+
+                        await tx.CommitAsync();
+                        return new SimpleResponse
+                        {
+                            Success = true,
+                            PaymentPending = true,
+                            PosTxnId = intent.Data,
+                            PosAmount = amount,
+                            PosAmountDisplay = _helper.SetSeprator(amount) + " ریال",
+                            Message = "مبلغ روی دستگاه POS ارسال شد"
+                        };
+                    }
+
+                    bool claimed = await _pos.ClaimAsync(posTxnId, memberID, amount, PosPaymentService.REF_SERVICE);
+                    if (!claimed)
+                        return new SimpleResponse
+                        {
+                            Success = false,
+                            Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است"
+                        };
                 }
 
                 // یک ترافیک ثبت می‌کنیم (در کیوسک باید روی یک Traffic سوار می‌شد)
@@ -124,6 +167,16 @@ namespace TandisWebApp.Services
                 });
 
                 await _db.SaveChangesAsync();
+
+                if (mode != "credit")
+                {
+                    // پرداخت POS: معادل کسرِ ثبت‌شده به‌صورت سند بستانکار برمی‌گردد → مانده بدون تغییر
+                    await _pos.NeutralizeAsync(memberID, CREDIT_SERVICE, balanceBefore, amount,
+                        "پرداخت با POS بابت خرید سرویس " + service.ServiceDesc + " (وب‌اپ)");
+                    if (posConfirm)
+                        await _pos.SettleRefAsync(posTxnId, ms.MemberServiceID);
+                }
+
                 await tx.CommitAsync();
 
                 return new SimpleResponse

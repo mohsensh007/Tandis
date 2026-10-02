@@ -5,7 +5,7 @@
 <div class="card">
     <div class="card-header">خرید بلیت جلسه آزاد</div>
     <div class="card-body">
-        <div class="alert alert-info">مبلغ بلیت از اعتبار ورزشی شما کسر خواهد شد.</div>
+        <div class="alert alert-info">مبلغ بلیت از اعتبار ورزشی شما کسر می‌شود یا می‌توانید با دستگاه POS پرداخت کنید.</div>
         <div id="tarefeList"><div class="text-center text-muted p-3">در حال بارگذاری...</div></div>
     </div>
 </div>
@@ -25,7 +25,7 @@
                         '<h6>' + (t.sans || '-') + '</h6>' +
                         '<p class="mb-1">' + t.tarefe + '</p>' +
                         '<strong class="text-primary">' + t.amountDisplay + '</strong>' +
-                        '<button class="btn btn-success btn-sm mt-2 w-100" onclick="buyTicket(' + t.tarefeID + ')">خرید</button>' +
+                        '<button class="btn btn-success btn-sm mt-2 w-100" onclick="buyTicket(' + t.tarefeID + ',' + t.amount + ')">خرید</button>' +
                         '</div></div></div>';
                 });
                 html += '</div>';
@@ -34,11 +34,17 @@
         });
     });
 
-    function buyTicket(id) {
-        if (!confirm('آیا مطمئن هستید؟ مبلغ از اعتبار شما کسر خواهد شد.')) return;
-        apiCall('/api/Ticket/Buy', 'POST', { tarefeID: id }, function (res) {
-            if (res.success) { showToast(res.message, 'success'); refreshDashboardCredits(); }
-            else { showToast(res.message, 'error'); }
+    function buyTicket(id, amount) {
+        openPaymentModal({
+            amount: amount || 0,
+            creditType: 'sport',
+            buyUrl: '/api/Ticket/Buy',
+            payload: { tarefeID: id },
+            title: 'پرداخت بلیت',
+            onDone: function (res) {
+                showToast(res.message, 'success');
+                if (typeof refreshDashboardCredits === 'function') refreshDashboardCredits();
+            }
         });
     }
 </script>

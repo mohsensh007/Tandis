@@ -431,8 +431,11 @@
             });
         }
 
+        var renewAmountDisplay = '';
+
         function openRenew(id, name, display) {
             selectedSanse = id;
+            renewAmountDisplay = display;
             $('#renewInfo').html(
                 '<div class="renew-info-box">' +
                     '<div class="small text-muted mb-1">ورزش</div>' +
@@ -465,18 +468,24 @@
             var date = $.trim($('#renewStartDate').val());
             if (!date) { showToast('تاریخ شروع را انتخاب کنید', 'error'); return; }
 
-            apiCall('/api/Register/Renew', 'POST', { sportSanseID: selectedSanse, startDate: date }, function (res) {
-                if (res.success) {
+            var amount = parseInt(String(renewAmountDisplay || '0').replace(/[^0-9]/g, ''), 10) || 0;
+            var payload = { sportSanseID: selectedSanse, startDate: date };
+            bootstrap.Modal.getInstance('#renewModal').hide();
+
+            openPaymentModal({
+                amount: amount,
+                creditType: 'sport',
+                buyUrl: '/api/Register/Renew',
+                payload: payload,
+                title: 'پرداخت ثبت‌نام / تمدید دوره',
+                onDone: function (res) {
                     showToast(res.message, 'success');
-                    bootstrap.Modal.getInstance('#renewModal').hide();
                     filterSanses($('#categoryList li.active').data('id') || 0);
 
                     // ✅ رفرش داشبورد + بازگشت به صفحه اصلی بعد از ۱.۵ ثانیه
                     setTimeout(function () {
                         window.location.href = '/Home';
                     }, 1500);
-                } else {
-                    showToast(res.message, 'error');
                 }
             });
         });

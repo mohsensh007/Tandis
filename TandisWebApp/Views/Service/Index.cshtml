@@ -3,7 +3,7 @@
 }
 
 <div class="card">
-    <div class="card-header">💁 خرید سرویس <small class="text-light">(اعتبار خدمات کسر می‌شود)</small></div>
+    <div class="card-header">💁 خرید سرویس <small class="text-light">(از اعتبار خدمات یا دستگاه POS)</small></div>
     <div class="card-body">
         <div id="serviceList"><div class="text-center text-muted p-3">در حال بارگذاری...</div></div>
     </div>
@@ -22,7 +22,7 @@
                     html += '<div class="col-md-4 col-6"><div class="card text-center h-100"><div class="card-body">' +
                         '<p class="mb-1">' + s.serviceDesc + '</p>' +
                         '<strong class="text-primary">' + s.amountDisplay + '</strong>' +
-                        '<button class="btn btn-success btn-sm mt-2 w-100" onclick="buyService(' + s.serviceID + ')">خرید</button>' +
+                        '<button class="btn btn-success btn-sm mt-2 w-100" onclick="buyService(' + s.serviceID + ',' + s.amount + ')">خرید</button>' +
                         '</div></div></div>';
                 });
                 html += '</div>';
@@ -31,11 +31,17 @@
         });
     });
 
-    function buyService(id) {
-        if (!confirm('آیا مطمئن هستید؟ مبلغ از اعتبار خدمات شما کسر خواهد شد.')) return;
-        apiCall('/api/Service/Buy', 'POST', { serviceID: id }, function (res) {
-            if (res.success) { showToast(res.message, 'success'); refreshDashboardCredits(); }
-            else { showToast(res.message, 'error'); }
+    function buyService(id, amount) {
+        openPaymentModal({
+            amount: amount || 0,
+            creditType: 'service',
+            buyUrl: '/api/Service/Buy',
+            payload: { serviceID: id },
+            title: 'پرداخت سرویس',
+            onDone: function (res) {
+                showToast(res.message, 'success');
+                if (typeof refreshDashboardCredits === 'function') refreshDashboardCredits();
+            }
         });
     }
 </script>

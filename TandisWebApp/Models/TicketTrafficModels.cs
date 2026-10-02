@@ -255,6 +255,12 @@ namespace TandisWebApp.Models
 
         [MaxLength(50)]
         public string? RefType { get; set; }
+
+        /// <summary>زمان ایجاد تراکنش (فقط تراکنش‌های وب‌اپ) - برای انقضا در Agent</summary>
+        public DateTime? CreationDate { get; set; }
+
+        /// <summary>عضوی که تراکنش وب‌اپ را ایجاد کرده (فقط تراکنش‌های وب‌اپ)</summary>
+        public int? MemberID { get; set; }
     }
 
     /// <summary>

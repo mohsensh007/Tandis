@@ -106,15 +106,21 @@
 
     $('#btnBuyBasket').click(function () {
         if (basket.length === 0) return;
-        if (!confirm('آیا مطمئن هستید؟')) return;
         var items = basket.map(function(b) { return { stuffID: b.stuffID, unitPrice: b.unitPrice, count: b.count }; });
-        apiCall('/api/Shop/Buy', 'POST', { items: items, isBuffet: false }, function (res) {
-            if (res.success) {
+        var total = 0;
+        $.each(basket, function (i, b) { total += b.unitPrice * b.count; });
+        openPaymentModal({
+            amount: total,
+            creditType: 'buffet',
+            buyUrl: '/api/Shop/Buy',
+            payload: { items: items, isBuffet: false },
+            title: 'پرداخت فروشگاه',
+            onDone: function (res) {
                 showToast(res.message, 'success');
                 basket = [];
                 renderBasket();
-                refreshDashboardCredits();
-            } else { showToast(res.message, 'error'); }
+                if (typeof refreshDashboardCredits === 'function') refreshDashboardCredits();
+            }
         });
     });
 
