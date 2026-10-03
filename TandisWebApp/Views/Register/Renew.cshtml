@@ -1,10 +1,10 @@
 @{
-    ViewData["Title"] = "تمدید دوره";
+    ViewData["Title"] = "ثبت‌نام / تمدید دوره";
 }
 
 <!-- ========== هدر صفحه ========== -->
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0"><i class="bi bi-arrow-repeat hd-icon"></i> تمدید دوره</h5>
+    <h5 class="mb-0"><i class="bi bi-arrow-repeat hd-icon"></i> ثبت‌نام / تمدید دوره</h5>
     <a href="/Home" class="purple-style btn-back-glass"><i class="bi bi-arrow-right"></i> داشبورد</a>
 </div>
 
@@ -21,10 +21,10 @@
         </div>
     </div>
 
-    <!-- ========== سانس‌های قابل تمدید ========== -->
+    <!-- ========== سانس‌های قابل ثبت‌نام / تمدید ========== -->
     <div class="col-lg-9 col-md-8">
         <div class="purple-style glass-card">
-            <div class="card-header grad-header"><i class="bi bi-arrow-repeat me-2"></i>سانس‌های قابل تمدید</div>
+            <div class="card-header grad-header"><i class="bi bi-arrow-repeat me-2"></i>سانس‌های قابل ثبت‌نام / تمدید</div>
             <div class="card-body">
                 <div id="sanseList" class="row g-3">
                     <div class="col-12"><div class="empty-state"><div class="empty-icon">⏳</div>در حال بارگذاری...</div></div>
@@ -71,12 +71,12 @@
     </div>
 </div>
 
-@* === مودال تمدید === *@
+@* === مودال ثبت‌نام / تمدید === *@
 <div class="modal fade" id="renewModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="purple-style modal-content glass-modal">
             <div class="modal-header grad-header">
-                <h5 class="modal-title"><i class="bi bi-arrow-repeat me-2"></i>تأیید تمدید دوره</h5>
+                <h5 class="modal-title" id="renewModalTitle"><i class="bi bi-arrow-repeat me-2"></i>تأیید تمدید دوره</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -100,14 +100,12 @@
 </div>
 
 <style>
-    /* ===== آیکن‌های فیروزه‌ای (بدون تغییر) ===== */
     .hd-icon {
         color: #66d3e8;
         margin-left: 6px;
         font-size: 1.05rem;
     }
 
-    /* ===== کارت‌های شیشه‌ای ===== */
     .glass-card {
         background: rgba(255,255,255,.05);
         border: 1px solid rgba(255,255,255,.12);
@@ -115,7 +113,6 @@
         overflow: hidden;
     }
 
-    /* ===== هدرها: گرادیان بنفش تم وب‌اپ + فاصله‌دار ===== */
     .grad-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: #fff;
@@ -129,7 +126,6 @@
             font-size: 1.1rem;
         }
 
-    /* ===== لیست دسته‌بندی (دسکتاپ: عمودی) ===== */
     #categoryList {
         list-style: none;
         margin: 0;
@@ -181,17 +177,16 @@
                 box-shadow: none;
             }
 
-    /* ===== 📱 موبایل: بیضی‌های شیشه‌ای کنار هم (flex-wrap) ===== */
     @@media (max-width: 767.98px) {
         #categoryList {
             flex-direction: row;
-            flex-wrap: wrap; /* ✅ کنار هم، خط به خط */
+            flex-wrap: wrap;
             gap: 8px;
         }
 
         .cat-item {
             flex: 0 0 auto;
-            border-radius: 999px; /* ✅ بیضی */
+            border-radius: 999px;
             padding: 8px 20px;
             font-size: .8rem;
             background: rgba(255,255,255,.10);
@@ -202,7 +197,7 @@
             .cat-item::before {
                 display: none;
             }
-            /* بیضی‌ها بدون نقطه، مثل عکس */
+
             .cat-item.active {
                 background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                 border-color: rgba(255,255,255,.30);
@@ -210,7 +205,6 @@
             }
     }
 
-    /* ===== کارت سانس ===== */
     .sans-card {
         position: relative;
         border-radius: 20px;
@@ -250,7 +244,6 @@
         margin-top: 4px;
     }
 
-    /* ===== pills فیروزه‌ای (بدون تغییر) ===== */
     .sans-pill {
         display: inline-flex;
         align-items: center;
@@ -269,7 +262,6 @@
             font-size: .85rem;
         }
 
-    /* ===== کادر قیمت فیروزه‌ای (بدون تغییر) ===== */
     .renew-price {
         display: inline-flex;
         align-items: center;
@@ -288,7 +280,6 @@
             font-size: 1.15rem;
         }
 
-    /* ===== دکمه تمدید: گرادیان بنفش تم وب‌اپ ===== */
     .btn-renew {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         border: none;
@@ -304,7 +295,6 @@
             color: #fff;
         }
 
-    /* ===== مودال شیشه‌ای ===== */
     .glass-modal {
         background: rgba(16,20,36,.97);
         border: 1px solid rgba(255,255,255,.15);
@@ -329,7 +319,7 @@
         border-radius: 14px;
         padding: 14px;
     }
-    /* ===== دکمه بازگشت شیشه‌ای ===== */
+
     .btn-back-glass {
         display: inline-flex;
         align-items: center;
@@ -360,11 +350,11 @@
             .btn-back-glass:hover i {
                 transform: translateX(3px);
             }
-        /* ✅ فلش موقع hover تکون می‌خوره */
+
         .btn-back-glass:active {
             transform: scale(.95);
         }
-    /* ✅ فاصله اولین کارت از هدر بخش */
+
     #sanseList {
         padding-top: 10px;
     }
@@ -399,6 +389,11 @@
                     html = '<div class="col-12"><div class="empty-state"><div class="empty-icon">🔍</div>سانسی یافت نشد</div></div>';
                 } else {
                     $.each(res.data, function (i, s) {
+                        // ✅ هوشمند: ثبت‌نام یا تمدید
+                        var isRenew = s.hasActiveRegister === true;
+                        var btnIcon = isRenew ? 'bi-arrow-repeat' : 'bi-plus-circle';
+                        var btnText = isRenew ? 'تمدید دوره' : 'ثبت‌نام';
+
                         html += '<div class="col-md-6">' +
                             '<div class="sans-card" data-id="' + s.sportSanseID + '" data-name="' + esc(s.sportName + ' - ' + s.sanseName) + '" data-amount="' + esc(s.totalAmountDisplay) + '">' +
                                 '<div class="d-flex justify-content-between align-items-start gap-3 flex-wrap">' +
@@ -413,29 +408,40 @@
                                     '<span class="sans-pill"><i class="bi bi-tag-fill"></i>' + esc(s.membershipTypeDesc || '-') + '</span>' +
                                     '<span class="sans-pill"><i class="bi bi-stopwatch-fill"></i>' + esc(s.periodDesc || '-') + '</span>' +
                                 '</div>' +
-                                '<button class="btn btn-renew w-100 mt-3 renew-btn"><i class="bi bi-arrow-repeat me-1"></i> تمدید دوره</button>' +
+                                '<button class="btn btn-renew w-100 mt-3 renew-btn" data-renew="' + (isRenew ? 1 : 0) + '">' +
+                                    '<i class="bi ' + btnIcon + ' me-1"></i> ' + btnText +
+                                '</button>' +
                             '</div>' +
                         '</div>';
                     });
                 }
                 $('#sanseList').html(html);
 
-                // event delegation
                 $('.renew-btn').off('click').on('click', function () {
                     var card = $(this).closest('.sans-card');
                     var id = card.data('id');
                     var name = card.data('name');
                     var amount = card.data('amount');
-                    openRenew(id, name, amount);
+                    var isRenew = $(this).data('renew') == 1;
+                    openRenew(id, name, amount, isRenew);
                 });
             });
         }
 
         var renewAmountDisplay = '';
 
-        function openRenew(id, name, display) {
+        function openRenew(id, name, display, isRenew) {
             selectedSanse = id;
             renewAmountDisplay = display;
+
+            // ✅ عنوان و دکمه مودال هوشمند
+            var icon = isRenew ? 'bi-arrow-repeat' : 'bi-plus-circle';
+            var title = isRenew ? 'تأیید تمدید دوره' : 'تأیید ثبت‌نام دوره';
+            var btnText = isRenew ? 'تأیید و تمدید' : 'تأیید و ثبت‌نام';
+
+            $('#renewModalTitle').html('<i class="bi ' + icon + ' me-2"></i>' + title);
+            $('#btnConfirmRenew').html('<i class="bi bi-check-lg me-1"></i> ' + btnText);
+
             $('#renewInfo').html(
                 '<div class="renew-info-box">' +
                     '<div class="small text-muted mb-1">ورزش</div>' +
@@ -453,11 +459,13 @@
             initCalendar('renewStartDate', '#renewModal');
             new bootstrap.Modal('#datePickerModal').show();
         });
+
         $('#prevMonth').click(function () {
             calendarDate.m++;
             if (calendarDate.m > 12) { calendarDate.m = 1; calendarDate.y++; }
             renderCalendar();
         });
+
         $('#nextMonth').click(function () {
             calendarDate.m--;
             if (calendarDate.m < 1) { calendarDate.m = 12; calendarDate.y--; }
@@ -481,8 +489,6 @@
                 onDone: function (res) {
                     showToast(res.message, 'success');
                     filterSanses($('#categoryList li.active').data('id') || 0);
-
-                    // ✅ رفرش داشبورد + بازگشت به صفحه اصلی بعد از ۱.۵ ثانیه
                     setTimeout(function () {
                         window.location.href = '/Home';
                     }, 1500);

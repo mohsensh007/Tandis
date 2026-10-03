@@ -182,6 +182,8 @@ namespace TandisWebApp.DTOs
         public short SessionCount { get; set; }
         public int? RemainingSessions { get; set; }
         public string CreationDate { get; set; } = string.Empty;
+        public bool IsRevival { get; set; }
+        public string TypeDesc => IsRevival ? "تمدید" : "ثبت‌نام";
     }
 
     public class TrafficReportDto

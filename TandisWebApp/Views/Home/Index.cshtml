@@ -34,24 +34,6 @@
                     </span>
                 </div>
             </div>
-            <!-- ✅ ساعت آنالوگ + باکس دیجیتال/تاریخ (سمت چپ هدر) -->
-            <div class="dash-clockbox ms-auto">
-                <div class="dc-face">
-                    <span class="dc-tick dc-t12"></span>
-                    <span class="dc-tick dc-t3"></span>
-                    <span class="dc-tick dc-t6"></span>
-                    <span class="dc-tick dc-t9"></span>
-                    <div class="dc-hand dc-hour" id="dcHour"></div>
-                    <div class="dc-hand dc-min" id="dcMin"></div>
-                    <div class="dc-hand dc-sec" id="dcSec"></div>
-                    <div class="dc-center"></div>
-                </div>
-                <!-- ✅ باکس زیر ساعت: دیجیتال + تاریخ -->
-                <div class="dc-infobox">
-                    <div class="dc-digitaltime" id="dcTime">--:--:--</div>
-                    <div class="dc-date" id="dashClockDate">-</div>
-                </div>
-            </div>
         </div>
     </div>
 </div>
@@ -61,7 +43,7 @@
     <div class="col-4 col-md-2">
         <a href="/Register/Renew" class="purple-style nav-card">
             <div class="nav-icon">🔄</div>
-            <div class="nav-title">تمدید دوره</div>
+            <div class="nav-title">ثبت نام(تمدید دوره)</div>
         </a>
     </div>
     <div class="col-4 col-md-2">
@@ -2038,33 +2020,7 @@
         }
                 loadDashboardCredits();
 
-                // ========== ✅ ساعت آنالوگ زنده هدر ==========
-        (function () {
-            // ✅ تاریخ کامل (روز هفته + تاریخ) داخل باکس زیر ساعت
-            var n0 = new Date();
-            $('#dashClockDate').text(n0.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' }));
-        })();
-
-        function updateDashClock() {
-            var now = new Date();
-            var h = now.getHours();
-            var m = now.getMinutes();
-            var s = now.getSeconds();
-
-            // ✅ چرخش عقربه‌ها
-            var hDeg = (h % 12) * 30 + m * 0.5;
-            var mDeg = m * 6 + s * 0.1;
-            var sDeg = s * 6;
-            $('#dcHour').css('transform', 'rotate(' + hDeg + 'deg)');
-            $('#dcMin').css('transform', 'rotate(' + mDeg + 'deg)');
-            $('#dcSec').css('transform', 'rotate(' + sDeg + 'deg)');
-
-            // ✅ ساعت دیجیتال داخل باکس زیر ساعت (با ثانیه)
-            $('#dcTime').text(toFa((h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s));
-        }
-        updateDashClock();
-        setInterval(updateDashClock, 1000);
-
+        
         function fitCreditValues() {
             document.querySelectorAll('.credit-value').forEach(function (el) {
                 el.style.fontSize = '';

@@ -15,7 +15,58 @@
     <link rel="stylesheet" href="~/css/site.css?v=3" />
     <link rel="stylesheet" href="~/css/panels.css?v=3" />
     <link rel="stylesheet" href="~/css/login-style.css" />
-    
+
+    <style>
+        /* ===== ✅ فلیپ ۳بعدی کارت بین ورود / ثبت‌نام ===== */
+        .login-fullscreen {
+            perspective: 1600px; /* عمق سه‌بعدی برای چرخش کارت */
+        }
+
+        #authCard {
+            transform-style: preserve-3d;
+            will-change: transform, opacity;
+        }
+
+        @@keyframes authFlipOut {
+            to {
+                transform: rotateY(88deg);
+                opacity: 0;
+            }
+        }
+
+        @@keyframes authFlipIn {
+            from {
+                transform: rotateY(-88deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: rotateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* ===== ✅ دکمه بازگشت به ورود (داخل صفحه ثبت‌نام) ===== */
+        .btn-back-login {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #9fb3c8;
+            font-size: .8rem;
+            font-weight: 700;
+            text-decoration: none;
+            background: rgba(255,255,255,.06);
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 999px;
+            padding: 6px 14px;
+            transition: all .2s;
+        }
+
+            .btn-back-login:hover {
+                color: #fff;
+                border-color: rgba(102,211,232,.5);
+            }
+    </style>
 </head>
 <body>
     <div class="login-fullscreen">
@@ -25,8 +76,8 @@
             <div class="bg-overlay"></div>
         </div>
 
-        <!-- فرم لاگین شیشه‌ای -->
-        <div class="purple-style login-glass-card">
+        <!-- ✅ فرم شیشه‌ای — این همون «کارت» هست که می‌چرخه -->
+        <div class="purple-style login-glass-card" id="authCard">
             <div class="logo-section text-center mb-4">
                 <img src="~/images/logo2.png" alt="ایمن تردد" class="main-logo" />
                 <h2 class="brand-text mt-3">ایمن تردد تندیس</h2>
@@ -41,6 +92,28 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js?v=5"></script>
+
+    <!-- ✅ منطق فلیپ کارت (مشترک بین ورود و ثبت‌نام) -->
+    <script>
+        // چرخش کارت به بیرون + رفتن به مقصد
+        window.flipNavigate = function (url) {
+            sessionStorage.setItem('authFlip', '1');
+            var card = document.getElementById('authCard');
+            if (!card) { window.location.href = url; return; }
+            card.style.animation = 'authFlipOut .3s ease-in forwards';
+            setTimeout(function () { window.location.href = url; }, 280);
+        };
+
+        // وقتی صفحه مقصد لود شد، کارت از پشت بیرون میاد
+        $(function () {
+            if (sessionStorage.getItem('authFlip') === '1') {
+                sessionStorage.removeItem('authFlip');
+                var card = document.getElementById('authCard');
+                if (card) card.style.animation = 'authFlipIn .45s cubic-bezier(.22,.9,.35,1.1)';
+            }
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

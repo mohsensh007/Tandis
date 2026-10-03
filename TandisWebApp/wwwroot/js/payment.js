@@ -37,7 +37,7 @@
         var html =
             '<div class="modal fade" id="posPayModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">' +
             '  <div class="modal-dialog modal-dialog-centered">' +
-            '    <div class="modal-content">' +
+            '    <div class="purple-style modal-content">' +
             '      <div class="modal-header">' +
             '        <h5 class="modal-title" id="posPayTitle">پرداخت</h5>' +
             '        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +

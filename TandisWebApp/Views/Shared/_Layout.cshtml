@@ -214,12 +214,153 @@
             font-size: .60rem;
         }
     }
+        /* ===== ✅ ساعت دیجیتال داخل هدر (بین لوگو و اسم) ===== */
+        .header-clock {
+            order: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.15;
+            padding: 3px 12px;
+            background: rgba(13,110,253,.12);
+            border: 1px solid rgba(13,110,253,.32);
+            border-radius: 12px;
+        }
+
+        .hc-time {
+            font-size: .95rem;
+            font-weight: 800;
+            color: #fff;
+            font-variant-numeric: tabular-nums;
+            direction: ltr;
+            letter-spacing: 1px;
+        }
+
+        .hc-date {
+            font-size: .58rem;
+            color: #9fb3c8;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .club-logo {
+            order: 0;
+        }
+
+        .club-name-wrap {
+            order: 2;
+        }
+
+        @@media (max-width: 767.98px) {
+            .navbar-brand-club {
+                justify-content: space-between;
+            }
+
+            .club-name-wrap {
+                margin-right: 0;
+            }
+            /* حذف auto تا space-between کار کنه */
+            .header-clock {
+                padding: 2px 8px;
+            }
+
+            .hc-time {
+                font-size: .78rem;
+            }
+
+            .hc-date {
+                font-size: .5rem;
+            }
+        }
     /* فاصله محتوا از بار شناور تا چیزی زیرش قایم نشه */
     @@media (max-width: 767.98px) {
         body {
             padding-bottom: 96px;
         }
     }
+        /* ============================================================
+               ✅ هدر موبایل — بازطراحی: لوگو راست | ساعت دقیقاً وسط | اسم چپ
+               ============================================================ */
+        @@media (max-width: 767.98px) {
+            /* نوار بالا: فاصله و خط زیر ظریف */
+            .navbar {
+                padding: 8px 0;
+            }
+
+                .navbar .container-fluid {
+                    padding-right: 14px;
+                    padding-left: 14px;
+                }
+            /* برند → شبکه ۳ ستونه: 1fr | auto | 1fr  ⇒ وسط همیشه دقیقاً وسطه */
+            .navbar-brand-club {
+                display: grid !important;
+                grid-template-columns: 1fr auto 1fr;
+                align-items: center;
+                width: 100%;
+                background: none;
+                border: none;
+                padding: 4px 0;
+                gap: 8px;
+            }
+            /* لوگو — سمت راست */
+            .club-logo {
+                grid-column: 1;
+                justify-self: start; /* RTL = راست */
+                order: 0;
+                height: 38px !important;
+                border-radius: 10px;
+                filter: drop-shadow(0 2px 8px rgba(0,0,0,.4));
+            }
+            /* ساعت — دقیقاً وسط، بزرگ‌تر و درخشان‌تر */
+            .header-clock {
+                grid-column: 2;
+                justify-self: center;
+                order: 0;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 6px 20px;
+                border-radius: 16px;
+                background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18));
+                border: 1px solid rgba(102,211,232,.35);
+                box-shadow: 0 4px 18px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.07);
+                backdrop-filter: blur(8px);
+            }
+
+            .hc-time {
+                font-size: 1.25rem; /* بزرگ‌تر */
+                font-weight: 800;
+                letter-spacing: 1.5px;
+                color: #fff;
+                text-shadow: 0 0 14px rgba(102,211,232,.5);
+            }
+
+            .hc-date {
+                font-size: .62rem;
+                color: #9fb3c8;
+                margin-top: 1px;
+            }
+            /* اسم باشگاه — سمت چپ، داخل کادر شیشه‌ای */
+            .club-name-wrap {
+                grid-column: 3;
+                justify-self: end; /* RTL = چپ */
+                order: 0;
+                margin-right: 0; /* حذف auto تا grid درست بچینه */
+                background: linear-gradient(135deg, rgba(102,126,234,.20), rgba(118,75,162,.16));
+                border: 1px solid rgba(102,211,232,.30);
+                border-radius: 12px;
+                padding: 5px 14px;
+            }
+
+            .club-name {
+                font-size: .84rem;
+                max-width: 110px;
+            }
+
+            .club-sub {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body class="admin-glass-body">
@@ -237,6 +378,11 @@
                 <!-- ✅ لوگو + اسم باشگاه (شیشه‌ای + گرادیانت) -->
                 <a class="navbar-brand navbar-brand-club" href="@(isCoach ? "/Coach" : "/Home")">
                     <img src="~/images/logo2.png" alt="@clubName" height="38" class="club-logo" />
+                    <!-- ✅ ساعت دیجیتال + تاریخ (بین لوگو و اسم باشگاه) -->
+                    <div class="header-clock">
+                        <span class="hc-time" id="hdrTime">--:--:--</span>
+                        <span class="hc-date" id="hdrDate">-</span>
+                    </div>
                     <div class="club-name-wrap">
                         <span class="club-name">@clubName</span>
                     </div>
@@ -526,7 +672,23 @@
                 window.addEventListener('resize', function () { placeAt(current, false); });
             })();
         </script>
-
+        <!-- ✅ ساعت زنده هدر (بین لوگو و اسم باشگاه) -->
+        <script>
+            (function () {
+                function faD(n) { return String(n).replace(/\d/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; }); }
+                function p2(x) { return (x < 10 ? '0' : '') + x; }
+                function tickHdr() {
+                    var n = new Date();
+                    var el = document.getElementById('hdrTime');
+                    if (el) el.textContent = faD(p2(n.getHours()) + ':' + p2(n.getMinutes()) + ':' + p2(n.getSeconds()));
+                }
+                var d0 = new Date();
+                var de = document.getElementById('hdrDate');
+                if (de) de.textContent = d0.toLocaleDateString('fa-IR', { weekday: 'long', year: 'numeric', month: '2-digit', day: '2-digit' });
+                tickHdr();
+                setInterval(tickHdr, 1000);
+            })();
+        </script>
         <!-- ✅ تأیید خروج: به جای خروج مستقیم، مودال سؤال می‌پرسه -->
         <script>
             $(document).on('click', '.js-logout', function (e) {

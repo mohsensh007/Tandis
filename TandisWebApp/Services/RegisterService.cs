@@ -481,9 +481,10 @@ VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.Contrac
                     StartDate = ms.StartDate,
                     EndDate = ms.EndDate,
                     IsActive = ms.IsActive ?? false,
+                    IsRevival = ms.IsRevival ?? false,
                     FinalPayment = ms.FinalPayment ?? 0,
                     SessionCount = ms.SessionCount ?? 0,
-                    RemainingSessions = ms.SessionCount,
+                    RemainingSessions = ms.SessionCount,                   
                     CreationDate = ms.CreationDate ?? ""
                 }
             ).ToListAsync();

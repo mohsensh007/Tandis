@@ -18,14 +18,18 @@
                 html = '<div class="text-center text-muted p-3">ثبت‌نامی یافت نشد</div>';
             } else {
                 html = '<div class="table-responsive"><table class="table table-striped"><thead><tr>' +
-                    '<th>دوره</th><th>مربی</th><th>شروع</th><th>پایان</th><th>وضعیت</th><th>مبلغ</th><th>جلسات</th>' +
+                    '<th>دوره</th><th>نوع</th><th>مربی</th><th>شروع</th><th>پایان</th><th>وضعیت</th><th>مبلغ</th><th>جلسات</th>' +
                     '</tr></thead><tbody>';
-                $.each(res.data, function (i, h) {
-                    var badge = h.isActive ? '<span class="badge badge-active">فعال</span>' : '<span class="badge badge-inactive">غیرفعال</span>';
-                    html += '<tr><td>' + h.sportSanseName + '</td><td>' + (h.coachName || '-') + '</td>' +
-                        '<td>' + (h.startDate || '-') + '</td><td>' + (h.endDate || '-') + '</td>' +
-                        '<td>' + badge + '</td><td>' + h.finalPaymentDisplay + '</td><td>' + h.remainingSessions + '</td></tr>';
-                });
+                                    $.each(res.data, function (i, h) {
+                        var badge = h.isActive ? '<span class="badge badge-active">فعال</span>' : '<span class="badge badge-inactive">غیرفعال</span>';
+                        // ✅ badge نوع: ثبت‌نام یا تمدید
+                        var typeBadge = h.isRevival
+                            ? '<span class="badge" style="background:rgba(102,211,232,.15);color:#66d3e8;border:1px solid rgba(102,211,232,.4);">تمدید</span>'
+                            : '<span class="badge" style="background:rgba(56,217,169,.15);color:#38d9a9;border:1px solid rgba(56,217,169,.4);">ثبت‌نام</span>';
+                        html += '<tr><td>' + h.sportSanseName + '</td><td>' + typeBadge + '</td><td>' + (h.coachName || '-') + '</td>' +
+                            '<td>' + (h.startDate || '-') + '</td><td>' + (h.endDate || '-') + '</td>' +
+                            '<td>' + badge + '</td><td>' + h.finalPaymentDisplay + '</td><td>' + h.remainingSessions + '</td></tr>';
+                    });
                 html += '</tbody></table></div>';
             }
             $('#historyList').html(html);
