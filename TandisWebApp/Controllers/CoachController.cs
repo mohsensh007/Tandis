@@ -85,7 +85,13 @@ namespace TandisWebApp.Controllers
             return View(model);
         }
 
-        /// <summary>ارسال پیام به شاگرد</summary>
+        /// <summary>
+        /// ارسال پیام به شاگرد
+        /// ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+        /// مربی دیگر اجازه ندارد به عضو/شاگرد پیام بفرستد.
+        /// برای فعال‌سازی دوباره کافی است کامنت /* */ زیر برداشته شود.
+        /// </summary>
+        /*
         [HttpPost]
         public async Task<IActionResult> SendMessage(int studentID, string? title, string body)
         {
@@ -94,6 +100,7 @@ namespace TandisWebApp.Controllers
                 return RedirectToAction("Chat", new { studentID });
             return BadRequest();
         }
+        */
 
         // ============================================================
         //  برنامه‌های تمرینی

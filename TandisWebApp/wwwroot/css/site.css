@@ -2,8 +2,37 @@
    تندیس - استایل RTL فارسی
    ============================ */
 
+/* ===== فونت Sahel (پوشه Fonts پروژه — از /fonts سرو می‌شود) ===== */
+@font-face {
+    font-family: 'Sahel';
+    src: url('/fonts/Sahel.woff?v=1') format('woff'),
+         url('/fonts/Sahel.ttf?v=1') format('truetype'),
+         url('/fonts/Sahel.eot?v=1') format('embedded-opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Sahel';
+    src: url('/fonts/Sahel-Bold.woff?v=1') format('woff'),
+         url('/fonts/Sahel-Bold.ttf?v=1') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Sahel';
+    src: url('/fonts/Sahel-Black.woff?v=1') format('woff'),
+         url('/fonts/Sahel-Black.ttf?v=1') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
 * {
-    font-family: Tahoma, 'Segoe UI', Arial, sans-serif;
+    font-family: 'Sahel', Tahoma, 'Segoe UI', Arial, sans-serif;
 }
 
 body {

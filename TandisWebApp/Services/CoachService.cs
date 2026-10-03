@@ -537,7 +537,13 @@ namespace TandisWebApp.Services
             };
         }
 
-        /// <summary>ارسال پیام (نوشتن - بدون AsNoTracking)</summary>
+        /// <summary>
+        /// ارسال پیام (نوشتن - بدون AsNoTracking)
+        /// ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+        /// مربی نمی‌تواند به شاگرد پیام بفرستد (فقط ادمین به مربی/عضو، و عضو به ادمین).
+        /// برای فعال‌سازی دوباره کافی است کامنت /* */ زیر برداشته شود.
+        /// </summary>
+        /*
         public async Task<bool> SendMessageToStudentAsync(int coachMemberID, int studentMemberID, string? title, string body)
         {
             var mySanseIds = await _db.Gen_SportSanses
@@ -574,6 +580,7 @@ namespace TandisWebApp.Services
             await _db.SaveChangesAsync();
             return true;
         }
+        */
 
         /// <summary>تعداد پیام‌های خوانده‌نشده (خواندنی)</summary>
         public async Task<int> GetCoachUnreadCountAsync(int coachMemberID)

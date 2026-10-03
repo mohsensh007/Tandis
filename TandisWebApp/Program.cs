@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -134,6 +135,9 @@ builder.Services.AddScoped<MemberRegistrationService>();
 builder.Services.AddScoped<FaceDeviceService>();
 builder.Services.AddHttpContextAccessor();
 
+// ✅ ایجنت POS: ارسال تراکنش‌های «در انتظار وب‌اپ» به دستگاه کارخوان و ثبت جواب در DB
+builder.Services.AddHostedService<PosAgentService>();
+
 // ============================================================
 // 4) CORS - خواندن از appsettings (متناسب با محیط)
 // ============================================================
@@ -232,6 +236,22 @@ app.UseStaticFiles(new StaticFileOptions
         ctx.Context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
     }
 });
+
+// ✅ سرو پوشه «Fonts» پروژه در /fonts (فونت‌های برنامه — Sahel و...)
+var fontsPath = Path.Combine(builder.Environment.ContentRootPath, "Fonts");
+if (Directory.Exists(fontsPath))
+{
+    app.UseStaticFiles(new StaticFileOptions
+    {
+        FileProvider = new PhysicalFileProvider(fontsPath),
+        RequestPath = "/fonts",
+        OnPrepareResponse = ctx =>
+        {
+            ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000,immutable");
+            ctx.Context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
+        }
+    });
+}
 
 app.UseRouting();
 app.UseCors("AllowAll");

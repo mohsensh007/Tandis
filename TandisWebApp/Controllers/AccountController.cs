@@ -175,6 +175,13 @@ namespace TandisWebApp.Controllers
             return Ok(new { success = true });
         }
 
+        /// <summary>
+        /// ارسال پیام عضو به مدیریت
+        /// ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+        /// فقط ادمین اجازه‌ی ارسال پیام دارد؛ عضو دیگر نمی‌تواند به مدیریت پیام بفرستد.
+        /// برای فعال‌سازی دوباره کافی است کامنت /* */ زیر برداشته شود.
+        /// </summary>
+        /*
         [Authorize]
         [HttpPost]
         [Route("api/Account/Messages/Send")]
@@ -187,5 +194,6 @@ namespace TandisWebApp.Controllers
             await _messages.SendFromMemberAsync(memberID, req.Title, req.Body);
             return Ok(new { success = true, message = "پیام شما برای مدیریت ارسال شد" });
         }
+        */
     }
 }

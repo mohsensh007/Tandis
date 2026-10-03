@@ -35,9 +35,14 @@ function loadMemberMessages(showModal) {
                         '<a href="#" class="msg-toggle d-block mt-1">مشاهده بیشتر ▼</a>'
                         : '') +
                     '</div>' +
+                    /* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+                       دکمه‌ی «مشاهده گفتگو» با مربی برداشته شد (چت عضو↔مربی غیرفعال است).
+                       برای فعال‌سازی دوباره کافی است کامنت زیر برداشته شود. */
+                    /*
                     (isIn && m.peerMemberID
                         ? '<a href="/Profile/Messages?coachID=' + m.peerMemberID + '" class="btn btn-sm btn-outline-success mt-2">💬 مشاهده گفتگو</a>'
                         : '') +
+                    */
                     (isIn && !m.isRead ? '<span class="badge bg-danger mt-2">خوانده نشده</span>' : '') +
                     '</div>';
             });
@@ -78,11 +83,16 @@ $(function () {
         }
     });
 
+    /* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+       فقط ادمین اجازه‌ی ارسال پیام دارد؛ دکمه‌ی «پیام به مدیریت» غیرفعال شد.
+       برای فعال‌سازی دوباره کافی است کامنت زیر برداشته شود. */
+    /*
     // رفتن به مودال ارسال
     $('#btnOpenSend').on('click', function () {
         bootstrap.Modal.getOrCreateInstance(document.getElementById('memberMessagesModal')).hide();
         bootstrap.Modal.getOrCreateInstance(document.getElementById('sendToAdminModal')).show();
     });
+    */
 
     // خواندن همه
     $('#btnMarkAllRead').on('click', function () {
@@ -107,6 +117,10 @@ $(function () {
         });
     });
 
+    /* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+       فقط ادمین اجازه‌ی ارسال پیام دارد؛ ارسال عضو به مدیریت غیرفعال شد.
+       برای فعال‌سازی دوباره کافی است کامنت زیر برداشته شود. */
+    /*
     // ارسال پیام به مدیریت
     $('#btnSendToAdmin').on('click', function () {
         var body = $('#txtMemberMsgBody').val().trim();
@@ -126,6 +140,7 @@ $(function () {
             }
         });
     });
+    */
 
     // ✅ توری امنیتی: پاکسازی backdrop جامانده بعد از بسته شدن هر مودال (ضد فریز)
     $('#memberMessagesModal, #sendToAdminModal').on('hidden.bs.modal', function () {

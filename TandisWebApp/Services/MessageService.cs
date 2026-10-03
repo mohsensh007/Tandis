@@ -109,6 +109,13 @@ namespace TandisWebApp.Services
             }
         }
 
+        /// <summary>
+        /// ارسال پیام از عضو به مدیریت (TargetType=0)
+        /// ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+        /// فقط ادمین اجازه‌ی ارسال دارد؛ عضو دیگر نمی‌تواند به مدیریت پیام بفرستد.
+        /// برای فعال‌سازی دوباره کافی است کامنت /* */ زیر برداشته شود.
+        /// </summary>
+        /*
         public async Task SendFromMemberAsync(int memberID, string? title, string body)
         {
             var (now, date, time) = NowShamsi();
@@ -125,6 +132,7 @@ namespace TandisWebApp.Services
             });
             await _db.SaveChangesAsync();
         }
+        */
 
         // ========== سمت ادمین ==========
 
@@ -332,7 +340,11 @@ namespace TandisWebApp.Services
             };
         }
         // ========== سمت عضو: چت با مربی ==========
-
+        /* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+           چت عضو با مربی حذف شد (نه عضو به مربی پیام می‌دهد نه مربی به عضو)،
+           پس سرویس‌های «لیست مربی‌های عضو» و «متن گفتگو» غیرفعال شدند.
+           برای فعال‌سازی دوباره کافی است کامنتِ زیر باز شود. */
+        /*
         /// <summary>لیست مربی‌های عضو (از ثبت‌نام‌های فعال)</summary>
         public async Task<List<MemberCoachDto>> GetMemberCoachesAsync(int memberID)
         {
@@ -418,8 +430,15 @@ namespace TandisWebApp.Services
 
             return new CoachChatDto { StudentMemberID = coachMemberID, StudentName = coachName, Messages = messages };
         }
+        */
 
-        /// <summary>ارسال پیام از عضو به مربی</summary>
+        /// <summary>
+        /// ارسال پیام از عضو به مربی
+        /// ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+        /// عضو نمی‌تواند به مربی پیام بفرستد (فقط ادمین به مربی/عضو، و عضو به ادمین).
+        /// برای فعال‌سازی دوباره کافی است کامنت /* */ زیر برداشته شود.
+        /// </summary>
+        /*
         public async Task<bool> SendToCoachAsync(int memberID, int coachMemberID, string? title, string body)
         {
             var related = await _db.Acc_MemberSports
@@ -444,5 +463,6 @@ namespace TandisWebApp.Services
             await _db.SaveChangesAsync();
             return true;
         }
+        */
     }
 }

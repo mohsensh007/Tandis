@@ -7,10 +7,32 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- فونت‌های پوشه Fonts (سرو در /fonts) را در build و publish کنار برنامه کپی کن -->
+    <None Update="Fonts\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- SDK رسمی SEP برای ارتباط با دستگاه POS (Pc2Pos) -->
+    <Reference Include="SSP1126.PcPos">
+      <HintPath>Libs\SSP1126.PcPos.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Sep.Logger">
+      <HintPath>Libs\Sep.Logger.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
     <PackageReference Include="QRCoder" Version="1.8.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.19.2" />
+    <!-- وابستگی‌های SDK SEP روی .NET 10 (CodePages برای خواندن پاسخ دستگاه الزامی است) -->
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="10.0.0" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="8.2.0" />
   </ItemGroup>
 
 </Project>

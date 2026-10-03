@@ -57,12 +57,19 @@ namespace TandisWebApp.Services
                 return new ApiResponse<long> { Success = false, Message = "مبلغ پرداخت نامعتبر است" };
 
             var posId = ConfiguredPosId;
-            var posExists = await _db.Gen_PosTbls.AnyAsync(p => p.PosID == posId);
-            if (!posExists)
+            var pos = await _db.Gen_PosTbls.AsNoTracking()
+                .FirstOrDefaultAsync(p => p.PosID == posId);
+            if (pos == null)
                 return new ApiResponse<long>
                 {
                     Success = false,
                     Message = $"دستگاه POS با شناسه {posId} در تنظیمات تعریف نشده است (Gen_PosTbl)"
+                };
+            if (string.IsNullOrWhiteSpace(pos.PosIPaddrss))
+                return new ApiResponse<long>
+                {
+                    Success = false,
+                    Message = "آدرس IP دستگاه POS در Gen_PosTbl خالی است — امکان ارسال مبلغ نیست"
                 };
 
             var txn = new ACC_PosTransaction

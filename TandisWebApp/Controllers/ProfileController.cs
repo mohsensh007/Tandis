@@ -91,15 +91,26 @@ namespace TandisWebApp.Controllers
         public async Task<IActionResult> Messages(int? coachID)
         {
             var memberID = int.Parse(User.FindFirstValue("MemberID") ?? "0");
+            /* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+               چت عضو با مربی حذف شد (نه عضو به مربی پیام می‌دهد نه مربی به عضو)،
+               پس دیگر لیست مربی‌ها و گفتگو پر نمی‌شود و همیشه «پیام‌های مدیریت» نمایش داده می‌شود.
+               برای فعال‌سازی دوباره کافی است کامنت زیر برداشته شود. */
+            /*
             ViewBag.Coaches = await _messages.GetMemberCoachesAsync(memberID);
             ViewBag.CurrentCoachID = coachID ?? 0;
             ViewBag.Chat = (coachID.HasValue && coachID.Value > 0)
                 ? await _messages.GetMemberCoachChatAsync(memberID, coachID.Value)
                 : null;
+            */
             return View();
         }
 
-        /// <summary>ارسال پیام عضو به مربی</summary>
+        /// <summary>
+        /// ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+        /// عضو دیگر اجازه ندارد به مربی پیام بفرستد.
+        /// برای فعال‌سازی دوباره کافی است کامنت /* */ زیر برداشته شود.
+        /// </summary>
+        /*
         [HttpPost]
         public async Task<IActionResult> SendToCoach(int coachID, string? title, string body)
         {
@@ -107,5 +118,6 @@ namespace TandisWebApp.Controllers
             await _messages.SendToCoachAsync(memberID, coachID, title, body);
             return RedirectToAction("Messages", new { coachID });
         }
+        */
     }
 }
