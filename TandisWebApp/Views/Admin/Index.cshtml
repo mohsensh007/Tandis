@@ -140,7 +140,7 @@
                 <div class="table-responsive">
                     <table class="table table-dark table-hover align-middle" style="--bs-table-bg:transparent;">
                         <thead>
-                            <tr><th>نام</th><th>کد عضویت</th><th>ورزش</th><th>ساعت ورود</th><th>وضعیت</th></tr>
+                            <tr><th>نام</th><th>کد عضویت</th><th>ورزش</th><th>ساعت ورود</th><th>زمان حضور</th><th>وضعیت</th></tr>
                         </thead>
                         <tbody id="tbodyInside"></tbody>
                     </table>
@@ -571,6 +571,16 @@
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
+        // ✅ نمایش «زمان حضور» (مدت حضور در باشگاه از لحظه ورود تا الان)
+        function fmtDur(min) {
+            min = Number(min) || 0;
+            if (min < 1) return 'کمتر از یک دقیقه';
+            var h = Math.floor(min / 60), m = min % 60;
+            if (h && m) return faNum(h) + ' ساعت و ' + faNum(m) + ' دقیقه';
+            if (h) return faNum(h) + ' ساعت';
+            return faNum(m) + ' دقیقه';
+        }
+
         function loadInsidePreview() {
             apiCall('/api/Admin/InsideList', 'GET', null, function (res) {
                 if (!res.success) return;
@@ -660,7 +670,7 @@
                 if (!res.success) return;
                 var rows = res.data || [];
                 if (!rows.length) {
-                    $('#tbodyInside').html('<tr><td colspan="5" class="text-center py-3">در حال حاضر کسی داخل باشگاه نیست.</td></tr>');
+                    $('#tbodyInside').html('<tr><td colspan="6" class="text-center py-3">در حال حاضر کسی داخل باشگاه نیست.</td></tr>');
                 } else {
                     var html = '';
                     rows.forEach(function (r) {
@@ -669,6 +679,7 @@
                             '<td>' + (r.memberCode ? esc(r.memberCode) : '-') + '</td>' +
                             '<td>' + esc(r.sportName) + '</td>' +
                             '<td style="direction:ltr;text-align:right;">' + esc(r.entryTime || '-') + '</td>' +
+                            '<td style="color:#66d3e8;">⏰ ' + fmtDur(r.durationMinutes) + '</td>' +
                             '<td>' + (r.isGuest ? '<span class="badge bg-warning">مهمان</span>' : '<span class="badge" style="background:rgba(56,217,169,.2);color:#38d9a9;">عضو</span>') + '</td>' +
                         '</tr>';
                     });

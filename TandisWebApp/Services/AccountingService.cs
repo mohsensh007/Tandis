@@ -48,7 +48,7 @@ namespace TandisWebApp.Services
         }
 
         /// <summary>
-        /// لیست تراکنش‌های مالی عضو (بستانکار و بدهکار)
+        /// لیست تراکنش‌های مالی عضو (بستانکار و بدهکار) — مرتب‌شده بر اساس تاریخ+ساعت (جدیدترین اول)
         /// </summary>
         public async Task<List<FinanceDocDto>> GetFinanceDocsAsync(int memberID)
         {
@@ -61,14 +61,19 @@ namespace TandisWebApp.Services
                 .ToListAsync();
             foreach (var c in credits)
             {
+                var dateStr = (c.CreationDate ?? "").Trim();
+                var timeStr = (c.CreationTime ?? "").Trim();
+
                 result.Add(new FinanceDocDto
                 {
-                    CreationTime = DateTime.MinValue,
-                    CreationDateDisplay = c.CreationDate ?? "",
+                    CreationTime = ParseShamsiDateTime(dateStr, timeStr),
+                    CreationDateDisplay = dateStr,
                     Amount = c.Amount ?? 0,
                     AmountDisplay = _helper.SetSeprator(c.Amount ?? 0) + " ریال",
                     DocType = "بستانکار",
-                    DocDesc = c.CreditDesc ?? ""
+                    DocDesc = c.CreditDesc ?? "",
+                    // ✅ کلید مرتب‌سازی: تاریخ شمسی + ساعت (رشته صفرپر → مرتب‌سازی درست)
+                    SortKey = (dateStr + " " + timeStr).Trim()
                 });
             }
 
@@ -83,6 +88,8 @@ namespace TandisWebApp.Services
                 if (d.CreationTime.HasValue)
                     dateDisplay = _helper.ToPersian(d.CreationTime.Value);
 
+                var debitTimeStr = d.CreationTime.HasValue ? d.CreationTime.Value.ToString("HH:mm:ss") : "";
+
                 result.Add(new FinanceDocDto
                 {
                     CreationTime = d.CreationTime ?? DateTime.MinValue,
@@ -90,11 +97,30 @@ namespace TandisWebApp.Services
                     Amount = d.Amount ?? 0,
                     AmountDisplay = _helper.SetSeprator(d.Amount ?? 0) + " ریال",
                     DocType = "بدهکار",
-                    DocDesc = d.DebitDesc ?? ""
+                    DocDesc = d.DebitDesc ?? "",
+                    SortKey = (dateDisplay + " " + debitTimeStr).Trim()
                 });
             }
 
-            return result.OrderByDescending(x => x.CreationTime).ToList();
+            // ✅ مرتب‌سازی بر اساس تاریخ + ساعت (جدیدترین اول) — صرف‌نظر از نوع سند
+            return result.OrderByDescending(x => x.SortKey, StringComparer.Ordinal).ToList();
+        }
+
+        /// <summary>تبدیل تاریخ/ساعت شمسی متنی به DateTime میلادی — در صورت خطا DateTime.MinValue</summary>
+        private DateTime ParseShamsiDateTime(string? date, string? time)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(date)) return DateTime.MinValue;
+                var d = _helper.ToGregorian(date.Trim());
+                if (TimeSpan.TryParse((time ?? "").Trim(), out var t))
+                    d = d.Add(t);
+                return d;
+            }
+            catch
+            {
+                return DateTime.MinValue;
+            }
         }
 
         /// <summary>

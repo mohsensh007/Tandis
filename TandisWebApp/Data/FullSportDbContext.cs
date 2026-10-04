@@ -53,6 +53,7 @@ namespace TandisWebApp.Data
         public DbSet<Acc_BuffetFactorDetail> Acc_BuffetFactorDetails { get; set; } = null!;
         public DbSet<ACC_PosTransaction> ACC_PosTransactions { get; set; } = null!;
         public DbSet<ACC_Freez> ACC_Freezs { get; set; } = null!;
+        public DbSet<Acc_ArticleDoc> Acc_ArticleDocs { get; set; } = null!;
 
         // ==================== Cash - تسویه حساب ====================
         public DbSet<Cash_CreditStatment> Cash_CreditStatments { get; set; } = null!;

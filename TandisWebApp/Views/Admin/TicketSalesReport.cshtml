@@ -1,0 +1,156 @@
+@{
+    ViewData["Title"] = "گزارش فروش بلیت";
+    Layout = "_AdminLayout";
+}
+
+<div class="purple-style rep-filter mb-3">
+    <div class="row g-2">
+        <div class="col-6 col-md-3">
+            <div class="rep-label">از تاریخ</div>
+            <div class="rep-input-group">
+                <input type="text" id="fromDate" class="rep-input" placeholder="1405/01/01" readonly />
+                <button type="button" class="rep-btn-icon" onclick="openCalendar('fromDate','از تاریخ')"><i class="bi bi-calendar3"></i></button>
+                <button type="button" class="rep-btn-icon danger" onclick="$('#fromDate').val('')"><i class="bi bi-x-lg"></i></button>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="rep-label">تا تاریخ</div>
+            <div class="rep-input-group">
+                <input type="text" id="toDate" class="rep-input" placeholder="1405/03/31" readonly />
+                <button type="button" class="rep-btn-icon" onclick="openCalendar('toDate','تا تاریخ')"><i class="bi bi-calendar3"></i></button>
+                <button type="button" class="rep-btn-icon danger" onclick="$('#toDate').val('')"><i class="bi bi-x-lg"></i></button>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="rep-label">&nbsp;</div>
+            <button class="rep-btn-main" id="btnSearch"><i class="bi bi-search"></i> نمایش گزارش</button>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="rep-label">&nbsp;</div>
+            <button class="rep-btn-excel" id="btnExport"><i class="bi bi-file-earmark-excel"></i> خروجی اکسل</button>
+        </div>
+    </div>
+</div>
+
+<div class="rep-summary mb-3" id="summaryCards" style="display:none;">
+    <div class="purple-style rep-chip hl"><b id="summaryTotal">۰</b><span>کل</span></div>
+    <div class="purple-style rep-chip"><b id="summaryAmount">—</b><span>مجموع مبالغ</span></div>
+    <div class="purple-style rep-chip"><b id="summaryAvg">—</b><span>میانگین</span></div>
+</div>
+
+<div class="rep-list-head">
+    <span class="rep-count" id="rowCount">۰ رکورد</span>
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+        <select id="sortKey" class="purple-style rep-search">
+            <option value="">مرتب‌سازی: پیش‌فرض</option>
+            <option value="date">تاریخ</option>
+            <option value="amount">مبلغ</option>
+            <option value="name">نام شخص</option>
+        </select>
+        <button type="button" class="purple-style rep-btn-icon" id="sortDir" data-dir="desc" title="جهت مرتب‌سازی">
+            <i class="bi bi-sort-down"></i>
+        </button>
+        <input type="text" id="searchInput" class="rep-search" placeholder="🔍 جستجو..." />
+    </div>
+</div>
+<div id="repList">
+    <div class="text-center text-muted py-4">فیلتر را تنظیم کرده و «نمایش گزارش» را بزنید.</div>
+</div>
+
+@section Scripts {
+    <script>
+        var lastRows = [];
+        var lastSummary = null;
+        var csvColumns = [
+            { t: 'نام', g: function (r) { return r.personName || ''; } },
+            { t: 'سانس', g: function (r) { return r.sansName || ''; } },
+            { t: 'تعرفه', g: function (r) { return r.tarefeName || ''; } },
+            { t: 'مبلغ', g: function (r) { return r.amountDisplay || ''; } },
+            { t: 'نوع پرداخت', g: function (r) { return r.payType || ''; } },
+            { t: 'تاریخ', g: function (r) { return r.creationDate || ''; } },
+            { t: 'ساعت', g: function (r) { return r.creationTime || ''; } },
+            { t: 'توضیحات', g: function (r) { return r.ticketDesc || ''; } }
+        ];
+
+        $('#btnSearch').click(function () {
+            var from = $.trim($('#fromDate').val());
+            var to = $.trim($('#toDate').val());
+            if (from && to && from > to) { showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error'); return; }
+            var qs = '?';
+            if (from) qs += 'from=' + encodeURIComponent(from) + '&';
+            if (to) qs += 'to=' + encodeURIComponent(to) + '&';
+            apiCall('/api/Admin/TicketSalesReport' + qs, 'GET', null, function (res) {
+                if (res.success) renderList(res.data || [], res.summary);
+            });
+        });
+
+        function renderList(rows, summary) {
+            lastRows = rows;
+            lastSummary = summary || null;
+            if (summary) {
+                $('#summaryTotal').text(faNum(summary.totalCount));
+                $('#summaryAmount').text(summary.totalAmountDisplay || '—');
+                var avg = summary.totalCount > 0 ? Math.round(summary.totalAmount / summary.totalCount) : 0;
+                $('#summaryAvg').text(faNum(avg) + ' ریال');
+                $('#summaryCards').show();
+            } else { $('#summaryCards').hide(); }
+
+            $('#rowCount').text(faNum(rows.length) + ' رکورد');
+            $('#searchInput').val('');
+            var $box = $('#repList');
+            if (!rows.length) { $box.html('<div class="text-center text-muted py-4">بلیتی در این بازه یافت نشد.</div>'); return; }
+
+            var html = '';
+            $.each(rows, function (i, r) {
+                html += '<div class="rep-card">' +
+                    '<div class="rep-head">' +
+                        '<div class="rep-num">' + faNum(i + 1) + '</div>' +
+                        '<div class="rep-mid">' +
+                            '<div class="rep-line"><b>' + esc(r.personName || '-') + '</b></div>' +
+                            '<div class="rep-line">🎫 ' + esc(r.sansName || '-') + '</div>' +
+                            '<div class="rep-line">💰 <span class="amt">' + esc(r.amountDisplay || '-') + '</span></div>' +
+                        '</div>' +
+                        '<button type="button" class="rep-toggle"><i class="bi bi-chevron-left"></i></button>' +
+                    '</div>' +
+                    '<div class="rep-details">' +
+                        '<div class="rep-drow"><span>تعرفه</span><b>' + esc(r.tarefeName || '-') + '</b></div>' +
+                        '<div class="rep-drow"><span>نوع پرداخت</span><b>' + esc(r.payType || '-') + '</b></div>' +
+                        '<div class="rep-drow"><span>تاریخ</span><b>' + esc(r.creationDate || '-') + '</b></div>' +
+                        '<div class="rep-drow"><span>ساعت</span><b>' + esc(r.creationTime || '-') + '</b></div>' +
+                        '<div class="rep-drow"><span>توضیحات</span><b>' + esc(r.ticketDesc || '-') + '</b></div>' +
+                    '</div>' +
+                '</div>';
+            });
+            $box.html(html);
+        }
+
+        $(document).on('click', '.rep-head', function () {
+            var $c = $(this).closest('.rep-card');
+            $c.toggleClass('open');
+            $c.find('.rep-details').slideToggle(200);
+        });
+
+        $('#searchInput').on('keyup', function () {
+            var v = $(this).val().toLowerCase(); var n = 0;
+            $('.rep-card').each(function () {
+                var m = $(this).text().toLowerCase().indexOf(v) > -1;
+                $(this).toggle(m); if (m) n++;
+            });
+            $('#rowCount').text(faNum(n) + ' رکورد');
+        });
+
+        $('#btnExport').click(function () {
+            if (!lastRows.length) { showToast('ابتدا گزارش را نمایش دهید', 'warning'); return; }
+            var lines = [csvColumns.map(function (c) { return '"' + c.t + '"'; }).join(',')];
+            lastRows.forEach(function (r) {
+                lines.push(csvColumns.map(function (c) { return '"' + String(c.g(r)).replace(/"/g, '""') + '"'; }).join(','));
+            });
+            var blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+            var link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'گزارش-فروش-بلیت.csv';
+            link.click();
+            URL.revokeObjectURL(link.href);
+        });
+    </script>
+}

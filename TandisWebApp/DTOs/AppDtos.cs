@@ -207,6 +207,9 @@ namespace TandisWebApp.DTOs
         public string AmountDisplay { get; set; } = string.Empty;
         public string DocType { get; set; } = string.Empty;
         public string DocDesc { get; set; } = string.Empty;
+
+        /// <summary>کلید مرتب‌سازی: «تاریخ شمسی + ساعت» به‌صورت رشته (مرتب‌سازی نزولی)</summary>
+        public string SortKey { get; set; } = string.Empty;
     }
 
     // ============================================================

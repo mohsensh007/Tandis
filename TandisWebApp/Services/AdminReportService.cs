@@ -271,6 +271,262 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
+        //  گزارش فروش بلیت (خواندنی)
+        // ============================================================
+        public async Task<AdminReportResponse<AdminTicketSaleRowDto, SalesReportSummaryDto>> GetTicketSalesReportAsync(short shiftID, string? from, string? to)
+        {
+            var query = _db.ACC_Tickets
+                .AsNoTracking()
+                .Where(t => t.ShiftID == shiftID);
+
+            if (!string.IsNullOrWhiteSpace(from))
+                query = query.Where(t => t.CreationDate != null && t.CreationDate.CompareTo(from) >= 0);
+            if (!string.IsNullOrWhiteSpace(to))
+                query = query.Where(t => t.CreationDate != null && t.CreationDate.CompareTo(to) <= 0);
+
+            var rows = await (
+                from t in query
+                orderby t.CreationDate descending, t.TicketID descending
+                select new
+                {
+                    t.TicketID,
+                    t.FullName,
+                    t.Amount,
+                    t.IsPos,
+                    t.CreationDate,
+                    t.CreationTime,
+                    t.TicketDesc,
+                    TarefeName = t.Gen_Tarefe != null ? t.Gen_Tarefe.Tarefe : null,
+                    SansName = t.Gen_San != null ? t.Gen_San.Sans : null
+                }).ToListAsync();
+
+            var result = new List<AdminTicketSaleRowDto>();
+            long total = 0;
+            foreach (var x in rows)
+            {
+                total += x.Amount ?? 0;
+                result.Add(new AdminTicketSaleRowDto
+                {
+                    TicketID = x.TicketID,
+                    PersonName = x.FullName,
+                    SansName = x.SansName,
+                    TarefeName = x.TarefeName,
+                    Amount = x.Amount ?? 0,
+                    AmountDisplay = _helper.SetSeprator(x.Amount ?? 0) + " ریال",
+                    CreationDate = x.CreationDate,
+                    CreationTime = x.CreationTime.HasValue ? x.CreationTime.Value.ToString("HH:mm:ss") : "",
+                    TicketDesc = x.TicketDesc,
+                    IsPos = x.IsPos
+                });
+            }
+
+            return new AdminReportResponse<AdminTicketSaleRowDto, SalesReportSummaryDto>
+            {
+                Data = result,
+                Summary = new SalesReportSummaryDto
+                {
+                    TotalCount = result.Count,
+                    TotalAmount = total,
+                    TotalAmountDisplay = _helper.SetSeprator(total) + " ریال"
+                }
+            };
+        }
+
+        // ============================================================
+        //  گزارش فروش خدمات (خواندنی)
+        // ============================================================
+        public async Task<AdminReportResponse<AdminServiceSaleRowDto, SalesReportSummaryDto>> GetServicesReportAsync(short shiftID, string? from, string? to)
+        {
+            var query = _db.ACC_MemberServices
+                .AsNoTracking()
+                .Where(s => s.ShiftID == shiftID);
+
+            if (!string.IsNullOrWhiteSpace(from))
+                query = query.Where(s => s.CreationDate != null && s.CreationDate.CompareTo(from) >= 0);
+            if (!string.IsNullOrWhiteSpace(to))
+                query = query.Where(s => s.CreationDate != null && s.CreationDate.CompareTo(to) <= 0);
+
+            var rows = await (
+                from s in query
+                join tr in _db.ACC_Traffics on s.TrafficID equals (long?)tr.TrafficID into trj
+                from tr in trj.DefaultIfEmpty()
+                join m in _db.Gen_Members on tr.MemberID equals m.MemberID into mj
+                from m in mj.DefaultIfEmpty()
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID into pj
+                from p in pj.DefaultIfEmpty()
+                orderby s.CreationDate descending, s.MemberServiceID descending
+                select new
+                {
+                    s.MemberServiceID,
+                    s.ServiceDesc,
+                    s.ServiceAmount,
+                    s.CreationDate,
+                    s.CreationTime,
+                    ServiceName = s.Gen_Service != null ? s.Gen_Service.ServiceDesc : null,
+                    TrafficPersonName = tr != null ? tr.PersonName : null,
+                    IsGuest = tr != null ? tr.IsGuest : null,
+                    FullName = p != null ? p.FullName : null,
+                    MemberID = m != null ? m.MemberID : 0
+                }).ToListAsync();
+
+            var result = new List<AdminServiceSaleRowDto>();
+            long total = 0;
+            foreach (var x in rows)
+            {
+                total += x.ServiceAmount ?? 0;
+
+                var personName = !string.IsNullOrEmpty(x.FullName) ? x.FullName
+                    : (!string.IsNullOrEmpty(x.TrafficPersonName) ? x.TrafficPersonName
+                    : (x.IsGuest == true || x.MemberID == 0 ? "مهمان" : "-"));
+
+                result.Add(new AdminServiceSaleRowDto
+                {
+                    MemberServiceID = x.MemberServiceID,
+                    ServiceName = string.IsNullOrWhiteSpace(x.ServiceName) ? (x.ServiceDesc ?? "-") : x.ServiceName,
+                    ServiceDesc = x.ServiceDesc,
+                    PersonName = personName,
+                    MemberCode = x.MemberID > 0 ? _helper.SetSeprator(x.MemberID) : null,
+                    Amount = x.ServiceAmount ?? 0,
+                    AmountDisplay = _helper.SetSeprator(x.ServiceAmount ?? 0) + " ریال",
+                    CreationDate = x.CreationDate,
+                    CreationTime = (x.CreationTime ?? "").Trim()
+                });
+            }
+
+            return new AdminReportResponse<AdminServiceSaleRowDto, SalesReportSummaryDto>
+            {
+                Data = result,
+                Summary = new SalesReportSummaryDto
+                {
+                    TotalCount = result.Count,
+                    TotalAmount = total,
+                    TotalAmountDisplay = _helper.SetSeprator(total) + " ریال"
+                }
+            };
+        }
+
+        // ============================================================
+        //  گزارش تک‌جلسه (مهمان‌ها - خواندنی)
+        //  افرادی که به‌عنوان مهمان آمده‌اند و سانس تک‌جلسه برایشان ثبت شده
+        // ============================================================
+        public async Task<AdminReportResponse<AdminGuestSessionRowDto, SalesReportSummaryDto>> GetGuestSessionReportAsync(short shiftID, string? from, string? to)
+        {
+            var query = _db.ACC_Traffics
+                .AsNoTracking()
+                .Where(t => t.ShiftID == shiftID && (t.IsGuest == true || t.MemberID == null));
+
+            if (!string.IsNullOrWhiteSpace(from))
+                query = query.Where(t => t.EntryDate != null && t.EntryDate.CompareTo(from) >= 0);
+            if (!string.IsNullOrWhiteSpace(to))
+                query = query.Where(t => t.EntryDate != null && t.EntryDate.CompareTo(to) <= 0);
+
+            var rows = await (
+                from t in query
+                join s in _db.Gen_SportSanses on t.FreeSportSansID equals (int?)s.SportSanseID into sj
+                from s in sj.DefaultIfEmpty()
+                join m in _db.Gen_Members on t.MemberID equals m.MemberID into mj
+                from m in mj.DefaultIfEmpty()
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID into pj
+                from p in pj.DefaultIfEmpty()
+                orderby t.EntryDate descending, t.TrafficID descending
+                select new
+                {
+                    t.TrafficID,
+                    t.PersonName,
+                    t.Amount,
+                    t.EntryDate,
+                    t.EntryTime,
+                    FullName = p != null ? p.FullName : null,
+                    MemberID = m != null ? m.MemberID : 0,
+                    SansName = s != null
+                        ? ((s.Gen_Sport_Category != null ? s.Gen_Sport_Category.SportName + " - " : "") + (s.SanseName ?? ""))
+                        : null
+                }).ToListAsync();
+
+            var result = new List<AdminGuestSessionRowDto>();
+            long total = 0;
+            foreach (var x in rows)
+            {
+                total += (long)(x.Amount ?? 0);
+
+                var personName = !string.IsNullOrEmpty(x.FullName) ? x.FullName
+                    : (!string.IsNullOrEmpty(x.PersonName) ? x.PersonName : "مهمان");
+
+                result.Add(new AdminGuestSessionRowDto
+                {
+                    TrafficID = x.TrafficID,
+                    PersonName = personName,
+                    MemberCode = x.MemberID > 0 ? _helper.SetSeprator(x.MemberID) : null,
+                    SansName = string.IsNullOrWhiteSpace(x.SansName) ? "-" : x.SansName,
+                    Amount = (long)(x.Amount ?? 0),
+                    AmountDisplay = _helper.SetSeprator((long)(x.Amount ?? 0)) + " ریال",
+                    EntryDate = x.EntryDate,
+                    EntryTime = (x.EntryTime ?? "").Trim()
+                });
+            }
+
+            return new AdminReportResponse<AdminGuestSessionRowDto, SalesReportSummaryDto>
+            {
+                Data = result,
+                Summary = new SalesReportSummaryDto
+                {
+                    TotalCount = result.Count,
+                    TotalAmount = total,
+                    TotalAmountDisplay = _helper.SetSeprator(total) + " ریال"
+                }
+            };
+        }
+
+        // ============================================================
+        //  گزارش هزینه‌ها - Acc_ArticleDoc (خواندنی)
+        // ============================================================
+        public async Task<AdminReportResponse<AdminExpenseRowDto, SalesReportSummaryDto>> GetExpenseReportAsync(short shiftID, string? from, string? to)
+        {
+            // نکته: CreationDate از نوع nchar است (ممکن است فاصله انتهایی داشته باشد) → Trim می‌شود
+            var rows = await _db.Acc_ArticleDocs
+                .AsNoTracking()
+                .Where(d => d.ShiftID == shiftID)
+                .OrderByDescending(d => d.CreationDate)
+                .ThenByDescending(d => d.DocID)
+                .ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(from))
+                rows = rows.Where(d => d.CreationDate != null && d.CreationDate.Trim().CompareTo(from) >= 0).ToList();
+            if (!string.IsNullOrWhiteSpace(to))
+                rows = rows.Where(d => d.CreationDate != null && d.CreationDate.Trim().CompareTo(to) <= 0).ToList();
+
+            var result = new List<AdminExpenseRowDto>();
+            long total = 0;
+            foreach (var x in rows)
+            {
+                total += x.Amount ?? 0;
+                result.Add(new AdminExpenseRowDto
+                {
+                    DocID = x.DocID,
+                    ArticleDesc = x.ArticleDesc,
+                    ArticleID = x.ArticleID,
+                    ArticleCount = (x.ArticleCount ?? "").Trim(),
+                    ArticleCountUnit = (x.ArticleCountUnit ?? "").Trim(),
+                    Amount = x.Amount ?? 0,
+                    AmountDisplay = _helper.SetSeprator(x.Amount ?? 0) + " ریال",
+                    CreationDate = (x.CreationDate ?? "").Trim(),
+                    CreationTime = (x.CreationTime ?? "").Trim()
+                });
+            }
+
+            return new AdminReportResponse<AdminExpenseRowDto, SalesReportSummaryDto>
+            {
+                Data = result,
+                Summary = new SalesReportSummaryDto
+                {
+                    TotalCount = result.Count,
+                    TotalAmount = total,
+                    TotalAmountDisplay = _helper.SetSeprator(total) + " ریال"
+                }
+            };
+        }
+
+        // ============================================================
         //  گزارش صندوق (خواندنی)
         // ============================================================
         public async Task<AdminReportResponse<AdminFinanceRowDto, FinanceReportSummaryDto>> GetFinanceReportAsync(short shiftID, string? from, string? to)
@@ -511,6 +767,8 @@ namespace TandisWebApp.Services
                     t.MemberID,
                     t.PersonName,
                     t.EntryTime,
+                    t.EntryDate,
+                    t.EntryDateTime,
                     t.IsGuest,
                     FullName = p != null ? p.FullName : "",
                     SportName = ms != null && ms.Gen_SportSanse != null
@@ -519,16 +777,43 @@ namespace TandisWebApp.Services
                 })
                 .ToListAsync();
 
-            return raw.Select(x => new AdminInsideRowDto
+            var rows = raw.Select(x =>
             {
-                TrafficID = x.TrafficID,
-                PersonName = x.MemberID != null ? (string.IsNullOrEmpty(x.FullName) ? "-" : x.FullName)
-                                                : (string.IsNullOrEmpty(x.PersonName) ? "مهمان" : x.PersonName),
-                MemberCode = x.MemberID != null && x.MemberID > 0 ? _helper.SetSeprator(x.MemberID.Value) : null,
-                EntryTime = (x.EntryTime ?? "").Trim(),
-                SportName = string.IsNullOrEmpty(x.SportName) ? "-" : x.SportName,
-                IsGuest = x.MemberID == null || x.IsGuest == true
+                // ✅ زمان ورود: ترجیحاً از EntryDateTime، وگرنه از تاریخ+ساعت متنی
+                DateTime? entry = x.EntryDateTime;
+                if (!entry.HasValue && !string.IsNullOrWhiteSpace(x.EntryDate))
+                {
+                    try
+                    {
+                        var d = _helper.ToGregorian(x.EntryDate.Trim());
+                        if (TimeSpan.TryParse((x.EntryTime ?? "").Trim(), out var t))
+                            d = d.Add(t);
+                        entry = d;
+                    }
+                    catch { }
+                }
+
+                int durationMinutes = entry.HasValue && entry.Value <= now
+                    ? (int)(now - entry.Value).TotalMinutes
+                    : 0;
+
+                return new AdminInsideRowDto
+                {
+                    TrafficID = x.TrafficID,
+                    PersonName = x.MemberID != null ? (string.IsNullOrEmpty(x.FullName) ? "-" : x.FullName)
+                                                    : (string.IsNullOrEmpty(x.PersonName) ? "مهمان" : x.PersonName),
+                    MemberCode = x.MemberID != null && x.MemberID > 0 ? _helper.SetSeprator(x.MemberID.Value) : null,
+                    EntryTime = (x.EntryTime ?? "").Trim(),
+                    SportName = string.IsNullOrEmpty(x.SportName) ? "-" : x.SportName,
+                    IsGuest = x.MemberID == null || x.IsGuest == true,
+                    DurationMinutes = durationMinutes
+                };
             }).ToList();
+
+            // ✅ مرتب‌سازی بر اساس «زمان حضور» — بیشترین مدت حضور در باشگاه اول
+            return rows.OrderByDescending(x => x.DurationMinutes)
+                       .ThenByDescending(x => x.EntryTime)
+                       .ToList();
         }
 
         // ============================================================

@@ -60,6 +60,22 @@ namespace TandisWebApp.Controllers
         [HttpGet]
         public IActionResult FinanceReport() => View();
 
+        [AdminAuthorize]
+        [HttpGet]
+        public IActionResult TicketSalesReport() => View();
+
+        [AdminAuthorize]
+        [HttpGet]
+        public IActionResult ServicesReport() => View();
+
+        [AdminAuthorize]
+        [HttpGet]
+        public IActionResult GuestSessionReport() => View();
+
+        [AdminAuthorize]
+        [HttpGet]
+        public IActionResult ExpenseReport() => View();
+
         // ============================================================
         //  صفحه نمودارها (سبک Twitch) + API سری‌زمانی
         // ============================================================
@@ -192,6 +208,42 @@ namespace TandisWebApp.Controllers
         public async Task<IActionResult> FinanceReportApi(string? from, string? to)
         {
             var response = await _reports.GetFinanceReportAsync(AdminShiftID, from, to);
+            return Ok(new { success = true, data = response.Data, summary = response.Summary });
+        }
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/TicketSalesReport")]
+        public async Task<IActionResult> TicketSalesReportApi(string? from, string? to)
+        {
+            var response = await _reports.GetTicketSalesReportAsync(AdminShiftID, from, to);
+            return Ok(new { success = true, data = response.Data, summary = response.Summary });
+        }
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/ServicesReport")]
+        public async Task<IActionResult> ServicesReportApi(string? from, string? to)
+        {
+            var response = await _reports.GetServicesReportAsync(AdminShiftID, from, to);
+            return Ok(new { success = true, data = response.Data, summary = response.Summary });
+        }
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/GuestSessionReport")]
+        public async Task<IActionResult> GuestSessionReportApi(string? from, string? to)
+        {
+            var response = await _reports.GetGuestSessionReportAsync(AdminShiftID, from, to);
+            return Ok(new { success = true, data = response.Data, summary = response.Summary });
+        }
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/ExpenseReport")]
+        public async Task<IActionResult> ExpenseReportApi(string? from, string? to)
+        {
+            var response = await _reports.GetExpenseReportAsync(AdminShiftID, from, to);
             return Ok(new { success = true, data = response.Data, summary = response.Summary });
         }
 

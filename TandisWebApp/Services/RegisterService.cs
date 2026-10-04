@@ -390,7 +390,9 @@ namespace TandisWebApp.Services
                     UserID = WEB_USER_ID,
                     CreationDate = _helper.GetToday(),
                     CreationTime = _helper.GetThisTime(),
-                    CommentText = "تمدید با وب‌اپ",
+                    // ✅ شرح سند بدهی (توسط Trigger از همین فیلد ساخته می‌شود):
+                    //    فقط وقتی واقعاً تمدید است «تمدید» نوشته می‌شود — ثبت‌نام جدید «ثبت‌نام» است
+                    CommentText = isRevival ? "تمدید با وب‌اپ" : "ثبت‌نام با وب‌اپ",
 
                     // ✅ مقداردهی اولیه با 0 (وقتی سانس مربی نداره، همین‌ها ثبت می‌شن)
                     CoachPercent = 0,
@@ -423,7 +425,7 @@ VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.Contrac
 
                 var insertedId = await _db.Acc_MemberSports
                     .AsNoTracking()
-                    .Where(x => x.MemberID == memberID && x.StartDate == startDate && x.CommentText == "تمدید با وب‌اپ")
+                    .Where(x => x.MemberID == memberID && x.StartDate == startDate && x.CommentText == rec.CommentText)
                     .OrderByDescending(x => x.SportMemberID)
                     .Select(x => x.SportMemberID)
                     .FirstOrDefaultAsync();

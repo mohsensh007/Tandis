@@ -236,6 +236,11 @@ namespace TandisWebApp.Services
                 factory.CardSwiped += r =>
                     _logger.LogInformation("کارت خوانده شد: {Card} ترمینال {Tid}", r?.CardNumberMask ?? "-", r?.TerminalId ?? "-");
 
+                // ✅ نظارت همزمان روی انصراف کاربر: اگر وب‌اپ ResponseCode را 'CANCELED' کرد،
+                //    پیام لغو (SSP Cancel) به دستگاه فرستاده می‌شود تا مبلغ از صفحه POS حذف شود.
+                using var waitCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                var cancelTask = WatchCancelAsync(txn.PcPosTransactionID, waitCts.Token);
+
                 if (!factory.SetLan(posIp))
                     throw new InvalidOperationException("SetLan ناموفق بود: " + posIp);
 
@@ -247,21 +252,47 @@ namespace TandisWebApp.Services
                     string.Empty, string.Empty, null, 0);
 
                 PosResult? result = null;
+                bool userCanceled = false;
                 if (immediate != null && !string.IsNullOrEmpty(immediate.ResponseCode))
                 {
                     result = immediate;                       // جواب همزمان
                 }
                 else
                 {
-                    var done = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(TimeoutSeconds), ct);
-                    result = done;                            // جواب از رویداد
+                    var deviceTask = tcs.Task.WaitAsync(TimeSpan.FromSeconds(TimeoutSeconds), waitCts.Token);
+                    // اگر مسیر انصراف رفت، خطای بعدیِ این تسک نادیده گرفته شود
+                    _ = deviceTask.ContinueWith(t => _ = t.Exception,
+                        TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+
+                    var first = await Task.WhenAny(deviceTask, cancelTask);
+                    if (first == cancelTask && await cancelTask)
+                    {
+                        // کاربر از گوشی انصراف داد → Dispose پیام لغو SSP (فیلد 3 = 000001) را می‌فرستد
+                        userCanceled = true;
+                        try { factory.Dispose(); }
+                        catch (Exception dex) { _logger.LogWarning(dex, "ارسال پیام لغو به دستگاه POS ناموفق بود"); }
+                        _logger.LogInformation("انصراف کاربر از تراکنش {Id} — پیام لغو (SSP Cancel) به دستگاه POS ارسال شد", txn.PcPosTransactionID);
+                    }
+                    else
+                    {
+                        result = await deviceTask;            // جواب از رویداد (یا تایم‌اوت)
+                    }
                 }
 
-                _logger.LogInformation("جواب دستگاه: کد={Code} شرح={Desc} تریس={Trace}",
-                    result.ResponseCode, result.ResponseDescription, result.TraceNumber ?? "-");
+                waitCts.Cancel();                              // توقف ناظر انصراف
 
-                await FinalizeAsync(txn, result.ResponseCode ?? "99",
-                    result.ResponseDescription ?? "", result);
+                if (userCanceled)
+                {
+                    // ResponseCode از قبل 'CANCELED' است → Finalize اثری ندارد (WHERE ResponseCode IS NULL)
+                }
+                else
+                {
+                    _logger.LogInformation("جواب دستگاه: کد={Code} شرح={Desc} تریس={Trace}",
+                        result!.ResponseCode, result.ResponseDescription, result.TraceNumber ?? "-");
+
+                    await FinalizeAsync(txn, result.ResponseCode ?? "99",
+                        result.ResponseDescription ?? "", result);
+                }
             }
             catch (OperationCanceledException)
             {
@@ -277,6 +308,36 @@ namespace TandisWebApp.Services
                 try { factory?.Dispose(); } catch { /* ignore */ }
                 _busy = false;
             }
+        }
+
+        /// <summary>
+        /// ناظر انصراف کاربر: تا وقتی تراکنش در DB «در انتظار» است آن را بررسی می‌کند.
+        /// اگر وب‌اپ انصراف کاربر را ثبت کند (ResponseCode='CANCELED' توسط CancelAsync)،
+        /// true برمی‌گرداند تا ProcessAsync پیام لغو را به دستگاه بفرستد.
+        /// </summary>
+        private async Task<bool> WatchCancelAsync(long txnId, CancellationToken ct)
+        {
+            try
+            {
+                while (!ct.IsCancellationRequested)
+                {
+                    using (var scope = _scopeFactory.CreateScope())
+                    {
+                        var db = scope.ServiceProvider.GetRequiredService<FullSportDbContext>();
+                        var code = await db.ACC_PosTransactions.AsNoTracking()
+                            .Where(t => t.PcPosTransactionID == txnId)
+                            .Select(t => t.ResponseCode)
+                            .FirstOrDefaultAsync(ct);
+
+                        if (code == "CANCELED") return true;
+                        if (!string.IsNullOrEmpty(code)) return false;  // نتیجه دیگری ثبت شده
+                    }
+
+                    await Task.Delay(500, ct);
+                }
+            }
+            catch (OperationCanceledException) { }
+            return false;
         }
 
         /// <summary> ثبت نتیجه روی تراکنش (ResponseCode → وضعیت نهایی برای poll وب‌اپ) </summary>

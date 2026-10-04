@@ -137,6 +137,47 @@ namespace TandisWebApp.Models
         public string? RefundType { get; set; }
     }
 
+    /// <summary>
+    /// اسناد هزینه (گزارش هزینه‌های باشگاه)
+    /// معادل جدول dbo.Acc_ArticleDoc
+    /// </summary>
+    [Table("Acc_ArticleDoc")]
+    public class Acc_ArticleDoc
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long DocID { get; set; }
+
+        [MaxLength(150)]
+        public string? ArticleDesc { get; set; }
+
+        public short? ArticleID { get; set; }
+
+        [MaxLength(50)]
+        public string? ArticleCount { get; set; }
+
+        [MaxLength(50)]
+        public string? ArticleCountUnit { get; set; }
+
+        public long? Amount { get; set; }
+
+        public byte? PosID { get; set; }
+
+        public short? ShiftID { get; set; }
+
+        public short? UserID { get; set; }
+
+        [MaxLength(10)]
+        public string? CreationDate { get; set; }
+
+        [MaxLength(8)]
+        public string? CreationTime { get; set; }
+
+        public short? Modifier { get; set; }
+
+        public DateTime? ModificationTime { get; set; }
+    }
+
     /// <summary>معادل dbo.Gen_PosTbl - تعریف دستگاه‌های POS</summary>
     [Table("Gen_PosTbl")]
     public class Gen_PosTbl

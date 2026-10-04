@@ -140,6 +140,89 @@ namespace TandisWebApp.DTOs
     }
 
     // ============================================================
+    //  خلاصه گزارش‌های فروش/هزینه (تعداد + مجموع مبلغ)
+    // ============================================================
+
+    public class SalesReportSummaryDto
+    {
+        public int TotalCount { get; set; }
+        public long TotalAmount { get; set; }
+        public string TotalAmountDisplay { get; set; } = string.Empty;
+    }
+
+    // ============================================================
+    //  گزارش فروش بلیت
+    // ============================================================
+
+    public class AdminTicketSaleRowDto
+    {
+        public int TicketID { get; set; }
+        public string? PersonName { get; set; }
+        public string? SansName { get; set; }
+        public string? TarefeName { get; set; }
+        public long Amount { get; set; }
+        public string AmountDisplay { get; set; } = string.Empty;
+        public string? CreationDate { get; set; }
+        public string? CreationTime { get; set; }
+        public string? TicketDesc { get; set; }
+        public bool? IsPos { get; set; }
+        public string PayType => IsPos == true ? "کارتخوان" : "نقد";
+    }
+
+    // ============================================================
+    //  گزارش فروش خدمات
+    // ============================================================
+
+    public class AdminServiceSaleRowDto
+    {
+        public int MemberServiceID { get; set; }
+        public string? ServiceName { get; set; }
+        public string? ServiceDesc { get; set; }
+        public string? PersonName { get; set; }
+        public string? MemberCode { get; set; }
+        public long Amount { get; set; }
+        public string AmountDisplay { get; set; } = string.Empty;
+        public string? CreationDate { get; set; }
+        public string? CreationTime { get; set; }
+    }
+
+    // ============================================================
+    //  گزارش تک‌جلسه (مهمان‌ها)
+    // ============================================================
+
+    public class AdminGuestSessionRowDto
+    {
+        public long TrafficID { get; set; }
+        public string? PersonName { get; set; }
+        public string? MemberCode { get; set; }
+        public string? SansName { get; set; }
+        public long Amount { get; set; }
+        public string AmountDisplay { get; set; } = string.Empty;
+        public string? EntryDate { get; set; }
+        public string? EntryTime { get; set; }
+    }
+
+    // ============================================================
+    //  گزارش هزینه‌ها (Acc_ArticleDoc)
+    // ============================================================
+
+    public class AdminExpenseRowDto
+    {
+        public long DocID { get; set; }
+        public string? ArticleDesc { get; set; }
+        public short? ArticleID { get; set; }
+        public string? ArticleCount { get; set; }
+        public string? ArticleCountUnit { get; set; }
+        public long Amount { get; set; }
+        public string AmountDisplay { get; set; } = string.Empty;
+        public string? CreationDate { get; set; }
+        public string? CreationTime { get; set; }
+
+        /// <summary>برای مرتب‌سازی مشترک «نام/شرح» در لایوت ادمین</summary>
+        public string? TypeDesc => ArticleDesc;
+    }
+
+    // ============================================================
     //  پاسخ گزارش با خلاصه (Generic wrapper)
     // ============================================================
 
@@ -177,6 +260,9 @@ namespace TandisWebApp.DTOs
         public string EntryTime { get; set; } = string.Empty;
         public string SportName { get; set; } = string.Empty;
         public bool IsGuest { get; set; }
+
+        /// <summary>زمان حضور در باشگاه به دقیقه (از لحظه ورود تا الان)</summary>
+        public int DurationMinutes { get; set; }
     }
 
     // ============================================================
