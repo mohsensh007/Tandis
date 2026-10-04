@@ -136,11 +136,11 @@
                 <h5 class="modal-title"><i class="bi bi-people-fill me-2"></i>افراد حاضر در باشگاه</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body">
+            <div class="purple-style modal-body">
                 <div class="table-responsive">
                     <table class="table table-dark table-hover align-middle" style="--bs-table-bg:transparent;">
                         <thead>
-                            <tr><th>نام</th><th>کد عضویت</th><th>ورزش</th><th>ساعت ورود</th><th>زمان حضور</th><th>وضعیت</th></tr>
+                            <tr><th>نام</th><th>کد عضویت</th><th class="hide-sm">ورزش</th><th>ساعت ورود</th><th>زمان حضور</th><th>وضعیت</th></tr>
                         </thead>
                         <tbody id="tbodyInside"></tbody>
                     </table>
@@ -558,6 +558,45 @@
             font-size: .68rem;
         }
     }
+    /* ===== مودال حاضرین: جمع‌وجور روی موبایل ===== */
+    @@media (max-width: 576px) {
+        #insideModal .modal-dialog {
+            margin: .5rem;
+            max-width: calc(100% - 1rem);
+        }
+
+        #insideModal .modal-content {
+            border-radius: 14px;
+        }
+
+        #insideModal .table {
+            font-size: .72rem;
+        }
+
+            #insideModal .table th,
+            #insideModal .table td {
+                padding: .45rem .3rem;
+                white-space: nowrap;
+                vertical-align: middle;
+            }
+
+        #insideModal .hide-sm {
+            display: none;
+        }
+
+        #insideModal .badge {
+            font-size: .65rem;
+            padding: .25em .5em;
+        }
+
+        #insideModal .modal-header {
+            padding: .8rem 1rem;
+        }
+
+        #insideModal .modal-title {
+            font-size: .9rem;
+        }
+    }
 </style>
 
 @section Scripts {
@@ -571,14 +610,10 @@
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
         }
 
-        // ✅ نمایش «زمان حضور» (مدت حضور در باشگاه از لحظه ورود تا الان)
-        function fmtDur(min) {
-            min = Number(min) || 0;
-            if (min < 1) return 'کمتر از یک دقیقه';
-            var h = Math.floor(min / 60), m = min % 60;
-            if (h && m) return faNum(h) + ' ساعت و ' + faNum(m) + ' دقیقه';
-            if (h) return faNum(h) + ' ساعت';
-            return faNum(m) + ' دقیقه';
+        function fmtDur(totalMin) {
+            var h = Math.floor(totalMin / 60);
+            var m = totalMin % 60;
+            return h + ':' + (m < 10 ? '0' : '') + m;   // → 4:42
         }
 
         function loadInsidePreview() {
@@ -677,7 +712,7 @@
                         html += '<tr>' +
                             '<td>' + esc(r.personName) + '</td>' +
                             '<td>' + (r.memberCode ? esc(r.memberCode) : '-') + '</td>' +
-                            '<td>' + esc(r.sportName) + '</td>' +
+                            '<td class="hide-sm">' + esc(r.sportName || '-') + '</td>' +
                             '<td style="direction:ltr;text-align:right;">' + esc(r.entryTime || '-') + '</td>' +
                             '<td style="color:#66d3e8;">⏰ ' + fmtDur(r.durationMinutes) + '</td>' +
                             '<td>' + (r.isGuest ? '<span class="badge bg-warning">مهمان</span>' : '<span class="badge" style="background:rgba(56,217,169,.2);color:#38d9a9;">عضو</span>') + '</td>' +

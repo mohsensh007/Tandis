@@ -3,8 +3,6 @@
     Layout = "_LoginLayout";
 }
 
-<link rel="stylesheet" href="~/css/register.css?v=1" />
-
 <style>
     .reg-steps {
         display: flex;
@@ -125,17 +123,48 @@
         font-size: 1.15rem;
     }
 
+    /* ===== ✅ بک‌دراپ تیره پشت پنل تقویم ===== */
+    .bd-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1070;
+        background: rgba(6,9,18,.65);
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+        display: none;
+    }
+
+        .bd-backdrop.show {
+            display: block;
+            animation: bdFsIn .2s ease;
+        }
+
+    /* ===== ✅ پنل تقویم: همیشه وسط صفحه (مودال) ===== */
     .bd-panel {
-        position: absolute;
-        top: calc(100% + 8px);
-        right: 0;
-        left: 0;
-        z-index: 80;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1075;
+        width: min(92vw, 380px);
         background: rgba(20,24,42,.98);
         border: 1px solid rgba(102,211,232,.35);
         border-radius: 16px;
         padding: 14px 10px 12px;
         box-shadow: 0 18px 50px rgba(0,0,0,.55);
+        animation: bdPanelIn .25s cubic-bezier(.22,.9,.35,1.15);
+    }
+
+    @@keyframes bdPanelIn {
+        from {
+            opacity: 0;
+            transform: translate(-50%, -46%) scale(.94);
+        }
+
+        to {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
     }
 
     .bd-tiles {
@@ -540,127 +569,132 @@
         }
     }
 </style>
+
 <div id="authCard">
     <div class="d-flex justify-content-start mb-2">
         <a href="javascript:void(0)" onclick="flipNavigate('/Account/Login')" class="btn-back-login">
             <i class="bi bi-arrow-right"></i> بازگشت به ورود
         </a>
     </div>
-<!-- ✅ نشانگر مراحل -->
-<div class="reg-steps">
-    <span class="reg-step on" id="stepBadge1">۱. شرایط باشگاه</span>
-    <span class="reg-step" id="stepBadge2">۲. اطلاعات شخصی</span>
-    <span class="reg-step" id="stepBadge3">۳. ثبت چهره</span>
-</div>
 
-<!-- ========== مرحله ۱ ========== -->
-<div id="stepRules">
-    <div class="reg-title"><i class="bi bi-shield-check"></i> شرایط و تعهدات باشگاه</div>
-    <div class="rules-box" id="rulesBox">در حال بارگذاری...</div>
-    <button id="btnAcceptRules" class="btn btn-primary w-100 py-2" disabled>
-        <i class="bi bi-check2-circle"></i> شرایط را می‌پذیرم و ادامه می‌دهم
-    </button>
-</div>
+    <!-- ✅ نشانگر مراحل -->
+    <div class="reg-steps">
+        <span class="reg-step on" id="stepBadge1">۱. شرایط باشگاه</span>
+        <span class="reg-step" id="stepBadge2">۲. اطلاعات شخصی</span>
+        <span class="reg-step" id="stepBadge3">۳. ثبت چهره</span>
+    </div>
 
-<!-- ========== مرحله ۲ ========== -->
-<div id="stepInfo" style="display:none;">
-    <div class="reg-title"><i class="bi bi-person-vcard"></i> اطلاعات شخصی</div>
-    <div class="mb-2">
-        <label class="form-label">نام <span class="text-danger">*</span></label>
-        <input type="text" id="txtFirstName" class="form-control" placeholder="نام" />
+    <!-- ========== مرحله ۱ ========== -->
+    <div id="stepRules">
+        <div class="reg-title"><i class="bi bi-shield-check"></i> شرایط و تعهدات باشگاه</div>
+        <div class="rules-box" id="rulesBox">در حال بارگذاری...</div>
+        <button id="btnAcceptRules" class="btn btn-primary w-100 py-2" disabled>
+            <i class="bi bi-check2-circle"></i> شرایط را می‌پذیرم و ادامه می‌دهم
+        </button>
     </div>
-    <div class="mb-2">
-        <label class="form-label">نام خانوادگی <span class="text-danger">*</span></label>
-        <input type="text" id="txtLastName" class="form-control" placeholder="نام خانوادگی" />
+
+    <!-- ========== مرحله ۲ ========== -->
+    <div id="stepInfo" style="display:none;">
+        <div class="reg-title"><i class="bi bi-person-vcard"></i> اطلاعات شخصی</div>
+        <div class="mb-2">
+            <label class="form-label">نام <span class="text-danger">*</span></label>
+            <input type="text" id="txtFirstName" class="form-control" placeholder="نام" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">نام خانوادگی <span class="text-danger">*</span></label>
+            <input type="text" id="txtLastName" class="form-control" placeholder="نام خانوادگی" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">کد ملی <span class="text-danger">*</span></label>
+            <input type="text" id="txtRegNationalCode" class="form-control" maxlength="10" placeholder="کد ملی ۱۰ رقم" inputmode="numeric" />
+        </div>
+        <div class="mb-2">
+            <label class="form-label">تاریخ تولد (شمسی) <span class="text-danger">*</span></label>
+            <div class="bd-picker">
+                <input type="text" id="txtBirthDate" class="form-control" maxlength="10" placeholder="مثال: 1368/04/12" inputmode="numeric" />
+                <button type="button" class="bd-cal-btn" id="btnBirthCal" title="انتخاب تاریخ">📅</button>
+            </div>
+        </div>
+        <div class="mb-2">
+            <label class="form-label">شماره موبایل <span class="text-danger">*</span></label>
+            <input type="text" id="txtMobile" class="form-control" maxlength="11" placeholder="مثال: 09123456789" inputmode="numeric" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">جنسیت <span class="text-danger">*</span></label>
+            <div class="d-flex gap-3">
+                <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;"><input type="radio" name="gender" value="true" checked /> <span>آقا</span></label>
+                <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;"><input type="radio" name="gender" value="false" /> <span>خانم</span></label>
+            </div>
+        </div>
+        <button id="btnNextStep" class="btn btn-primary w-100 py-2">مرحله بعد <i class="bi bi-arrow-left"></i></button>
+        <button id="btnBackToRules" class="btn btn-outline-secondary w-100 py-2 mt-2"><i class="bi bi-arrow-right"></i> بازگشت</button>
     </div>
-    <div class="mb-2">
-        <label class="form-label">کد ملی <span class="text-danger">*</span></label>
-        <input type="text" id="txtRegNationalCode" class="form-control" maxlength="10" placeholder="کد ملی ۱۰ رقم" inputmode="numeric" />
-    </div>
-    <div class="mb-2">
-        <label class="form-label">تاریخ تولد (شمسی) <span class="text-danger">*</span></label>
-        <div class="bd-picker">
-            <input type="text" id="txtBirthDate" class="form-control" maxlength="10" placeholder="مثال: 1368/04/12" inputmode="numeric" />
-            <button type="button" class="bd-cal-btn" id="btnBirthCal" title="انتخاب تاریخ">📅</button>
-            <div class="bd-panel" id="bdPanel" style="display:none;">
-                <div class="bd-stage" id="bdStage1">
-                    <div class="bd-tiles">
-                        <button type="button" class="bd-tile" data-unit="day"><span class="bd-tile-val" id="bdTileDay">15</span><span class="bd-tile-lbl">روز</span></button>
-                        <button type="button" class="bd-tile" data-unit="month"><span class="bd-tile-val" id="bdTileMonth">مرداد</span><span class="bd-tile-lbl">ماه</span></button>
-                        <button type="button" class="bd-tile" data-unit="year"><span class="bd-tile-val" id="bdTileYear">1368</span><span class="bd-tile-lbl">سال</span></button>
-                    </div>
-                    <div class="bd-selected" id="bdSelected">-</div>
-                    <div class="bd-actions">
-                        <button type="button" class="bd-ok" id="bdOk">تأیید</button>
-                        <button type="button" class="bd-cancel" id="bdCancel">انصراف</button>
-                    </div>
-                </div>
+
+    <!-- ========== ✅ پنل تقویم + بک‌دراپ (با JS به body منتقل می‌شن) ========== -->
+    <div class="bd-backdrop" id="bdBackdrop"></div>
+    <div class="bd-panel" id="bdPanel" style="display:none;">
+        <div class="bd-stage" id="bdStage1">
+            <div class="bd-tiles">
+                <button type="button" class="bd-tile" data-unit="day"><span class="bd-tile-val" id="bdTileDay">15</span><span class="bd-tile-lbl">روز</span></button>
+                <button type="button" class="bd-tile" data-unit="month"><span class="bd-tile-val" id="bdTileMonth">مرداد</span><span class="bd-tile-lbl">ماه</span></button>
+                <button type="button" class="bd-tile" data-unit="year"><span class="bd-tile-val" id="bdTileYear">1368</span><span class="bd-tile-lbl">سال</span></button>
+            </div>
+            <div class="bd-selected" id="bdSelected">-</div>
+            <div class="bd-actions">
+                <button type="button" class="bd-ok" id="bdOk">تأیید</button>
+                <button type="button" class="bd-cancel" id="bdCancel">انصراف</button>
             </div>
         </div>
     </div>
-    <div class="mb-2">
-        <label class="form-label">شماره موبایل <span class="text-danger">*</span></label>
-        <input type="text" id="txtMobile" class="form-control" maxlength="11" placeholder="مثال: 09123456789" inputmode="numeric" />
-    </div>
-    <div class="mb-3">
-        <label class="form-label">جنسیت <span class="text-danger">*</span></label>
-        <div class="d-flex gap-3">
-            <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;"><input type="radio" name="gender" value="true" checked /> <span>آقا</span></label>
-            <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;"><input type="radio" name="gender" value="false" /> <span>خانم</span></label>
+
+    <!-- ========== قوس تمام‌صفحه ========== -->
+    <div class="bd-fs" id="bdStage2">
+        <div class="bd-fs-head">
+            <button type="button" class="bd-back" id="bdBack">→ بازگشت</button>
+            <span class="bd-s2-title" id="bdS2Title">ماه</span>
+            <button type="button" class="bd-done" id="bdDone">✓ تأیید</button>
         </div>
-    </div>
-    <button id="btnNextStep" class="btn btn-primary w-100 py-2">مرحله بعد <i class="bi bi-arrow-left"></i></button>
-    <button id="btnBackToRules" class="btn btn-outline-secondary w-100 py-2 mt-2"><i class="bi bi-arrow-right"></i> بازگشت</button>
-</div>
-
-<!-- ========== قوس تمام‌صفحه ========== -->
-<div class="bd-fs" id="bdStage2">
-    <div class="bd-fs-head">
-        <button type="button" class="bd-back" id="bdBack">→ بازگشت</button>
-        <span class="bd-s2-title" id="bdS2Title">ماه</span>
-        <button type="button" class="bd-done" id="bdDone">✓ تأیید</button>
-    </div>
-    <div class="bd-fs-arc">
-        <div class="arc-wrap" id="arcWrap">
-            <div class="arc-pivot" id="arcPivot"></div>
-            <div class="arc-marker"></div>
+        <div class="bd-fs-arc">
+            <div class="arc-wrap" id="arcWrap">
+                <div class="arc-pivot" id="arcPivot"></div>
+                <div class="arc-marker"></div>
+            </div>
         </div>
-    </div>
-    <div class="bd-hint">با انگشت بکشید ← → یا روی عدد بزنید</div>
-</div>
-
-<!-- ========== مرحله ۳ ========== -->
-<div id="stepDone" style="display:none;" class="text-center py-3">
-    <div style="font-size:3rem; color:#6aeaa2;">✅</div>
-    <div class="fw-bold text-white mb-2" style="font-size:1.1rem;">ثبت‌نام با موفقیت انجام شد</div>
-    <div class="mb-3 small" style="color:#9fb3c8;">اطلاعات ورود شما:</div>
-    <div class="done-info-box">
-        <div class="done-row"><span>کد عضویت:</span><b id="doneMemberID">-</b></div>
-        <div class="done-row"><span>نام کاربری:</span><b id="doneNationalCode">-</b></div>
-        <div class="done-row"><span>رمز عبور اولیه:</span><b id="donePassword" style="color:#ffa94d;">-</b></div>
+        <div class="bd-hint">با انگشت بکشید ← → یا روی عدد بزنید</div>
     </div>
 
-    <!-- ✅ دکمه ثبت چهره (دستی) -->
-    <button id="btnSendFace" class="btn btn-primary w-100 py-2 mt-2">
-        <i class="bi bi-camera-fill"></i> ثبت چهره با دستگاه
-    </button>
+    <!-- ========== مرحله ۳ ========== -->
+    <div id="stepDone" style="display:none;" class="text-center py-3">
+        <div style="font-size:3rem; color:#6aeaa2;">✅</div>
+        <div class="fw-bold text-white mb-2" style="font-size:1.1rem;">ثبت‌نام با موفقیت انجام شد</div>
+        <div class="mb-3 small" style="color:#9fb3c8;">اطلاعات ورود شما:</div>
+        <div class="done-info-box">
+            <div class="done-row"><span>کد عضویت:</span><b id="doneMemberID">-</b></div>
+            <div class="done-row"><span>نام کاربری:</span><b id="doneNationalCode">-</b></div>
+            <div class="done-row"><span>رمز عبور اولیه:</span><b id="donePassword" style="color:#ffa94d;">-</b></div>
+        </div>
 
-    <!-- ✅ باکس وضعیت چهره -->
-    <div id="faceStatusBox" class="face-status-box" style="display:none;">
-        <div class="face-icon-pending" id="faceIcon"><i class="bi bi-hourglass-split"></i></div>
-        <div class="face-status-text" id="faceStatusText"></div>
-        <div class="face-hint" id="faceHint"></div>
-        <div class="face-device-info" id="faceDeviceInfo"></div>
-        <div class="face-timer" id="faceTimer"></div>
+        <!-- ✅ دکمه ثبت چهره (دستی) -->
+        <button id="btnSendFace" class="btn btn-primary w-100 py-2 mt-2">
+            <i class="bi bi-camera-fill"></i> ثبت چهره با دستگاه
+        </button>
+
+        <!-- ✅ باکس وضعیت چهره -->
+        <div id="faceStatusBox" class="face-status-box" style="display:none;">
+            <div class="face-icon-pending" id="faceIcon"><i class="bi bi-hourglass-split"></i></div>
+            <div class="face-status-text" id="faceStatusText"></div>
+            <div class="face-hint" id="faceHint"></div>
+            <div class="face-device-info" id="faceDeviceInfo"></div>
+            <div class="face-timer" id="faceTimer"></div>
+        </div>
+
+        <div class="alert-warning-text mt-2">⚠️ در اولین ورود، <b>مجبور به تغییر رمز عبور</b> خواهید بود.</div>
+
+        <!-- ✅ دکمه ورود — فقط بعد از ثبت چهره -->
+        <a id="btnGoLogin" href="/Account/Login" class="btn btn-primary w-100 py-2 mt-3" style="display:none;">
+            <i class="bi bi-box-arrow-in-right"></i> ورود به حساب
+        </a>
     </div>
-
-    <div class="alert-warning-text mt-2">⚠️ در اولین ورود، <b>مجبور به تغییر رمز عبور</b> خواهید بود.</div>
-
-    <!-- ✅ دکمه ورود — فقط بعد از ثبت چهره -->
-    <a id="btnGoLogin" href="/Account/Login" class="btn btn-primary w-100 py-2 mt-3" style="display:none;">
-        <i class="bi bi-box-arrow-in-right"></i> ورود به حساب
-    </a>
-</div>
 </div> <!-- /authCard -->
 @section Scripts {
     <script>
@@ -722,7 +756,6 @@
                     $('#stepBadge2').removeClass('on').addClass('done');
                     $('#stepBadge3').addClass('on');
                     showToast('ثبت‌نام با موفقیت انجام شد', 'success');
-                    // ✅ منتظر کلیک کاربر روی «ثبت چهره» می‌مونیم
                 } else {
                     showToast(res.message, 'error');
                     $btn.prop('disabled', false).html('مرحله بعد <i class="bi bi-arrow-left"></i>');
@@ -763,7 +796,7 @@
                 hadBefore ? 'چهره قبلاً ثبت شده بود' : 'چهره با موفقیت ثبت شد',
                 'اکنون می‌توانید وارد حساب خود شوید');
             $('#faceTimer').hide();
-            $('#btnGoLogin').show(); // ✅ فقط اینجا دکمه ورود میاد
+            $('#btnGoLogin').show();
             showToast('چهره با موفقیت ثبت شد', 'success');
         }
         function showSendFaceBtn() {
@@ -811,7 +844,7 @@
                 stopFacePoll();
                 setFaceBox('timeout', 'bi-exclamation-triangle-fill', 'چهره در ۲۰ ثانیه ثبت نشد', 'دکمه ثبت چهره را دوباره بزنید');
                 $('#faceTimer').hide();
-                showSendFaceBtn(); // ✅ دکمه ثبت چهره دوباره میاد — دکمه ورود نه
+                showSendFaceBtn();
                 showToast('مهلت ثبت چهره تمام شد؛ دوباره تلاش کنید', 'warning');
                 return;
             }
@@ -829,7 +862,7 @@
             sendFaceCommand();
         });
 
-        // ========== تقویم لمسی ==========
+        // ========== ✅ تقویم لمسی (پنل وسط صفحه) ==========
         (function () {
             function faToEn(s) { return String(s).replace(/[۰-۹]/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); }); }
             var curJY = parseInt(faToEn(new Date().toLocaleDateString('fa-IR', { year: 'numeric' })));
@@ -843,6 +876,22 @@
                 $('#bdTileYear').text(String(sel.year));
                 $('#bdSelected').text(sel.year + '/' + pad2(sel.month) + '/' + pad2(sel.day));
             }
+
+            // ✅ انتقال پنل و بک‌دراپ به body (تا fixed درست کار کنه)
+            $('#bdBackdrop').appendTo(document.body);
+            $('#bdPanel').appendTo(document.body);
+            $('#bdStage2').appendTo(document.body);
+
+            function openBdPanel() {
+                refreshTiles();
+                $('#bdBackdrop').addClass('show');
+                $('#bdPanel').show();
+            }
+            function closeBdPanel() {
+                $('#bdBackdrop').removeClass('show');
+                $('#bdPanel').hide();
+            }
+
             var STEP = 14, PXI = 60;
             var arc = { unit: null, items: [], pos: 0, idx: -1, raf: 0, dragging: false };
             var $wrap = $('#arcWrap'), $pivot = $('#arcPivot');
@@ -932,26 +981,36 @@
             $(document).on('mousemove.bdarc', function (e) { onMove(e.clientX); });
             $(document).on('mouseup.bdarc', onUp);
             $(document).on('click', '.arc-it', function () { if (movedFar) return; snap($pivot.children().index(this)); });
+
             function openUnit(unit) {
                 $('#bdS2Title').text(unit === 'year' ? 'سال' : (unit === 'month' ? 'ماه' : 'روز'));
-                buildArc(unit); $('#bdPanel').hide(); $('#bdStage2').addClass('open');
+                buildArc(unit);
+                closeBdPanel();
+                $('#bdStage2').addClass('open');
             }
             function backToTiles() {
                 commitIdx();
                 var $fs = $('#bdStage2');
                 $fs.addClass('closing');
-                setTimeout(function () { $fs.removeClass('open closing'); $('#bdPanel').show(); }, 180);
+                setTimeout(function () {
+                    $fs.removeClass('open closing');
+                    openBdPanel();   // ✅ پنل + بک‌دراپ با هم برمی‌گردن
+                }, 180);
             }
+
             $(document).on('click', '.bd-tile', function () { openUnit($(this).data('unit')); });
             $(document).on('click', '#bdBack, #bdDone', backToTiles);
-            $(document).on('click', '#btnBirthCal', function (e) { e.stopPropagation(); refreshTiles(); $('#bdPanel').toggle(); });
-            $(document).on('click', '#bdCancel', function () { $('#bdPanel').hide(); });
-            $(document).on('click', '#bdOk', function () { $('#txtBirthDate').val(sel.year + '/' + pad2(sel.month) + '/' + pad2(sel.day)); $('#bdPanel').hide(); });
-            $(document).on('click', function (e) {
-                if ($('#bdStage2').hasClass('open')) return;
-                if (!$(e.target).closest('#bdPanel, #btnBirthCal, #bdStage2').length) $('#bdPanel').hide();
+            $(document).on('click', '#btnBirthCal', function (e) {
+                e.stopPropagation();
+                if ($('#bdPanel').is(':visible')) closeBdPanel(); else openBdPanel();
             });
-            $('#bdStage2').appendTo(document.body);
+            $(document).on('click', '#bdCancel', closeBdPanel);
+            $(document).on('click', '#bdBackdrop', closeBdPanel);
+            $(document).on('click', '#bdOk', function () {
+                $('#txtBirthDate').val(sel.year + '/' + pad2(sel.month) + '/' + pad2(sel.day));
+                closeBdPanel();
+            });
+
             refreshTiles();
         })();
     </script>

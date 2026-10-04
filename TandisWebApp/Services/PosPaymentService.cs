@@ -270,6 +270,13 @@ namespace TandisWebApp.Services
 
             return 0;
         }
+        // ✅ عمومی: ثبت سند بستانکار POS
+        // برای خریدهایی که Trigger خودش بدهی می‌سازه (مثل ثبت‌نام/تمدید)
+        // و کیف پول دست نمی‌خوره → فقط باید بدهیِ Trigger رو خنثی کنیم
+        public async Task AddPosCreditAsync(int memberID, byte creditTypeId, long amount, string desc)
+        {
+            await AddCreditAsync(memberID, creditTypeId, amount, desc);
+        }
 
         private async Task AddCreditAsync(int memberID, byte creditTypeId, long amount, string desc)
         {

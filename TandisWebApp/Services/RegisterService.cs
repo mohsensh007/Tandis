@@ -432,14 +432,11 @@ VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.Contrac
 
                 if (mode != "credit")
                 {
-                    // پرداخت POS: معادل بدهیِ ثبت‌نام (توسط Trigger جدول ساخته می‌شود) به‌صورت
-                    // سند بستانکار «پرداخت شهریه با POS» برمی‌گردد → مانده عضو بدون تغییر.
-                    // اگر بدهی‌ای ثبت نشده باشد (pairIfZero) زوج بدهکار/بستانکار ثبت می‌شود
-                    // تا رسید پرداخت در گزارش‌ها دیده شود.
-                    await _pos.NeutralizeAsync(memberID, CommonHelperService.CR_PAY_SHAHRIE,
-                        balanceBefore, finalPayment,
-                        "پرداخت با POS بابت " + (isRevival ? "تمدید" : "ثبت‌نام") + " دوره (وب‌اپ)",
-                        pairIfZero: true);
+                    // ✅ فقط یک بستانکار POS معادل بدهیِ Trigger ثبت‌نام
+                    // (pairIfZero حذف شد تا بدهی اضافه «پرداخت با POS» ساخته نشه)
+                    await _pos.AddPosCreditAsync(memberID, CommonHelperService.CR_PAY_SHAHRIE,
+                        finalPayment,
+                        "پرداخت با POS بابت " + (isRevival ? "تمدید" : "ثبت‌نام") + " دوره (وب‌اپ)");
                     if (posConfirm)
                         await _pos.SettleRefAsync(posTxnId, insertedId);
                 }

@@ -214,61 +214,6 @@ namespace TandisWebApp.Services
             };
         }
 
-        // ============================================================
-        //  گزارش تک‌جلسه‌ها (خواندنی)
-        // ============================================================
-        public async Task<AdminReportResponse<AdminOneSessionRowDto, OneSessionReportSummaryDto>> GetOneSessionReportAsync(short shiftID, string? from, string? to)
-        {
-            var query = _db.ACC_Tickets
-                .AsNoTracking()
-                .Where(t => t.ShiftID == shiftID);
-
-            if (!string.IsNullOrWhiteSpace(from))
-                query = query.Where(t => t.CreationDate != null && t.CreationDate.CompareTo(from) >= 0);
-            if (!string.IsNullOrWhiteSpace(to))
-                query = query.Where(t => t.CreationDate != null && t.CreationDate.CompareTo(to) <= 0);
-
-            var rows = await (
-                from t in query
-                orderby t.TicketID descending
-                select new { t, tarefe = t.Gen_Tarefe, san = t.Gen_Tarefe != null ? t.Gen_Tarefe.Gen_San : null }
-            ).ToListAsync();
-
-            var result = new List<AdminOneSessionRowDto>();
-            long totalAmount = 0;
-
-            foreach (var item in rows)
-            {
-                totalAmount += item.t.Amount ?? 0;
-                result.Add(new AdminOneSessionRowDto
-                {
-                    TicketID = item.t.TicketID,
-                    PersonName = item.t.FullName,
-                    SansName = item.san?.Sans ?? "",
-                    TarefeName = item.tarefe?.Tarefe ?? "",
-                    Amount = item.t.Amount ?? 0,
-                    AmountDisplay = _helper.SetSeprator(item.t.Amount ?? 0) + " ریال",
-                    CreationDate = item.t.CreationDate,
-                    CreationTime = item.t.CreationTime != null
-                        ? item.t.CreationTime.Value.ToString(@"hh\:mm\:ss")
-                        : "",
-                    TicketDesc = item.t.TicketDesc
-                });
-            }
-
-            var summary = new OneSessionReportSummaryDto
-            {
-                TotalCount = result.Count,
-                TotalAmount = totalAmount,
-                TotalAmountDisplay = _helper.SetSeprator(totalAmount) + " ریال"
-            };
-
-            return new AdminReportResponse<AdminOneSessionRowDto, OneSessionReportSummaryDto>
-            {
-                Data = result,
-                Summary = summary
-            };
-        }
 
         // ============================================================
         //  گزارش فروش بلیت (خواندنی)

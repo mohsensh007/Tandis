@@ -52,9 +52,6 @@ namespace TandisWebApp.Controllers
         [HttpGet]
         public IActionResult RegisterReport() => View();
 
-        [AdminAuthorize]
-        [HttpGet]
-        public IActionResult OneSessionReport() => View();
 
         [AdminAuthorize]
         [HttpGet]
@@ -193,14 +190,6 @@ namespace TandisWebApp.Controllers
             return Ok(new { success = true, data = response.Data, summary = response.Summary });
         }
 
-        [AdminAuthorize]
-        [HttpGet]
-        [Route("api/Admin/OneSessionReport")]
-        public async Task<IActionResult> OneSessionReportApi(string? from, string? to)
-        {
-            var response = await _reports.GetOneSessionReportAsync(AdminShiftID, from, to);
-            return Ok(new { success = true, data = response.Data, summary = response.Summary });
-        }
 
         [AdminAuthorize]
         [HttpGet]

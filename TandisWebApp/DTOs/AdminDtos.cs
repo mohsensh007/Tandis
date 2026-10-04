@@ -43,13 +43,6 @@ namespace TandisWebApp.DTOs
         public string TotalAmountDisplay { get; set; } = string.Empty;
     }
 
-    public class OneSessionReportSummaryDto
-    {
-        public int TotalCount { get; set; }
-        public long TotalAmount { get; set; }
-        public string TotalAmountDisplay { get; set; } = string.Empty;
-    }
-
     public class FinanceReportSummaryDto
     {
         public int TotalCount { get; set; }
@@ -105,23 +98,6 @@ namespace TandisWebApp.DTOs
         public string TypeDesc => IsRevival ? "تمدید" : "ثبت‌نام";
     }
 
-    // ============================================================
-    //  گزارش تک‌جلسه‌ها
-    // ============================================================
-
-    public class AdminOneSessionRowDto
-    {
-        public int TicketID { get; set; }
-        public string? PersonName { get; set; }
-        public string? MemberCode { get; set; }
-        public string? SansName { get; set; }
-        public string? TarefeName { get; set; }
-        public long Amount { get; set; }
-        public string AmountDisplay { get; set; } = string.Empty;
-        public string? CreationDate { get; set; }
-        public string? CreationTime { get; set; }
-        public string? TicketDesc { get; set; }
-    }
 
     // ============================================================
     //  گزارش بدهی‌ها و دریافت‌ها
