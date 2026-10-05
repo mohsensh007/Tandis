@@ -308,11 +308,9 @@ namespace TandisWebApp.Models
         [MaxLength(100)]
         public string? ManagerName { get; set; }
 
-        [MaxLength]
-        public string? BgImage { get; set; }
+        public byte[]? BgImage { get; set; }
 
-        [MaxLength]
-        public string? Logo { get; set; }
+        public byte[]? Logo { get; set; }
     }
 
     /// <summary>معادل dbo.ACC_Freez - فریز کردن دوره ورزشی</summary>

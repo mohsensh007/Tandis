@@ -4,22 +4,36 @@
 }
 
 <style>
+   
+    #authCard {
+        position: relative;
+    }
+
     .reg-steps {
         display: flex;
+        align-items: center; /* ✅ هم‌ترازی عمودی با فلش‌های بین مراحل */
         gap: 6px;
         margin-bottom: 16px;
     }
 
     .reg-step {
         flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center; /* ✅ وسط عمودی */
+        justify-content: center;
         text-align: center;
-        font-size: .72rem;
+        white-space: nowrap; /* ✅ هیچ‌وقت ۲ خطی نمی‌شه */
+        font-size: clamp(.6rem, 2.6vw, .72rem);
         font-weight: 700;
         color: #9fb3c8;
         background: rgba(255,255,255,.06);
         border: 1px solid rgba(255,255,255,.12);
         border-radius: 999px;
-        padding: 5px 8px;
+        padding: 8px 6px;
+        line-height: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
         .reg-step.on {
@@ -154,6 +168,53 @@
         box-shadow: 0 18px 50px rgba(0,0,0,.55);
         animation: bdPanelIn .25s cubic-bezier(.22,.9,.35,1.15);
     }
+    /* ✅ کارت باید relative باشه تا فلش گوشه‌ش بشینه */
+    #authCard {
+        position: relative;
+    }
+
+    /* ✅ فلش بازگشت: گوشه بالا-راست + داخل پررنگ */
+    .reg-back-arrow {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        z-index: 6;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.15rem;
+        text-decoration: none;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: 1px solid rgba(255,255,255,.25);
+        box-shadow: 0 4px 14px rgba(118,75,162,.45);
+        transition: all .2s;
+    }
+
+        .reg-back-arrow:hover {
+            filter: brightness(1.12);
+            transform: translateY(-1px);
+        }
+
+        .reg-back-arrow:active {
+            transform: scale(.94);
+        }
+
+    /* ✅ فلش بین مراحل */
+    .reg-arrow {
+        flex: 0 0 auto;
+        color: rgba(255,255,255,.20);
+        font-size: .8rem;
+        transition: all .3s;
+    }
+
+        .reg-arrow.lit {
+            color: #66d3e8;
+            text-shadow: 0 0 10px rgba(102,211,232,.7);
+        }
 
     @@keyframes bdPanelIn {
         from {
@@ -570,17 +631,14 @@
     }
 </style>
 
-<div id="authCard">
-    <div class="d-flex justify-content-start mb-2">
-        <a href="javascript:void(0)" onclick="flipNavigate('/Account/Login')" class="btn-back-login">
-            <i class="bi bi-arrow-right"></i> بازگشت به ورود
-        </a>
-    </div>
-
+<div>
+    
     <!-- ✅ نشانگر مراحل -->
     <div class="reg-steps">
         <span class="reg-step on" id="stepBadge1">۱. شرایط باشگاه</span>
+        <i class="bi bi-arrow-left reg-arrow" id="regArrow1"></i>
         <span class="reg-step" id="stepBadge2">۲. اطلاعات شخصی</span>
+        <i class="bi bi-arrow-left reg-arrow" id="regArrow2"></i>
         <span class="reg-step" id="stepBadge3">۳. ثبت چهره</span>
     </div>
 
@@ -717,18 +775,20 @@
             $('#rulesBox').text(text || 'شرایطی از سمت باشگاه ثبت نشده است.');
             $('#btnAcceptRules').prop('disabled', false);
         });
-        $('#btnAcceptRules').click(function () {
+                $('#btnAcceptRules').click(function () {
             $('#stepRules').hide(); $('#stepInfo').show();
             $('#stepBadge1').removeClass('on').addClass('done');
             $('#stepBadge2').addClass('on');
+            $('#regArrow1').addClass('lit');      // ✅ فلش ۱→۲ روشن
         });
-        $('#btnBackToRules').click(function () {
+                $('#btnBackToRules').click(function () {
             $('#stepInfo').hide(); $('#stepRules').show();
             $('#stepBadge2').removeClass('on');
             $('#stepBadge1').removeClass('done').addClass('on');
+            $('#regArrow1').removeClass('lit');   // ✅ فلش خاموش
         });
 
-        // ========== مرحله ۲ ==========
+                // ========== مرحله ۲ ==========
         $('#btnNextStep').click(function () {
             var fn = $.trim($('#txtFirstName').val());
             var ln = $.trim($('#txtLastName').val());
@@ -752,9 +812,17 @@
                     $('#doneMemberID').text(toFa(res.data.memberID));
                     $('#doneNationalCode').text(res.data.nationalCode);
                     $('#donePassword').text(res.data.defaultPassword);
-                    $('#stepInfo').hide(); $('#stepDone').show();
+                    $('#stepInfo').hide();
+                    $('#stepDone').show();
                     $('#stepBadge2').removeClass('on').addClass('done');
                     $('#stepBadge3').addClass('on');
+                    $('#regArrow2').addClass('lit');
+                    $('#regBackArrow').hide();   // ✅ فلش بازگشت مخفی
+                     sessionStorage.setItem('regDone', JSON.stringify({
+                        memberID: res.data.memberID,
+                        nationalCode: res.data.nationalCode,
+                        password: res.data.defaultPassword
+                    }));
                     showToast('ثبت‌نام با موفقیت انجام شد', 'success');
                 } else {
                     showToast(res.message, 'error');
@@ -861,6 +929,36 @@
             if (!registeredMemberID) { showToast('ابتدا ثبت‌نام را انجام دهید', 'error'); return; }
             sendFaceCommand();
         });
+                $('#btnGoLogin').on('click', function () {
+            sessionStorage.removeItem('regDone');
+        });
+                // ✅✅ اگه کاربر مرحله ۳ رو refresh کرد، همون‌جا بمونه
+        (function restoreStep3() {
+            var raw = sessionStorage.getItem('regDone');
+            if (!raw) return;
+            var d; try { d = JSON.parse(raw); } catch (e) { return; }
+            if (!d || !d.memberID) return;
+
+            registeredMemberID = d.memberID;
+            $('#doneMemberID').text(toFa(d.memberID));
+            $('#doneNationalCode').text(d.nationalCode || '-');
+            $('#donePassword').text(d.password || '-');
+            $('#stepRules').hide(); $('#stepInfo').hide(); $('#stepDone').show();
+            $('#stepBadge1').removeClass('on').addClass('done');
+            $('#stepBadge2').removeClass('on').addClass('done');
+            $('#stepBadge3').addClass('on');
+            $('#regArrow1').addClass('lit'); $('#regArrow2').addClass('lit');
+            $('#regBackArrow').hide();
+
+            // وضعیت چهره رو هم چک کن
+            apiCall('/api/Face/Status?memberID=' + d.memberID, 'GET', null, function (res2) {
+                if (res2 && res2.success && res2.data && res2.data.hasFace) { faceSuccess(true); }
+                else {
+                    setFaceBox('', 'bi-person-bounding-box', 'در انتظار ثبت چهره', 'دکمه ثبت چهره را بزنید و مقابل دستگاه بایستید');
+                    showSendFaceBtn();
+                }
+            });
+        })();
 
         // ========== ✅ تقویم لمسی (پنل وسط صفحه) ==========
         (function () {
@@ -907,14 +1005,23 @@
                 for (var i = 0; i < arc.items.length; i++) html += '<span class="arc-it"><b>' + arc.items[i] + '</b></span>';
                 $pivot.html(html);
                 arc.idx = -1;
+                arc.lastLo = undefined; arc.lastHi = undefined;
                 arc.pos = clampPos(unit === 'year' ? arc.items.indexOf(String(sel.year)) : unit === 'month' ? sel.month - 1 : sel.day - 1);
                 stopAnim(); paintArc(true);
             }
-            function paintArc(force) {
+             function paintArc(force) {
                 var n = arc.items.length;
                 var lo = Math.max(0, Math.floor(arc.pos) - 4);
                 var hi = Math.min(n - 1, Math.ceil(arc.pos) + 4);
                 var $its = $pivot.children();
+
+                // ✅ پاک‌کردن «اعداد شبح» پنجره قبلی که بیرون پنجره جدید موندن
+                if (arc.lastLo !== undefined) {
+                    for (var g = arc.lastLo; g <= arc.lastHi; g++) {
+                        if (g < lo || g > hi) $its.eq(g).css({ opacity: 0 });
+                    }
+                }
+
                 for (var i = lo; i <= hi; i++) {
                     var rel = i - arc.pos, theta = rel * STEP;
                     var op = Math.max(0, 1 - Math.abs(rel) * 0.28);
@@ -922,6 +1029,8 @@
                     $it.css({ transform: 'rotate(' + theta + 'deg)', opacity: op });
                     $it.children('b').css('transform', 'rotate(' + (-theta) + 'deg)');
                 }
+                arc.lastLo = lo; arc.lastHi = hi;
+
                 var ci = clampPos(Math.round(arc.pos));
                 if (force || ci !== arc.idx) { arc.idx = ci; $its.removeClass('on').eq(ci).addClass('on'); commitIdx(); }
             }

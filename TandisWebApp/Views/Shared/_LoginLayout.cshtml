@@ -1,3 +1,21 @@
+@inject TandisWebApp.Services.ProfileService ProfileService
+@{
+    var clubName = "باشگاه تندیس";
+    string? clubLogoSrc = null;
+
+    try { clubName = await ProfileService.GetClubNameAsync(); } catch { }
+
+    try
+    {
+        var logoBytes = await ProfileService.GetClubLogoAsync();
+        if (logoBytes != null && logoBytes.Length > 0)
+        {
+            clubLogoSrc = "data:" + TandisWebApp.Services.ProfileService.DetectImageType(logoBytes)
+                        + ";base64," + Convert.ToBase64String(logoBytes);
+        }
+    }
+    catch { }
+}
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -12,6 +30,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - تندیس</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css?v=3" />
     <link rel="stylesheet" href="~/css/panels.css?v=3" />
     <link rel="stylesheet" href="~/css/login-style.css" />
@@ -19,7 +38,7 @@
     <style>
         /* ===== ✅ فلیپ ۳بعدی کارت بین ورود / ثبت‌نام ===== */
         .login-fullscreen {
-            perspective: 1600px; /* عمق سه‌بعدی برای چرخش کارت */
+            perspective: 1600px;
         }
 
         #authCard {
@@ -46,26 +65,23 @@
             }
         }
 
-        /* ===== ✅ دکمه بازگشت به ورود (داخل صفحه ثبت‌نام) ===== */
-        .btn-back-login {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            color: #9fb3c8;
-            font-size: .8rem;
-            font-weight: 700;
-            text-decoration: none;
-            background: rgba(255,255,255,.06);
-            border: 1px solid rgba(255,255,255,.14);
-            border-radius: 999px;
-            padding: 6px 14px;
-            transition: all .2s;
+        /* ===== ✅ لوگوی کوچک ما — گوشه پایین-چپ کارت ===== */
+        .mini-logo {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            opacity: .92;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,.4));
         }
 
-            .btn-back-login:hover {
-                color: #fff;
-                border-color: rgba(102,211,232,.5);
-            }
+        /* ===== ✅ فلش بازگشت به ورود (فقط صفحه ثبت‌نام) ===== */
+        .reg-back-arrow:hover {
+            color: #66d3e8 !important;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body>
@@ -77,15 +93,46 @@
         </div>
 
         <!-- ✅ فرم شیشه‌ای — این همون «کارت» هست که می‌چرخه -->
-        <div class="purple-style login-glass-card" id="authCard">
+        <div class="purple-style login-glass-card" id="authCard" style="position:relative;">
+
+            <!-- ✅ فلش بازگشت به ورود (فقط توی صفحه ثبت‌نام) -->
+            @if (ViewData["Title"]?.ToString() == "ثبت‌نام")
+            {
+                <a href="javascript:void(0)" onclick="flipNavigate('/Account/Login')" title="بازگشت به ورود" id="regBackArrow"
+                   style="position:absolute; top:12px; right:12px; z-index:6;
+                              color:#fff; font-size:1.45rem; text-decoration:none;
+                              text-shadow:0 0 10px rgba(102,211,232,.5);
+                              transition:all .2s;">
+                    <i class="bi bi-arrow-right"></i>
+                </a>
+            }
+
+            <!-- ✅ بخش لوگو -->
             <div class="logo-section text-center mb-4">
-                <img src="~/images/logo2.png" alt="ایمن تردد" class="main-logo" />
-                <h2 class="brand-text mt-3">ایمن تردد تندیس</h2>
+                @if (clubLogoSrc != null)
+                {
+                    <!-- بالا فقط لوگوی خودِ باشگاه -->
+                    <img src="@clubLogoSrc" alt="@clubName" class="main-logo" style="object-fit:contain;" />
+
+                }
+                else
+                {
+                    <!-- اگه باشگاه لوگو نداشت → لوگوی ما بزرگ بالا -->
+                    <img src="~/images/logo2.png" alt="@clubName" class="main-logo" />
+                }
+                <h2 class="brand-text mt-3">@clubName</h2>
             </div>
 
             <div class="form-container">
                 @RenderBody()
             </div>
+
+            <!-- ✅ لوگوی ما کوچک: لاگین → پایین-چپ | ثبت‌نام → بالا-چپ (بدون تداخل) -->
+            @if (clubLogoSrc != null)
+            {
+                <img src="~/images/logo2.png" alt="ایمن تردد" class="mini-logo"
+                     style="@(ViewData["Title"]?.ToString() == "ثبت‌نام" ? "top:12px; left:12px; bottom:auto;" : "")" />
+            }
         </div>
     </div>
 
@@ -104,13 +151,27 @@
             setTimeout(function () { window.location.href = url; }, 280);
         };
 
-        // وقتی صفحه مقصد لود شد، کارت از پشت بیرون میاد
-        $(function () {
+        function playFlipIn() {
+            var card = document.getElementById('authCard');
+            if (card) card.style.animation = 'authFlipIn .45s cubic-bezier(.22,.9,.35,1.1)';
+        }
+
+        // بارگذاری عادی
+        document.addEventListener('DOMContentLoaded', function () {
             if (sessionStorage.getItem('authFlip') === '1') {
                 sessionStorage.removeItem('authFlip');
-                var card = document.getElementById('authCard');
-                if (card) card.style.animation = 'authFlipIn .45s cubic-bezier(.22,.9,.35,1.1)';
+                playFlipIn();
             }
+        });
+
+        // ✅ فیکس دکمه Back مرورگر (bfcache)
+        window.addEventListener('pageshow', function (e) {
+            if (!e.persisted) return;
+            var card = document.getElementById('authCard');
+            if (!card) return;
+            card.style.animation = 'none';
+            void card.offsetWidth;
+            playFlipIn();
         });
     </script>
 

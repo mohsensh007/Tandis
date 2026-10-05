@@ -187,5 +187,21 @@ namespace TandisWebApp.Services
                 return "باشگاه تندیس";
             }
         }
+        /// <summary>دریافت لوگوی باشگاه از Sec_Systems (SystemID=1) به‌صورت بایت</summary>
+        public async Task<byte[]?> GetClubLogoAsync()
+        {
+            try
+            {
+                var sys = await _db.Sec_Systems
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.SystemID == 1);
+                var logo = sys?.Logo;
+                return (logo == null || logo.Length == 0) ? null : logo;
+            }
+            catch
+            {
+                return null;
+            }
+        }
     }
 }
