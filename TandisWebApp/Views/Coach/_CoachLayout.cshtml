@@ -12,17 +12,20 @@
     <link rel="apple-touch-icon" href="/images/app-icon.png" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- viewport-fit=cover → فعال‌شدن env(safe-area-inset-*) برای نچ (iPhone) و نوار پایین iOS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f172a" />
     <title>@ViewData["Title"] - پنل مربی | تندیس</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css?v=3" />
-    <link rel="stylesheet" href="~/css/panels.css?v=3" />
+    <link rel="stylesheet" href="~/css/site.css?v=4" />
+    <link rel="stylesheet" href="~/css/panels.css?v=4" />
 
     <style>
         body.coach-glass-body {
             background-color: #0f172a;
             min-height: 100vh;
+            min-height: 100dvh; /* ارتفاع واقعی در مرورگرهای موبایل */
             color: #e2e8f0;
         }
 
@@ -38,8 +41,10 @@
 
         .coach-top-nav {
             background: rgba(15, 23, 42, .75) !important;
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,.08);
+            padding-top: calc(8px + env(safe-area-inset-top));
         }
 
             .coach-top-nav .navbar-brand {
@@ -86,20 +91,20 @@
 
         .coach-bottom-nav {
             position: fixed;
-            bottom: 12px;
-            left: 14px;
-            right: 14px;
+            bottom: max(12px, env(safe-area-inset-bottom));
+            left: max(14px, calc(env(safe-area-inset-left) + 6px));
+            right: max(14px, calc(env(safe-area-inset-right) + 6px));
             z-index: 1030;
             display: flex;
             justify-content: space-around;
             align-items: stretch;
             background: rgba(15, 23, 42, .88);
-            backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
             border: 1px solid rgba(255,255,255,.10);
             border-radius: 22px;
             box-shadow: 0 12px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
-            padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+            padding: 8px 6px;
         }
 
         .cbn-item {
@@ -162,12 +167,13 @@
             border: 1px solid rgba(255,255,255,.15);
             border-radius: 18px;
             color: #fff;
+            -webkit-backdrop-filter: blur(14px);
             backdrop-filter: blur(14px);
         }
 
         @@media (max-width: 767.98px) {
             body {
-                padding-bottom: 96px;
+                padding-bottom: calc(96px + env(safe-area-inset-bottom));
             }
         }
     </style>

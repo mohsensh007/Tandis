@@ -3,11 +3,15 @@
     position: relative;
     width: 100%;
     min-height: 100vh;
+    min-height: 100dvh; /* ارتفاع واقعی در Safari/Chrome/Firefox موبایل (نوار آدرس) */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
     direction: rtl;
+    /* فاصله از نچ و نوار پایین iOS هنگام نصب به‌عنوان وب‌اپ */
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    box-sizing: border-box;
 }
 
 /* عکس پس‌زمینه */
@@ -44,8 +48,8 @@
     max-width: 420px;
     padding: 40px 35px;
     background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
     border-radius: 24px;
     border: 1px solid rgba(255, 255, 255, 0.3);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
@@ -88,7 +92,7 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
     border-radius: 12px;
     padding: 14px 16px;
-    font-size: 15px;
+    font-size: 16px; /* 16px → جلوگیری از زوم خودکار iOS Safari */
     transition: all 0.3s ease;
     color: #2c3e50;
 }
@@ -195,7 +199,7 @@
 
     .form-control {
         padding: 12px 14px;
-        font-size: 14px;
+        font-size: 16px; /* حداقل 16px در موبایل تا Safari زوم نکند */
     }
 
     .btn-primary, .btn-warning {

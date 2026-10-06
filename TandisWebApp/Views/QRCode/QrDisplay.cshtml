@@ -6,7 +6,8 @@
 <html dir="rtl" lang="fa">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f172a" />
     <title>QR Code ورود - باشگاه</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <style>
@@ -14,34 +15,42 @@
             background: linear-gradient(135deg, #0f172a, #1e3a8a);
             color: white;
             min-height: 100vh;
+            min-height: 100dvh; /* ارتفاع واقعی در مرورگرهای موبایل */
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
+            box-sizing: border-box;
             font-family: 'Sahel', Tahoma, Arial, sans-serif;
         }
 
         .qr-container {
             background: rgba(255,255,255,0.1);
+            -webkit-backdrop-filter: blur(16px);
             backdrop-filter: blur(16px);
             border: 2px solid rgba(255,255,255,0.2);
             border-radius: 24px;
-            padding: 40px;
+            padding: 32px 16px; /* در موبایل باریک‌تر تا اسکرول افقی ایجاد نشود */
             text-align: center;
             max-width: 500px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         #qrImage {
             background: white;
-            padding: 20px;
+            padding: 16px;
             border-radius: 16px;
             display: inline-block;
-            min-height: 300px;
-            min-width: 300px;
+            max-width: 100%;
+            box-sizing: border-box;
+            min-height: 240px; /* فضای رزروشده هنگام بارگذاری */
         }
 
             #qrImage img {
-                max-width: 350px;
+                max-width: min(350px, 100%);
                 width: 100%;
+                height: auto;
             }
 
         .countdown {

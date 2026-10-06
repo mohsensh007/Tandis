@@ -46,32 +46,34 @@
     <!-- جلوگیری از ذخیره‌سازی در کش برای آپدیت‌های سریع‌تر -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- viewport-fit=cover → فعال‌شدن env(safe-area-inset-*) برای نچ (iPhone) و نوار پایین iOS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f172a" />
     <title>@ViewData["Title"] - تندیس</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css?v=3" />
-    <link rel="stylesheet" href="~/css/panels.css?v=3" />
-    <link rel="stylesheet" href="~/css/admin-style.css?v=4" />
+    <link rel="stylesheet" href="~/css/site.css?v=4" />
+    <link rel="stylesheet" href="~/css/panels.css?v=4" />
+    <link rel="stylesheet" href="~/css/admin-style.css?v=5" />
 
     <style>
         /* ===== نوار پایین شناور (فقط موبایل) ===== */
         .bottom-nav {
             position: fixed;
-            bottom: 12px;
-            left: 14px;
-            right: 14px;
+            bottom: max(12px, env(safe-area-inset-bottom));
+            left: max(14px, calc(env(safe-area-inset-left) + 6px));
+            right: max(14px, calc(env(safe-area-inset-right) + 6px));
             z-index: 1030;
             display: flex;
             justify-content: space-around;
             align-items: stretch;
             background: rgba(16, 20, 36, .82);
-            backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
             border: 1px solid rgba(255,255,255,.08);
             border-radius: 22px;
             box-shadow: 0 12px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
-            padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+            padding: 8px 6px;
         }
 
         .bn-item {
@@ -139,6 +141,7 @@
             border: 1px solid rgba(255,255,255,.15);
             border-radius: 18px;
             color: #fff;
+            -webkit-backdrop-filter: blur(14px);
             backdrop-filter: blur(14px);
             box-shadow: 0 20px 50px rgba(0,0,0,.5);
         }
@@ -275,7 +278,7 @@
     /* فاصله محتوا از بار شناور تا چیزی زیرش قایم نشه */
     @@media (max-width: 767.98px) {
         body {
-            padding-bottom: 96px;
+            padding-bottom: calc(96px + env(safe-area-inset-bottom));
         }
     }
         /* ============================================================
@@ -324,6 +327,7 @@
                 background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18));
                 border: 1px solid rgba(102,211,232,.35);
                 box-shadow: 0 4px 18px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.07);
+                -webkit-backdrop-filter: blur(8px);
                 backdrop-filter: blur(8px);
             }
 
@@ -360,6 +364,11 @@
             .club-sub {
                 display: none;
             }
+        }
+
+        /* ===== iOS/Android safe-area: فاصله نوار بالا از نچ و آیتم‌ها از نوار پایین ===== */
+        .navbar {
+            padding-top: calc(8px + env(safe-area-inset-top));
         }
     </style>
 </head>
@@ -405,7 +414,7 @@
                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:10px;">@unreadCount</span>
                                 }
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" style="min-width:300px;">
+                            <ul class="dropdown-menu dropdown-menu-end" style="min-width:min(300px, calc(100vw - 24px));">
                                 <li class="dropdown-header fw-bold">🔔 پیام‌های جدید</li>
                                 <li><hr class="dropdown-divider"></li>
 

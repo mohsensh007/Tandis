@@ -26,6 +26,7 @@
     font-size: .82rem;
     font-weight: 700;
     text-decoration: none;
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     transition: all .25s;
 }
@@ -116,6 +117,7 @@
     border: 1px solid rgba(255,255,255,.14);
     border-radius: 20px;
     padding: 18px;
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
 }
 
@@ -620,8 +622,8 @@ select.pe-input option {
     inset: 0;
     z-index: 1080;
     background: rgba(8,12,22,.55);
-    backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -771,6 +773,7 @@ select.pe-input option {
     border: 1px solid rgba(255,255,255,.15);
     border-radius: 18px;
     color: #fff;
+    -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
 }
 

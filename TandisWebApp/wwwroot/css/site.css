@@ -35,10 +35,16 @@
     font-family: 'Sahel', Tahoma, 'Segoe UI', Arial, sans-serif;
 }
 
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 body {
     direction: rtl;
     background: #f5f6fa;
     min-height: 100vh;
+    min-height: 100dvh; /* مرورگرهای مدرن موبایل (Safari/Chrome/Firefox) — ارتفاع واقعی بدون نوار آدرس */
 }
 
 /* === Navbar === */
@@ -288,6 +294,7 @@ body {
     border-radius: 999px;
     font-size: .85rem;
     font-weight: 600;
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
 }
 
@@ -660,6 +667,7 @@ body {
     font-size: .82rem;
     font-weight: 700;
     text-decoration: none;
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     transition: all .25s;
 }
@@ -704,8 +712,8 @@ body {
     border: 1px solid rgba(255,255,255,.18) !important;
     border-radius: 20px;
     color: #fff;
-    backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0,0,0,.55);
 }
@@ -801,3 +809,27 @@ body {
             text-decoration: line-through !important;
             cursor: not-allowed;
         }
+
+/* ============================================================
+   سازگاری موبایل — iOS Safari / Chrome / Firefox / Samsung Internet
+   ============================================================ */
+@media (max-width: 767.98px) {
+    /* جلوگیری از زوم خودکار iOS Safari هنگام ورود به فیلدها (فونت زیر 16px) */
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]),
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+
+    /* اسکرول افقی روان روی جدول‌ها در WebKit */
+    .table-responsive {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* لمس راحت‌تر آیتم‌های کوچک */
+    a.nav-link,
+    .dropdown-item {
+        padding-top: max(.5rem, 6px);
+        padding-bottom: max(.5rem, 6px);
+    }
+}

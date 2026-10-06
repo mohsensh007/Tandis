@@ -6,6 +6,7 @@
 body.admin-glass-body {
     background-color: #0f172a;
     min-height: 100vh;
+    min-height: 100dvh; /* ارتفاع واقعی در مرورگرهای موبایل */
     color: #e2e8f0;
 }
 
@@ -22,8 +23,8 @@ body.admin-glass-body {
     /* ۲. نوبار (Navbar) شیشه‌ای - با !important برای غلبه بر استایل inline قدیمی */
     body.admin-glass-body .navbar {
         background: rgba(15, 23, 42, 0.6) !important;
-        backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     }
@@ -40,8 +41,8 @@ body.admin-glass-body {
     /* ۳. کارت‌های شیشه‌ای (داشبورد و گزارش‌ها) */
     body.admin-glass-body .card {
         background: rgba(255, 255, 255, 0.08) !important;
-        backdrop-filter: blur(16px);
         -webkit-backdrop-filter: blur(16px);
+        backdrop-filter: blur(16px);
         border: 1px solid rgba(255, 255, 255, 0.15) !important;
         border-radius: 16px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
@@ -114,6 +115,7 @@ body.admin-glass-body {
     /* ۶. مودال‌ها (مثل تقویم جلالی که در کد دیدم) */
     body.admin-glass-body .modal-content {
         background: rgba(30, 41, 59, 0.95);
+        -webkit-backdrop-filter: blur(20px);
         backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.15);
         color: #ffffff;
@@ -130,6 +132,7 @@ body.admin-glass-body {
     /* ۷. فوتر */
     body.admin-glass-body footer {
         background: rgba(0, 0, 0, 0.3);
+        -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
         border-top: 1px solid rgba(255, 255, 255, 0.1);
         color: rgba(255, 255, 255, 0.7);
@@ -163,6 +166,7 @@ body.admin-glass-body {
     body.admin-glass-body .card.bg-success,
     body.admin-glass-body .card.bg-warning {
         background: rgba(255, 255, 255, 0.15) !important;
+        -webkit-backdrop-filter: blur(12px);
         backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.2);
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
@@ -332,8 +336,8 @@ body.admin-glass-body {
     body.admin-glass-body .menu-box,
     body.admin-glass-body .menu-card {
         background: rgba(255, 255, 255, 0.1) !important;
-        backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
         color: #ffffff !important;
         border-radius: 14px;
@@ -381,8 +385,8 @@ body.admin-glass-body {
     body.admin-glass-body .stat-card,
     body.admin-glass-body .stat-box {
         background: rgba(255, 255, 255, 0.1) !important;
-        backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
+        backdrop-filter: blur(12px);
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
     }
 /* دونات داشبورد */
@@ -423,8 +427,8 @@ body.admin-glass-body .navbar {
 /* ۱) منوی dropdown (زنگوله و بقیه) شیشه‌ای تیره */
 body.admin-glass-body .dropdown-menu {
     background: rgba(15, 23, 42, 0.94) !important;
-    backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 14px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
@@ -515,8 +519,8 @@ body.admin-glass-body select.form-control option {
    ========================================= */
 body.admin-glass-body .card.bg-info {
     background: rgba(255, 255, 255, 0.15) !important;
-    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-left: 4px solid #17a2b8 !important; /* خط فیروزه‌ای */
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
@@ -543,8 +547,8 @@ body.admin-glass-body .card.bg-info {
     justify-content: center;
     padding: 14px 8px;
     background: rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
     border: 1px solid rgba(255, 255, 255, 0.15);
     border-radius: 14px;
     color: #e2e8f0;

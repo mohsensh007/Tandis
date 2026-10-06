@@ -19,32 +19,34 @@
 
     <meta name="mobile-web-app-capable" content="yes" />
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- viewport-fit=cover → فعال‌شدن env(safe-area-inset-*) برای نچ (iPhone) و نوار پایین iOS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#0f172a" />
     <title>@ViewData["Title"] - پنل مدیر | تندیس</title>
-    <link rel="stylesheet" href="~/css/admin-style.css" />
+    <link rel="stylesheet" href="~/css/admin-style.css?v=5" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css?v=3" />
-    <link rel="stylesheet" href="~/css/panels.css?v=3" />
+    <link rel="stylesheet" href="~/css/site.css?v=4" />
+    <link rel="stylesheet" href="~/css/panels.css?v=4" />
 
     <style>
         /* ===== نوار پایین شناور پنل ادمین ===== */
         .admin-bottom-nav {
             position: fixed;
-            bottom: 12px;
-            left: 14px;
-            right: 14px;
+            bottom: max(12px, env(safe-area-inset-bottom));
+            left: max(14px, calc(env(safe-area-inset-left) + 6px));
+            right: max(14px, calc(env(safe-area-inset-right) + 6px));
             z-index: 1030;
             display: flex;
             justify-content: space-around;
             align-items: stretch;
             background: rgba(15, 23, 42, .88);
-            backdrop-filter: blur(14px);
             -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
             border: 1px solid rgba(255,255,255,.10);
             border-radius: 22px;
             box-shadow: 0 12px 32px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);
-            padding: 8px 6px calc(8px + env(safe-area-inset-bottom));
+            padding: 8px 6px;
         }
 
         .abn-item {
@@ -106,8 +108,10 @@
         /* ===== نوار بالا ===== */
         .admin-top-nav {
             background: rgba(15, 23, 42, .75) !important;
+            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255,255,255,.08);
+            padding-top: calc(8px + env(safe-area-inset-top));
         }
 
             .admin-top-nav .navbar-brand {
@@ -141,6 +145,7 @@
             border-radius: 16px;
             padding: 10px 14px;
             margin-bottom: 14px;
+            -webkit-backdrop-filter: blur(8px);
             backdrop-filter: blur(8px);
         }
 
@@ -208,6 +213,7 @@
             border: 1px solid rgba(255,255,255,.15);
             border-radius: 18px;
             color: #fff;
+            -webkit-backdrop-filter: blur(14px);
             backdrop-filter: blur(14px);
         }
 
@@ -294,7 +300,7 @@
         /* فاصله محتوا از نوار پایین شناور در موبایل */
         @@media (max-width: 767.98px) {
             body {
-                padding-bottom: 96px;
+                padding-bottom: calc(96px + env(safe-area-inset-bottom));
             }
         }
     </style>
@@ -344,7 +350,7 @@
                         <i class="bi bi-bell-fill text-light" style="font-size:20px;"></i>
                         <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:10px;display:none;">0</span>
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end" style="min-width:300px;max-height:400px;overflow-y:auto;">
+                    <ul class="dropdown-menu dropdown-menu-end" style="min-width:min(300px, calc(100vw - 24px));max-height:400px;overflow-y:auto;">
                         <li class="dropdown-header fw-bold">پیام‌های جدید</li>
                         <li><hr class="dropdown-divider"></li>
                         <li id="notifList"><a class="dropdown-item text-muted small">در حال بارگذاری...</a></li>

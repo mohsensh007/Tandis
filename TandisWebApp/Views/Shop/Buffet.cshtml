@@ -115,7 +115,7 @@
                 return;
             }
 
-            var html = '<table class="table table-sm"><tbody>';
+            var html = '<div class="table-responsive"><table class="table table-sm"><tbody>';
             var total = 0;
             $.each(basket, function (i, b) {
                 var t = b.unitPrice * b.count;
@@ -127,7 +127,7 @@
                     '<td><button class="btn btn-sm btn-danger" onclick="removeFromBasket('+b.stuffID+')"><i class="bi bi-trash"></i></button></td>' +
                     '</tr>';
             });
-            html += '</tbody></table>';
+            html += '</tbody></table></div>';
 
             $('#basketList').html(html);
             $('#totalAmount').text(Number(total).toLocaleString());
