@@ -405,6 +405,9 @@ namespace TandisWebApp.Services
             };
         }
 
+        /* ⛔ محدودسازی پیام‌رسانی (فقط کامنت شده، حذف نشده):
+           لیست گفتگوی مربی با شاگردان غیرفعال شد؛ صفحه «پیام‌ها» حالا فقط پیام‌های ارسالیِ مدیریت را نشان می‌دهد.
+           برای فعال‌سازی دوباره کافی است این کامنت باز شود.
         /// <summary>لیست شاگردان با آخرین پیام‌ها (خواندنی)</summary>
         public async Task<List<CoachMessageSummaryDto>> GetMessageSummariesAsync(int coachMemberID)
         {
@@ -464,7 +467,11 @@ namespace TandisWebApp.Services
 
             return result.OrderByDescending(r => r.LastMessageDate).ThenByDescending(r => r.LastMessageTime).ToList();
         }
+        */
 
+        /* ⛔ محدودسازی پیام‌رسانی (فقط کامنت شده، حذف نشده):
+           چت مربی با شاگرد غیرفعال شد (نه مربی به شاگرد پیام می‌دهد نه شاگرد به مربی).
+           برای فعال‌سازی دوباره کافی است این کامنت باز شود.
         /// <summary>چت با یک شاگرد (خواندنی + mark as read)</summary>
         public async Task<CoachChatDto?> GetChatAsync(int coachMemberID, int studentMemberID)
         {
@@ -536,6 +543,72 @@ namespace TandisWebApp.Services
                 Messages = messages
             };
         }
+        */
+
+        // ============================================================
+        //  اینباکس مربی: فقط پیام‌های ارسالیِ مدیریت
+        // ============================================================
+
+        /// <summary>
+        /// پیام‌هایی که مدیریت برای این مربی فرستاده (همه اعضا / نقش / رشته / عضو مشخص)
+        /// </summary>
+        public async Task<List<CoachInboxItemDto>> GetInboxAsync(int coachMemberID)
+        {
+            var coach = await _db.Gen_Members.AsNoTracking()
+                .FirstOrDefaultAsync(m => m.MemberID == coachMemberID);
+            var roleID = (int?)(coach?.RoleID) ?? 0;
+
+            var mySportCatIds = await _db.Gen_SportSanses.AsNoTracking()
+                .Where(s => s.CoachMemberID == coachMemberID && s.IsActive == true)
+                .Select(s => s.SportCatID)
+                .Where(x => x != null)
+                .Select(x => x!.Value)
+                .Distinct()
+                .ToListAsync();
+
+            var readIds = await _db.MsgReads.AsNoTracking()
+                .Where(r => r.MemberID == coachMemberID)
+                .Select(r => r.MessageID)
+                .ToListAsync();
+
+            var msgs = await _db.MsgMessages.AsNoTracking()
+                .Where(m => m.IsActive
+                            && m.SenderUserID != null          // فقط پیام ارسالیِ ادمین
+                            && m.SenderMemberID == null
+                            && (m.TargetType == 1
+                                || (m.TargetType == 2 && m.TargetRoleID == roleID)
+                                || (m.TargetType == 3 && m.TargetSportCatID != null && mySportCatIds.Contains(m.TargetSportCatID.Value))
+                                || (m.TargetType == 4 && m.TargetMemberID == coachMemberID)))
+                .OrderByDescending(m => m.CreationDateTime)
+                .ToListAsync();
+
+            return msgs.Select(m => new CoachInboxItemDto
+            {
+                MessageID = m.MessageID,
+                Title = m.Title,
+                Body = m.Body,
+                CreationDate = m.CreationDate,
+                CreationTime = m.CreationTime,
+                IsRead = readIds.Contains(m.MessageID)
+            }).ToList();
+        }
+
+        /// <summary>علامت‌گذاری یک پیام مدیریت به‌عنوان خوانده‌شده</summary>
+        public async Task<bool> MarkInboxReadAsync(int coachMemberID, long messageID)
+        {
+            var exists = await _db.MsgReads.AsNoTracking()
+                .AnyAsync(r => r.MessageID == messageID && r.MemberID == coachMemberID);
+            if (exists) return true;
+
+            _db.MsgReads.Add(new Msg_Read
+            {
+                MessageID = messageID,
+                MemberID = coachMemberID,
+                ReadDateTime = DateTime.Now
+            });
+            await _db.SaveChangesAsync();
+            return true;
+        }
 
         /// <summary>
         /// ارسال پیام (نوشتن - بدون AsNoTracking)
@@ -582,15 +655,30 @@ namespace TandisWebApp.Services
         }
         */
 
-        /// <summary>تعداد پیام‌های خوانده‌نشده (خواندنی)</summary>
+        /// <summary>تعداد پیام‌های خوانده‌نشدهٔ مدیریت برای این مربی</summary>
         public async Task<int> GetCoachUnreadCountAsync(int coachMemberID)
         {
+            var coach = await _db.Gen_Members.AsNoTracking()
+                .FirstOrDefaultAsync(m => m.MemberID == coachMemberID);
+            var roleID = (int?)(coach?.RoleID) ?? 0;
+
+            var mySportCatIds = await _db.Gen_SportSanses.AsNoTracking()
+                .Where(s => s.CoachMemberID == coachMemberID && s.IsActive == true)
+                .Select(s => s.SportCatID)
+                .Where(x => x != null)
+                .Select(x => x!.Value)
+                .Distinct()
+                .ToListAsync();
+
             return await _db.MsgMessages
                 .AsNoTracking()
                 .Where(m => m.IsActive &&
-                            m.TargetType == 4 &&
-                            m.TargetMemberID == coachMemberID &&
-                            m.SenderMemberID != null &&
+                            m.SenderUserID != null &&
+                            m.SenderMemberID == null &&
+                            (m.TargetType == 1 ||
+                             (m.TargetType == 2 && m.TargetRoleID == roleID) ||
+                             (m.TargetType == 3 && m.TargetSportCatID != null && mySportCatIds.Contains(m.TargetSportCatID.Value)) ||
+                             (m.TargetType == 4 && m.TargetMemberID == coachMemberID)) &&
                             !_db.MsgReads.Any(r => r.MessageID == m.MessageID && r.MemberID == coachMemberID))
                 .CountAsync();
         }

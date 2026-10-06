@@ -67,14 +67,27 @@ namespace TandisWebApp.Controllers
             return View(model);
         }
 
-        /// <summary>لیست پیام‌ها با شاگردان</summary>
+        /// <summary>لیست پیام‌های دریافتی از مدیریت</summary>
         [HttpGet]
         public async Task<IActionResult> Messages()
         {
-            var model = await _coach.GetMessageSummariesAsync(CoachMemberID);
+            var model = await _coach.GetInboxAsync(CoachMemberID);
+            ViewBag.UnreadMessages = await _coach.GetCoachUnreadCountAsync(CoachMemberID);
             return View(model);
         }
 
+        /// <summary>علامت‌گذاری یک پیام مدیریت به‌عنوان خوانده‌شده</summary>
+        [HttpPost]
+        [Route("api/Coach/Messages/Read")]
+        public async Task<IActionResult> MessagesReadApi([FromBody] long messageID)
+        {
+            await _coach.MarkInboxReadAsync(CoachMemberID, messageID);
+            return Ok(new { success = true });
+        }
+
+        /* ⛔ محدودسازی پیام‌رسانی (فقط کامنت شده، حذف نشده):
+           چت مربی با شاگرد غیرفعال شد؛ مربی فقط پیام‌های مدیریت را می‌بیند.
+           برای فعال‌سازی دوباره کافی است این کامنت باز شود.
         /// <summary>چت با یک شاگرد</summary>
         [HttpGet]
         public async Task<IActionResult> Chat(int studentID)
@@ -84,6 +97,7 @@ namespace TandisWebApp.Controllers
                 return NotFound();
             return View(model);
         }
+        */
 
         /// <summary>
         /// ارسال پیام به شاگرد

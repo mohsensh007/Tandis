@@ -1,52 +1,60 @@
-﻿@model List<TandisWebApp.DTOs.CoachMessageSummaryDto>
+@model List<TandisWebApp.DTOs.CoachInboxItemDto>
 @{
     ViewData["Title"] = "پیام‌ها";
     var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
+    var unread = ViewBag.UnreadMessages as int? ?? 0;
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0"><i class="bi bi-chat-dots-fill hd-icon"></i> پیام‌های شاگردان</h5>
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h5 class="mb-0">
+        <i class="bi bi-chat-dots-fill hd-icon"></i> پیام‌های مدیریت
+        @if (unread > 0)
+        {
+            <span class="ms-unread ms-unread-static" id="unreadBadge">@unread.ToString(fa)</span>
+        }
+    </h5>
     <a href="/Coach" class="purple-style coach-back-pill"><i class="bi bi-arrow-right"></i> داشبورد</a>
 </div>
+
+<p class="small mb-3" style="color:#9fb3c8">
+    <i class="bi bi-info-circle me-1"></i>
+    در این بخش فقط پیام‌هایی که مدیریت برای شما فرستاده نمایش داده می‌شود.
+</p>
 
 @if (Model.Count == 0)
 {
     <div class="ms-empty">
-        <div style="font-size:2.4rem" class="mb-2">💬</div>
-        هنوز گفتگویی با شاگردان ندارید
+        <div style="font-size:2.4rem" class="mb-2">📭</div>
+        هنوز پیامی از طرف مدیریت برای شما ارسال نشده است
     </div>
 }
 else
 {
     <div class="row g-3">
-        @foreach (var st in Model)
+        @foreach (var msg in Model)
         {
-            <div class="col-md-6">
-                <a href="/Coach/Chat?studentID=@st.StudentMemberID" class="text-decoration-none">
-                    <div class="purple-style ms-card h-100">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="ms-avatar"><i class="bi bi-person-fill"></i></div>
-                            <div class="flex-grow-1" style="min-width:0">
-                                <div class="ms-name">@st.StudentName</div>
-                                <div class="ms-mobile" dir="ltr">@st.Mobile</div>
+            <div class="col-12">
+                <div class="purple-style ms-card @(msg.IsRead ? "" : "ms-card-unread")"
+                     data-id="@msg.MessageID" onclick="toggleMsg(this)">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="ms-avatar"><i class="bi bi-envelope-fill"></i></div>
+                        <div class="flex-grow-1" style="min-width:0">
+                            <div class="d-flex align-items-center justify-content-between gap-2">
+                                <div class="ms-name">
+                                    @(string.IsNullOrEmpty(msg.Title) ? "(بدون عنوان)" : msg.Title)
+                                </div>
+                                @if (!msg.IsRead)
+                                {
+                                    <span class="ms-unread ms-dot">جدید</span>
+                                }
                             </div>
-                            @if (st.UnreadCount > 0)
-                            {
-                                <span class="ms-unread">@st.UnreadCount.ToString(fa)</span>
-                            }
-                            <i class="bi bi-chevron-left ms-arrow"></i>
+                            <div class="ms-preview">@msg.Body</div>
+                            <div class="ms-full" style="display:none">@msg.Body</div>
+                            <div class="ms-date">@msg.CreationDate - @msg.CreationTime</div>
                         </div>
-                        @if (!string.IsNullOrEmpty(st.LastMessage))
-                        {
-                            <div class="ms-preview">@st.LastMessage</div>
-                            <div class="ms-date">@st.LastMessageDate - @st.LastMessageTime</div>
-                        }
-                        else
-                        {
-                            <div class="ms-preview ms-muted">هنوز پیامی رد و بدل نشده</div>
-                        }
+                        <i class="bi bi-chevron-down ms-arrow"></i>
                     </div>
-                </a>
+                </div>
             </div>
         }
     </div>
@@ -77,17 +85,12 @@ else
 
         .coach-back-pill i {
             color: #66d3e8;
-            transition: transform .25s;
         }
 
         .coach-back-pill:hover {
             background: rgba(255,255,255,.14);
             color: #fff;
         }
-
-            .coach-back-pill:hover i {
-                transform: translateX(3px);
-            }
 
     .ms-empty {
         background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
@@ -106,7 +109,9 @@ else
         border: 1px solid rgba(255,255,255,.14);
         border-radius: 18px;
         padding: 16px;
+        cursor: pointer;
         transition: transform .25s, border-color .25s;
+        -webkit-tap-highlight-color: transparent;
     }
 
         .ms-card::before {
@@ -120,9 +125,9 @@ else
             pointer-events: none;
         }
 
-    a:hover .ms-card {
-        transform: translateY(-4px);
+    .ms-card-unread {
         border-color: rgba(102,211,232,.45);
+        box-shadow: 0 6px 18px rgba(46,134,222,.18);
     }
 
     .ms-avatar {
@@ -143,16 +148,8 @@ else
         font-weight: 800;
         color: #fff;
         font-size: .95rem;
-        white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-    }
-
-    .ms-mobile {
-        font-size: .75rem;
-        color: #66d3e8;
-        margin-top: 2px;
-        text-align: right;
     }
 
     .ms-unread {
@@ -164,16 +161,24 @@ else
         font-size: .68rem;
         font-weight: 800;
         box-shadow: 0 2px 8px rgba(255,107,129,.5);
+        white-space: nowrap;
+    }
+
+    .ms-unread-static {
+        font-size: .7rem;
+        vertical-align: middle;
+        margin-right: 6px;
     }
 
     .ms-arrow {
         flex: 0 0 auto;
         color: #66d3e8;
         transition: transform .25s;
+        margin-top: 4px;
     }
 
-    a:hover .ms-arrow {
-        transform: translateX(-4px);
+    .ms-card.open .ms-arrow {
+        transform: rotate(180deg);
     }
 
     .ms-preview {
@@ -189,8 +194,21 @@ else
         white-space: nowrap;
     }
 
-    .ms-muted {
-        color: #8a93a6;
+    .ms-card.open .ms-preview {
+        display: none;
+    }
+
+    .ms-full {
+        margin-top: 12px;
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 12px;
+        padding: 11px 13px;
+        color: #e9ecef;
+        font-size: .85rem;
+        line-height: 1.9;
+        white-space: pre-wrap;
+        word-break: break-word;
     }
 
     .ms-date {
@@ -199,3 +217,34 @@ else
         margin-top: 6px;
     }
 </style>
+
+@section Scripts {
+    <script>
+        // ✅ باز/بسته کردن پیام + علامت‌گذاری خوانده‌شده (فقط خواندنی — امکان پاسخ وجود ندارد)
+        function toggleMsg(el) {
+            var open = el.classList.toggle('open');
+            var full = el.querySelector('.ms-full');
+            if (full) full.style.display = open ? 'block' : 'none';
+
+            if (!open) return;
+
+            var id = parseInt(el.getAttribute('data-id'), 10);
+            if (!id || el.getAttribute('data-read') === '1') return;
+            el.setAttribute('data-read', '1');
+            el.classList.remove('ms-card-unread');
+
+            var dot = el.querySelector('.ms-dot');
+            if (dot) dot.remove();
+
+            apiCall('/api/Coach/Messages/Read', 'POST', id, function () {
+                var badge = document.getElementById('unreadBadge');
+                if (!badge) return;
+                var n = parseInt((badge.textContent || '0'), 10);
+                if (isNaN(n)) n = 0;
+                n = n - 1;
+                if (n <= 0) { badge.remove(); }
+                else { badge.textContent = n.toLocaleString('fa-IR'); }
+            });
+        }
+    </script>
+}

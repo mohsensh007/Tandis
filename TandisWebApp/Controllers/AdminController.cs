@@ -327,6 +327,47 @@ namespace TandisWebApp.Controllers
         public async Task<IActionResult> SearchMemberApi(string q)
             => Ok(new { success = true, data = await _messages.SearchMembersAsync(AdminShiftID, q) });
 
+        /// <summary>اعضای یک نقش (برای انتخاب گیرنده در مودال ارسال پیام) — صفحه‌ای</summary>
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/MembersByRole")]
+        public async Task<IActionResult> MembersByRoleApi(int roleID, string? q, int skip = 0, int take = 300)
+        {
+            var page = await _messages.GetMembersByRoleAsync(AdminShiftID, roleID, q, skip, take);
+            return Ok(new { success = true, data = page.Items, total = page.Total, skip = page.Skip, hasMore = page.HasMore });
+        }
+
+        /// <summary>اعضای چند رشته ورزشی (برای انتخاب گیرنده در مودال ارسال پیام) — صفحه‌ای</summary>
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/MembersBySports")]
+        public async Task<IActionResult> MembersBySportsApi(string? sportIds, string? q, int skip = 0, int take = 300)
+        {
+            var ids = (sportIds ?? "").Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(s => int.TryParse(s.Trim(), out var v) ? v : 0)
+                .Where(v => v > 0)
+                .Distinct()
+                .ToList();
+
+            var page = await _messages.GetMembersBySportsAsync(AdminShiftID, ids, q, skip, take);
+            return Ok(new { success = true, data = page.Items, total = page.Total, skip = page.Skip, hasMore = page.HasMore });
+        }
+
+        /// <summary>ارسال پیام به اعضای تیک‌خورده (لیستی از MemberID)</summary>
+        [AdminAuthorize]
+        [HttpPost]
+        [Route("api/Admin/Messages/SendToMembers")]
+        public async Task<IActionResult> MessagesSendToMembersApi([FromBody] SendToManyRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.Body))
+                return Ok(new { success = false, message = "متن پیام خالی است" });
+            if (req.MemberIDs == null || req.MemberIDs.Count == 0)
+                return Ok(new { success = false, message = "هیچ گیرنده‌ای انتخاب نشده است" });
+
+            var count = await _messages.SendToManyAsync(CurrentAdminUserID, req.Title, req.Body, req.MemberIDs);
+            return Ok(new { success = true, message = $"پیام برای {count} نفر ارسال شد", count });
+        }
+
         [AdminAuthorize]
         [Route("Admin/Messages/View/{messageID:long}")]
         public async Task<IActionResult> MessageView(long messageID)

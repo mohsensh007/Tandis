@@ -52,6 +52,9 @@ namespace TandisWebApp.DTOs
         public string Message { get; set; } = string.Empty;
         public T? Data { get; set; }
 
+        // ===== هدایت خودکار (مثلاً کاربران غیرفعال → صفحه QR کیوسک) =====
+        public string? RedirectTo { get; set; }
+
         // ===== پرداخت با POS (وب‌اپ) =====
         /// <summary>true یعنی مبلغ روی دستگاه POS ارسال شده و منتظر کشیدن کارتیم</summary>
         public bool PaymentPending { get; set; }

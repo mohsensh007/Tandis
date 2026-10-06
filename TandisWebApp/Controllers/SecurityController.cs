@@ -50,8 +50,11 @@ namespace TandisWebApp.Controllers
             {
                 var token = await _qrService.GenerateQrTokenAsync(shiftID);
 
+                // ✅ محتوای QR = فقط URL صفحه ورود (توکن ورود به باشگاه هم به‌صورت پارامتر کنار آن می‌ماند)
+                var loginUrl = $"{Request.Scheme}://{Request.Host}/Account/Login?qr={token}";
+
                 using var qrGenerator = new QRCodeGenerator();
-                using var qrCodeData = qrGenerator.CreateQrCode(token, QRCodeGenerator.ECCLevel.M);
+                using var qrCodeData = qrGenerator.CreateQrCode(loginUrl, QRCodeGenerator.ECCLevel.M);
                 using var qrCode = new PngByteQRCode(qrCodeData);
                 var qrCodeImage = qrCode.GetGraphic(20);
 

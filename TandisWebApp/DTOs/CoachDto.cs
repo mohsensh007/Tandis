@@ -149,6 +149,17 @@
         public string CreationTime { get; set; } = "";
     }
 
+    /// <summary>پیام دریافتیِ مربی از مدیریت (فقط خواندنی)</summary>
+    public class CoachInboxItemDto
+    {
+        public long MessageID { get; set; }
+        public string? Title { get; set; }
+        public string Body { get; set; } = "";
+        public string? CreationDate { get; set; }
+        public string? CreationTime { get; set; }
+        public bool IsRead { get; set; }
+    }
+
     /// <summary>گزارش پیام‌های مربی-شاگرد برای ادمین</summary>
     public class AdminCoachMessageRowDto
     {

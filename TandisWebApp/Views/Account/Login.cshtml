@@ -48,9 +48,10 @@
             var nc = $.trim($('#txtNationalCode').val());
             var pw = $('#txtPassword').val();
 
-            // === تشخیص خودکار مدیر: admin / adminb ===
+            // === تشخیص مسیر ورود: کد ملی ۱۰ رقمی → عضو / بقیه → نام کاربری (ادمین و پرسنل) ===
             var lower = nc.toLowerCase();
-            isAdminLogin = (lower === 'admin' || lower === 'adminb');
+            var isNationalCode = /^\d{10}$/.test(nc);
+            isAdminLogin = (lower === 'admin' || lower === 'adminb') || !isNationalCode;
 
             if (!nc) { showToast('کد ملی / نام کاربری را وارد کنید', 'error'); return; }
             if (!isAdminLogin && nc.length < 10) { showToast('کد ملی را صحیح وارد کنید', 'error'); return; }
@@ -61,6 +62,13 @@
             if (isAdminLogin) {
                 // ===== مسیر ورود مدیر =====
                 apiCall('/api/Admin/Login', 'POST', { username: lower, password: pw }, function (res) {
+                    // ✅ کاربر غیرفعال (Sec_Users.IsActive = false) → صفحه QR کیوسک
+                    if (res.redirectTo) {
+                        if (typeof hideLoading === 'function') { hideLoading(); }
+                        showToast(res.message || 'حساب شما غیرفعال است', 'warning');
+                        setTimeout(function () { window.location.href = res.redirectTo; }, 1200);
+                        return;
+                    }
                     if (res.success) {
                         if (res.data.mustChangePassword) {
                             // ✅ رمز پیش‌فرض admin/admin → فرم تغییر رمز

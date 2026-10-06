@@ -288,6 +288,134 @@ namespace TandisWebApp.Services
                 }
             ).Take(10).ToListAsync();
         }
+        // ========== لیست اعضا برای انتخاب گیرنده (مودال ارسال پیام) ==========
+
+        /// <summary>
+        /// اعضای یک نقش مشخص (با جستجو) — به‌صورت صفحه‌ای + مرتب‌سازی فارسی‌ها اول
+        /// </summary>
+        public Task<RecipientPageDto> GetMembersByRoleAsync(short shiftID, int roleID, string? q, int skip = 0, int take = 300)
+            => GetMemberPageAsync(BuildRoleQuery(shiftID, roleID), q, skip, take);
+
+        private IQueryable<RecipientRow> BuildRoleQuery(short shiftID, int roleID)
+            => from gm in _db.Gen_Members.AsNoTracking()
+               join gp in _db.Gen_Persons on gm.PersonID equals gp.PersonID
+               where gm.ShiftID == shiftID && gm.RoleID == roleID
+               select new RecipientRow { MemberID = gm.MemberID, FullName = gp.FullName, Mobile = gp.Mobile, CardNo = gm.CardNo };
+
+        /// <summary>اعضای چند رشته ورزشی (ثبت‌نام فعال) با جستجو — صفحه‌ای</summary>
+        public async Task<RecipientPageDto> GetMembersBySportsAsync(short shiftID, List<int> sportCatIDs, string? q, int skip = 0, int take = 300)
+        {
+            if (sportCatIDs == null || sportCatIDs.Count == 0)
+                return new RecipientPageDto();
+
+            var sanseIds = await _db.Gen_SportSanses.AsNoTracking()
+                .Where(s => s.IsActive == true && s.SportCatID != null && sportCatIDs.Contains(s.SportCatID.Value))
+                .Select(s => s.SportSanseID)
+                .ToListAsync();
+
+            if (sanseIds.Count == 0)
+                return new RecipientPageDto();
+
+            var memberIds = await _db.Acc_MemberSports.AsNoTracking()
+                .Where(ms => ms.IsActive == true
+                             && ms.SportSanseID != null && sanseIds.Contains(ms.SportSanseID.Value)
+                             && ms.MemberID != null)
+                .Select(ms => ms.MemberID!.Value)
+                .Distinct()
+                .ToListAsync();
+
+            if (memberIds.Count == 0)
+                return new RecipientPageDto();
+
+            var query = from gm in _db.Gen_Members.AsNoTracking()
+                        join gp in _db.Gen_Persons on gm.PersonID equals gp.PersonID
+                        where gm.ShiftID == shiftID && memberIds.Contains(gm.MemberID)
+                        select new RecipientRow { MemberID = gm.MemberID, FullName = gp.FullName, Mobile = gp.Mobile, CardNo = gm.CardNo };
+
+            return await GetMemberPageAsync(query, q, skip, take);
+        }
+
+        /// <summary>ردیف خام برای مرتب‌سازی/صفحه‌بندی در حافظه</summary>
+        private sealed class RecipientRow
+        {
+            public int MemberID { get; set; }
+            public string? FullName { get; set; }
+            public string? Mobile { get; set; }
+            public string? CardNo { get; set; }
+        }
+
+        /// <summary>
+        /// ✅ مرتب‌سازی: اعضای فارسی‌نام اول، بعد بقیه (در غیر این صورت SQL حروف لاتین را بالا می‌آورد
+        /// و به‌نظر می‌رسد فقط اعضای انگلیسی‌نام نمایش داده می‌شوند).
+        /// صفحه‌بندی در حافظه انجام می‌شود تا ترتیب بین صفحه‌ها ثابت بماند.
+        /// </summary>
+        private async Task<RecipientPageDto> GetMemberPageAsync(IQueryable<RecipientRow> query, string? q, int skip, int take)
+        {
+            var key = (q ?? "").Trim();
+            if (key.Length > 0)
+            {
+                query = query.Where(x => (x.FullName ?? "").Contains(key)
+                                      || (x.Mobile ?? "").Contains(key)
+                                      || (x.CardNo != null && x.CardNo.Contains(key)));
+            }
+
+            var rows = await query.ToListAsync();
+
+            static bool IsPersianStart(string? s)
+                => !string.IsNullOrEmpty(s) && s[0] >= '\u0600' && s[0] <= '\u06FF';
+
+            var ordered = rows
+                .OrderBy(x => IsPersianStart(x.FullName) ? 0 : 1)
+                .ThenBy(x => x.FullName ?? "", StringComparer.CurrentCulture)
+                .ThenBy(x => x.MemberID)
+                .ToList();
+
+            if (skip < 0) skip = 0;
+            if (take <= 0) take = 300;
+
+            var page = ordered.Skip(skip).Take(take).ToList();
+
+            return new RecipientPageDto
+            {
+                Total = ordered.Count,
+                Skip = skip,
+                HasMore = skip + page.Count < ordered.Count,
+                Items = page.Select(x => new RecipientMemberDto
+                {
+                    MemberID = x.MemberID,
+                    FullName = string.IsNullOrEmpty(x.FullName) ? "-" : x.FullName,
+                    Mobile = x.Mobile,
+                    MemberCode = x.MemberID.ToString()
+                }).ToList()
+            };
+        }
+
+        /// <summary>ارسال یک پیام به چند عضو مشخص (تیک‌خورده‌ها) → TargetType=4</summary>
+        public async Task<int> SendToManyAsync(short? userID, string? title, string body, List<int>? memberIDs)
+        {
+            var ids = (memberIDs ?? new List<int>()).Where(id => id > 0).Distinct().ToList();
+            if (ids.Count == 0) return 0;
+
+            var (now, date, time) = NowShamsi();
+            foreach (var id in ids)
+            {
+                _db.MsgMessages.Add(new Msg_Message
+                {
+                    Title = title,
+                    Body = body,
+                    TargetType = 4,
+                    TargetMemberID = id,
+                    SenderUserID = userID,
+                    IsActive = true,
+                    CreationDateTime = now,
+                    CreationDate = date,
+                    CreationTime = time
+                });
+            }
+            await _db.SaveChangesAsync();
+            return ids.Count;
+        }
+
         // ========== کمکی: تاریخ شمسی + ساعت + زمان جاری ==========
         private static (DateTime now, string date, string time) NowShamsi()
         {

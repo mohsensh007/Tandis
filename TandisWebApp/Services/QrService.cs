@@ -57,10 +57,11 @@ namespace TandisWebApp.Services
         /// </summary>
         public async Task<(bool isValid, string message)> ValidateTokenAsync(string token)
         {
-            if (string.IsNullOrWhiteSpace(token))
+            var rawToken = ExtractToken(token);
+            if (string.IsNullOrWhiteSpace(rawToken))
                 return (false, "فرمت QR نامعتبر است");
 
-            var key = CACHE_PREFIX + token.Trim().ToUpper();
+            var key = CACHE_PREFIX + rawToken.ToUpper();
 
             if (!_cache.TryGetValue<QrPayload>(key, out var payload) || payload == null)
                 return (false, "QR Code منقضی شده است. لطفاً QR جدید روی صفحه باشگاه را اسکن کنید.");
@@ -87,6 +88,32 @@ namespace TandisWebApp.Services
                 return (false, "SystemCode نامعتبر است. لطفاً QR Code از صفحه رسمی باشگاه را اسکن کنید.");
 
             return (true, "QR Code معتبر است");
+        }
+
+        /// <summary>
+        /// محتوای QR حالا URL صفحه ورود است (…/Account/Login?qr=TOKEN)؛
+        /// این متد توکن را از داخل URL یا از ورودی خام (توکن قبلی) بیرون می‌کشد.
+        /// </summary>
+        private static string ExtractToken(string raw)
+        {
+            if (string.IsNullOrWhiteSpace(raw)) return "";
+
+            var data = raw.Trim();
+            var idx = data.IndexOf("qr=", StringComparison.OrdinalIgnoreCase);
+            if (idx >= 0)
+            {
+                data = data.Substring(idx + 3);
+                var amp = data.IndexOf('&');
+                if (amp >= 0) data = data.Substring(0, amp);
+            }
+
+            data = data.Trim().TrimEnd('/', '?', '&');
+
+            // فقط کاراکترهای معتبر توکن (۱۶ کاراکتری Guid) باقی می‌ماند
+            var cut = data.IndexOfAny(new[] { ' ', '\r', '\n', '"', '\'' });
+            if (cut >= 0) data = data.Substring(0, cut);
+
+            return data;
         }
 
         private string ComputeHMAC(string data)

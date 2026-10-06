@@ -45,6 +45,32 @@ namespace TandisWebApp.DTOs
         public string? Title { get; set; }
         public string Body { get; set; } = string.Empty;
     }
+    /// <summary>گیرندهٔ انتخابی (برای لیست‌های نقش/رشته در مودال ارسال پیام)</summary>
+    public class RecipientMemberDto
+    {
+        public int MemberID { get; set; }
+        public string FullName { get; set; } = "";
+        public string? Mobile { get; set; }
+        public string MemberCode { get; set; } = "";
+    }
+
+    /// <summary>صفحه‌ای از گیرندگان (برای لیست‌های بلند نقش/رشته با اسکرول مرحله‌ای)</summary>
+    public class RecipientPageDto
+    {
+        public List<RecipientMemberDto> Items { get; set; } = new();
+        public int Total { get; set; }
+        public int Skip { get; set; }
+        public bool HasMore { get; set; }
+    }
+
+    /// <summary>ارسال پیام به چند عضو مشخص (تیک‌خورده‌ها)</summary>
+    public class SendToManyRequest
+    {
+        public string? Title { get; set; }
+        public string Body { get; set; } = string.Empty;
+        public List<int> MemberIDs { get; set; } = new();
+    }
+
     public class RoleOptionDto
     {
         public int RoleID { get; set; }
