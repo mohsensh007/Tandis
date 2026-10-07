@@ -58,6 +58,79 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
             .replace(/'/g, '&#39;');
     }
 
+    // ===== ✅ ارقام: فارسی→لاتین هنگام تایپ / لاتین→فارسی هنگام نمایش =====
+    var FA_OR_AR_RE = /[\u06F0-\u06F9\u0660-\u0669]/;
+
+    /// تبدیل ارقام فارسی/عربی به لاتین (برای ارسال به سرور/دیتابیس)
+    function toEnDigits(s) {
+        return String(s).replace(/[\u06F0-\u06F9\u0660-\u0669]/g, function (d) {
+            var c = d.charCodeAt(0);
+            return String(c >= 0x06F0 ? c - 0x06F0 : c - 0x0660);
+        });
+    }
+
+    /// تبدیل ارقام لاتین به فارسی (برای نمایش در صفحه)
+    function toFaDigits(s) {
+        return String(s).replace(/[0-9]/g, function (d) { return FaDigits[d]; });
+    }
+    window.toEnDigits = toEnDigits;
+    window.toFaDigits = toFaDigits;
+
+    // ✅ هنگام تایپ یا جای‌گذاری در هر اینپوت/تکست‌آریا (به‌جز رمز عبور):
+    //    ارقام فارسی/عربی بلافاصله لاتین می‌شوند تا هیچ عدد فارسی به دیتابیس نرود.
+    document.addEventListener('input', function (e) {
+        var el = e.target;
+        if (!el || (el.tagName !== 'INPUT' && el.tagName !== 'TEXTAREA')) return;
+        if (el.type === 'password' || el.type === 'number' || el.readOnly) return;
+        var v = el.value;
+        if (!v || !FA_OR_AR_RE.test(v)) return;
+        var pos = null;
+        try { pos = el.selectionStart; } catch (_) { }
+        el.value = toEnDigits(v);
+        if (pos !== null) { try { el.setSelectionRange(pos, pos); } catch (_) { } }
+    });
+
+    // ✅ نمایش تمام اعدادِ متنی صفحه به صورت فارسی (حتی اعدادی که از دیتابیس می‌آیند).
+    //    فقط گره‌های متنی تغییر می‌کنند؛ مقدار اینپوت‌ها/تکست‌آریاها دست نمی‌خورد
+    //    (بنابراین عددی که کاربر تایپ می‌کند لاتین می‌ماند و به سرور لاتین می‌رود).
+    var FA_SKIP_TAGS = { SCRIPT: 1, STYLE: 1, TEXTAREA: 1, INPUT: 1, SELECT: 1, CODE: 1, PRE: 1, KBD: 1, SAMP: 1, VAR: 1, IFRAME: 1, OBJECT: 1, TEMPLATE: 1 };
+
+    function faifyTextNode(t) {
+        if (!t || t.nodeType !== 3) return;
+        var v = t.nodeValue;
+        if (!v || !/[0-9]/.test(v)) return;
+        var p = t.parentElement;
+        if (!p || FA_SKIP_TAGS[p.tagName] || p.isContentEditable) return;
+        if (p.closest && p.closest('[data-no-fa]')) return;
+        t.nodeValue = toFaDigits(v);
+    }
+    function faify(root) {
+        if (!root) return;
+        if (root.nodeType === 3) { faifyTextNode(root); return; }
+        if (root.nodeType !== 1) return;
+        if (FA_SKIP_TAGS[root.tagName] || root.isContentEditable) return;
+        var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+        var n;
+        while ((n = walker.nextNode())) faifyTextNode(n);
+    }
+    window.faify = faify;
+
+    function startFaDisplay() {
+        if (!document.body) return;
+        faify(document.body);
+        if (typeof MutationObserver === 'undefined') return;
+        new MutationObserver(function (mutations) {
+            for (var i = 0; i < mutations.length; i++) {
+                var m = mutations[i];
+                if (m.type === 'characterData') {
+                    faifyTextNode(m.target);
+                } else if (m.type === 'childList') {
+                    for (var j = 0; j < m.addedNodes.length; j++) faify(m.addedNodes[j]);
+                }
+            }
+        }).observe(document.body, { subtree: true, childList: true, characterData: true });
+    }
+
     // ===== آیکن‌های توست با رنگ تم تندیس =====
     var ICON_SUCCESS = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="#38d9a9" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
     var ICON_ERROR = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="#ff6b81" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
@@ -241,6 +314,7 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     // ===== اجرای خودکار =====
     document.addEventListener('DOMContentLoaded', function () {
         hideLoading();
+        startFaDisplay();
 
         if (!window.location.pathname.includes('login') &&
             !window.location.pathname.includes('register')) {

@@ -25,6 +25,15 @@
                 </button>
             </div>
             <div class="card-body p-0">
+                <!-- ✅ فیلترهای اینباکس (task 4) -->
+                <div class="inbox-filters">
+                    <input type="search" class="form-control" id="txtInboxSearch"
+                           placeholder="🔍 جستجو: نام / موبایل / عنوان / متن / تاریخ" />
+                    <label class="inbox-unread">
+                        <input type="checkbox" id="chkInboxUnread" />
+                        فقط خوانده‌نشده
+                    </label>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead>
@@ -97,6 +106,7 @@
                     <button type="button" class="rec-tab active" data-mode="all">همه اعضا</button>
                     <button type="button" class="rec-tab" data-mode="role">بر اساس نقش</button>
                     <button type="button" class="rec-tab" data-mode="sport">بر اساس رشته</button>
+                    <button type="button" class="rec-tab" data-mode="birthday">🎂 متولدین امروز</button>
                 </div>
 
                 <!-- حالت ۱: همه اعضا -->
@@ -139,6 +149,10 @@
                         اعضای رشته‌های انتخاب‌شده
                         <span class="badge rec-badge" id="sportScopeCount">۰ رشته</span>
                     </div>
+
+                    <!-- ✅ task 3: نوار رشته‌های انتخاب‌شده — همیشه در دید تا در لیست بلند گم نشود -->
+                    <div class="rec-selbar" id="selectedSportsBar" style="display:none"></div>
+
                     <div class="rec-toolbar">
                         <input type="search" class="form-control" id="txtSportMemberSearch"
                                placeholder="جستجو: نام / موبایل / کد عضویت" />
@@ -146,6 +160,22 @@
                     <div class="rec-counter" id="sportCounter"></div>
                     <div class="rec-list" id="sportMemberList" data-mode="sport">
                         <div class="rec-hint">ابتدا حداقل یک رشته را تیک بزنید</div>
+                    </div>
+                </div>
+
+                <!-- حالت ۴: تولد امروز (task 4) -->
+                <div class="rec-panel" id="panelBirthday" style="display:none">
+                    <div class="rec-note">
+                        <i class="bi bi-gift"></i>
+                        پیام برای اعضایی که <b>تولدشان امروز</b> است ارسال می‌شود (تاریخ تولد شمسی یا میلادی).
+                    </div>
+                    <div class="rec-toolbar">
+                        <input type="search" class="form-control" id="txtBirthdaySearch"
+                               placeholder="جستجو: نام / موبایل / کد عضویت" />
+                    </div>
+                    <div class="rec-counter" id="birthdayCounter"></div>
+                    <div class="rec-list" id="birthdayList" data-mode="birthday">
+                        <div class="rec-hint">در حال بارگذاری...</div>
                     </div>
                 </div>
             </div>
@@ -197,7 +227,7 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/admin-messages.js?v=4"></script>
+    <script src="~/js/admin-messages.js?v=6"></script>
 }
 <style>
     /* ===== دکمه‌های تم‌رنگ: گرادیان بنفش-آبی، کوچیک و جمع‌وجور ===== */
@@ -600,6 +630,94 @@
         .rec-radio.disabled {
             opacity: .45;
             pointer-events: none;
+        }
+
+    /* ===== فیلترهای اینباکس (task 4) ===== */
+    .inbox-filters {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        flex-wrap: wrap;
+    }
+
+        .inbox-filters .form-control {
+            flex: 1 1 220px;
+        }
+
+    .inbox-unread {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .8rem;
+        color: #cbd3da;
+        margin: 0;
+        white-space: nowrap;
+        cursor: pointer;
+    }
+
+        .inbox-unread input {
+            accent-color: #667eea;
+        }
+
+    /* ===== نوار رشته‌های انتخاب‌شده (task 3) ===== */
+    .rec-selbar {
+        position: sticky;
+        top: 0;
+        z-index: 6;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 6px;
+        background: rgba(20, 26, 48, .97);
+        border: 1px solid rgba(102, 211, 232, .35);
+        border-radius: 12px;
+        padding: 8px 10px;
+        margin: 8px 0;
+        box-shadow: 0 6px 18px rgba(0,0,0,.35);
+    }
+
+    .rsb-label {
+        font-size: .76rem;
+        font-weight: 800;
+        color: #66d3e8;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .rsb-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: linear-gradient(135deg, rgba(102,126,234,.85), rgba(118,75,162,.8));
+        border: 1px solid rgba(255,255,255,.25);
+        color: #fff;
+        border-radius: 999px;
+        padding: 3px 8px;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+    .rsb-x {
+        border: none;
+        background: rgba(0,0,0,.28);
+        color: #fff;
+        width: 17px;
+        height: 17px;
+        border-radius: 50%;
+        line-height: 1;
+        font-size: .85rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        cursor: pointer;
+    }
+
+        .rsb-x:hover {
+            background: #ff6b81;
         }
 
     @@media (max-width: 576px) {

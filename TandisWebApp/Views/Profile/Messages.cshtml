@@ -5,203 +5,62 @@
     var currentCoachID = (int)(ViewBag.CurrentCoachID ?? 0);
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h5 class="mb-0"><i class="bi bi-chat-dots-fill hd-icon"></i>پیام‌های من</h5>
-    <a href="/Home" class="btn-back-glass"><i class="bi bi-arrow-right"></i> داشبورد</a>
-</div>
-
-<div class="row g-3">
-    <!-- ========== ستون راست ========== -->
-    <div class="col-md-4">
-
-        @* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
-           فقط ادمین اجازه‌ی ارسال پیام دارد؛ کارت «پیام به مدیریت» برداشته شد.
-           برای فعال‌سازی دوباره کافی است کامنت زیر برداشته شود. *@
-        @*
-        <!-- ✅ کارت ارسال پیام به مدیریت — بالای همه تا همیشه دیده بشه -->
-        <div class="card coach-list-card mb-3">
-            <div class="card-header coach-list-header">✉️ پیام به مدیریت</div>
-            <div class="card-body">
-                <div class="mb-2">
-                    <input type="text" id="txtAdminTitle" class="form-control" placeholder="عنوان (اختیاری)" maxlength="200" />
-                </div>
-                <div class="mb-2">
-                    <textarea id="txtAdminBody" class="form-control" rows="3" placeholder="متن پیام..."></textarea>
-                </div>
-                <button type="button" class="btn btn-primary btn-sm w-100" id="btnSendAdmin">📤 ارسال به مدیریت</button>
-            </div>
-        </div>
-        *@
-
-        @* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
-           چت عضو با مربی حذف شد (نه عضو به مربی می‌تواند پیام بدهد نه مربی به عضو)،
-           پس کارت «مربی‌های من» هم غیرفعال شد.
-           برای فعال‌سازی دوباره کافی است کامنت زیر برداشته شود. *@
-        @*
-        <!-- لیست مربی‌ها -->
-        <div class="card coach-list-card">
-            <div class="card-header coach-list-header">🏋️ مربی‌های من</div>
-            <div class="card-body p-2">
-                @if (coaches.Count == 0)
-                {
-                    <div class="text-center text-muted py-4">مربی‌ای ندارید</div>
-                }
-                @foreach (var c in coaches)
-                {
-                    <a href="/Profile/Messages?coachID=@c.CoachMemberID"
-                       class="d-block text-decoration-none coach-item @(c.CoachMemberID == currentCoachID ? "coach-item-active" : "")">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div style="min-width:0">
-                                <div class="fw-bold coach-item-name">@c.CoachName</div>
-                                @if (!string.IsNullOrEmpty(c.LastMessage))
-                                {
-                                    <div class="small coach-item-preview text-truncate" style="max-width:170px">@c.LastMessage</div>
-                                }
-                            </div>
-                            @if (c.UnreadCount > 0)
-                            {
-                                <span class="badge bg-danger rounded-pill">@c.UnreadCount</span>
-                            }
-                        </div>
-                    </a>
-                }
-            </div>
-        </div>
-        *@
-    </div>
-
-    <!-- ========== ستون چپ ========== -->
-    <div class="col-md-8">
-        @if (chat != null)
-        {
-            @* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
-               نمایش گفتگوی عضو با مربی برداشته شد (ارسال‌کننده‌ای باقی نمانده).
-               برای فعال‌سازی دوباره کافی است کامنت زیر برداشته شود. *@
-            @*
-            <!-- گفتگو با مربی -->
-            <div class="card coach-list-card mb-3">
-                <div class="card-header coach-list-header d-flex justify-content-between align-items-center">
-                    <span>گفتگو با @chat.StudentName</span>
-                    <a href="/Profile/Messages" class="btn btn-sm btn-outline-light">📢 پیام‌های مدیریت</a>
-                </div>
-                <div class="card-body" style="max-height:400px; overflow-y:auto;">
-                    @if (chat.Messages.Count == 0)
-                    {
-                        <div class="text-center text-muted">هنوز پیامی رد و بدل نشده</div>
-                    }
-                    @foreach (var msg in chat.Messages)
-                    {
-                        <div class="mb-2 @(msg.IsFromMe ? "text-end" : "text-start")">
-                            <div class="d-inline-block p-2 rounded msg-bubble @(msg.IsFromMe ? "me" : "other")">
-                                <div>@msg.Body</div>
-                                <div class="small mt-1 opacity-75">@msg.CreationDate - @msg.CreationTime</div>
-                            </div>
-                        </div>
-                    }
-                </div>
-            </div>
-            *@
-            @* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
-               عضو دیگر اجازه ندارد به مربی پیام بفرستد (فقط ادمین ⇄ عضو).
-               برای فعال‌سازی دوباره کافی است کامنت زیر برداشته شود. *@
-            @*
-            <div class="card coach-list-card">
-                <div class="card-body">
-                    <form method="post" asp-action="SendToCoach" asp-controller="Profile">
-                        <input type="hidden" name="coachID" value="@currentCoachID" />
-                        <textarea name="body" rows="2" class="form-control mb-2" placeholder="پیام خود را بنویسید..." required></textarea>
-                        <button type="submit" class="btn btn-primary btn-sm">📤 ارسال به مربی</button>
-                    </form>
-                </div>
-            </div>
-            *@
-        }
-        else
-        {
-            <!-- پیام‌های مدیریت -->
-            <div class="card coach-list-card">
-                <div class="card-header coach-list-header d-flex justify-content-between align-items-center">
-                    <span>📢 پیام‌های مدیریت</span>
-                    <button type="button" class="btn btn-sm btn-outline-light btn-back-glass" id="btnMarkAll">✅ خواندن همه</button>
-                </div>
-                <div class="card-body" style="max-height:520px; overflow-y:auto;">
-                    <div id="adminMsgsList" class="text-center text-muted py-4">در حال بارگذاری...</div>
-                </div>
-            </div>
-        }
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h5 class="mb-0">
+        <i class="bi bi-chat-dots-fill hd-icon"></i> پیام‌های من
+        <span class="ms-unread ms-unread-static" id="unreadBadge" style="display:none">۰</span>
+    </h5>
+    <div class="d-flex align-items-center gap-2">
+        <button type="button" class="purple-style coach-back-pill" id="btnMarkAll"><i class="bi bi-check2-all"></i> خواندن همه</button>
+        <a href="/Home" class="purple-style coach-back-pill"><i class="bi bi-arrow-right"></i> داشبورد</a>
     </div>
 </div>
+
+<p class="small mb-3" style="color:#9fb3c8">
+    <i class="bi bi-info-circle me-1"></i>
+    در این بخش پیام‌هایی که مدیریت برای شما فرستاده نمایش داده می‌شود. برای خواندن متن کامل روی پیام بزنید.
+</p>
+
+<div class="row g-3" id="adminMsgsList">
+    <div class="col-12">
+        <div class="ms-empty">در حال بارگذاری پیام‌ها...</div>
+    </div>
+</div>
+
+@* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
+   فقط ادمین اجازه‌ی ارسال پیام دارد؛ ارسال عضو به مدیریت و گفتگوی عضو با مربی غیرفعال شد.
+   برای فعال‌سازی دوباره کافی است کامنت‌های زیر برداشته شود. *@
+@*
+<div class="row g-3 mt-2">
+    <div class="col-md-6">
+        <div class="purple-style ms-card">
+            <div class="ms-name mb-2">✉️ پیام به مدیریت</div>
+            <input type="text" id="txtAdminTitle" class="form-control mb-2" placeholder="عنوان (اختیاری)" maxlength="200" />
+            <textarea id="txtAdminBody" class="form-control mb-2" rows="3" placeholder="متن پیام..."></textarea>
+            <button type="button" class="btn btn-primary btn-sm w-100" id="btnSendAdmin">📤 ارسال به مدیریت</button>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="purple-style ms-card">
+            <div class="ms-name mb-2">🏋️ مربی‌های من</div>
+            @foreach (var c in coaches)
+            {
+                <a href="/Profile/Messages?coachID=@c.CoachMemberID" class="d-block text-decoration-none coach-item">
+                    @c.CoachName — @c.LastMessage
+                </a>
+            }
+        </div>
+    </div>
+</div>
+*@
 
 <style>
-    .coach-list-card {
-        background: rgba(255,255,255,.05);
-        border: 1px solid rgba(255,255,255,.12);
-    }
-
-    .coach-list-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: #fff;
-        font-weight: 700;
-    }
-
-    .coach-item {
-        padding: .6rem .7rem;
-        border-radius: 10px;
-        margin-bottom: .4rem;
-        background: rgba(255,255,255,.06);
-        color: #e9ecef !important;
-    }
-
-        .coach-item:hover {
-            background: rgba(255,255,255,.12);
-        }
-
-    .coach-item-active {
-        background: rgba(13,110,253,.35);
-        outline: 1px solid rgba(13,110,253,.6);
-    }
-
-    .coach-item-name {
-        color: #fff;
-    }
-
-    .coach-item-preview {
-        color: #adb5bd;
-    }
-
-    .msg-bubble {
-        max-width: 75%;
-        text-align: right;
-    }
-
-        .msg-bubble.me {
-            background: #0d6efd;
-            color: #fff;
-        }
-
-        .msg-bubble.other {
-            background: rgba(255,255,255,.12);
-            color: #e9ecef;
-        }
-
-    .admin-msg {
-        border-radius: 12px;
-        background: rgba(255,255,255,.06);
-        border: 1px solid rgba(255,255,255,.10);
-    }
-
-        .admin-msg.msg-out {
-            background: rgba(13,110,253,.10);
-            border-color: rgba(13,110,253,.25);
-        }
-
     .hd-icon {
         color: #66d3e8;
         margin-left: 6px;
-        font-size: 1.05rem;
     }
-    /* ===== دکمه بازگشت شیشه‌ای ===== */
-    .btn-back-glass {
+
+    .coach-back-pill {
         display: inline-flex;
         align-items: center;
         gap: 8px;
@@ -218,31 +77,222 @@
         transition: all .25s;
     }
 
-        .btn-back-glass i {
+        .coach-back-pill i {
             color: #66d3e8;
-            transition: transform .25s;
         }
 
-        .btn-back-glass:hover {
+        .coach-back-pill:hover {
             background: rgba(255,255,255,.14);
             color: #fff;
-            border-color: rgba(102,211,232,.45);
         }
 
-            .btn-back-glass:hover i {
-                transform: translateX(3px);
-            }
-        /* ✅ فلش موقع hover تکون می‌خوره */
-        .btn-back-glass:active {
-            transform: scale(.95);
+    .ms-empty {
+        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 20px;
+        text-align: center;
+        padding: 44px 16px;
+        color: #9fb3c8;
+        font-size: .9rem;
+    }
+
+    .ms-card {
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 18px;
+        padding: 16px;
+        cursor: pointer;
+        transition: transform .25s, border-color .25s;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+        .ms-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: -40px;
+            width: 130px;
+            height: 130px;
+            background: radial-gradient(circle, rgba(46,134,222,.25), transparent 70%);
+            pointer-events: none;
         }
+
+    .ms-card-unread {
+        border-color: rgba(102,211,232,.45);
+        box-shadow: 0 6px 18px rgba(46,134,222,.18);
+    }
+
+    .ms-avatar {
+        flex: 0 0 auto;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        color: #fff;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        box-shadow: 0 5px 14px rgba(118,75,162,.4);
+    }
+
+    /* آواتار پیام‌های ارسالی — آبی تا از دریافتی متمایز شود */
+    .ms-avatar-out {
+        background: linear-gradient(135deg, #2196f3, #2172d6);
+        box-shadow: 0 5px 14px rgba(33,114,214,.4);
+    }
+
+    .ms-name {
+        font-weight: 800;
+        color: #fff;
+        font-size: .95rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .ms-unread {
+        flex: 0 0 auto;
+        background: #ff6b81;
+        color: #fff;
+        border-radius: 999px;
+        padding: 3px 9px;
+        font-size: .68rem;
+        font-weight: 800;
+        box-shadow: 0 2px 8px rgba(255,107,129,.5);
+        white-space: nowrap;
+    }
+
+    .ms-unread-static {
+        font-size: .7rem;
+        vertical-align: middle;
+        margin-right: 6px;
+    }
+
+    /* چیپ «ارسالی» برای پیام‌های خروجی */
+    .ms-chip-out {
+        flex: 0 0 auto;
+        background: rgba(33,146,246,.25);
+        border: 1px solid rgba(33,146,246,.45);
+        color: #9fd0ff;
+        border-radius: 999px;
+        padding: 3px 9px;
+        font-size: .68rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .ms-arrow {
+        flex: 0 0 auto;
+        color: #66d3e8;
+        transition: transform .25s;
+        margin-top: 4px;
+    }
+
+    .ms-card.open .ms-arrow {
+        transform: rotate(180deg);
+    }
+
+    .ms-preview {
+        margin-top: 12px;
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 12px;
+        padding: 9px 12px;
+        color: #cbd3da;
+        font-size: .8rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .ms-card.open .ms-preview {
+        display: none;
+    }
+
+    .ms-full {
+        margin-top: 12px;
+        background: rgba(255,255,255,.05);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 12px;
+        padding: 11px 13px;
+        color: #e9ecef;
+        font-size: .85rem;
+        line-height: 1.9;
+        white-space: pre-wrap;
+        word-break: break-word;
+    }
+
+    .ms-date {
+        font-size: .68rem;
+        color: #8a93a6;
+        margin-top: 6px;
+    }
 </style>
 
 @section Scripts {
     <script>
+        var adminMsgs = [];
+
         function esc(str) {
             if (str === null || str === undefined) return '';
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // ✅ ساخت HTML یک کارت پیام — استایل کارت‌های پنل مربی
+        function msgCardHtml(m) {
+            var isIn = m.direction === 'in';
+            var unread = isIn && !m.isRead;
+            var title = m.title ? esc(m.title) : (isIn ? '(بدون عنوان)' : 'پیام به مدیریت');
+            var body = esc(m.body || '');
+            var date = esc(m.creationDate || '') + ' - ' + esc(m.creationTime || '');
+
+            return '<div class="col-12">' +
+                '<div class="ms-card ' + (unread ? 'ms-card-unread' : '') + '" data-id="' + m.messageID + '" data-dir="' + m.direction + '" data-read="' + (unread ? '0' : '1') + '" onclick="toggleMsg(this)">' +
+                    '<div class="d-flex align-items-start gap-3">' +
+                        '<div class="ms-avatar ' + (isIn ? '' : 'ms-avatar-out') + '"><i class="bi ' + (isIn ? 'bi-envelope-fill' : 'bi-send-fill') + '"></i></div>' +
+                        '<div class="flex-grow-1" style="min-width:0">' +
+                            '<div class="d-flex align-items-center justify-content-between gap-2">' +
+                                '<div class="ms-name">' + (isIn ? title : '📤 ' + title) + '</div>' +
+                                (unread ? '<span class="ms-unread ms-dot">جدید</span>'
+                                        : (!isIn ? '<span class="ms-chip-out">ارسالی</span>' : '')) +
+                            '</div>' +
+                            '<div class="ms-preview">' + body + '</div>' +
+                            '<div class="ms-full" style="display:none">' + body + '</div>' +
+                            '<div class="ms-date">' + date + '</div>' +
+                        '</div>' +
+                        '<i class="bi bi-chevron-down ms-arrow"></i>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+        }
+
+        function renderMsgs() {
+            var $box = $('#adminMsgsList');
+            if (!$box.length) return;
+            if (!adminMsgs.length) {
+                $box.html('<div class="col-12"><div class="ms-empty">' +
+                    '<div style="font-size:2.4rem" class="mb-2">📭</div>' +
+                    'هنوز پیامی از طرف مدیریت برای شما ارسال نشده است</div></div>');
+                return;
+            }
+            var html = '';
+            adminMsgs.forEach(function (m) { html += msgCardHtml(m); });
+            $box.html(html);
+            renderBadge();
+        }
+
+        function renderBadge() {
+            var badge = document.getElementById('unreadBadge');
+            if (!badge) return;
+            var n = adminMsgs.filter(function (m) { return m.direction === 'in' && !m.isRead; }).length;
+            if (n > 0) {
+                badge.style.display = '';
+                badge.textContent = n.toLocaleString('fa-IR');
+            } else {
+                badge.style.display = 'none';
+            }
         }
 
         // ========== بارگذاری پیام‌های مدیریت ==========
@@ -250,42 +300,49 @@
             apiCall('/api/Account/Messages', 'GET', null, function (res) {
                 var $box = $('#adminMsgsList');
                 if (!$box.length) return;
-                if (!res.success) { $box.html('<div class="text-center text-muted py-4">خطا در بارگذاری پیام‌ها</div>'); return; }
-
-                // فقط پیام‌های سیستمی/مدیریت (بدون گفتگوی مربی)
-                var rows = (res.data || []).filter(function (m) { return !m.peerMemberID; });
-
-                if (!rows.length) {
-                    $box.html('<div class="text-center text-muted py-4">پیامی وجود ندارد</div>');
+                if (!res.success) {
+                    $box.html('<div class="col-12"><div class="ms-empty">خطا در بارگذاری پیام‌ها</div></div>');
                     return;
                 }
-
-                var html = '';
-                rows.forEach(function (m) {
-                    var isIn = m.direction === 'in';
-                    html += '<div class="admin-msg p-3 mb-2 ' + (isIn ? '' : 'msg-out') + '">' +
-                        '<div class="d-flex justify-content-between align-items-center mb-1">' +
-                            '<strong class="small">' + (isIn ? '📥 از مدیریت' : '📤 به مدیریت') + '</strong>' +
-                            '<span class="text-muted" style="font-size:11px;">' + esc(m.creationDate || '') + ' ' + esc(m.creationTime || '') + '</span>' +
-                        '</div>' +
-                        (m.title ? '<div class="fw-bold mb-1">' + esc(m.title) + '</div>' : '') +
-                        '<div class="small">' + esc(m.body) + '</div>' +
-                        (isIn && !m.isRead ? '<span class="badge bg-danger mt-2">خوانده نشده</span>' : '') +
-                    '</div>';
-                });
-                $box.html(html);
+                // فقط پیام‌های سیستمی/مدیریت (بدون گفتگوی مربی)
+                adminMsgs = (res.data || []).filter(function (m) { return !m.peerMemberID; });
+                renderMsgs();
             });
         }
 
+        // ✅ باز/بسته کردن پیام + علامت‌گذاری خوانده‌شده (فقط خواندنی — امکان پاسخ وجود ندارد)
+        function toggleMsg(el) {
+            var open = el.classList.toggle('open');
+            var full = el.querySelector('.ms-full');
+            if (full) full.style.display = open ? 'block' : 'none';
+
+            if (!open) return;
+            if (el.getAttribute('data-dir') !== 'in') return;
+            if (el.getAttribute('data-read') === '1') return;
+
+            var id = parseInt(el.getAttribute('data-id'), 10);
+            if (!id) return;
+            el.setAttribute('data-read', '1');
+            el.classList.remove('ms-card-unread');
+
+            var dot = el.querySelector('.ms-dot');
+            if (dot) dot.remove();
+
+            adminMsgs.forEach(function (m) {
+                if (m.messageID === id) m.isRead = true;
+            });
+            renderBadge();
+
+            apiCall('/api/Account/Messages/Read', 'POST', id, function () { });
+        }
+
         $(function () {
-            // بارگذاری پیام‌های مدیریت (اگه بخشش توی صفحه هست)
             loadAdminMsgs();
 
             /* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
                فقط ادمین اجازه‌ی ارسال پیام دارد؛ ارسال عضو به مدیریت غیرفعال شد.
                برای فعال‌سازی دوباره کافی است کامنت زیر برداشته شود. */
             /*
-            // ========== ✅ ارسال پیام به مدیریت ==========
             $('#btnSendAdmin').off('click').on('click', function () {
                 var title = $('#txtAdminTitle').val();
                 var body = $('#txtAdminBody').val();
@@ -306,20 +363,18 @@
 
             // ========== ✅ خواندن همه پیام‌ها ==========
             $('#btnMarkAll').off('click').on('click', function () {
-                apiCall('/api/Account/Messages', 'GET', null, function (res) {
-                    if (!res.success) return;
-                    var unread = (res.data || []).filter(function (m) { return m.direction === 'in' && !m.isRead; });
-                    if (!unread.length) { showToast('پیام خوانده‌نشده‌ای ندارید', 'info'); return; }
+                var unread = adminMsgs.filter(function (m) { return m.direction === 'in' && !m.isRead; });
+                if (!unread.length) { showToast('پیام خوانده‌نشده‌ای ندارید', 'info'); return; }
 
-                    var done = 0;
-                    unread.forEach(function (m) {
-                        apiCall('/api/Account/Messages/Read', 'POST', m.messageID, function () {
-                            done++;
-                            if (done === unread.length) {
-                                showToast('همه پیام‌ها خوانده شد', 'success');
-                                loadAdminMsgs();
-                            }
-                        });
+                var done = 0;
+                unread.forEach(function (m) {
+                    apiCall('/api/Account/Messages/Read', 'POST', m.messageID, function () {
+                        done++;
+                        m.isRead = true;
+                        if (done === unread.length) {
+                            showToast('همه پیام‌ها خوانده شد', 'success');
+                            renderMsgs();
+                        }
                     });
                 });
             });

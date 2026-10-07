@@ -1,0 +1,4 @@
+warn: Microsoft.EntityFrameworkCore.Model.Validation[30001]
+      The property 'CreditTypeID' on entity type 'Cash_CreditType' is of type 'byte', but is set up to use a SQL Server identity column; this requires that values starting at 255 and counting down will be used for temporary key values. A temporary key value is needed for every entity inserted in a single call to 'SaveChanges'. Care must be taken that these values do not collide with real key values.
+warn: Microsoft.EntityFrameworkCore.Model.Validation[30001]
+      The property 'CardTypeID' on entity type 'DiscountCardType' is of type 'byte', but is set up to use a SQL Server identity column; this requires that values starting at 255 and counting down will be used for temporary key values. A temporary key value is needed for every entity inserted in a single call to 'SaveChanges'. Care must be taken that these values do not collide with real key values.

@@ -345,7 +345,7 @@
         width: 118px;
         height: 118px;
         border-radius: 50%;
-        background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.10), rgba(255,255,255,.02) 62%), rgba(13,17,30,.55);
+        background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.10), rgba(255,255,255,.02) 62%), rgba(16,21,38,.94);
         border: 1px solid rgba(102,211,232,.35);
         box-shadow: 0 8px 24px rgba(0,0,0,.35), inset 0 0 18px rgba(13,110,253,.10);
     }
@@ -600,7 +600,7 @@
         height: 150px;
         margin: -75px 0 0 -75px;
         border-radius: 18px;
-        background: linear-gradient(145deg, rgba(255,255,255,.14), rgba(255,255,255,.05));
+        background: linear-gradient(145deg, rgba(50,57,82,.97), rgba(36,42,67,.97));
         border: 1px solid rgba(255,255,255,.18);
         -webkit-backdrop-filter: blur(8px);
         backdrop-filter: blur(8px);
@@ -617,7 +617,7 @@
     }
 
         .cf-card.cf-active {
-            background: linear-gradient(145deg, rgba(13,110,253,.55), rgba(111,66,193,.45));
+            background: linear-gradient(145deg, rgba(13,110,253,.92), rgba(111,66,193,.88));
             border-color: rgba(255,255,255,.35);
             box-shadow: 0 16px 40px rgba(13,110,253,.35);
         }
@@ -648,7 +648,7 @@
 
     /* ===== کارت‌های اعتبار (پایین صفحه) ===== */
     .credit-card {
-        background: linear-gradient(160deg, rgba(255,255,255,.09), rgba(255,255,255,.04));
+        background: linear-gradient(160deg, rgba(45,52,75,.97), rgba(34,40,65,.97));
         border: 1px solid rgba(255,255,255,.12);
         border-radius: 18px;
     }
@@ -835,7 +835,7 @@
         gap: 8px;
         padding: 16px 6px;
         border-radius: 16px;
-        background: rgba(255,255,255,.09);
+        background: rgba(38,45,70,.96);
         border: 1px solid rgba(255,255,255,.14);
         color: #e9ecef;
         text-decoration: none;
@@ -869,7 +869,7 @@
     .sans-card {
         position: relative;
         border-radius: 20px;
-        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+        background: linear-gradient(160deg, rgba(47,54,77,.97), rgba(34,40,65,.97));
         border: 1px solid rgba(255,255,255,.14);
         padding: 16px;
         overflow: hidden;
@@ -996,7 +996,7 @@
         }
 
     .ss-card, .tf-card {
-        background: rgba(255,255,255,.08);
+        background: rgba(38,45,70,.96);
         border: 1px solid rgba(255,255,255,.14);
         border-radius: 14px;
         padding: 14px;
@@ -1327,7 +1327,7 @@
     }
 
     .tf-filterpanel {
-        background: rgba(255,255,255,.06);
+        background: rgba(36,42,67,.96);
         border: 1px solid rgba(255,255,255,.14);
         border-radius: 14px;
         padding: 12px;
@@ -1371,7 +1371,7 @@
         gap: 10px;
         padding: 8px 10px;
         border-radius: 10px;
-        background: rgba(255,255,255,.05);
+        background: rgba(33,39,63,.96);
         border: 1px solid rgba(255,255,255,.10);
         cursor: pointer;
         margin: 0;
@@ -1967,8 +1967,8 @@
                 '<svg viewBox="0 0 72 72" width="84" height="84">' +
                 '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="7"/>' +
                 '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="7" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 ' + cx + ' ' + cy + ')" style="transition:stroke-dashoffset 1s ease"/>' +
-                '<text x="' + cx + '" y="' + (cy - 2) + '" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-size="15" font-weight="800" font-family="Sahel, Tahoma">' + toFa(pct) + '٪</text>' +
-                '<text x="' + cx + '" y="' + (cy + 13) + '" text-anchor="middle" fill="#9fb3c8" font-size="7" font-family="Sahel, Tahoma">مصرف شده</text>' +
+                '<text x="' + cx + '" y="' + (cy - 2) + '" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-size="15" font-weight="800" font-family="Iranian Sans, Sahel, Tahoma">' + toFa(pct) + '٪</text>' +
+                '<text x="' + cx + '" y="' + (cy + 13) + '" text-anchor="middle" fill="#9fb3c8" font-size="7" font-family="Iranian Sans, Sahel, Tahoma">مصرف شده</text>' +
                 '</svg>' +
                 '<div class="sans-remain mt-1" style="font-size:.8rem;">' + toFa(remaining) + ' جلسه مانده</div>' +
                 '<div style="font-size:.68rem; color:#9fb3c8;">مصرف: ' + toFa(used) + ' از ' + toFa(total) + '</div>' +

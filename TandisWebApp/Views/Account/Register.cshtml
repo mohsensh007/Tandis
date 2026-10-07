@@ -797,6 +797,14 @@
             var mb = $.trim($('#txtMobile').val());
             var gender = $('input[name="gender"]:checked').val() === 'true';
 
+            // ✅ task 8: عدد فارسی/عربی → لاتین (هنگام تایپ هم خودکار تبدیل می‌شود؛ اینجا ضامن نهایی است)
+            if (typeof toEnDigits === 'function') {
+                nc = toEnDigits(nc); bd = toEnDigits(bd); mb = toEnDigits(mb);
+                $('#txtRegNationalCode').val(nc);
+                $('#txtBirthDate').val(bd);
+                $('#txtMobile').val(mb);
+            }
+
             if (!fn) { showToast('نام را وارد کنید', 'error'); return; }
             if (!ln) { showToast('نام خانوادگی را وارد کنید', 'error'); return; }
             if (!isValidNationalCode(nc)) { showToast('کد ملی معتبر نیست', 'error'); return; }

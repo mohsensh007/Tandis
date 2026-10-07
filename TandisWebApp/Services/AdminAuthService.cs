@@ -116,20 +116,22 @@ namespace TandisWebApp.Services
                     };
                 }
 
-                // ✅ کاربران غیرفعالِ Sec_Users (به‌جز admin/adminB) → هدایت به صفحه QR کیوسک
+                // ✅ کاربران Sec_Users غیرفعال یا غیرادمین (کاربر سیستم — به‌جز admin/adminB)
+                //    → هدایت به صفحه QR کیوسک (ورود فقط از مسیر QR)
                 var uname = req.Username.Trim();
                 if (!uname.Equals("admin", StringComparison.OrdinalIgnoreCase) &&
                     !uname.Equals("adminb", StringComparison.OrdinalIgnoreCase))
                 {
-                    var inactiveUser = await _db.Sec_Users.AsNoTracking()
-                        .FirstOrDefaultAsync(u => u.UserName == uname && u.IsActive != true);
+                    var qrUser = await _db.Sec_Users.AsNoTracking()
+                        .FirstOrDefaultAsync(u => u.UserName == uname &&
+                                                   (u.IsActive != true || u.IsAdmin != true));
 
-                    if (inactiveUser != null)
+                    if (qrUser != null)
                     {
                         return new ApiResponse<AdminLoginResponse>
                         {
                             Success = false,
-                            Message = "حساب کاربری شما غیرفعال است. QR صفحه زیر را اسکن کنید.",
+                            Message = "حساب کاربری شما در پنل وب فعال نیست. QR صفحه زیر را اسکن کنید.",
                             RedirectTo = "/Kiosk/QrDisplay"
                         };
                     }

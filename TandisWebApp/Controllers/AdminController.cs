@@ -319,7 +319,7 @@ namespace TandisWebApp.Controllers
         [HttpGet]
         [Route("api/Admin/SportCategories")]
         public async Task<IActionResult> AdminSportCategoriesApi()
-            => Ok(new { success = true, data = await _messages.GetSportOptionsAsync() });
+            => Ok(new { success = true, data = await _messages.GetSportOptionsAsync(AdminShiftID) });
 
         [AdminAuthorize]
         [HttpGet]
@@ -366,6 +366,34 @@ namespace TandisWebApp.Controllers
 
             var count = await _messages.SendToManyAsync(CurrentAdminUserID, req.Title, req.Body, req.MemberIDs);
             return Ok(new { success = true, message = $"پیام برای {count} نفر ارسال شد", count });
+        }
+
+        /// <summary>✅ ارسال به همهٔ افراد فیلترشده (نقش/رشته/تولد امروز + جستجوی داخل لیست)</summary>
+        [AdminAuthorize]
+        [HttpPost]
+        [Route("api/Admin/Messages/SendToFilter")]
+        public async Task<IActionResult> MessagesSendToFilterApi([FromBody] SendToFilterRequest req)
+        {
+            if (string.IsNullOrWhiteSpace(req.Body))
+                return Ok(new { success = false, message = "متن پیام خالی است" });
+
+            var count = await _messages.SendToFilterAsync(CurrentAdminUserID, req.Title, req.Body,
+                AdminShiftID, req.Mode, req.RoleID, req.SportIDs, req.Q);
+
+            if (count == 0)
+                return Ok(new { success = false, message = "هیچ گیرنده‌ای با این فیلتر پیدا نشد" });
+
+            return Ok(new { success = true, message = $"پیام برای {count} نفر ارسال شد", count });
+        }
+
+        /// <summary>اعضای متولدشده در روز جاری (برای فیلتر «تولد امروز»)</summary>
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/MembersBornToday")]
+        public async Task<IActionResult> MembersBornTodayApi(string? q, int skip = 0, int take = 300)
+        {
+            var page = await _messages.GetMembersBornTodayAsync(AdminShiftID, q, skip, take);
+            return Ok(new { success = true, data = page.Items, total = page.Total, skip = page.Skip, hasMore = page.HasMore });
         }
 
         [AdminAuthorize]

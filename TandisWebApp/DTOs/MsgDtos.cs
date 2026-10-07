@@ -71,6 +71,18 @@ namespace TandisWebApp.DTOs
         public List<int> MemberIDs { get; set; } = new();
     }
 
+    /// <summary>ارسال به همهٔ افراد منطبق بر فیلتر (نقش/رشته/تولد امروز + جستجو)</summary>
+    public class SendToFilterRequest
+    {
+        public string? Title { get; set; }
+        public string Body { get; set; } = string.Empty;
+        /// <summary>role | sport | birthday</summary>
+        public string Mode { get; set; } = "role";
+        public int RoleID { get; set; }
+        public List<int>? SportIDs { get; set; }
+        public string? Q { get; set; }
+    }
+
     public class RoleOptionDto
     {
         public int RoleID { get; set; }

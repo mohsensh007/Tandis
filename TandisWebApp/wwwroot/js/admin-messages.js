@@ -1,45 +1,81 @@
 var replyToMsgID = 0;
 
 // ============================================================
-//  اینباکس مدیریت
+//  اینباکس مدیریت (با فیلتر جستجو + فقط خوانده‌نشده)
 // ============================================================
+var inboxRows = [];
+var inboxFilter = { q: '', unreadOnly: false };
+
+function renderInbox() {
+    var rows = inboxRows;
+    var q = (inboxFilter.q || '').trim().toLowerCase();
+    if (q) {
+        rows = rows.filter(function (m) {
+            return (m.senderName || '').toLowerCase().indexOf(q) !== -1
+                || (m.memberCode || '').indexOf(q) !== -1
+                || (m.mobile || '').indexOf(q) !== -1
+                || (m.title || '').toLowerCase().indexOf(q) !== -1
+                || (m.body || '').toLowerCase().indexOf(q) !== -1
+                || (m.creationDate || '').indexOf(q) !== -1;
+        });
+    }
+    if (inboxFilter.unreadOnly) {
+        rows = rows.filter(function (m) { return !m.isSeen; });
+    }
+
+    var tb = $('#tbodyInbox');
+
+    if (!rows.length) {
+        var anyFilter = inboxFilter.unreadOnly || (inboxFilter.q || '').trim().length > 0;
+        tb.html('<tr><td colspan="5" class="text-center py-3">' +
+            (anyFilter ? 'پیامی مطابق فیلتر پیدا نشد' : 'هیچ پیامی وجود ندارد') + '</td></tr>');
+        return;
+    }
+
+    var html = '';
+    rows.forEach(function (m) {
+        html += '<tr class="' + (m.isSeen ? '' : 'table-light fw-bold') + '">' +
+            '<td>' + esc(m.senderName) + '<br><small class="text-muted">' + esc(m.memberCode || '') + '</small></td>' +
+            '<td>' + esc(m.mobile || '-') + '</td>' +
+            '<td>' +
+            '<a href="/Admin/Messages/View/' + m.messageID + '" class="link-light text-decoration-none d-block">' +
+            (m.title
+                ? '<div class="fw-bold mb-1">' + esc(m.title) + '</div>'
+                : '<div class="fw-bold mb-1 text-muted">(بدون عنوان)</div>') +
+            '<div class="text-muted small text-break">' +
+            esc(m.body.substring(0, 60)) + (m.body.length > 60 ? '…' : '') +
+            '</div>' +
+            '<div class="small mt-1" style="color:#7ab8ff;">🔍 مشاهده کامل پیام</div>' +
+            '</a>' +
+            '</td>' +
+            '<td class="text-nowrap small">' + esc(m.creationDate || '') + '<br>' + esc(m.creationTime || '') + '</td>' +
+            '<td>' +
+            '<button class="btn btn-sm btn-primary" onclick="openReply(' + m.messageID + ', \'' + esc(m.senderName) + '\', \'' + esc(m.body.replace(/'/g, "\\'")).substring(0, 100) + '\')"><i class="bi bi-reply"></i></button>' +
+            (!m.isSeen ? ' <button class="btn btn-sm btn-outline-success" onclick="markSeen(' + m.messageID + ')"><i class="bi bi-check2"></i></button>' : '') +
+            '</td>' +
+            '</tr>';
+    });
+    tb.html(html);
+}
+
 function loadInbox() {
     apiCall('/api/Admin/Messages/Inbox', 'GET', null, function (res) {
         if (!res.success) return;
-        var rows = res.data || [];
-        var tb = $('#tbodyInbox');
-
-        if (!rows.length) {
-            tb.html('<tr><td colspan="5" class="text-center py-3">هیچ پیامی وجود ندارد</td></tr>');
-            return;
-        }
-
-        var html = '';
-        rows.forEach(function (m) {
-            html += '<tr class="' + (m.isSeen ? '' : 'table-light fw-bold') + '">' +
-                '<td>' + esc(m.senderName) + '<br><small class="text-muted">' + esc(m.memberCode || '') + '</small></td>' +
-                '<td>' + esc(m.mobile || '-') + '</td>' +
-                '<td>' +
-                '<a href="/Admin/Messages/View/' + m.messageID + '" class="link-light text-decoration-none d-block">' +
-                (m.title
-                    ? '<div class="fw-bold mb-1">' + esc(m.title) + '</div>'
-                    : '<div class="fw-bold mb-1 text-muted">(بدون عنوان)</div>') +
-                '<div class="text-muted small text-break">' +
-                esc(m.body.substring(0, 60)) + (m.body.length > 60 ? '…' : '') +
-                '</div>' +
-                '<div class="small mt-1" style="color:#7ab8ff;">🔍 مشاهده کامل پیام</div>' +
-                '</a>' +
-                '</td>' +
-                '<td class="text-nowrap small">' + esc(m.creationDate || '') + '<br>' + esc(m.creationTime || '') + '</td>' +
-                '<td>' +
-                '<button class="btn btn-sm btn-primary" onclick="openReply(' + m.messageID + ', \'' + esc(m.senderName) + '\', \'' + esc(m.body.replace(/'/g, "\\'")).substring(0, 100) + '\')"><i class="bi bi-reply"></i></button>' +
-                (!m.isSeen ? ' <button class="btn btn-sm btn-outline-success" onclick="markSeen(' + m.messageID + ')"><i class="bi bi-check2"></i></button>' : '') +
-                '</td>' +
-                '</tr>';
-        });
-        tb.html(html);
+        inboxRows = res.data || [];
+        renderInbox();
     });
 }
+
+// ✅ فیلترهای اینباکس (task 4)
+$('#txtInboxSearch').on('input', debounce(function () {
+    inboxFilter.q = $(this).val() || '';
+    renderInbox();
+}, 250));
+
+$('#chkInboxUnread').on('change', function () {
+    inboxFilter.unreadOnly = !!this.checked;
+    renderInbox();
+});
 
 function markSeen(id) {
     apiCall('/api/Admin/Messages/MarkSeen', 'POST', id, function () { loadInbox(); });
@@ -126,8 +162,9 @@ function renderSportChips(q) {
 // ---------- رندر لیست اعضا (صفحه‌ای / اسکرول مرحله‌ای) ----------
 var PAGE_SIZE = 300;
 var listState = {
-    role:  { skip: 0, total: 0, hasMore: false, loading: false, q: '' },
-    sport: { skip: 0, total: 0, hasMore: false, loading: false, q: '' }
+    role:     { skip: 0, total: 0, hasMore: false, loading: false, q: '' },
+    sport:    { skip: 0, total: 0, hasMore: false, loading: false, q: '' },
+    birthday: { skip: 0, total: 0, hasMore: false, loading: false, q: '' }
 };
 
 function memberRowHtml(m) {
@@ -155,8 +192,11 @@ function paintList(selector, rows, append, st) {
         }
     }
 
-    var counter = selector === '#roleList' ? '#roleCounter' : '#sportCounter';
-    $(counter).text(st.total ? ('کل ' + faNum(st.total) + ' نفر — نمایش ' + faNum(st.skip)) : '');
+    var counterMap = { '#roleList': '#roleCounter', '#sportMemberList': '#sportCounter', '#birthdayList': '#birthdayCounter' };
+    var counter = counterMap[selector];
+    if (counter) {
+        $(counter).text(st.total ? ('کل ' + faNum(st.total) + ' نفر — نمایش ' + faNum(st.skip)) : '');
+    }
     updateScopeUI();
 }
 
@@ -173,7 +213,8 @@ function loadMembers(url, stateKey, selector, q, append) {
     }
 
     st.loading = true;
-    apiCall(url + '&q=' + encodeURIComponent(st.q) + '&skip=' + st.skip + '&take=' + PAGE_SIZE,
+    var sep = url.indexOf('?') >= 0 ? '&' : '?';
+    apiCall(url + sep + 'q=' + encodeURIComponent(st.q) + '&skip=' + st.skip + '&take=' + PAGE_SIZE,
         'GET', null, function (res) {
             st.loading = false;
             if (!res.success) return showToast(res.message || 'خطا', 'error');
@@ -210,6 +251,41 @@ function loadSportMembers(q, append) {
     loadMembers('/api/Admin/MembersBySports?sportIds=' + ids.join(','), 'sport', '#sportMemberList', q, append);
 }
 
+// ---------- تولد امروز ----------
+function loadBirthdayMembers(q, append) {
+    loadMembers('/api/Admin/MembersBornToday', 'birthday', '#birthdayList', q, append);
+}
+
+// ✅ نوار رشته‌های انتخاب‌شده (task 3) — همیشه در دید می‌ماند تا در لیست بلند گم نشود
+function renderSelectedSportsBar() {
+    var ids = Object.keys(rec.sportIds).map(Number);
+    var bar = $('#selectedSportsBar');
+    if (!ids.length) { bar.hide().empty(); return; }
+
+    var html = '<span class="rsb-label"><i class="bi bi-check2-all"></i> رشته‌های انتخاب‌شده (' + faNum(ids.length) + '):</span>';
+    ids.forEach(function (id) {
+        var s = null;
+        for (var i = 0; i < sportsAll.length; i++) {
+            if (Number(sportsAll[i].sportCatID) === id) { s = sportsAll[i]; break; }
+        }
+        html += '<span class="rsb-chip">' + esc(s ? s.sportName : ('رشته ' + id)) +
+            '<button type="button" class="rsb-x" data-id="' + id + '" title="حذف از انتخاب">×</button></span>';
+    });
+    bar.html(html).show();
+}
+
+$('#selectedSportsBar').on('click', '.rsb-x', function () {
+    var id = parseInt($(this).data('id'), 10);
+    delete rec.sportIds[id];
+    rec.selected = {};
+    rec.scope = 'all';
+    $('#txtSportMemberSearch').val('');
+    renderSportChips($('#txtSportSearch').val() || '');
+    renderSelectedSportsBar();
+    loadSportMembers('');
+    updateScopeUI();
+});
+
 // اسکرول مرحله‌ای: رسیدن به انتهای لیست → بارگذاری صفحه بعد
 $('.rec-list').on('scroll', function () {
     var el = this;
@@ -217,6 +293,7 @@ $('.rec-list').on('scroll', function () {
     var mode = el.getAttribute('data-mode');
     if (mode === 'role') loadRoleMembers(null, true);
     if (mode === 'sport') loadSportMembers(null, true);
+    if (mode === 'birthday') loadBirthdayMembers(null, true);
 });
 
 // ---------- دامنه ارسال (همهٔ فیلتر / فقط تیک‌خورده‌ها) ----------
@@ -252,10 +329,11 @@ function setMode(mode) {
     $('.rec-tab').removeClass('active');
     $('.rec-tab[data-mode="' + mode + '"]').addClass('active');
 
-    $('#panelAll, #panelRole, #panelSport').hide();
+    $('#panelAll, #panelRole, #panelSport, #panelBirthday').hide();
     if (mode === 'all') $('#panelAll').show();
     if (mode === 'role') { $('#panelRole').show(); loadRoleMembers($('#txtRoleSearch').val() || ''); }
-    if (mode === 'sport') { $('#panelSport').show(); loadSportMembers($('#txtSportMemberSearch').val() || ''); }
+    if (mode === 'sport') { $('#panelSport').show(); loadSportMembers($('#txtSportMemberSearch').val() || ''); renderSelectedSportsBar(); }
+    if (mode === 'birthday') { $('#panelBirthday').show(); loadBirthdayMembers($('#txtBirthdaySearch').val() || ''); }
 
     updateScopeUI();
 }
@@ -287,6 +365,7 @@ $('#sportChips').on('change', 'input[type="checkbox"]', function () {
     rec.selected = {};
     rec.scope = 'all';
     $('#txtSportMemberSearch').val('');
+    renderSelectedSportsBar();
     loadSportMembers('');
     updateScopeUI();
 });
@@ -319,6 +398,7 @@ function debounce(fn, ms) {
 $('#txtRoleSearch').on('input', debounce(function () { loadRoleMembers($(this).val()); }, 300));
 $('#txtSportSearch').on('input', function () { renderSportChips($(this).val()); });
 $('#txtSportMemberSearch').on('input', debounce(function () { loadSportMembers($(this).val()); }, 300));
+$('#txtBirthdaySearch').on('input', debounce(function () { loadBirthdayMembers($(this).val()); }, 300));
 
 // ---------- پاک کردن / تأیید ----------
 $('#btnRecClear').on('click', function () {
@@ -326,10 +406,15 @@ $('#btnRecClear').on('click', function () {
     rec.sportIds = {};
     rec.roleId = 0;
     rec.scope = 'all';
+    // ✅ task 1: انتخابِ اعمال‌شدهٔ قبلی هم پاک می‌شود تا خلاصهٔ گیرندگان و ارسال از حالت قبلی نماند
+    target = { mode: 'none' };
+    $('#recSummary').text('هیچ گیرنده‌ای انتخاب نشده');
     $('#selRecRole').val('');
-    $('#txtRoleSearch, #txtSportSearch, #txtSportMemberSearch').val('');
+    $('#txtRoleSearch, #txtSportSearch, #txtSportMemberSearch, #txtBirthdaySearch').val('');
+    renderSelectedSportsBar();
     if (rec.mode === 'sport') { renderSportChips(''); loadSportMembers(''); }
     if (rec.mode === 'role') loadRoleMembers('');
+    if (rec.mode === 'birthday') loadBirthdayMembers('');
     updateScopeUI();
     showToast('انتخاب‌ها پاک شد', 'success');
 });
@@ -339,13 +424,24 @@ function summarize() {
 
     if (rec.mode === 'role') {
         if (!rec.roleId) return 'نقشی انتخاب نشده';
-        if (rec.scope === 'all') return 'همه اعضا با نقش «' + rec.roleName + '»';
+        var rq = (listState.role.q || '').trim();
+        var rPart = rq ? ' — جستجوی «' + rq + '»' : '';
+        if (rec.scope === 'all') return 'همه اعضا با نقش «' + rec.roleName + '»' + rPart;
         return faNum(selectedIds().length) + ' نفر از نقش «' + rec.roleName + '»';
+    }
+
+    if (rec.mode === 'birthday') {
+        var bq = (listState.birthday.q || '').trim();
+        var bPart = bq ? ' — جستجوی «' + bq + '»' : '';
+        if (rec.scope === 'all') return 'همه متولدین امروز' + bPart;
+        return faNum(selectedIds().length) + ' نفر از متولدین امروز';
     }
 
     var ids = Object.keys(rec.sportIds);
     if (!ids.length) return 'رشته‌ای انتخاب نشده';
-    if (rec.scope === 'all') return 'همه اعضای ' + faNum(ids.length) + ' رشته انتخابی';
+    var sq = (listState.sport.q || '').trim();
+    var sPart = sq ? ' — جستجوی «' + sq + '»' : '';
+    if (rec.scope === 'all') return 'همه اعضای ' + faNum(ids.length) + ' رشته انتخابی' + sPart;
     return faNum(selectedIds().length) + ' نفر از رشته‌های انتخابی';
 }
 
@@ -363,13 +459,19 @@ $('#btnRecApply').on('click', function () {
         roleName: rec.roleName,
         sportIds: Object.keys(rec.sportIds).map(Number),
         scope: rec.scope,
-        ids: selectedIds()
+        ids: selectedIds(),
+        // ✅ task 2: متن جستجوی فعلی لیست هم ثبت می‌شود تا «ارسال به همهٔ افراد فیلترشده» واقعاً فیلتر را بفرستد
+        q: rec.mode === 'role' ? (listState.role.q || '')
+            : rec.mode === 'sport' ? (listState.sport.q || '')
+                : rec.mode === 'birthday' ? (listState.birthday.q || '') : ''
     };
 
     $('#recSummary').text(summarize());
     var modalEl = document.getElementById('recipientModal');
     (bootstrap.Modal.getInstance(modalEl) || bootstrap.Modal.getOrCreateInstance(modalEl)).hide();
-    showToast('گیرندگان انتخاب شدند', 'success');
+    showToast(target.scope === 'all'
+        ? 'گیرندگان ثبت شد: ارسال به همهٔ افراد فیلترشده'
+        : 'گیرندگان ثبت شد: فقط ' + faNum(target.ids.length) + ' نفر تیک‌خورده', 'success');
 });
 
 // ============================================================
@@ -378,6 +480,16 @@ $('#btnRecApply').on('click', function () {
 function sendToMembers(title, body, ids, done) {
     apiCall('/api/Admin/Messages/SendToMembers', 'POST',
         { title: title, body: body, memberIDs: ids }, function (res) {
+            if (!res.success) return showToast(res.message || 'خطا', 'error');
+            done(res);
+        });
+}
+
+// ✅ task 2: ارسال به همهٔ افراد فیلترشده — فیلتر روی سرور حل و پیام به تک‌تک آن‌ها می‌رود
+function sendToFilter(title, body, filt, done) {
+    apiCall('/api/Admin/Messages/SendToFilter', 'POST',
+        { title: title, body: body, mode: filt.mode, roleID: filt.roleID || 0, sportIDs: filt.sportIDs || [], q: filt.q || '' },
+        function (res) {
             if (!res.success) return showToast(res.message || 'خطا', 'error');
             done(res);
         });
@@ -413,27 +525,45 @@ $('#btnSendBroadcast').on('click', function () {
         $('#txtTitle, #txtBody').val('');
     }
 
+    // ✅ task 1: بعد از «پاک کردن» هیچ گیرنده‌ای ثبت نیست — ارسال متوقف می‌شود
+    if (t.mode === 'none')
+        return showToast('گیرنده‌ای انتخاب نشده است. ابتدا روی «انتخاب گیرندگان» بزنید', 'warning');
+
     if (t.mode === 'all') {
         return sendBulkList(title, body, [{ targetType: 1 }], success);
     }
 
+    var fq = (t.q || '').trim();
+
     if (t.mode === 'role') {
-        if (t.scope === 'all') {
-            if (!t.roleId) return showToast('گیرنده‌ای انتخاب نشده است', 'warning');
-            return sendBulkList(title, body, [{ targetType: 2, targetRoleID: t.roleId }], success);
+        if (!t.roleId) return showToast('گیرنده‌ای انتخاب نشده است', 'warning');
+        if (t.scope === 'ids') {
+            if (!t.ids || !t.ids.length) return showToast('هیچ گیرنده‌ای تیک نخورده است', 'warning');
+            return sendToMembers(title, body, t.ids, success);
         }
-        if (!t.ids || !t.ids.length) return showToast('هیچ گیرنده‌ای تیک نخورده است', 'warning');
-        return sendToMembers(title, body, t.ids, success);
+        // ارسال به همهٔ فیلترشده‌ها
+        if (fq) return sendToFilter(title, body, { mode: 'role', roleID: t.roleId, q: fq }, success);
+        return sendBulkList(title, body, [{ targetType: 2, targetRoleID: t.roleId }], success);
     }
 
     if (t.mode === 'sport') {
-        if (t.scope === 'all') {
-            if (!t.sportIds || !t.sportIds.length) return showToast('رشته‌ای انتخاب نشده است', 'warning');
-            var payloads = t.sportIds.map(function (id) { return { targetType: 3, targetSportCatID: id }; });
-            return sendBulkList(title, body, payloads, success);
+        if (!t.sportIds || !t.sportIds.length) return showToast('رشته‌ای انتخاب نشده است', 'warning');
+        if (t.scope === 'ids') {
+            if (!t.ids || !t.ids.length) return showToast('هیچ گیرنده‌ای تیک نخورده است', 'warning');
+            return sendToMembers(title, body, t.ids, success);
         }
-        if (!t.ids || !t.ids.length) return showToast('هیچ گیرنده‌ای تیک نخورده است', 'warning');
-        return sendToMembers(title, body, t.ids, success);
+        // ارسال به همهٔ فیلترشده‌ها
+        if (fq) return sendToFilter(title, body, { mode: 'sport', sportIDs: t.sportIds, q: fq }, success);
+        var payloads = t.sportIds.map(function (id) { return { targetType: 3, targetSportCatID: id }; });
+        return sendBulkList(title, body, payloads, success);
+    }
+
+    if (t.mode === 'birthday') {
+        if (t.scope === 'ids') {
+            if (!t.ids || !t.ids.length) return showToast('هیچ گیرنده‌ای تیک نخورده است', 'warning');
+            return sendToMembers(title, body, t.ids, success);
+        }
+        return sendToFilter(title, body, { mode: 'birthday', q: fq }, success);
     }
 });
 

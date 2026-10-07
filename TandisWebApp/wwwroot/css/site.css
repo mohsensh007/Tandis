@@ -2,6 +2,15 @@
    تندیس - استایل RTL فارسی
    ============================ */
 
+/* ===== فونت Iranian Sans (فونت اصلی برنامه — پوشه Fonts پروژه) ===== */
+@font-face {
+    font-family: 'Iranian Sans';
+    src: url('/fonts/Iranian%20Sans.ttf?v=1') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* ===== فونت Sahel (پوشه Fonts پروژه — از /fonts سرو می‌شود) ===== */
 @font-face {
     font-family: 'Sahel';
@@ -32,7 +41,7 @@
 }
 
 * {
-    font-family: 'Sahel', Tahoma, 'Segoe UI', Arial, sans-serif;
+    font-family: 'Iranian Sans', 'Sahel', Tahoma, 'Segoe UI', Arial, sans-serif;
 }
 
 html {
@@ -620,11 +629,13 @@ body {
     transform: translateY(-2px) scale(1.1);
 }
 
-/* ===== پس‌زمینه بنفش شیشه‌ای + هاله‌های نور ===== */
+/* ===== پس‌زمینه بنفش شیشه‌ای + هاله‌های نور =====
+   ✅ task 7: گرادیان کدر (تقریباً نیمه‌اوپک) تا پس‌زمینهٔ صفحه از داخل جعبه‌ها دیده نشود
+   (مثل بقیهٔ کارت‌های برنامه) */
 .purple-style {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18)) !important;
+    background: linear-gradient(135deg, rgb(52,58,112), rgb(74,52,108)) !important;
 }
 
     .purple-style::before {
@@ -708,7 +719,7 @@ body {
 
 /* ===== مودال تقویم شمسی ===== */
 #datePickerModal .modal-content {
-    background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18)) !important;
+    background: linear-gradient(135deg, rgb(52,58,112), rgb(74,52,108)) !important;
     border: 1px solid rgba(255,255,255,.18) !important;
     border-radius: 20px;
     color: #fff;

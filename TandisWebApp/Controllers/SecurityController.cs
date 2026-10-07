@@ -2,6 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Security.Claims;
 using TandisWebApp.Attributes;
 using TandisWebApp.Data;
@@ -17,17 +20,88 @@ namespace TandisWebApp.Controllers
         private readonly FullSportDbContext _db;
         private readonly CommonHelperService _helper;
         private readonly ILogger<SecurityController> _logger;
+        private readonly IConfiguration _config;
 
         public SecurityController(
             QrService qrService,
             FullSportDbContext db,
             CommonHelperService helper,
-            ILogger<SecurityController> logger)
+            ILogger<SecurityController> logger,
+            IConfiguration config)
         {
             _qrService = qrService;
             _db = db;
             _helper = helper;
             _logger = logger;
+            _config = config;
+        }
+
+        // ========== ساخت آدرس پایهٔ عمومی برای QR ==========
+        /// <summary>
+        /// ✅ آدرس عمومی سرور برای محتوای QR:
+        /// ۱) اگر AppSettings:PublicBaseUrl تنظیم شده باشد همان استفاده می‌شود؛
+        /// ۲) اگر کیوسک با localhost/127.0.0.1 باز شده باشد، آدرس LAN سرور می‌نشیند
+        ///    (چون موبایلِ اسکن‌کننده localhost خودش را باز می‌کند و به سرور نمی‌رسد).
+        /// </summary>
+        private string BuildPublicBaseUrl()
+        {
+            var configured = _config["AppSettings:PublicBaseUrl"];
+            if (!string.IsNullOrWhiteSpace(configured))
+                return configured.TrimEnd('/');
+
+            var host = Request.Host;
+            var isLoopback = host.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase) ||
+                             host.Host == "127.0.0.1" || host.Host == "::1" || host.Host == "[::1]";
+
+            if (!isLoopback)
+                return $"{Request.Scheme}://{host}";
+
+            var lanIp = GetLanIPv4();
+            if (string.IsNullOrEmpty(lanIp))
+                return $"{Request.Scheme}://{host}";
+
+            var portPart = host.Port.HasValue && host.Port != 80 && host.Port != 443
+                ? ":" + host.Port.Value
+                : "";
+            return $"{Request.Scheme}://{lanIp}{portPart}";
+        }
+
+        /// <summary>اولین آدرس IPv4 غیر-لوکال کارت شبکهٔ فعال (WiFi/Ethernet اولویت دارد)</summary>
+        private static string? GetLanIPv4()
+        {
+            try
+            {
+                string? fallback = null;
+                foreach (var nic in NetworkInterface.GetAllNetworkInterfaces())
+                {
+                    if (nic.OperationalStatus != OperationalStatus.Up) continue;
+                    if (nic.NetworkInterfaceType == NetworkInterfaceType.Loopback ||
+                        nic.NetworkInterfaceType == NetworkInterfaceType.Tunnel) continue;
+
+                    var name = (nic.Name + " " + nic.Description).ToLowerInvariant();
+                    if (name.Contains("vmware") || name.Contains("virtualbox") || name.Contains("vethernet") ||
+                        name.Contains("hyper-v") || name.Contains("loopback") || name.Contains("tun") ||
+                        name.Contains("tap") || name.Contains("wintun") || name.Contains("bluetooth"))
+                        continue;
+
+                    foreach (var ua in nic.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ua.Address.AddressFamily != AddressFamily.InterNetwork) continue;
+                        if (IPAddress.IsLoopback(ua.Address)) continue;
+
+                        if (nic.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
+                            nic.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+                            return ua.Address.ToString();
+
+                        fallback ??= ua.Address.ToString();
+                    }
+                }
+                return fallback;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         // ========== صفحه نمایش QR در کیوسک ==========
@@ -51,7 +125,11 @@ namespace TandisWebApp.Controllers
                 var token = await _qrService.GenerateQrTokenAsync(shiftID);
 
                 // ✅ محتوای QR = فقط URL صفحه ورود (توکن ورود به باشگاه هم به‌صورت پارامتر کنار آن می‌ماند)
-                var loginUrl = $"{Request.Scheme}://{Request.Host}/Account/Login?qr={token}";
+                //    آدرس با BuildPublicBaseUrl ساخته می‌شود تا روی موبایلِ اسکن‌کننده هم باز شود.
+                var loginUrl = $"{BuildPublicBaseUrl()}/Account/Login?qr={token}";
+
+                // برای دیاگنوستیک: آدرس دقیق داخل QR در هدر پاسخ هم می‌آید (توکن همان است که در تصویر است)
+                Response.Headers["X-Qr-Url"] = loginUrl;
 
                 using var qrGenerator = new QRCodeGenerator();
                 using var qrCodeData = qrGenerator.CreateQrCode(loginUrl, QRCodeGenerator.ECCLevel.M);

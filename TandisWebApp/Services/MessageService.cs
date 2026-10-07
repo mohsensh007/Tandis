@@ -259,9 +259,9 @@ namespace TandisWebApp.Services
                 .Select(r => new RoleOptionDto { RoleID = r.RoleID, RoleDesc = r.RoleDesc ?? "" })
                 .ToListAsync();
 
-        public async Task<List<SportOptionDto>> GetSportOptionsAsync()
+        public async Task<List<SportOptionDto>> GetSportOptionsAsync(short shiftID)
             => await _db.Set<Gen_Sport_Category>().AsNoTracking()
-                .Where(s => s.IsActive == true)
+                .Where(s => s.IsActive == true && s.ShiftID == shiftID)  // ✅ رشته‌های همین شیفت
                 .OrderBy(s => s.SportCatID)
                 .Select(s => new SportOptionDto { SportCatID = s.SportCatID, SportName = s.SportName ?? "" })
                 .ToListAsync();
@@ -305,8 +305,18 @@ namespace TandisWebApp.Services
         /// <summary>اعضای چند رشته ورزشی (ثبت‌نام فعال) با جستجو — صفحه‌ای</summary>
         public async Task<RecipientPageDto> GetMembersBySportsAsync(short shiftID, List<int> sportCatIDs, string? q, int skip = 0, int take = 300)
         {
-            if (sportCatIDs == null || sportCatIDs.Count == 0)
+            var query = await BuildSportQueryAsync(shiftID, sportCatIDs);
+            if (query == null)
                 return new RecipientPageDto();
+
+            return await GetMemberPageAsync(query, q, skip, take);
+        }
+
+        /// <summary>ساختمان کوئری اعضای چند رشته — null یعنی رشته/عضوی پیدا نشد</summary>
+        private async Task<IQueryable<RecipientRow>?> BuildSportQueryAsync(short shiftID, List<int> sportCatIDs)
+        {
+            if (sportCatIDs == null || sportCatIDs.Count == 0)
+                return null;
 
             var sanseIds = await _db.Gen_SportSanses.AsNoTracking()
                 .Where(s => s.IsActive == true && s.SportCatID != null && sportCatIDs.Contains(s.SportCatID.Value))
@@ -314,7 +324,7 @@ namespace TandisWebApp.Services
                 .ToListAsync();
 
             if (sanseIds.Count == 0)
-                return new RecipientPageDto();
+                return null;
 
             var memberIds = await _db.Acc_MemberSports.AsNoTracking()
                 .Where(ms => ms.IsActive == true
@@ -325,14 +335,44 @@ namespace TandisWebApp.Services
                 .ToListAsync();
 
             if (memberIds.Count == 0)
-                return new RecipientPageDto();
+                return null;
 
-            var query = from gm in _db.Gen_Members.AsNoTracking()
-                        join gp in _db.Gen_Persons on gm.PersonID equals gp.PersonID
-                        where gm.ShiftID == shiftID && memberIds.Contains(gm.MemberID)
-                        select new RecipientRow { MemberID = gm.MemberID, FullName = gp.FullName, Mobile = gp.Mobile, CardNo = gm.CardNo };
+            return from gm in _db.Gen_Members.AsNoTracking()
+                   join gp in _db.Gen_Persons on gm.PersonID equals gp.PersonID
+                   where gm.ShiftID == shiftID && memberIds.Contains(gm.MemberID)
+                   select new RecipientRow { MemberID = gm.MemberID, FullName = gp.FullName, Mobile = gp.Mobile, CardNo = gm.CardNo };
+        }
 
-            return await GetMemberPageAsync(query, q, skip, take);
+        /// <summary>اعضای متولدشده در روز جاری (تولد امروز — شمسی یا میلادی) با جستجو — صفحه‌ای</summary>
+        public Task<RecipientPageDto> GetMembersBornTodayAsync(short shiftID, string? q, int skip = 0, int take = 300)
+            => GetMemberPageAsync(BuildBirthdayQuery(shiftID), q, skip, take);
+
+        /// <summary>
+        /// ✅ کوئری «تولد امروز»: پایان BirthDate با ماه/روز امروز در تقویم شمسی یا میلادی برابر باشد
+        /// (داده‌ها عموماً شمسی «1368/06/17» هستند؛ قالب‌های بدون صفر و میلادی با خط تیره هم پوشش داده می‌شوند).
+        /// </summary>
+        private IQueryable<RecipientRow> BuildBirthdayQuery(short shiftID)
+        {
+            var now = DateTime.Now;
+            var pc = new System.Globalization.PersianCalendar();
+            var pm = pc.GetMonth(now); var pd = pc.GetDayOfMonth(now);
+            var gm = now.Month; var gd = now.Day;
+
+            var suffixes = new[]
+            {
+                $"/{pm:00}/{pd:00}", $"/{pm}/{pd}",   // شمسی ۱۴۰۴/۰۷/۱۵
+                $"-{gm:00}-{gd:00}", $"-{gm}-{gd}"    // میلادی 1985-10-06
+            };
+
+            return from gmem in _db.Gen_Members.AsNoTracking()
+                   join gp in _db.Gen_Persons on gmem.PersonID equals gp.PersonID
+                   where gmem.ShiftID == shiftID
+                      && gp.BirthDate != null
+                      && (gp.BirthDate.EndsWith(suffixes[0])
+                          || gp.BirthDate.EndsWith(suffixes[1])
+                          || gp.BirthDate.EndsWith(suffixes[2])
+                          || gp.BirthDate.EndsWith(suffixes[3]))
+                   select new RecipientRow { MemberID = gmem.MemberID, FullName = gp.FullName, Mobile = gp.Mobile, CardNo = gmem.CardNo };
         }
 
         /// <summary>ردیف خام برای مرتب‌سازی/صفحه‌بندی در حافظه</summary>
@@ -362,7 +402,16 @@ namespace TandisWebApp.Services
             var rows = await query.ToListAsync();
 
             static bool IsPersianStart(string? s)
-                => !string.IsNullOrEmpty(s) && s[0] >= '\u0600' && s[0] <= '\u06FF';
+            {
+                if (string.IsNullOrEmpty(s)) return false;
+                foreach (var c in s)
+                {
+                    if (c >= '\u0600' && c <= '\u06FF') return true;  // حرف فارسی/عربی
+                    if (char.IsLetter(c)) return false;               // اولین حرف، لاتین است
+                    // فاصله/عدد/علامت ابتدای نام نادیده گرفته می‌شود
+                }
+                return false;
+            }
 
             var ordered = rows
                 .OrderBy(x => IsPersianStart(x.FullName) ? 0 : 1)
@@ -414,6 +463,47 @@ namespace TandisWebApp.Services
             }
             await _db.SaveChangesAsync();
             return ids.Count;
+        }
+
+        /// <summary>
+        /// ✅ ارسال به «همهٔ افراد فیلترشده»: شناسهٔ همه اعضای منطبق بر فیلتر
+        /// (نقش/رشته/تولد امروز + جستجو) همین‌جا روی سرور حل می‌شود و پیام برای تک‌تک آن‌ها می‌رود.
+        /// </summary>
+        public async Task<int> SendToFilterAsync(short? userID, string? title, string body,
+            short shiftID, string? mode, int roleID, List<int>? sportCatIDs, string? q)
+        {
+            IQueryable<RecipientRow> query;
+
+            if (string.Equals(mode, "role", StringComparison.OrdinalIgnoreCase))
+            {
+                if (roleID <= 0) return 0;
+                query = BuildRoleQuery(shiftID, roleID);
+            }
+            else if (string.Equals(mode, "sport", StringComparison.OrdinalIgnoreCase))
+            {
+                var sq = await BuildSportQueryAsync(shiftID, sportCatIDs ?? new List<int>());
+                if (sq == null) return 0;
+                query = sq;
+            }
+            else if (string.Equals(mode, "birthday", StringComparison.OrdinalIgnoreCase))
+            {
+                query = BuildBirthdayQuery(shiftID);
+            }
+            else
+            {
+                return 0;
+            }
+
+            var key = (q ?? "").Trim();
+            if (key.Length > 0)
+            {
+                query = query.Where(x => (x.FullName ?? "").Contains(key)
+                                      || (x.Mobile ?? "").Contains(key)
+                                      || (x.CardNo != null && x.CardNo.Contains(key)));
+            }
+
+            var ids = await query.Select(x => x.MemberID).Distinct().ToListAsync();
+            return await SendToManyAsync(userID, title, body, ids);
         }
 
         // ========== کمکی: تاریخ شمسی + ساعت + زمان جاری ==========
