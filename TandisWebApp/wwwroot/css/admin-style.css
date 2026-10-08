@@ -402,10 +402,10 @@ body.admin-glass-body {
     width: 100%;
     height: auto;
 }
-/* پیش‌نمایش زنده افراد حاضر در کارت داشبورد */
+/* پیش‌نمایش زنده افراد حاضر در کارت داشبورد
+   ✅ اسکرول‌بار کناری حذف شد — محتوا حداکثر ۳ ردیف + لینک «نفرات بیشتر» است
+   و بدون max-height هم رشد نامحدود ندارد */
 .inside-preview {
-    max-height: 160px;
-    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -907,4 +907,63 @@ select.rep-search {
     .nav-title {
         font-size: 0.7rem;
     }
+}
+
+/* =========================================
+   ✅ نوار صفحه‌بندی گزارش‌ها (report-pager.js)
+   وقتی لیست بلند باشد به صورت خودکار چند صفحه‌ای می‌شود
+   ========================================= */
+.rp-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 14px;
+    direction: rtl;
+}
+
+.rp-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: #dce9ff;
+    border-radius: 10px;
+    padding: 6px 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rp-btn:hover:not(:disabled) {
+    background: rgba(13, 110, 253, 0.28);
+    border-color: rgba(102, 211, 232, 0.45);
+    color: #fff;
+}
+
+.rp-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+
+.rp-btn.rp-active {
+    background: linear-gradient(135deg, #0d6efd, #6f42c1);
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #fff;
+}
+
+.rp-gap {
+    color: #9fb3c8;
+    padding: 0 2px;
+}
+
+.rp-info {
+    width: 100%;
+    text-align: center;
+    font-size: 0.72rem;
+    color: #9fb3c8;
+    margin-top: 2px;
 }

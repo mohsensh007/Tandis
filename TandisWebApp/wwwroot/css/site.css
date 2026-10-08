@@ -627,15 +627,15 @@ body {
     opacity: 1;
     filter: none;
     transform: translateY(-2px) scale(1.1);
-}
-
-/* ===== پس‌زمینه بنفش شیشه‌ای + هاله‌های نور =====
-   ✅ task 7: گرادیان کدر (تقریباً نیمه‌اوپک) تا پس‌زمینهٔ صفحه از داخل جعبه‌ها دیده نشود
-   (مثل بقیهٔ کارت‌های برنامه) */
+}/* ===== پس‌زمینه بنفش شیشه‌ای + هاله‌های نور =====
+   ✅ اوپاسیته ۷۰٪ تا پس‌زمینهٔ صفحه کمی از داخل جعبه دیده شود (درخواست کاربر)
+   و متن‌های داخل آن هم خوانا بمانند */
 .purple-style {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, rgb(52,58,112), rgb(74,52,108)) !important;
+    background: linear-gradient(135deg, rgba(52,58,112,.7), rgba(74,52,108,.7)) !important;
+    /* ✅ سایهٔ متن برای خوانایی بهتر روی پس‌زمینهٔ نیمه‌شفاف */
+    text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
 }
 
     .purple-style::before {

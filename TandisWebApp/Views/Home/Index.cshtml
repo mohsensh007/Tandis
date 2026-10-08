@@ -345,7 +345,7 @@
         width: 118px;
         height: 118px;
         border-radius: 50%;
-        background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.10), rgba(255,255,255,.02) 62%), rgba(16,21,38,.94);
+        background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.10), rgba(255,255,255,.02) 62%), rgba(16,21,38,.7);
         border: 1px solid rgba(102,211,232,.35);
         box-shadow: 0 8px 24px rgba(0,0,0,.35), inset 0 0 18px rgba(13,110,253,.10);
     }
@@ -600,7 +600,7 @@
         height: 150px;
         margin: -75px 0 0 -75px;
         border-radius: 18px;
-        background: linear-gradient(145deg, rgba(50,57,82,.97), rgba(36,42,67,.97));
+        background: linear-gradient(145deg, rgba(50,57,82,.7), rgba(36,42,67,.7));
         border: 1px solid rgba(255,255,255,.18);
         -webkit-backdrop-filter: blur(8px);
         backdrop-filter: blur(8px);
@@ -611,13 +611,15 @@
         gap: 10px;
         color: #fff;
         text-decoration: none;
+        text-shadow: 0 1px 3px rgba(0, 0, 0, .55);
         transition: transform .55s cubic-bezier(.22,.9,.35,1.1), opacity .45s;
         transform-style: preserve-3d;
         box-shadow: 0 10px 30px rgba(0,0,0,.35);
+        text-shadow: 0 1px 3px rgba(0, 0, 0, .55);
     }
 
         .cf-card.cf-active {
-            background: linear-gradient(145deg, rgba(13,110,253,.92), rgba(111,66,193,.88));
+            background: linear-gradient(145deg, rgba(13,110,253,.72), rgba(111,66,193,.68));
             border-color: rgba(255,255,255,.35);
             box-shadow: 0 16px 40px rgba(13,110,253,.35);
         }
@@ -648,9 +650,11 @@
 
     /* ===== کارت‌های اعتبار (پایین صفحه) ===== */
     .credit-card {
-        background: linear-gradient(160deg, rgba(45,52,75,.97), rgba(34,40,65,.97));
+        background: linear-gradient(160deg, rgba(45,52,75,.7), rgba(34,40,65,.7));
         border: 1px solid rgba(255,255,255,.12);
         border-radius: 18px;
+        /* ✅ سایهٔ متن برای خوانایی بهتر روی پس‌زمینهٔ نیمه‌شفاف */
+        text-shadow: 0 1px 3px rgba(0, 0, 0, .55);
     }
 
         .credit-card .card-body {
@@ -835,7 +839,7 @@
         gap: 8px;
         padding: 16px 6px;
         border-radius: 16px;
-        background: rgba(38,45,70,.96);
+        background: rgba(38,45,70,.7);
         border: 1px solid rgba(255,255,255,.14);
         color: #e9ecef;
         text-decoration: none;
@@ -869,7 +873,7 @@
     .sans-card {
         position: relative;
         border-radius: 20px;
-        background: linear-gradient(160deg, rgba(47,54,77,.97), rgba(34,40,65,.97));
+        background: linear-gradient(160deg, rgba(47,54,77,.7), rgba(34,40,65,.7));
         border: 1px solid rgba(255,255,255,.14);
         padding: 16px;
         overflow: hidden;
@@ -996,7 +1000,7 @@
         }
 
     .ss-card, .tf-card {
-        background: rgba(38,45,70,.96);
+        background: rgba(38,45,70,.7);
         border: 1px solid rgba(255,255,255,.14);
         border-radius: 14px;
         padding: 14px;
@@ -1327,7 +1331,7 @@
     }
 
     .tf-filterpanel {
-        background: rgba(36,42,67,.96);
+        background: rgba(36,42,67,.7);
         border: 1px solid rgba(255,255,255,.14);
         border-radius: 14px;
         padding: 12px;
@@ -1371,7 +1375,7 @@
         gap: 10px;
         padding: 8px 10px;
         border-radius: 10px;
-        background: rgba(33,39,63,.96);
+        background: rgba(33,39,63,.7);
         border: 1px solid rgba(255,255,255,.10);
         cursor: pointer;
         margin: 0;
