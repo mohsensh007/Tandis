@@ -622,6 +622,41 @@ body.admin-glass-body .card.bg-info {
         background: rgba(255,255,255,.12);
     }
 
+/* قاب تاریخ با دکمه پاک کردن (×) داخل خودِ فیلد */
+.rep-field {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+}
+
+    .rep-field .rep-input {
+        width: 100%;
+        padding-left: 32px;
+    }
+
+.rep-clear {
+    position: absolute;
+    top: 50%;
+    left: 8px;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,107,129,.15);
+    color: #ff6b81;
+    font-size: .62rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .rep-clear:hover {
+        background: rgba(255,107,129,.3);
+        color: #fff;
+    }
+
 .rep-btn-icon {
     flex: 0 0 auto;
     width: 40px;
@@ -668,6 +703,15 @@ body.admin-glass-body .card.bg-info {
     align-items: center;
     justify-content: center;
     gap: 8px;
+}
+
+/* خروجی اکسل داخل نوار ابزار لیست (کنار مرتب‌سازی — بعد از نمایش گزارش) */
+.rep-list-head .rep-btn-excel {
+    width: auto;
+    flex: 0 0 auto;
+    font-size: .78rem;
+    border-radius: 10px;
+    padding: 8px 14px;
 }
 
 .rep-summary {

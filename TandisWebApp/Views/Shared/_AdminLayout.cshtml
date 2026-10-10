@@ -516,6 +516,17 @@
             new bootstrap.Modal('#datePickerModal').show();
         }
 
+        // ===== بازه پیش‌فرض گزارش‌ها: از اول ماه جاری تا امروز =====
+        (function () {
+            var fromEl = document.getElementById('fromDate');
+            if (!fromEl || fromEl.value) return;
+            var now = new Date();
+            var j = gregorianToJalali(now.getFullYear(), now.getMonth() + 1, now.getDate());
+            fromEl.value = j[0] + '/' + pad2(j[1]) + '/01';
+            var toEl = document.getElementById('toDate');
+            if (toEl && !toEl.value) toEl.value = todayJalaliStr();
+        })();
+
         function esc(str) {
             if (str === null || str === undefined) return '';
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')

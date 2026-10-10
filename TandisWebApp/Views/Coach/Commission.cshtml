@@ -1,6 +1,6 @@
 ﻿@model TandisWebApp.DTOs.CoachCommissionSummaryDto
 @{
-    ViewData["Title"] = "گزارش پورسانت";
+    ViewData["Title"] = "گزارش دریافتی";
     var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
     var fromDate = Model.FromDate;
     var toDate = Model.ToDate;
@@ -8,7 +8,7 @@
 
 <!-- ===== هدر ===== -->
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <h5 class="mb-0"><i class="bi bi-cash-coin hd-icon"></i> گزارش پورسانت</h5>
+    <h5 class="mb-0"><i class="bi bi-cash-coin hd-icon"></i> گزارش دریافتی</h5>
     <a href="/Coach" class="purple-style cm-back-pill"><i class="bi bi-arrow-right"></i> داشبورد</a>
 </div>
 
@@ -38,12 +38,12 @@
     </div>
 </form>
 
-<!-- ===== کارت‌های آمار (فقط پورسانت) ===== -->
+<!-- ===== کارت‌های آمار (فقط دریافتی) ===== -->
 <div class="row g-3 mb-3">
     <div class="col-6 col-md-3">
         <div class="purple-style cm-card h-100">
             <div class="cm-icon grad-green"><i class="bi bi-cash-stack"></i></div>
-            <div class="cm-label">پورسانت این ماه</div>
+            <div class="cm-label">دریافتی این ماه</div>
             <div class="cm-value">@Model.ThisMonthAmount.ToString("N0", fa)</div>
         </div>
     </div>
@@ -57,7 +57,7 @@
     <div class="col-6 col-md-3">
         <div class="purple-style cm-card h-100">
             <div class="cm-icon grad-purple"><i class="bi bi-wallet2"></i></div>
-            <div class="cm-label">جمع پورسانت (دوره)</div>
+            <div class="cm-label">جمع دریافتی (دوره)</div>
             <div class="cm-value">@Model.TotalAmount.ToString("N0", fa)</div>
         </div>
     </div>
@@ -73,7 +73,7 @@
 <!-- ===== لیست کارت‌های بازشو (مثل گزارش تردد) ===== -->
 <div class="purple-style cm-box">
     <div class="cm-box-head">
-        <span><i class="bi bi-list-ul me-2"></i>جزئیات پورسانت ثبت‌نام‌ها</span>
+        <span><i class="bi bi-list-ul me-2"></i>جزئیات دریافتی ثبت‌نام‌ها</span>
         <span class="cm-box-count">@Model.Rows.Count.ToString(fa) رکورد</span>
     </div>
     <div class="cm-box-body">
@@ -89,7 +89,7 @@
             @foreach (var r in Model.Rows)
             {
                 <div class="cmr-card">
-                    <!-- سر کارت: نام + تاریخ + پورسانت -->
+                    <!-- سر کارت: نام + تاریخ + دریافتی -->
                     <div class="cmr-head">
                         <div class="cmr-mid">
                             <div class="cmr-name">@r.StudentName</div>
@@ -98,7 +98,7 @@
                         <div class="cmr-amount">@r.TotalCommission.ToString("N0", fa)</div>
                         <button type="button" class="cmr-toggle"><i class="bi bi-chevron-left"></i></button>
                     </div>
-                    <!-- جزئیات بازشو: رشته / سانس / نوع / پورسانت جدا -->
+                    <!-- جزئیات بازشو: رشته / سانس / نوع / دریافتی جدا -->
                     <div class="cmr-details">
                         <div class="cmr-drow"><span>رشته</span><b>@r.SportName</b></div>
                         <div class="cmr-drow"><span>سانس</span><b>@r.SanseName</b></div>
@@ -114,14 +114,14 @@
                                 <b><span class="cm-new">ثبت‌نام</span></b>
                             }
                         </div>
-                        <div class="cmr-drow"><span>پورسانت مربی</span><b class="cmr-green">@r.TotalCommission.ToString("N0", fa) ریال</b></div>
+                        <div class="cmr-drow"><span>دریافتی مربی</span><b class="cmr-green">@r.TotalCommission.ToString("N0", fa) ریال</b></div>
                     </div>
                 </div>
             }
 
             <!-- جمع کل -->
             <div class="cmr-total">
-                <span><i class="bi bi-calculator-fill me-1"></i> جمع کل پورسانت</span>
+                <span><i class="bi bi-calculator-fill me-1"></i> جمع کل دریافتی</span>
                 <b>@Model.TotalAmount.ToString("N0", fa) ریال</b>
             </div>
         }

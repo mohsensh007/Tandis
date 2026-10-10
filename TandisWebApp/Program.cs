@@ -133,6 +133,9 @@ builder.Services.AddScoped<CoachService>();
 builder.Services.AddScoped<ClubRuleService>();
 builder.Services.AddScoped<MemberRegistrationService>();
 builder.Services.AddScoped<FaceDeviceService>();
+// ✅ گوشه «ورزشکاران»: ثبت ورود/خروج، دفترچه تمرین و باز کردن کمد (ارتباط با کنترلر)
+builder.Services.AddScoped<AthleteService>();
+builder.Services.AddScoped<LockerService>();
 builder.Services.AddHttpContextAccessor();
 
 // ✅ ایجنت POS: ارسال تراکنش‌های «در انتظار وب‌اپ» به دستگاه کارخوان و ثبت جواب در DB

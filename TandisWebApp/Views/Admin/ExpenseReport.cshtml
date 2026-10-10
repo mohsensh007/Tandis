@@ -8,26 +8,26 @@
         <div class="col-6 col-md-3">
             <div class="rep-label">از تاریخ</div>
             <div class="rep-input-group">
-                <input type="text" id="fromDate" class="rep-input" placeholder="1405/01/01" readonly />
+                <div class="rep-field">
+                    <input type="text" id="fromDate" class="rep-input" placeholder="1405/01/01" readonly />
+                    <button type="button" class="rep-clear" onclick="$('#fromDate').val('')" title="پاک کردن"><i class="bi bi-x-lg"></i></button>
+                </div>
                 <button type="button" class="rep-btn-icon" onclick="openCalendar('fromDate','از تاریخ')"><i class="bi bi-calendar3"></i></button>
-                <button type="button" class="rep-btn-icon danger" onclick="$('#fromDate').val('')"><i class="bi bi-x-lg"></i></button>
             </div>
         </div>
         <div class="col-6 col-md-3">
             <div class="rep-label">تا تاریخ</div>
             <div class="rep-input-group">
-                <input type="text" id="toDate" class="rep-input" placeholder="1405/03/31" readonly />
+                <div class="rep-field">
+                    <input type="text" id="toDate" class="rep-input" placeholder="1405/03/31" readonly />
+                    <button type="button" class="rep-clear" onclick="$('#toDate').val('')" title="پاک کردن"><i class="bi bi-x-lg"></i></button>
+                </div>
                 <button type="button" class="rep-btn-icon" onclick="openCalendar('toDate','تا تاریخ')"><i class="bi bi-calendar3"></i></button>
-                <button type="button" class="rep-btn-icon danger" onclick="$('#toDate').val('')"><i class="bi bi-x-lg"></i></button>
             </div>
         </div>
-        <div class="col-6 col-md-3">
+        <div class="col-12 col-md-6">
             <div class="rep-label">&nbsp;</div>
             <button class="rep-btn-main" id="btnSearch"><i class="bi bi-search"></i> نمایش گزارش</button>
-        </div>
-        <div class="col-6 col-md-3">
-            <div class="rep-label">&nbsp;</div>
-            <button class="rep-btn-excel" id="btnExport"><i class="bi bi-file-earmark-excel"></i> خروجی اکسل</button>
         </div>
     </div>
 </div>
@@ -38,7 +38,7 @@
     <div class="purple-style rep-chip"><b id="summaryAvg">—</b><span>میانگین</span></div>
 </div>
 
-<div class="rep-list-head">
+<div class="rep-list-head" style="display:none;">
     <span class="rep-count" id="rowCount">۰ رکورد</span>
     <div class="d-flex align-items-center gap-2 flex-wrap">
         <select id="sortKey" class="purple-style rep-search">
@@ -50,10 +50,11 @@
         <button type="button" class="purple-style rep-btn-icon" id="sortDir" data-dir="desc" title="جهت مرتب‌سازی">
             <i class="bi bi-sort-down"></i>
         </button>
+        <button type="button" class="rep-btn-excel" id="btnExport"><i class="bi bi-file-earmark-excel"></i> خروجی اکسل</button>
         <input type="text" id="searchInput" class="rep-search" placeholder="🔍 جستجو..." />
     </div>
 </div>
-<div id="repList">
+<div id="repList" style="display:none;">
     <div class="text-center text-muted py-4">فیلتر را تنظیم کرده و «نمایش گزارش» را بزنید.</div>
 </div>
 
@@ -86,6 +87,7 @@
         function renderList(rows, summary) {
             lastRows = rows;
             lastSummary = summary || null;
+            $('.rep-list-head, #repList').show();
             if (summary) {
                 $('#summaryTotal').text(faNum(summary.totalCount));
                 $('#summaryAmount').text(summary.totalAmountDisplay || '—');

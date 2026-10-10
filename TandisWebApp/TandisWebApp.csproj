@@ -21,6 +21,11 @@
       <HintPath>Libs\Sep.Logger.dll</HintPath>
       <Private>true</Private>
     </Reference>
+    <!-- کتابخانه‌ی کنترلر کمد (پروتکل C_pc_sg) — همان DLL که Traffic.exe استفاده می‌کند -->
+    <Reference Include="ProcondC8">
+      <HintPath>Libs\ProcondC8.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +38,8 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="10.0.0" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.1" />
     <PackageReference Include="System.ServiceModel.Primitives" Version="8.2.0" />
+    <!-- پورت سریال برای مسیر Serial کنترلر کمد (ProcondC8 روی .NET Framework ساخته شده) -->
+    <PackageReference Include="System.IO.Ports" Version="9.0.0" />
   </ItemGroup>
 
 </Project>

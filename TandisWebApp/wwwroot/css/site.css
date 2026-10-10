@@ -2,15 +2,6 @@
    تندیس - استایل RTL فارسی
    ============================ */
 
-/* ===== فونت Iranian Sans (فونت اصلی برنامه — پوشه Fonts پروژه) ===== */
-@font-face {
-    font-family: 'Iranian Sans';
-    src: url('/fonts/Iranian%20Sans.ttf?v=1') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
 /* ===== فونت Sahel (پوشه Fonts پروژه — از /fonts سرو می‌شود) ===== */
 @font-face {
     font-family: 'Sahel';
@@ -41,7 +32,7 @@
 }
 
 * {
-    font-family: 'Iranian Sans', 'Sahel', Tahoma, 'Segoe UI', Arial, sans-serif;
+    font-family: 'Sahel', Tahoma, 'Segoe UI', Arial, sans-serif;
 }
 
 html {
