@@ -4,40 +4,43 @@
     Layout = "_Layout";
 }
 
-<link rel="stylesheet" href="~/css/athlete.css?v=2" />
+<link rel="stylesheet" href="~/css/athlete.css?v=3" />
 
 <!-- ===== داده‌های اولیه برای JS ===== -->
 <script id="athlete-data" type="application/json">
-@Html.Raw(System.Text.Json.JsonSerializer.Serialize(new
-{
-    today = Model.TodayShamsi,
-    weekday = Model.WeekdayFa,
-    programs = Model.Programs.Select(p => new
+    @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new
     {
-        p.PrgID,
-        p.CoachName,
-        days = p.Items.Select(i => string.IsNullOrWhiteSpace(i.DayTitle) ? "بدون روز" : i.DayTitle).Distinct().ToList()
-    }),
-    // ✅ وضعیت ورود از دستگاه تردد باشگاه (ثبت ورود داخل اپ حذف شد)
-    visit = Model.TodayVisit == null ? null : new
-    {
-        enterTime = Model.TodayVisit.EnterTime,
-        exitTime = Model.TodayVisit.ExitTime,
-        sessionName = Model.TodayVisit.SessionName,
-        isOpen = Model.TodayVisit.IsOpen,
-        durationMinutes = Model.TodayVisit.DurationMinutes
-    },
-    // ✅ کمد اختصاص‌یافته به عضو (بدون انتخاب رختکن/شماره)
-    myLocker = Model.MyLocker == null ? null : new
-    {
-        Model.MyLocker.LockerRoomID,
-        Model.MyLocker.LockerRoomName,
-        Model.MyLocker.BoxNo,
-        Model.MyLocker.IsOnline,
-        Model.MyLocker.HasController,
-        Model.MyLocker.Transport
-    }
-}))
+            today = Model.TodayShamsi,
+                weekday = Model.WeekdayFa,
+                // ✅ وضعیت حضور: true = داخل باشگاه (ورود باز) | false = خروج زده
+                isInside = Model.IsInside,
+                programs = Model.Programs.Select(p => new
+                {
+                        PrgID = p.PrgID,
+                        CoachName = p.CoachName,
+                        days = p.Items.Select(i => string.IsNullOrWhiteSpace(i.DayTitle) ? "بدون روز" : i.DayTitle).Distinct().ToList()
+                }),
+                // ✅ وضعیت ورود از دستگاه تردد باشگاه
+                visit = Model.TodayVisit == null ? null : new
+                {
+                        enterTime = Model.TodayVisit.EnterTime,
+                        exitTime = Model.TodayVisit.ExitTime,
+                        sessionName = Model.TodayVisit.SessionName,
+                        isOpen = Model.TodayVisit.IsOpen,
+                        durationMinutes = Model.TodayVisit.DurationMinutes
+                },
+                // ✅ کمد اختصاص‌یافته به عضو (فقط وقتی داخل باشگاهه)
+                myLocker = Model.MyLocker == null ? null : new
+                {
+                        LockerRoomID = Model.MyLocker.LockerRoomID,
+                        LockerRoomName = Model.MyLocker.LockerRoomName,
+                        BoxNo = Model.MyLocker.BoxNo,
+                        IsOnline = Model.MyLocker.IsOnline,
+                        HasController = Model.MyLocker.HasController,
+                        Transport = Model.MyLocker.Transport
+                }
+                // ❌ summary اینجا نیست — از endpoint زنده /Athlete/Summary خونده می‌شه
+        }))
 </script>
 
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
@@ -56,7 +59,7 @@
 </div>
 
 <div class="ath-grid">
-    <!-- ===== کارت ۱: وضعیت ورود امروز (فقط نمایش — از دستگاه تردد) ===== -->
+    <!-- ===== کارت ۱: وضعیت ورود امروز (همیشه نمایش داده می‌شه) ===== -->
     <div class="ath-card">
         <div class="ath-card-title"><i class="bi bi-door-open-fill"></i> وضعیت ورود امروز</div>
 
@@ -64,7 +67,7 @@
         {
             <div class="ath-checkin-ok">
                 <div>
-                    <div class="fw-bold">✅ امروز وارد شده‌اید</div>
+                    <div class="fw-bold">@(Model.IsInside ? "✅ داخل باشگاه هستید" : "✅ امروز وارد شده‌اید (خروج زده‌اید)")</div>
                     <div class="ath-sub">ساعت ورود (دستگاه تردد): <b style="color:#86efac;">@Model.TodayVisit.EnterTime</b></div>
                     @if (!string.IsNullOrWhiteSpace(Model.TodayVisit.SessionName))
                     {
@@ -89,72 +92,95 @@
         <div class="ath-tip"><i class="bi bi-droplet-fill"></i> <span id="athTip">قبل، حین و بعد از تمرین آب بنوشید.</span></div>
     </div>
 
-    <!-- ===== کارت ۲: کمد من (فقط باز کردن کمدِ خودِ عضو) ===== -->
-    <div class="ath-card">
-        <div class="ath-card-title"><i class="bi bi-box2-fill"></i> کمد من</div>
+    @if (Model.IsInside)
+    {
+        <!-- ===== کارت ۲: کمد من (فقط وقتی داخل باشگاهه) ===== -->
+        <div class="ath-card">
+            <div class="ath-card-title"><i class="bi bi-box2-fill"></i> کمد من</div>
 
-        @if (Model.MyLocker != null)
-        {
-            <div class="ath-locker-info">
-                <div><i class="bi bi-door-closed-fill"></i> @Model.MyLocker.LockerRoomName</div>
-                <div class="ath-locker-no" id="lockerNo">کمد @Model.MyLocker.BoxNo</div>
-            </div>
-            <button class="ath-btn w-100" id="btnOpenLocker"><i class="bi bi-unlock-fill"></i> باز کردن کمد</button>
-        }
-        else
-        {
-            <div class="ath-empty">برای شما کمدی در باشگاه ثبت نشده است.</div>
-        }
+            @if (Model.MyLocker != null)
+            {
+                <div class="ath-locker-info">
+                    <div><i class="bi bi-door-closed-fill"></i> @Model.MyLocker.LockerRoomName</div>
+                    <div class="ath-locker-no" id="lockerNo">کمد @Model.MyLocker.BoxNo</div>
+                </div>
+                <button class="ath-btn w-100" id="btnOpenLocker"><i class="bi bi-unlock-fill"></i> باز کردن کمد</button>
+            }
+            else
+            {
+                <div class="ath-empty">برای شما کمدی در باشگاه ثبت نشده است.</div>
+            }
 
-        <div class="ath-locker-msg" id="lockerMsg"></div>
-    </div>
+            <div class="ath-locker-msg" id="lockerMsg"></div>
+        </div>
+    }
 </div>
 
-<!-- ===== کارت ۳: جدول تمرین (با دکمه شروع) ===== -->
-<div class="ath-card">
-    <div class="ath-card-title"><i class="bi bi-clipboard2-pulse-fill"></i> جدول تمرین من</div>
+@if (Model.IsInside)
+{
+    <!-- ===== کارت ۳: جدول تمرین (فقط وقتی داخل باشگاهه) ===== -->
+    <div class="ath-card mt-3">
+        <div class="ath-card-title"><i class="bi bi-clipboard2-pulse-fill"></i> جدول تمرین من</div>
 
-    <div class="row g-2 mb-2">
-        <div class="col-6 col-md-4">
-            <div class="ath-sub mb-1">برنامه</div>
-            <div class="acmb" id="cmbProgram"></div>
-        </div>
-        <div class="col-6 col-md-4">
-            <div class="ath-sub mb-1">روز</div>
-            <div class="acmb" id="cmbDay"></div>
-        </div>
-        <div class="col-12 col-md-4 d-flex align-items-end">
-            <div class="w-100">
-                <div class="d-flex justify-content-between ath-sub"><span>پیشرفت روز</span><b id="progressText" style="color:#86efac;">۰٪</b></div>
-                <div class="ath-progress"><div id="progressBar"></div></div>
+        <div class="row g-2 mb-2">
+            <div class="col-6 col-md-4">
+                <div class="ath-sub mb-1">برنامه</div>
+                <div class="acmb" id="cmbProgram"></div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="ath-sub mb-1">روز</div>
+                <div class="acmb" id="cmbDay"></div>
+            </div>
+            <div class="col-12 col-md-4 d-flex align-items-end">
+                <div class="w-100">
+                    <div class="d-flex justify-content-between ath-sub"><span>پیشرفت روز</span><b id="progressText" style="color:#86efac;">۰٪</b></div>
+                    <div class="ath-progress"><div id="progressBar"></div></div>
+                </div>
             </div>
         </div>
+
+        <!-- ✅ دکمه شروع تمرین -->
+        <button type="button" class="ath-btn ath-start w-100 mb-2" id="btnStart">
+            <i class="bi bi-play-fill"></i> شروع تمرین
+        </button>
+
+        <!-- ✅ نوار وضعیت جلسه (هنگام تمرین) -->
+        <div class="ath-session-bar" id="sessionBar" style="display:none;">
+            <span><i class="bi bi-clock-fill"></i> شروع: <b id="startTime">—</b></span>
+            <span><i class="bi bi-stopwatch"></i> مدت: <b id="sessionTime">00:00</b></span>
+            <span><i class="bi bi-check2-circle"></i> انجام‌شده: <b id="doneCount">۰</b></span>
+        </div>
+
+        <div class="ath-rest" id="restBox">
+            <div><i class="bi bi-hourglass-split"></i> استراحت کنید…</div>
+            <b id="restTime">00:00</b>
+            <button class="btn-timer" id="restSkip" title="رد کردن"><i class="bi bi-forward-end-fill"></i></button>
+        </div>
+
+        <div id="dayInfo" class="ath-sub mb-2"></div>
+        <div id="exList"><div class="ath-empty">روز تمرین را انتخاب کنید و «شروع تمرین» را بزنید تا حرکات آن روز نمایش داده شود.</div></div>
     </div>
+}
+else
+{
+    <!-- ===== ✅ کارت جایگزین: خلاصه تمرین امروز (فقط بعد از خروج) ===== -->
+    <div class="ath-card mt-3">
+        <div class="ath-card-title"><i class="bi bi-pie-chart-fill"></i> خلاصه تمرین امروز</div>
+        <div class="ath-empty">
+            جلسه‌ی امروز شما پایان یافته است. 🏁<br />
+            <span class="ath-sub">برای دیدن زمان اختصاص‌یافته به هر حرکت، دکمه‌ی زیر را بزنید.</span>
+        </div>
 
-    <!-- ✅ دکمه شروع تمرین: تا نخورده نوشته‌ها نمایش داده نمی‌شوند -->
-    <button type="button" class="ath-btn ath-start w-100 mb-2" id="btnStart">
-        <i class="bi bi-play-fill"></i> شروع تمرین
-    </button>
-
-    <!-- ✅ نوار وضعیت جلسه (هنگام تمرین) -->
-    <div class="ath-session-bar" id="sessionBar" style="display:none;">
-        <span><i class="bi bi-clock-fill"></i> شروع: <b id="startTime">—</b></span>
-        <span><i class="bi bi-stopwatch"></i> مدت: <b id="sessionTime">00:00</b></span>
-        <span><i class="bi bi-check2-circle"></i> انجام‌شده: <b id="doneCount">۰</b></span>
+        <!-- ⬇️️⬇️ این دکمه همین‌جا اضافه می‌شه — داخل بلوک else ⬇️⬇️⬇️ -->
+        <button type="button" class="ath-btn w-100 mt-2" id="btnShowSummary">
+            <i class="bi bi-pie-chart-fill"></i> مشاهده خلاصه تمرین امروز
+        </button>
+        <!-- ⬆️️⬆️ -->
     </div>
+}
 
-    <div class="ath-rest" id="restBox">
-        <div><i class="bi bi-hourglass-split"></i> استراحت کنید…</div>
-        <b id="restTime">00:00</b>
-        <button class="btn-timer" id="restSkip" title="رد کردن"><i class="bi bi-forward-end-fill"></i></button>
-    </div>
-
-    <div id="dayInfo" class="ath-sub mb-2"></div>
-    <div id="exList"><div class="ath-empty">روز تمرین را انتخاب کنید و «شروع تمرین» را بزنید تا حرکات آن روز نمایش داده شود.</div></div>
-</div>
-
-<!-- ===== کارت ۴: تاریخچه حضور (از دستگاه تردد) ===== -->
-<div class="ath-card">
+<!-- ===== کارت ۴: تاریخچه حضور (همیشه) ===== -->
+<div class="ath-card mt-3">
     <div class="ath-card-title"><i class="bi bi-calendar-check-fill"></i> آخرین حضورهای من</div>
     @if (Model.RecentVisits.Count == 0)
     {
@@ -184,6 +210,23 @@
     }
 </div>
 
+<!-- ===== ✅ پاپ‌آپ خلاصه تمرین امروز (نمودار دایره‌ای) ===== -->
+<div class="modal fade" id="summaryModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background:rgba(16,20,36,.97);border:1px solid rgba(255,255,255,.15);border-radius:18px;color:#fff;">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-pie-chart-fill" style="color:#66d3e8;"></i> خلاصه تمرین امروز</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <canvas id="summaryChart" height="260"></canvas>
+                <div id="summaryEmpty" class="ath-empty" style="display:none;">امروز هیچ حرکتی ثبت نشده است.</div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
-    <script src="~/js/athlete.js?v=2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script src="~/js/athlete.js?v=3"></script>
 }

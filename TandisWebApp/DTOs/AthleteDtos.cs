@@ -59,6 +59,11 @@ namespace TandisWebApp.DTOs
 
         /// <summary>✅ کمد اختصاص‌یافته به عضو در بازدید امروز (اگر نداشته باشد null)</summary>
         public MyLockerDto? MyLocker { get; set; }
+        /// <summary>✅ آیا عضو الان داخل باشگاهه؟ (ورود باز = ExitTime خالی)</summary>
+        public bool IsInside { get; set; }
+
+        /// <summary>✅ خلاصه تمرین امروز برای نمودار دایره‌ای (فقط بعد از خروج پر می‌شه)</summary>
+        public List<AthleteSummaryItemDto> TodaySummary { get; set; } = new();
     }
 
     // ===== ✅ «کمد من» — فقط باز کردن کمدِ خودِ عضو (بدون انتخاب رختکن/شماره) =====
@@ -101,5 +106,11 @@ namespace TandisWebApp.DTOs
     public class AthletePageModel
     {
         public AthleteIndexDto Data { get; set; } = new();
+    }
+    // ===== ✅ آیتم نمودار خلاصه تمرین امروز =====
+    public class AthleteSummaryItemDto
+    {
+        public string Name { get; set; } = string.Empty;
+        public double Minutes { get; set; }
     }
 }

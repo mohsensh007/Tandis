@@ -54,6 +54,7 @@ namespace TandisWebApp.Data
         public DbSet<ACC_PosTransaction> ACC_PosTransactions { get; set; } = null!;
         public DbSet<ACC_Freez> ACC_Freezs { get; set; } = null!;
         public DbSet<Acc_ArticleDoc> Acc_ArticleDocs { get; set; } = null!;
+        public DbSet<ACC_AthleteSetLog> ACC_AthleteSetLogs { get; set; } = null!;
 
         // ==================== Cash - تسویه حساب ====================
         public DbSet<Cash_CreditStatment> Cash_CreditStatments { get; set; } = null!;
@@ -77,7 +78,7 @@ namespace TandisWebApp.Data
 
         public DbSet<Msg_Message> MsgMessages { get; set; }
         public DbSet<Msg_Read> MsgReads { get; set; }
-
+        public DbSet<BoxLogOpenTb> BoxLogOpenTbs { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
