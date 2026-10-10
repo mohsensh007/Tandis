@@ -138,33 +138,31 @@ CREATE TABLE dbo.Web_LockerOpenLog (
         //  ورود / خروج
         // ============================================================
 
-        /// <summary>بازدیدِ امروز (آخرین رکورد امروز)</summary>
+        /// <summary>✅ بازدیدِ امروز — از داده‌ی واقعی دستگاه تردد باشگاه (dbo.ACC_Traffic).</summary>
+        /// <remarks>ثبت ورود/خروجِ داخل اپ حذف شد؛ عضو فقط وضعیت و ساعت را می‌بیند.</remarks>
         public async Task<AthleteVisitDto?> GetTodayVisitAsync(int memberID)
         {
-            await EnsureTablesAsync();
             var today = _helper.GetToday();
-            var v = await QueryVisitsAsync(
-                @"SELECT TOP(1) VisitID, VisitDate, EnterTime, ExitTime, SessionName
-                  FROM dbo.Web_AthleteVisit
-                  WHERE MemberID = @m AND VisitDate = @d
-                  ORDER BY VisitID DESC", ("@m", memberID), ("@d", today));
-            return v.Count == 0 ? null : v[0];
+            var list = await GetVisitsAsync(memberID, 30);
+            return list.FirstOrDefault(v => NormDate(v.VisitDate) == today);
         }
 
-        /// <summary>آخرین بازدیدها (برای جدول تاریخچه)</summary>
+        /// <summary>آخرین تردهای عضو (جدول تاریخچه‌ی صفحه)</summary>
         public async Task<List<AthleteVisitDto>> GetVisitsAsync(int memberID, int take = 10)
         {
-            await EnsureTablesAsync();
-            return await QueryVisitsAsync(
-                $@"SELECT TOP({take}) VisitID, VisitDate, EnterTime, ExitTime, SessionName
-                  FROM dbo.Web_AthleteVisit
-                  WHERE MemberID = @m
-                  ORDER BY VisitID DESC", ("@m", memberID));
+            return await QueryTrafficAsync(memberID, take);
         }
 
-        private async Task<List<AthleteVisitDto>> QueryVisitsAsync(string sql, params (string Name, object Value)[] pars)
+        /// <summary>ترددهای واقعی عضو از جدول اصلی باشگاه (توسط دستگاه تردد ثبت می‌شود)</summary>
+        private async Task<List<AthleteVisitDto>> QueryTrafficAsync(int memberID, int take)
         {
-            var rows = await QueryAsync<VisitRow>(sql, pars);
+            var rows = await QueryAsync<TrafficRow>(
+                $@"SELECT TOP({Math.Clamp(take, 1, 200)}) TrafficID AS VisitID, EntryDate AS VisitDate,
+                          EntryTime AS EnterTime, ExitTime, EntryDesc AS SessionName, BoxID
+                   FROM dbo.ACC_Traffic
+                   WHERE MemberID = @m
+                   ORDER BY TrafficID DESC", ("@m", memberID));
+
             var now = DateTime.Now.TimeOfDay;
             return rows.Select(r =>
             {
@@ -183,7 +181,8 @@ CREATE TABLE dbo.Web_LockerOpenLog (
                     EnterTime = r.EnterTime,
                     ExitTime = r.ExitTime,
                     SessionName = r.SessionName,
-                    IsOpen = r.ExitTime == null,
+                    BoxID = r.BoxID == 0 ? null : r.BoxID,
+                    IsOpen = string.IsNullOrWhiteSpace(r.ExitTime),
                     DurationMinutes = mins
                 };
             }).ToList();
@@ -237,11 +236,7 @@ CREATE TABLE dbo.Web_LockerOpenLog (
         public async Task<AthleteStatsDto> GetStatsAsync(int memberID, int setsDoneToday)
         {
             await EnsureTablesAsync();
-            var list = await QueryVisitsAsync(
-                @"SELECT TOP(120) VisitID, VisitDate, EnterTime, ExitTime, SessionName
-                  FROM dbo.Web_AthleteVisit
-                  WHERE MemberID = @m
-                  ORDER BY VisitID DESC", ("@m", memberID));
+            var list = await QueryTrafficAsync(memberID, 120);
 
             var st = new AthleteStatsDto { SetsDoneToday = setsDoneToday };
             var todayDate = DateTime.Now.Date;
@@ -403,6 +398,26 @@ CREATE TABLE dbo.Web_LockerOpenLog (
             public string EnterTime { get; set; } = "";
             public string? ExitTime { get; set; }
             public string? SessionName { get; set; }
+        }
+
+        /// <summary>ردیف دستگاه تردد (dbo.ACC_Traffic)</summary>
+        public class TrafficRow
+        {
+            public long VisitID { get; set; }
+            public string VisitDate { get; set; } = "";
+            public string EnterTime { get; set; } = "";
+            public string? ExitTime { get; set; }
+            public string? SessionName { get; set; }
+            public short BoxID { get; set; }
+        }
+
+        /// <summary>نرمال‌سازی تاریخ شمسی (1405/7/9 → 1405/07/09) برای مقایسه</summary>
+        private static string NormDate(string? d)
+        {
+            var p = (d ?? "").Replace('-', '/').Split('/', StringSplitOptions.RemoveEmptyEntries);
+            if (p.Length != 3) return "";
+            if (!int.TryParse(p[0], out var y) || !int.TryParse(p[1], out var m) || !int.TryParse(p[2], out var day)) return "";
+            return $"{y:0000}/{m:00}/{day:00}";
         }
 
         public class SetLogRow

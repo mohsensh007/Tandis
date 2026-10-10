@@ -640,10 +640,14 @@ body {
         pointer-events: none;
     }
 
+    /* ✅ bottom صفر (به جای -60px): هالهٔ نور باید داخل کادر بماند تا کادر
+       عملاً اسکرول‌پذیر نشود؛ کانتینر overflow:hidden اسکرول‌بار ندارد و اگر
+       اسکرول شود (مثلاً هنگام کلیک روی دکمه‌های صفحه‌بندی) محتوای بالای کارت
+       مثل تب‌های گزارش‌ها بریده می‌شود و فقط با refresh برمی‌گردد. */
     .purple-style::after {
         content: '';
         position: absolute;
-        bottom: -60px;
+        bottom: 0;
         left: -30px;
         width: 140px;
         height: 140px;

@@ -136,18 +136,55 @@
         renderNav(cfg, matched.length, pages);
     }
 
+    /* ✅ اسکرول امن:
+       بعضی کانتینرها (مثل کارت‌های بنفش با overflow:hidden) عملاً اسکرول‌پذیرند
+       اما کاربر اسکرول‌باری ندارد؛ اگر آن‌ها را اسکرول کنیم، محتوای بالای کارت
+       (مثلاً تب‌های «گزارش مالی / تردد / سوابق ثبت‌نام») بریده می‌شود و فقط با
+       refresh صفحه برمی‌گردد. پس هرگز سراغ چنین کانتینرهایی نمی‌رویم. */
+    function isUserScrollable(el) {
+        var cs = getComputedStyle(el);
+        return (cs.overflowY === 'auto' || cs.overflowY === 'scroll') &&
+               el.scrollHeight > el.clientHeight + 1;
+    }
+
+    function resetClippedAncestors(anchor) {
+        var el = anchor.parentElement;
+        while (el && el !== document.documentElement) {
+            if (getComputedStyle(el).overflowY === 'hidden' && el.scrollTop !== 0) el.scrollTop = 0;
+            el = el.parentElement;
+        }
+    }
+
+    function scrollToAnchor(anchor) {
+        if (!anchor) return;
+        resetClippedAncestors(anchor);
+
+        /* کانتینرهای واقعاً اسکرول‌پذیر (overflow:auto/scroll) */
+        var el = anchor.parentElement;
+        while (el && el !== document.body) {
+            if (isUserScrollable(el)) {
+                var cr = el.getBoundingClientRect();
+                if (cr.top < 8 || cr.top > window.innerHeight * 0.5) {
+                    el.scrollTop = Math.max(0, anchor.getBoundingClientRect().top - cr.top + el.scrollTop - 8);
+                }
+            }
+            el = el.parentElement;
+        }
+
+        /* خودِ صفحه */
+        var r = anchor.getBoundingClientRect();
+        if (r.top < 8 || r.top > window.innerHeight * 0.5) {
+            var y = (window.pageYOffset || document.documentElement.scrollTop) + r.top - 8;
+            try { window.scrollTo({ top: y, behavior: 'smooth' }); }
+            catch (e) { window.scrollTo(0, y); }
+        }
+    }
+
     function goto(cfg, p) {
         var s = st(cfg);
         s.page = p;
         apply(cfg, false);
-        var a = s.anchor;
-        if (a) {
-            var r = a.getBoundingClientRect();
-            if (r.top < 0 || r.top > window.innerHeight * 0.5) {
-                try { a.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-                catch (e) { a.scrollIntoView(); }
-            }
-        }
+        scrollToAnchor(s.anchor);
     }
 
     function init() {

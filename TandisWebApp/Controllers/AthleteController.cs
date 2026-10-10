@@ -50,33 +50,79 @@ namespace TandisWebApp.Controllers
             {
                 TodayShamsi = _helper.GetToday(),
                 WeekdayFa = WeekdayFa(DateTime.Now.DayOfWeek),
+                // ✅ ورود/خروج از داده‌ی دستگاه تردد باشگاه خوانده می‌شود (ثبت توسط عضو حذف شد)
                 TodayVisit = await _athlete.GetTodayVisitAsync(memberID),
                 RecentVisits = await _athlete.GetVisitsAsync(memberID, 8),
                 Programs = await _programs.GetMemberProgramsAsync(memberID),
-                Sessions = await GetSessionNamesAsync(),
-                LockerRooms = await _locker.GetRoomsAsync()
+                MyLocker = await GetMyLockerAsync(memberID)
             };
             model.Stats = await _athlete.GetStatsAsync(memberID, await _athlete.CountDoneTodayAsync(memberID));
             return View(model);
         }
 
-        // ============================================================
-        //  ورود / خروج
-        // ============================================================
-        [HttpPost("/Athlete/CheckIn")]
-        public async Task<IActionResult> CheckIn([FromBody] AthleteCheckInRequest req)
+        /// <summary>✅ کمد اختصاص‌یافته به عضو در بازدید امروز (از روی کمد ثبت‌شده در تردد)</summary>
+        private async Task<MyLockerDto?> GetMyLockerAsync(int memberID)
         {
-            var v = await _athlete.CheckInAsync(MemberID, req?.EnterTime, req?.SessionName);
-            return Json(new { success = true, visit = v });
+            var visit = await _athlete.GetTodayVisitAsync(memberID);
+            if (visit == null || visit.BoxID == null) return null;
+
+            var box = await _db.Gen_Boxes.AsNoTracking()
+                .FirstOrDefaultAsync(b => b.BoxID == visit.BoxID);
+            if (box == null) return null;
+
+            var room = await _db.Gen_LockerRooms.AsNoTracking()
+                .FirstOrDefaultAsync(r => r.LockerRoomID == box.LockerRoomID);
+            if (room == null) return null;
+
+            return new MyLockerDto
+            {
+                LockerRoomID = room.LockerRoomID,
+                LockerRoomName = room.LockerRoomName ?? $"رختکن {room.LockerRoomID}",
+                BoxNo = box.BoxNo ?? 0,
+                IsOnline = room.IsOnline == true,
+                HasController = room.ControllerID != null,
+                Transport = string.IsNullOrWhiteSpace(room.IpAddress) ? "Serial" : "UDP"
+            };
         }
 
-        [HttpPost("/Athlete/CheckOut")]
-        public async Task<IActionResult> CheckOut()
+        // ============================================================
+        //  کمد رختکن — فقط کمدِ خودِ عضو
+        // ============================================================
+        /// <summary>✅ باز کردن کمد اختصاص‌یافته به خودِ عضو در بازدید امروز.
+        /// عضو رختکن/شماره کمد را انتخاب نمی‌کند؛ کمدِ خودش را باز می‌کند.</summary>
+        [HttpPost("/Athlete/OpenMyLocker")]
+        public async Task<IActionResult> OpenMyLocker()
         {
-            var v = await _athlete.CheckOutAsync(MemberID);
-            if (v == null) return Json(new { success = false, message = "ورودی ثبت نشده است." });
-            return Json(new { success = true, visit = v });
+            var memberID = MemberID;
+            var my = await GetMyLockerAsync(memberID);
+            if (my == null || my.BoxNo <= 0)
+                return Json(new LockerOpenResultDto
+                {
+                    Success = false,
+                    Message = "برای شما کمدی در باشگاه ثبت نشده است."
+                });
+
+            var result = await _locker.OpenBoxAsync(memberID, my.LockerRoomID, my.BoxNo);
+            return Json(result);
         }
+
+        // ✅ موقتاً غیرفعال شد (درخواست کاربر): ثبت ورود/خروج از داخل اپ حذف شد و
+        //    ورود/خروج با دستگاه تردد باشگاه ثبت می‌شود. برای برگرداندن، کامنت را بردارید.
+        //
+        // [HttpPost("/Athlete/CheckIn")]
+        // public async Task<IActionResult> CheckIn([FromBody] AthleteCheckInRequest req)
+        // {
+        //     var v = await _athlete.CheckInAsync(MemberID, req?.EnterTime, req?.SessionName);
+        //     return Json(new { success = true, visit = v });
+        // }
+        //
+        // [HttpPost("/Athlete/CheckOut")]
+        // public async Task<IActionResult> CheckOut()
+        // {
+        //     var v = await _athlete.CheckOutAsync(MemberID);
+        //     if (v == null) return Json(new { success = false, message = "ورودی ثبت نشده است." });
+        //     return Json(new { success = true, visit = v });
+        // }
 
         // ============================================================
         //  جدول تمرین
@@ -140,24 +186,6 @@ namespace TandisWebApp.Controllers
         // ============================================================
         //  کمکی
         // ============================================================
-        /// <summary>سانس‌های فعال باشگاه (برای کامپوبوکس انتخاب سانس ورود)</summary>
-        private async Task<List<string>> GetSessionNamesAsync()
-        {
-            try
-            {
-                var list = await _db.Gen_Sans.AsNoTracking()
-                    .Where(s => s.IsActive != false)
-                    .OrderBy(s => s.SansID)
-                    .Select(s => s.Sans)
-                    .Where(s => s != null)
-                    .Cast<string>()
-                    .ToListAsync();
-                if (list.Count > 0) return list;
-            }
-            catch { }
-            return new List<string> { "صبح", "ظهر", "عصر" };
-        }
-
         private static string WeekdayFa(DayOfWeek d) => d switch
         {
             DayOfWeek.Saturday => "شنبه",

@@ -491,3 +491,124 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ===== ✅ دکمه «شروع تمرین» (بزرگ و لمس‌پسند) ===== */
+.ath-start {
+    justify-content: center;
+    padding: 14px 18px;
+    font-size: 1rem;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    box-shadow: 0 10px 24px rgba(22, 163, 74, .38);
+}
+
+    .ath-start.stop {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        box-shadow: 0 10px 24px rgba(185, 28, 28, .35);
+    }
+
+/* ===== ✅ نوار وضعیت جلسه (شروع / مدت / انجام‌شده) ===== */
+.ath-session-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, .06);
+    border: 1px dashed rgba(255, 255, 255, .2);
+    border-radius: 13px;
+    padding: 9px 12px;
+    margin-bottom: 10px;
+    font-size: .8rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+    .ath-session-bar b {
+        color: #86efac;
+        font-variant-numeric: tabular-nums;
+    }
+
+/* ===== ✅ حرکت بعدی (راهنمای چشمی بعد از تیک) ===== */
+.ex-row.ex-next {
+    border-color: rgba(102, 211, 232, .55);
+    box-shadow: 0 0 0 3px rgba(102, 211, 232, .14);
+}
+
+    .ex-row.ex-next .ex-name::after {
+        content: '← بعدی';
+        display: inline-block;
+        margin-right: 8px;
+        font-size: .7rem;
+        font-weight: 800;
+        color: #66d3e8;
+        background: rgba(102, 211, 232, .14);
+        border: 1px solid rgba(102, 211, 232, .3);
+        border-radius: 999px;
+        padding: 1px 8px;
+        vertical-align: middle;
+    }
+
+.ex-row.ex-pop {
+    animation: athPop .9s ease;
+}
+
+@keyframes athPop {
+    0% { transform: scale(1); }
+    35% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+/* ===== ✅ «کمد من» ===== */
+.ath-locker-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 13px;
+    padding: 11px 14px;
+    margin-bottom: 10px;
+    font-size: .85rem;
+    font-weight: 700;
+    color: #e2e8f0;
+}
+
+.ath-locker-no {
+    color: #fbbf24;
+    font-weight: 800;
+}
+
+/* ===== ✅ موبایل: هدف‌های لمسی بزرگ‌تر ===== */
+@media (max-width: 575.98px) {
+    .ex-check {
+        width: 38px;
+        height: 38px;
+        min-width: 38px;
+        border-radius: 12px;
+    }
+
+    .ex-row {
+        padding: 13px 12px;
+        gap: 10px;
+    }
+
+    .ex-name {
+        font-size: .95rem;
+    }
+
+    .btn-timer {
+        width: 44px;
+        height: 44px;
+    }
+
+    .ath-btn {
+        padding: 13px 18px;
+    }
+
+    .ath-session-bar {
+        font-size: .75rem;
+    }
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>athlete.js harness</title>
+<link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
+<link rel="stylesheet" href="lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+<link rel="stylesheet" href="css/athlete.css?v=2" />
+</head>
+<body style="background:#0f172a; padding:16px;">
+<div class="ath-stats mb-3">
+    <div class="ath-stat"><b id="stWeek">1</b><span>حضور این هفته</span></div>
+    <div class="ath-stat"><b id="stMinutes">2</b><span>دقیقه حضور (ماه)</span></div>
+    <div class="ath-stat"><b id="stStreak">3</b><span>روز پیاپی</span></div>
+    <div class="ath-stat"><b id="stSets">0</b><span>تمرین امروز</span></div>
+</div>
+
+<div class="ath-card">
+    <div class="ath-card-title"><i class="bi bi-clipboard2-pulse-fill"></i> جدول تمرین من</div>
+    <div class="row g-2 mb-2">
+        <div class="col-6 col-md-4"><div class="ath-sub mb-1">برنامه</div><div class="acmb" id="cmbProgram"></div></div>
+        <div class="col-6 col-md-4"><div class="ath-sub mb-1">روز</div><div class="acmb" id="cmbDay"></div></div>
+        <div class="col-12 col-md-4 d-flex align-items-end">
+            <div class="w-100">
+                <div class="d-flex justify-content-between ath-sub"><span>پیشرفت روز</span><b id="progressText" style="color:#86efac;">۰٪</b></div>
+                <div class="ath-progress"><div id="progressBar"></div></div>
+            </div>
+        </div>
+    </div>
+    <button type="button" class="ath-btn ath-start w-100 mb-2" id="btnStart"><i class="bi bi-play-fill"></i> شروع تمرین</button>
+    <div class="ath-session-bar" id="sessionBar" style="display:none;">
+        <span><i class="bi bi-clock-fill"></i> شروع: <b id="startTime">—</b></span>
+        <span><i class="bi bi-stopwatch"></i> مدت: <b id="sessionTime">00:00</b></span>
+        <span><i class="bi bi-check2-circle"></i> انجام‌شده: <b id="doneCount">۰</b></span>
+    </div>
+    <div class="ath-rest" id="restBox">
+        <div><i class="bi bi-hourglass-split"></i> استراحت کنید…</div>
+        <b id="restTime">00:00</b>
+        <button class="btn-timer" id="restSkip" title="رد کردن"><i class="bi bi-forward-end-fill"></i></button>
+    </div>
+    <div id="dayInfo" class="ath-sub mb-2"></div>
+    <div id="exList"><div class="ath-empty">...در حال بارگذاری</div></div>
+</div>
+
+<script id="athlete-data" type="application/json">
+{
+  "today": "1405/07/19",
+  "weekday": "جمعه",
+  "programs": [
+    { "PrgID": 11, "CoachName": "مربی آزمایشی", "days": ["شنبه و یکشنبه", "دوشنبه"] }
+  ],
+  "visit": { "enterTime": "18:20", "exitTime": null, "sessionName": "عصر", "isOpen": true, "durationMinutes": null },
+  "myLocker": { "LockerRoomID": 1, "LockerRoomName": "رختکن A", "BoxNo": 7, "IsOnline": true, "HasController": true, "Transport": "UDP" }
+}
+</script>
+
+<script>
+  // ✅ استاب سرور: /Athlete/Day و /Athlete/SaveSet
+  window.__saved = [];
+  const dayPayload = {
+    PrgID: 11,
+    CoachName: "مربی آزمایشی",
+    DayTitle: "شنبه و یکشنبه",
+    Days: ["شنبه و یکشنبه", "دوشنبه"],
+    Items: [
+      { ItemID: 101, ItemDesc: "سرشانه دمبل", SetCount: 4, RepCount: 12, WCount: 10, RestSeconds: 45 },
+      { ItemID: 102, ItemDesc: "پرس سینه هالتر", SetCount: 4, RepCount: 10, WCount: 40, RestSeconds: 60, Note: "کمر صاف" },
+      { ItemID: 103, ItemDesc: "زیربغل سیم‌کش", SetCount: 3, RepCount: 15, WCount: 25, RestSeconds: 30 }
+    ],
+    Logs: []
+  };
+  const origFetch = window.fetch.bind(window);
+  window.fetch = function (url, opts) {
+    if (String(url).indexOf('/Athlete/Day') === 0) {
+      return Promise.resolve(new Response(JSON.stringify(dayPayload), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+    if (String(url).indexOf('/Athlete/SaveSet') === 0) {
+      window.__saved.push(JSON.parse(opts.body));
+      return Promise.resolve(new Response(JSON.stringify({ success: true }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+    }
+    return origFetch(url, opts);
+  };
+</script>
+<script src="js/athlete.js?v=2"></script>
+</body>
+</html>

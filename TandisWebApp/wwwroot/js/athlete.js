@@ -1,7 +1,9 @@
 /* ============================================================
-   athlete.js — صفحه‌ی «ورزشکاران» پنل عضو
-   کامپوبوکس سفارشی + ثبت ورود/خروج + جدول تمرین با تایمر هر حرکت
-   + تایمر استراحت + باز کردن کمد
+   athlete.js — صفحه‌ی «شروع تمرین» پنل عضو
+   ✅ وضعیت ورود: فقط نمایش از دستگاه تردد باشگاه (ثبت ورود داخل اپ حذف شد)
+   ✅ کمد من: فقط باز کردن کمدِ خودِ عضو (بدون انتخاب رختکن/شماره)
+   ✅ جدول تمرین: دکمه «شروع تمرین» → نمایش حرکات روز → تیک هر حرکت
+      (با ثبت زمان سپری‌شده) و رفتن به سراغ حرکت بعدی
    ============================================================ */
 (function () {
     'use strict';
@@ -27,7 +29,6 @@
         }).then(function (r) { return r.json(); });
     }
     function toast(msg, ok) {
-        // پیام کوچک بالای صفحه
         var t = document.createElement('div');
         t.textContent = msg;
         t.style.cssText = 'position:fixed;top:14px;right:50%;transform:translateX(50%);z-index:2000;' +
@@ -40,7 +41,7 @@
     }
 
     /* ============================================================
-       کامپوبوکس سفارشی (جستجوپذیر)
+       کامپوبوکس سفارشی (جستجوپذیر) — برای انتخاب برنامه و روز
        ============================================================ */
     function Combo(el, items, selectedValue, onChange) {
         this.el = el;
@@ -114,89 +115,33 @@
     };
 
     /* ============================================================
-       ۱) ورود / خروج
+       ۱) وضعیت ورود امروز (فقط نمایش — داده از دستگاه تردد)
        ============================================================ */
-    var checkinForm = document.getElementById('checkinForm');
-    var checkinStatus = document.getElementById('checkinStatus');
-    var elapsedEl = document.getElementById('elapsed');
-    var elapsedTimer = null;
-    var enterAt = null;
+    (function () {
+        var elapsedEl = document.getElementById('elapsed');
+        if (!elapsedEl) return;
+        var v = D.visit;
+        if (!v || !v.enterTime) { elapsedEl.textContent = '--:--:--'; return; }
 
-    // سانس
-    var sessionItems = (D.sessions && D.sessions.length ? D.sessions : ['صبح', 'ظهر', 'عصر'])
-        .map(function (s) { return { value: s, text: s }; });
-    var cmbSession = new Combo(document.getElementById('cmbSession'), sessionItems);
+        var parts = String(v.enterTime).split(':');
+        var start = new Date();
+        start.setHours(parseInt(parts[0], 10) || 0, parseInt(parts[1], 10) || 0, 0, 0);
 
-    // ساعت ورود: اول «ساعت فعلی» بعد بازه‌ی نیم‌ساعته
-    function timeItems() {
-        var now = new Date();
-        var cur = p2(now.getHours()) + ':' + p2(now.getMinutes());
-        var items = [{ value: cur, text: 'ساعت فعلی — ' + cur, badge: 'الان', badgeClass: 'bg-success' }];
-        for (var h = 6; h <= 23; h++) {
-            for (var m = 0; m < 60; m += 30) {
-                var t = p2(h) + ':' + p2(m);
-                if (t !== cur) items.push({ value: t, text: t });
-            }
+        var end = null; // خروج ثبت‌شده (در صورت وجود)
+        if (v.exitTime) {
+            var pe = String(v.exitTime).split(':');
+            end = new Date();
+            end.setHours(parseInt(pe[0], 10) || 0, parseInt(pe[1], 10) || 0, 0, 0);
         }
-        return items;
-    }
-    var cmbTime = new Combo(document.getElementById('cmbTime'), timeItems());
 
-    function startElapsed(fromHHmm, sessionName) {
-        var parts = String(fromHHmm || '').split(':');
-        var d = new Date();
-        if (parts.length >= 2) {
-            d.setHours(parseInt(parts[0], 10) || 0, parseInt(parts[1], 10) || 0, 0, 0);
-        }
-        enterAt = d;
-        document.getElementById('inTime').textContent = fromHHmm || '';
-        document.getElementById('inSess').textContent = sessionName ? '— ' + sessionName : '';
-        checkinForm.style.display = 'none';
-        checkinStatus.style.display = '';
-        if (elapsedTimer) clearInterval(elapsedTimer);
         var tick = function () {
-            var sec = Math.max(0, Math.floor((Date.now() - enterAt.getTime()) / 1000));
+            var target = end || new Date();
+            var sec = Math.max(0, Math.floor((target.getTime() - start.getTime()) / 1000));
             elapsedEl.textContent = hhmmss(sec);
         };
         tick();
-        elapsedTimer = setInterval(tick, 1000);
-    }
-
-    document.getElementById('btnCheckIn').addEventListener('click', function () {
-        var btn = this;
-        btn.disabled = true;
-        post('/Athlete/CheckIn', { enterTime: cmbTime.value, sessionName: cmbSession.value })
-            .then(function (r) {
-                if (r && r.success && r.visit) {
-                    startElapsed(r.visit.enterTime, r.visit.sessionName);
-                    toast('ورود شما ثبت شد ✔', true);
-                } else {
-                    toast((r && r.message) || 'ثبت ورود ناموفق بود', false);
-                }
-            })
-            .catch(function () { toast('خطا در ارتباط با سرور', false); })
-            .finally(function () { btn.disabled = false; });
-    });
-
-    document.getElementById('btnCheckOut').addEventListener('click', function () {
-        var btn = this;
-        btn.disabled = true;
-        post('/Athlete/CheckOut', {})
-            .then(function (r) {
-                if (r && r.success) {
-                    toast('خروج شما ثبت شد ✔', true);
-                    setTimeout(function () { location.reload(); }, 900);
-                } else {
-                    toast((r && r.message) || 'ثبت خروج ناموفق بود', false);
-                }
-            })
-            .catch(function () { toast('خطا در ارتباط با سرور', false); })
-            .finally(function () { btn.disabled = false; });
-    });
-
-    if (D.visit && D.visit.IsOpen) {
-        startElapsed(D.visit.EnterTime, D.visit.SessionName);
-    }
+        if (!end) setInterval(tick, 1000);
+    })();
 
     // نکته‌های کوتاه (چرخشی)
     var tips = [
@@ -208,10 +153,10 @@
     ];
     var tipEl = document.getElementById('athTip');
     var tipIdx = 0;
-    setInterval(function () { tipIdx = (tipIdx + 1) % tips.length; tipEl.textContent = tips[tipIdx]; }, 7000);
+    if (tipEl) setInterval(function () { tipIdx = (tipIdx + 1) % tips.length; tipEl.textContent = tips[tipIdx]; }, 7000);
 
     /* ============================================================
-       ۲) جدول تمرین
+       ۲) جدول تمرین — با دکمه «شروع تمرین»
        ============================================================ */
     var programs = (D.programs || []).map(function (p) {
         return {
@@ -224,12 +169,21 @@
     var cmbProgram = new Combo(document.getElementById('cmbProgram'),
         programs.map(function (p) { return { value: p.value, text: p.text }; }));
     var cmbDay = new Combo(document.getElementById('cmbDay'), []);
-    var currentPrg = null;
-    var dayItems = [];
-    var states = {};         // itemId -> { done, seconds }
-    var timers = {};         // itemId -> seconds
-    var runningId = null;    // itemId در حال اجرا
+
+    var exListBox = document.getElementById('exList');
+    var dayInfo = document.getElementById('dayInfo');
+    var sessionBar = document.getElementById('sessionBar');
+    var btnStart = document.getElementById('btnStart');
+
+    var dayItems = [];     // حرکات روزِ انتخابی (تا شروع خالی می‌ماند)
+    var states = {};       // itemId -> { done, seconds }
+    var timers = {};       // itemId -> seconds
+    var runningId = null;  // تایمر در حال اجرا
     var runInt = null;
+    var sessionStarted = false;
+    var sessionStartAt = null;
+    var sessionInt = null;
+    var pendingData = null; // داده‌ی روز تا زمان «شروع»
 
     function findProgram(id) {
         for (var i = 0; i < programs.length; i++) if (programs[i].value === id) return programs[i];
@@ -237,8 +191,8 @@
     }
 
     function fillDays(prgId) {
-        currentPrg = findProgram(prgId);
-        var days = currentPrg ? currentPrg.days : [];
+        var prg = findProgram(prgId);
+        var days = prg ? prg.days : [];
         var wd = D.weekday || '';
         var def = null;
         days.forEach(function (d) { if (!def && wd && d.indexOf(wd.substring(0, 4)) > -1) def = d; });
@@ -256,24 +210,26 @@
         return b;
     }
 
+    /* --- رندر حرکات روز (فقط بعد از «شروع تمرین») --- */
     function renderDay(data) {
+        pendingData = data;
         dayItems = data.Items || [];
         states = {};
+        timers = {};
         (data.Logs || []).forEach(function (l) { states[l.ItemID] = { done: l.IsDone, seconds: l.DurationSec }; });
 
-        document.getElementById('dayInfo').innerHTML =
+        dayInfo.innerHTML =
             (data.CoachName ? 'مربی: <b style="color:#ddd6fe;">' + esc(data.CoachName) + '</b> • ' : '') +
             'روز: <b style="color:#ddd6fe;">' + esc(data.DayTitle || '—') + '</b> • ' +
             fa(dayItems.length) + ' حرکت';
 
-        var box = document.getElementById('exList');
         if (!dayItems.length) {
-            box.innerHTML = '<div class="ath-empty">برای این روز حرکتی ثبت نشده است.</div>';
+            exListBox.innerHTML = '<div class="ath-empty">برای این روز حرکتی ثبت نشده است.</div>';
             updateProgress();
             return;
         }
 
-        box.innerHTML = dayItems.map(function (it, idx) {
+        exListBox.innerHTML = dayItems.map(function (it, idx) {
             var st = states[it.ItemID] || { done: false, seconds: 0 };
             timers[it.ItemID] = Math.max(timers[it.ItemID] || 0, st.seconds || 0);
             var meta = [];
@@ -298,8 +254,24 @@
                 '</div>';
         }).join('');
 
-        box.querySelectorAll('.ex-row').forEach(bindRow);
+        exListBox.querySelectorAll('.ex-row').forEach(bindRow);
+        markNext();
         updateProgress();
+    }
+
+    /* --- حرکت بعدی (اولین حرکت انجام‌نشده) --- */
+    function markNext() {
+        var nextId = null;
+        for (var i = 0; i < dayItems.length; i++) {
+            var st = states[dayItems[i].ItemID];
+            if (!st || !st.done) { nextId = dayItems[i].ItemID; break; }
+        }
+        document.querySelectorAll('.ex-row.ex-next').forEach(function (r) { r.classList.remove('ex-next'); });
+        if (nextId != null) {
+            var row = rowOf(nextId);
+            if (row) row.classList.add('ex-next');
+        }
+        return nextId;
     }
 
     function bindRow(row) {
@@ -315,9 +287,27 @@
             states[id].done = done;
             saveSet(id);
             updateProgress();
+
             if (done) {
                 var rest = parseInt(row.getAttribute('data-rest'), 10) || 0;
                 if (rest > 0) startRest(rest);
+                // ✅ رفتن به سراغ حرکت بعدی
+                var nextId = markNext();
+                if (nextId != null) {
+                    var nr = rowOf(nextId);
+                    if (nr) {
+                        nr.classList.add('ex-pop');
+                        setTimeout(function () { nr.classList.remove('ex-pop'); }, 900);
+                        var r = nr.getBoundingClientRect();
+                        if (r.top < 70 || r.bottom > window.innerHeight - 40) {
+                            try { nr.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+                            catch (e) { nr.scrollIntoView(); }
+                        }
+                    }
+                    toast('ثبت شد ✔ سراغ حرکت بعدی بروید', true);
+                } else {
+                    toast('همه‌ی حرکات این روز انجام شد 🎉', true);
+                }
             }
         });
 
@@ -358,7 +348,7 @@
     }
 
     function saveSet(id) {
-        if (!id || isNaN(id) || id <= 0) return; // حرکت سفارشی بدون ItemID معتبر ذخیره نمی‌شود
+        if (!id || isNaN(id) || id <= 0) return;
         var st = states[id] || { done: false, seconds: 0 };
         post('/Athlete/SaveSet', {
             prgID: cmbProgram.value,
@@ -380,6 +370,8 @@
         document.getElementById('progressText').textContent = fa(pct) + '٪';
         var stSets = document.getElementById('stSets');
         if (stSets) stSets.textContent = fa(done);
+        var dc = document.getElementById('doneCount');
+        if (dc) dc.textContent = fa(done) + ' از ' + fa(total);
     }
 
     /* ---- تایمر استراحت ---- */
@@ -403,24 +395,70 @@
     }
     document.getElementById('restSkip').addEventListener('click', stopRest);
 
-    /* ---- بارگذاری روز ---- */
-    function loadDay() {
-        var prg = cmbProgram.value, day = cmbDay.value;
-        if (!prg) {
-            document.getElementById('exList').innerHTML =
-                '<div class="ath-empty">هنوز برنامه‌ی تمرینی فعالی ندارید. با مربی خود هماهنگ کنید.</div>';
-            document.getElementById('dayInfo').textContent = '';
+    /* ---- ✅ شروع / پایان تمرین ---- */
+    function startSession() {
+        if (!pendingData) return;
+        sessionStarted = true;
+        sessionStartAt = new Date();
+        sessionBar.style.display = 'flex';
+        document.getElementById('startTime').textContent = fa(p2(sessionStartAt.getHours()) + ':' + p2(sessionStartAt.getMinutes()));
+        if (sessionInt) clearInterval(sessionInt);
+        sessionInt = setInterval(function () {
+            var sec = Math.floor((Date.now() - sessionStartAt.getTime()) / 1000);
+            document.getElementById('sessionTime').textContent = fa(mmss(sec));
+        }, 1000);
+        btnStart.innerHTML = '<i class="bi bi-stop-fill"></i> پایان تمرین';
+        btnStart.classList.add('stop');
+        renderDay(pendingData);
+    }
+
+    function endSession() {
+        sessionStarted = false;
+        if (sessionInt) { clearInterval(sessionInt); sessionInt = null; }
+        stopTimer(runningId);
+        sessionBar.style.display = 'none';
+        btnStart.innerHTML = '<i class="bi bi-play-fill"></i> شروع تمرین';
+        btnStart.classList.remove('stop');
+        // نمایش لیست برای مرور باقی می‌ماند
+        toast('تمرین پایان یافت — زمان‌ها ذخیره شد ✔', true);
+    }
+
+    btnStart.addEventListener('click', function () {
+        if (!cmbProgram.value) { toast('ابتدا برنامه‌ی تمرینی را انتخاب کنید', false); return; }
+        if (sessionStarted) { endSession(); return; }
+        if (pendingData) { startSession(); return; }
+        fetch('/Athlete/Day?prgID=' + cmbProgram.value + '&day=' + encodeURIComponent(cmbDay.value || ''), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function (r) { return r.json(); })
+            .then(function (data) { pendingData = data; startSession(); })
+            .catch(function () { toast('خطا در دریافت برنامه', false); });
+    });
+
+    /* ---- آماده‌سازی (بدون نمایش حرکات تا زمان شروع) ---- */
+    function prepareDay() {
+        stopTimer(runningId);
+        sessionStarted = false;
+        if (sessionInt) { clearInterval(sessionInt); sessionInt = null; }
+        sessionBar.style.display = 'none';
+        btnStart.innerHTML = '<i class="bi bi-play-fill"></i> شروع تمرین';
+        btnStart.classList.remove('stop');
+        pendingData = null;
+        dayItems = [];
+        states = {};
+        timers = {};
+
+        if (!cmbProgram.value) {
+            exListBox.innerHTML = '<div class="ath-empty">هنوز برنامه‌ی تمرینی فعالی ندارید. با مربی خود هماهنگ کنید.</div>';
+            dayInfo.textContent = '';
             updateProgress();
             return;
         }
-        fetch('/Athlete/Day?prgID=' + prg + '&day=' + encodeURIComponent(day || ''), { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
-            .then(function (r) { return r.json(); })
-            .then(renderDay)
-            .catch(function () { toast('خطا در دریافت برنامه', false); });
+        dayInfo.innerHTML = 'روز انتخابی: <b style="color:#ddd6fe;">' + esc(cmbDay.value || '—') + '</b>';
+        exListBox.innerHTML = '<div class="ath-empty">برای دیدن حرکات این روز، «شروع تمرین» را بزنید.</div>';
+        updateProgress();
     }
 
-    cmbProgram.onChange = function (v) { fillDays(v); loadDay(); };
-    cmbDay.onChange = function () { loadDay(); };
+    cmbProgram.onChange = function (v) { fillDays(v); prepareDay(); };
+    cmbDay.onChange = function () { prepareDay(); };
 
     if (programs.length) {
         var wd = D.weekday || '';
@@ -430,66 +468,38 @@
         });
         cmbProgram.setValue(defPrg !== null ? defPrg : programs[0].value, true);
         fillDays(cmbProgram.value);
-        loadDay();
     } else {
-        document.getElementById('exList').innerHTML =
-            '<div class="ath-empty">هنوز برنامه‌ی تمرینی فعالی ندارید. با مربی خود هماهنگ کنید.</div>';
+        exListBox.innerHTML = '<div class="ath-empty">هنوز برنامه‌ی تمرینی فعالی ندارید. با مربی خود هماهنگ کنید.</div>';
     }
+    prepareDay();
 
     /* ============================================================
-       ۳) کمد رختکن
+       ۳) کمد من (فقط باز کردن کمدِ خودِ عضو)
        ============================================================ */
-    var rooms = (D.rooms || []).filter(function (r) { return (r.boxes || []).length > 0; });
-    var roomItems = rooms.map(function (r) {
-        return {
-            value: r.LockerRoomID,
-            text: r.LockerRoomName,
-            badge: r.IsOnline ? (r.HasController ? 'آنلاین' : 'بدون کنترلر') : 'آفلاین',
-            badgeClass: r.IsOnline && r.HasController ? 'bg-success' : 'bg-secondary',
-            room: r
-        };
-    });
+    var lockerNo = document.getElementById('lockerNo');
+    if (lockerNo && D.myLocker) lockerNo.textContent = 'کمد ' + fa(D.myLocker.BoxNo);
 
-    var cmbRoom = new Combo(document.getElementById('cmbRoom'), roomItems);
-    var cmbBox = new Combo(document.getElementById('cmbBox'), []);
-    var lockerHint = document.getElementById('lockerHint');
-
-    function fillBoxes(roomId) {
-        var room = null;
-        for (var i = 0; i < rooms.length; i++) if (rooms[i].LockerRoomID === roomId) { room = rooms[i]; break; }
-        var boxes = room ? room.boxes : [];
-        cmbBox.setItems(boxes.map(function (b) {
-            return { value: b, text: 'کمد ' + b };
-        }), boxes.length ? boxes[0] : null);
-
-        lockerHint.textContent = !room ? '' :
-            !room.IsOnline ? '⚠ این رختکن فعلاً آفلاین است.' :
-            !room.HasController ? '⚠ کنترلر این رختکن در دیتابیس پیکربندی نشده (Version=8 / ControllerID).' :
-            'اتصال: ' + (room.Transport === 'UDP' ? 'شبکه (UDP)' : 'سریال');
+    var btnOpenLocker = document.getElementById('btnOpenLocker');
+    if (btnOpenLocker) {
+        var lockerMsg = document.getElementById('lockerMsg');
+        btnOpenLocker.addEventListener('click', function () {
+            var btn = this;
+            btn.disabled = true;
+            lockerMsg.className = 'ath-locker-msg';
+            lockerMsg.textContent = 'در حال ارسال فرمان به کنترلر…';
+            post('/Athlete/OpenMyLocker', {})
+                .then(function (r) {
+                    lockerMsg.className = 'ath-locker-msg ' + (r && r.Success ? 'ok' : 'err');
+                    lockerMsg.textContent = (r && r.Message) || 'نتیجه‌ای دریافت نشد.';
+                    toast((r && r.Message) || 'انجام شد', !!(r && r.Success));
+                })
+                .catch(function () {
+                    lockerMsg.className = 'ath-locker-msg err';
+                    lockerMsg.textContent = 'خطا در ارتباط با سرور.';
+                })
+                .finally(function () { btn.disabled = false; });
+        });
     }
-
-    cmbRoom.onChange = function (v) { fillBoxes(v); };
-    fillBoxes(cmbRoom.value);
-
-    var lockerMsg = document.getElementById('lockerMsg');
-    document.getElementById('btnOpenLocker').addEventListener('click', function () {
-        var btn = this;
-        if (!cmbRoom.value || !cmbBox.value) { toast('رختکن و شماره‌ی کمد را انتخاب کنید', false); return; }
-        btn.disabled = true;
-        lockerMsg.className = 'ath-locker-msg';
-        lockerMsg.textContent = 'در حال ارسال فرمان به کنترلر…';
-        post('/Athlete/OpenLocker', { lockerRoomID: cmbRoom.value, boxNo: cmbBox.value })
-            .then(function (r) {
-                lockerMsg.className = 'ath-locker-msg ' + (r && r.Success ? 'ok' : 'err');
-                lockerMsg.textContent = (r && r.Message) || 'نتیجه‌ای دریافت نشد.';
-                toast((r && r.Message) || 'انجام شد', !!(r && r.Success));
-            })
-            .catch(function () {
-                lockerMsg.className = 'ath-locker-msg err';
-                lockerMsg.textContent = 'خطا در ارتباط با سرور.';
-            })
-            .finally(function () { btn.disabled = false; });
-    });
 
     /* ---- نمایش اعداد فارسی در آمار ---- */
     ['stWeek', 'stMinutes', 'stStreak', 'stSets'].forEach(function (id) {

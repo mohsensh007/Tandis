@@ -1,13 +1,14 @@
 namespace TandisWebApp.DTOs
 {
-    // ===== ورود/خروج باشگاه (ثبت حضور عضو) =====
+    // ===== ورود/خروج باشگاه — خوانده‌شده از دستگاه تردد (dbo.ACC_Traffic) =====
     public class AthleteVisitDto
     {
-        public int VisitID { get; set; }
+        public long VisitID { get; set; }
         public string VisitDate { get; set; } = string.Empty;   // شمسی
         public string EnterTime { get; set; } = string.Empty;   // HH:mm
         public string? ExitTime { get; set; }
         public string? SessionName { get; set; }
+        public short? BoxID { get; set; }                       // کمد اختصاص‌یافته توسط دستگاه
         public bool IsOpen { get; set; }
         public int? DurationMinutes { get; set; }
     }
@@ -55,6 +56,20 @@ namespace TandisWebApp.DTOs
         public List<TandisWebApp.Models.Gen_San> SansList { get; set; } = new();
         public List<MemberProgramDto> Programs { get; set; } = new();
         public List<LockerRoomOptionDto> LockerRooms { get; set; } = new();
+
+        /// <summary>✅ کمد اختصاص‌یافته به عضو در بازدید امروز (اگر نداشته باشد null)</summary>
+        public MyLockerDto? MyLocker { get; set; }
+    }
+
+    // ===== ✅ «کمد من» — فقط باز کردن کمدِ خودِ عضو (بدون انتخاب رختکن/شماره) =====
+    public class MyLockerDto
+    {
+        public short LockerRoomID { get; set; }
+        public string LockerRoomName { get; set; } = string.Empty;
+        public short BoxNo { get; set; }
+        public bool IsOnline { get; set; }
+        public bool HasController { get; set; }
+        public string Transport { get; set; } = string.Empty; // UDP / Serial
     }
 
     // ===== کمد =====

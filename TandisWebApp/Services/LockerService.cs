@@ -17,7 +17,8 @@ namespace TandisWebApp.Services
     ///   - باز کردن کمد: Output_Exe( شماره‌ی کنترلر، شماره‌ی کمد، 0 ) — دقیقاً همان فراخوانی
     ///     Traffic.exe برای دکمه‌ی «باز کردن کمد».
     ///
-    /// ⚠️ کنترلر فیزیکی فعلاً وصل نیست؛ کد کامل نوشته شده و به‌محض وصل‌شدن کنترلر قابل تست است.
+    /// ⚠️ کنترلر: کتابخانه ProcondC8.dll (همان DLL برنامه‌ی تردد باشگاه — Traffic.exe) در Libs پروژه است.
+    ///     تست ارتباط: کنترلر باید به Ack پاسخ دهد (ریشه‌یابی با ابزار Probe در Temp/lockerprobe).
     /// </summary>
     public class LockerService
     {
@@ -44,7 +45,8 @@ namespace TandisWebApp.Services
                     LockerRoomID = r.LockerRoomID,
                     LockerRoomName = r.LockerRoomName ?? $"رختکن {r.LockerRoomID}",
                     IsOnline = r.IsOnline == true,
-                    HasController = r.Version == 8 && r.ControllerID != null,
+                    // ✅ فقط وجود آدرس کنترلر مهم است؛ Version کنترلرهای جدید ۳۰ است نه ۸
+                    HasController = r.ControllerID != null && r.ControllerIndex != null,
                     Transport = string.IsNullOrWhiteSpace(r.IpAddress) ? "Serial" : "UDP",
                     Boxes = boxes
                         .Where(b => b.LockerRoomID == r.LockerRoomID)
@@ -73,9 +75,8 @@ namespace TandisWebApp.Services
             if (room.IsOnline != true)
                 return await Fail(memberID, lockerRoomID, boxNo, "این رختکن آفلاین است.");
 
-            if (room.Version != 8 || room.ControllerID == null)
-                return await Fail(memberID, lockerRoomID, boxNo,
-                    "نوع کنترلر این رختکن برای وب‌اپ پیکربندی نشده (Version=8 و ControllerID لازم است).");
+            if (room.ControllerID == null)
+                return await Fail(memberID, lockerRoomID, boxNo, "آدرس کنترلر (ControllerID) این رختکن در دیتابیس تنظیم نشده است.");
 
             if (room.ControllerIndex == null || room.ControllerIndex > 32)
                 return await Fail(memberID, lockerRoomID, boxNo, "شماره‌ی کنترلر (ControllerIndex) در دیتابیس تنظیم نشده.");

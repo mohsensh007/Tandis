@@ -164,12 +164,16 @@
     }
 
         .nav-tabs-custom .nav-item {
-            flex: 1 1 0;
+            /* ✅ اندازهٔ طبیعی خود متن + رشد یکسان:
+               قبلاً flex:1 1 0 بود و هر تب دقیقاً یک‌سوم می‌شد؛ برچبل «سوابق ثبت‌نام»
+               از این یک‌سوم بلندتر بود و آخرش بریده می‌شد (…). */
+            flex: 1 1 auto;
             min-width: 0;
         }
 
         .nav-tabs-custom .nav-link {
-            width: 100%;
+            width: auto;
+            text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -196,6 +200,21 @@
             .nav-tabs-custom .nav-link i {
                 display: none;
             }
+    }
+
+    /* ===== ✅ نام روز کنار تاریخ (جزئیات گزارش تردد) ===== */
+    .trf-day {
+        display: inline-block;
+        font-size: .72rem;
+        font-weight: 700;
+        color: #66d3e8;
+        background: rgba(102, 211, 232, .12);
+        border: 1px solid rgba(102, 211, 232, .3);
+        border-radius: 999px;
+        padding: 1px 8px;
+        margin-right: 4px;
+        white-space: nowrap;
+        text-shadow: none;
     }
 
     /* ===== ✅ آیکن‌های جزئیات: سایز مناسب داخل ردیف‌ها ===== */
@@ -296,6 +315,18 @@
         $('#calPrev').on('click', function () { calM--; if (calM < 1) { calM = 12; calY--; } renderAttCal(); });
         $('#calNext').on('click', function () { calM++; if (calM > 12) { calM = 1; calY++; } renderAttCal(); });
 
+        // ========== ✅ نام روز هفته کنار تاریخ (برای گزارش تردد) ==========
+        var weekNames = ['یکشنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
+        function dayName(dateStr) {
+            var p = String(dateStr || '').trim().split('/');
+            if (p.length !== 3) return '';
+            var jy = +p[0], jm = +p[1], jd = +p[2];
+            if (!jy || !jm || !jd) return '';
+            try {
+                var g = jalaliToGregorian(jy, jm, jd);
+                return weekNames[new Date(Date.UTC(g.gy, g.gm - 1, g.gd)).getUTCDay()];
+            } catch (e) { return ''; }
+        }
         // ========== گزارش مالی ==========
         function loadFinance() {
             apiCall('/api/Accounting/FinanceDocs', 'GET', null, function (res) {
@@ -371,9 +402,9 @@
                             '</div>' +
                             '<div class="trf-details">' +
                                 '<div class="trf-drow"><span>🗄️ شماره کمد</span><b>' + (t.boxID != null ? toFa(t.boxID) : 'بدون کمد') + '</b></div>' +
-                                '<div class="trf-drow"><span>تاریخ ورود</span><b>' + esc(t.entryDate || '-') + '</b></div>' +
+                                '<div class="trf-drow"><span>تاریخ ورود</span><b>' + esc(t.entryDate || '-') + ' <span class="trf-day">' + dayName(t.entryDate) + '</span></b></div>' +
                                 '<div class="trf-drow"><span>ساعت ورود</span><b>' + esc(t.entryTime || '-') + '</b></div>' +
-                                '<div class="trf-drow"><span>تاریخ خروج</span><b>' + esc(t.exitDate || '-') + '</b></div>' +
+                                '<div class="trf-drow"><span>تاریخ خروج</span><b>' + esc(t.exitDate || '-') + ' <span class="trf-day">' + dayName(t.exitDate) + '</span></b></div>' +
                                 '<div class="trf-drow"><span>ساعت خروج</span><b>' + esc(t.exitTime || '-') + '</b></div>' +
                                 (dur ? '<div class="trf-drow"><span>⏱️ مدت حضور</span><b>' + dur + '</b></div>' : '') +
                             '</div>' +
