@@ -26,6 +26,13 @@
       <HintPath>Libs\ProcondC8.dll</HintPath>
       <Private>true</Private>
     </Reference>
+    <!-- کتابخانه‌ی کنترلرهای نسل جدید (Version=30) — پروتکل CrpCommunications از ITPanel V2.3.6
+         نکته: نسخه‌ی اصلی فقط ۳۲ بیتی علامت خورده (32BITREQUIRED) است؛ این کپی با فلگ پاک‌شده (MSIL)
+         روی .NET 10 (x64) لود می‌شود. کد IL خالص است و تغییری در رفتار ندارد. -->
+    <Reference Include="CrpCommunications">
+      <HintPath>Libs\CrpCommunications.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

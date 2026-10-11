@@ -7,54 +7,57 @@
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
     <h4 class="mb-0">📨 مدیریت پیام‌ها</h4>
     <div class="d-flex gap-2 flex-wrap">
-        <a href="/Admin/CoachMessages" class="btn btn-outline-warning btn-sm">
+        @* ✅ نظارت پیام‌های مربی-شاگرد فعلاً حذف شده — برای برگرداندن، این کامنت را باز کنید *@
+        @*
+<a href="/Admin/CoachMessages" class="btn btn-outline-warning btn-sm">
             🕵️ نظارت پیام‌های مربی-شاگرد
         </a>
+        *@
         <a href="/Admin" class="btn btn-outline-secondary btn-sm">🔙 داشبورد</a>
     </div>
 </div>
 
 <div class="row g-3">
     <!-- ستون لیست پیام‌ها -->
+    <!-- ✅ ستون لیست پیام‌های ارسال‌شده (جایگزین اینباکس — عضو فعلاً نمی‌تواند پیامی به ادمین بفرستد) -->
     <div class="col-12 col-lg-7">
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">📨 اینباکس پیام‌ها</h5>
-                <button class="btn btn-sm btn-outline-light" id="btnRefreshInbox">
+                <h5 class="mb-0">📤 پیام‌های ارسال‌شده</h5>
+                <button class="btn btn-sm btn-outline-light" id="btnRefreshSent">
                     <i class="bi bi-arrow-repeat"></i>
                 </button>
             </div>
             <div class="card-body p-0">
-                <!-- ✅ فیلترهای اینباکس (task 4) -->
                 <div class="inbox-filters">
-                    <input type="search" class="form-control" id="txtInboxSearch"
-                           placeholder="🔍 جستجو: نام / موبایل / عنوان / متن / تاریخ" />
-                    <label class="inbox-unread">
-                        <input type="checkbox" id="chkInboxUnread" />
-                        فقط خوانده‌نشده
-                    </label>
+                    <input type="search" class="form-control" id="txtSentSearch"
+                           placeholder="🔍 جستجو: گیرنده / عنوان / متن / تاریخ" />
+                    <select class="form-select" id="selSentTarget" style="max-width:210px;">
+                        <option value="">همه گیرندگان</option>
+                        <option value="1">همه اعضا</option>
+                        <option value="2">نقش</option>
+                        <option value="3">رشته ورزشی</option>
+                        <option value="4">عضو مشخص</option>
+                    </select>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover mb-0">
                         <thead>
                             <tr>
-                                <th>عضو</th>
-                                <th>موبایل</th>
+                                <th>گیرنده</th>
                                 <th>پیام</th>
                                 <th>تاریخ</th>
-                                <th>عملیات</th>
+                                <th>وضعیت</th>
                             </tr>
                         </thead>
-                        <tbody id="tbodyInbox">
-                            <tr><td colspan="5" class="text-center py-3">در حال بارگذاری...</td></tr>
+                        <tbody id="tbodySent">
+                            <tr><td colspan="4" class="text-center py-3">در حال بارگذاری...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- ستون ارسال پیام گروهی -->
     <div class="col-12 col-lg-5">
         <div class="card">
             <div class="card-header">
@@ -203,31 +206,8 @@
     </div>
 </div>
 
-<!-- مودال پاسخ به پیام -->
-<div class="modal fade" id="replyModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">پاسخ به <span id="replyTo"></span></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="alert alert-light small" id="origBody"></div>
-                <div class="mb-3">
-                    <label class="form-label">متن پاسخ</label>
-                    <textarea class="form-control" id="txtReplyBody" rows="4"></textarea>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">انصراف</button>
-                <button type="button" class="btn btn-primary" id="btnSendReply">ارسال پاسخ</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
-    <script src="~/js/admin-messages.js?v=6"></script>
+    <script src="~/js/admin-messages.js?v=7"></script>
 }
 <style>
     /* ===== دکمه‌های تم‌رنگ: گرادیان بنفش-آبی، کوچیک و جمع‌وجور ===== */
@@ -728,5 +708,15 @@
         .rec-chips {
             max-height: 18vh;
         }
+    }
+    /* ✅ بج گیرنده در لیست پیام‌های ارسال‌شده */
+    .sent-badge {
+        background: rgba(102,211,232,.14);
+        color: #66d3e8;
+        border: 1px solid rgba(102,211,232,.35);
+        font-size: .74rem;
+        font-weight: 700;
+        border-radius: 10px;
+        padding: .3rem .6rem;
     }
 </style>

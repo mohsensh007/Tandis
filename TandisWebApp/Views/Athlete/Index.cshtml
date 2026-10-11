@@ -4,7 +4,7 @@
     Layout = "_Layout";
 }
 
-<link rel="stylesheet" href="~/css/athlete.css?v=3" />
+<link rel="stylesheet" href="~/css/athlete.css?v=4" />
 
 <!-- ===== داده‌های اولیه برای JS ===== -->
 <script id="athlete-data" type="application/json">
@@ -219,14 +219,32 @@ else
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                <canvas id="summaryChart" height="260"></canvas>
-                <div id="summaryEmpty" class="ath-empty" style="display:none;">امروز هیچ حرکتی ثبت نشده است.</div>
+        <div id="sumHero" class="sum-hero" style="display:none;">
+            <div class="sum-ring-wrap">
+                <svg viewBox="0 0 120 120" class="sum-ring" aria-hidden="true">
+                    <defs>
+                        <linearGradient id="sumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#66d3e8" />
+                            <stop offset="100%" stop-color="#764ba2" />
+                        </linearGradient>
+                    </defs>
+                    <circle class="sum-ring-bg" cx="60" cy="60" r="52" />
+                    <circle class="sum-ring-fg" cx="60" cy="60" r="52" />
+                </svg>
+                <div class="sum-ring-center">
+                    <div class="sum-total"><span id="sumTotalNum">۰</span></div>
+                    <div class="sum-total-unit">دقیقه تمرین</div>
+                    <div class="sum-total-sub">مجموع امروز</div>
+                </div>
             </div>
+            <div class="sum-count"><i class="bi bi-trophy-fill"></i> <span id="sumMoveCount">۰</span> حرکت با موفقیت انجام شد</div>
+        </div>
+        <div id="sumList" class="sum-list"></div>
+        <div id="summaryEmpty" class="ath-empty" style="display:none;">امروز هیچ حرکتی ثبت نشده است.</div>            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="~/js/athlete.js?v=3"></script>
+    <script src="~/js/athlete.js?v=5"></script>
 }

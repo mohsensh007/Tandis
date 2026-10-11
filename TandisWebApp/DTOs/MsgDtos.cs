@@ -16,6 +16,19 @@ namespace TandisWebApp.DTOs
         public bool IsSeen { get; set; }
     }
 
+    /// <summary>✅ ردیف پیام ارسال‌شده از طرف ادمین (لیست «پیام‌های ارسال‌شده» صفحه پیام‌ها)</summary>
+    public class AdminSentRowDto
+    {
+        public long MessageID { get; set; }
+        public byte TargetType { get; set; }          // 1=همه اعضا، 2=نقش، 3=رشته، 4=عضو مشخص
+        public string TargetLabel { get; set; } = string.Empty;
+        public string? Title { get; set; }
+        public string Body { get; set; } = string.Empty;
+        public string? CreationDate { get; set; }
+        public string? CreationTime { get; set; }
+        public bool IsSeen { get; set; }              // فقط برای پیام «عضو مشخص» معنا دارد
+    }
+
     public class MemberMessageRowDto
     {
         public long MessageID { get; set; }

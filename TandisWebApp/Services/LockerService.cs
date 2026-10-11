@@ -1,24 +1,31 @@
+using System.Net;
+using System.Reflection;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TandisWebApp.Data;
 using TandisWebApp.DTOs;
+using CrpCommunications;
+using CrpCommunications.Commands;
+using CrpCommunications.ConnectionsStatus;
 
 namespace TandisWebApp.Services
 {
     /// <summary>
     /// سرویس باز کردن کمد رختکن — ارتباط مستقیم با کنترلر کمد.
     ///
-    /// پروتکل از روی برنامه‌ی اصلی باشگاه (Traffic.exe در پوشه‌ی 14050311) استخراج شده:
-    ///   - اطلاعات کنترلر در جدول Gen_LlockerRoom است:
-    ///       ControllerIndex , ControllerID , IpAddress , NetPort , CntrollerComPort , Version , IsOnline
-    ///   - کتابخانه‌ی مورد استفاده‌ی Traffic: ProcondC8.dll (پروتکل C_pc_sg ، همان چیزی که
-    ///     SA_DLL هم پیاده می‌کند). ترافیک اصلی: اگر IpAddress پر باشد اتصال شبکه‌ای UDP،
-    ///     وگرنه پورت سریال ( baud = "3" همان‌طور که در Traffic.exe هست ).
-    ///   - باز کردن کمد: Output_Exe( شماره‌ی کنترلر، شماره‌ی کمد، 0 ) — دقیقاً همان فراخوانی
-    ///     Traffic.exe برای دکمه‌ی «باز کردن کمد».
+    /// دو نسل کنترلر داریم (دقیقاً مطابق منطق Traffic.exe):
+    ///   • Version = ۸/۱۰ (قدیمی): پروتکل C_pc_sg با کتابخانه‌ی ProcondC8.dll
+    ///       Init_Ethernet/Init_Serial → Ack → Output_Exe
+    ///   • Version = ۳۰ (جدید): پروتکل CrpCommunications با کتابخانه‌ی CrpCommunications.dll
+    ///       (همان DLL که ITPanel V2.3.6 و Traffic استفاده می‌کنند)
+    ///       GetKey/AuthenticateKey → OpenUdp(23, NetPort) → ControllerInstantiation
+    ///       → AreYouThere → OpenLock(lock=BoxNo, delay=0, duration=DelayTime, justOpen=true)
     ///
-    /// ⚠️ کنترلر: کتابخانه ProcondC8.dll (همان DLL برنامه‌ی تردد باشگاه — Traffic.exe) در Libs پروژه است.
-    ///     تست ارتباط: کنترلر باید به Ack پاسخ دهد (ریشه‌یابی با ابزار Probe در Temp/lockerprobe).
+    /// اطلاعات کنترلر در جدول Gen_LlockerRoom است:
+    ///   ControllerIndex , ControllerID , IpAddress , NetPort , ServerIP , Version , IsOnline
+    ///
+    /// ⚠️ کتابخانه‌ها در Libs پروژه‌اند. نسخه‌ی CrpCommunications از Tools/ITPanel/V2.3.6 آمده؛
+    ///     فلگ 32BITREQUIRED آن پاک شده تا روی .NET 10 (x64) لود شود (کد IL خالص است).
     /// </summary>
     public class LockerService
     {
@@ -91,7 +98,8 @@ namespace TandisWebApp.Services
             await _commLock.WaitAsync();
             try
             {
-                result = await Task.Run(() => SendCommand(room, boxNo));
+                int duration = box.DelayTime ?? 15; // مدت باز ماندن کمد (ثانیه) — مثل DelayTime در Traffic
+                result = await Task.Run(() => SendCommand(room, boxNo, duration));
             }
             finally
             {
@@ -106,8 +114,13 @@ namespace TandisWebApp.Services
         }
 
         /// <summary>هسته‌ی ارتباط با کنترلر (دقیقاً مطابق منطق Traffic.exe)</summary>
-        private LockerOpenResultDto SendCommand(Models.Gen_LockerRoom room, short boxNo)
+        private LockerOpenResultDto SendCommand(Models.Gen_LockerRoom room, short boxNo, int duration)
         {
+            // کنترلر نسل جدید (Version=30) → پروتکل CrpCommunications (ITPanel V2.3.6 / Traffic)
+            if (room.Version == 30 && !string.IsNullOrWhiteSpace(room.IpAddress))
+                return SendCommandV30(room, boxNo, duration);
+
+            // ---------- کنترلر قدیمی (Version 8/10) → پروتکل C_pc_sg (ProcondC8) ----------
             var comm = new ProcondC8.Comm();
             int idx = room.ControllerIndex!.Value;
             byte addr = (byte)(room.ControllerID ?? 0);
@@ -156,6 +169,116 @@ namespace TandisWebApp.Services
                 Message = ok ? "فرمان ارسال شد." : "کنترلر فرمان را نپذیرفت.",
                 Detail = string.IsNullOrEmpty(str) ? r.ToString() : $"{r} / {str}"
             };
+        }
+
+        // ============================================================
+        //  کنترلر نسل جدید (Version=30) — پروتکل CrpCommunications
+        //  ترتیب دقیقاً مطابق Traffic.exe:
+        //    GetKey → AuthenticateKey → OpenUdp(23, NetPort) → Protocol=UDP
+        //    → ControllerInstantiation → AreYouThere → OpenLock
+        // ============================================================
+
+        // وضعیت ارتباط (کتابخانه state استاتیک دارد — مثل Traffic.exe کل برنامه یک نمونه دارد)
+        private static readonly ItTandisLockerManagement _crpLocker = new ItTandisLockerManagement();
+        private static readonly BasicCommands _crpBasic = new BasicCommands();
+        private static readonly Connections _crpConn = new Connections();
+        private static bool _crpAuthed;
+        private static bool _crpUdpOpened;
+
+        /// <summary>
+        /// دروازه‌ی احراز هویت داخلی کتابخانه: GetKey یک کلید تصادفی می‌سازد و نتیجه‌ی مورد انتظار را
+        /// در تنها فیلد استاتیک int کلاس ذخیره می‌کند؛ AuthenticateKey باید همان مقدار را بگیرد.
+        /// (Traffic.exe همین کار را با فرمول (key ^ ثابت) / ثابت انجام می‌دهد، اما ثابت‌ها بین
+        /// نسخه‌های کتابخانه فرق دارد — بنابراین مقدار ذخیره‌شده را مستقیم می‌خوانیم.)
+        /// </summary>
+        private static bool EnsureCrpAuthed(out string? err)
+        {
+            err = null;
+            if (_crpAuthed) return true;
+            try
+            {
+                _crpLocker.GetKey();
+                FieldInfo? keyField = typeof(ItTandisLockerManagement)
+                    .GetFields(BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static)
+                    .FirstOrDefault(f => f.FieldType == typeof(int));
+                if (keyField == null)
+                {
+                    err = "ساختار داخلی کتابخانه‌ی CrpCommunications تغییر کرده است.";
+                    return false;
+                }
+                int expected = (int)keyField.GetValue(null)!;
+                _crpAuthed = _crpLocker.AuthenticateKey(expected);
+                if (!_crpAuthed) err = "احراز هویت کلید کنترلر (AuthenticateKey) ناموفق بود.";
+                return _crpAuthed;
+            }
+            catch (Exception ex)
+            {
+                err = "خطا در احراز هویت کنترلر: " + ex.Message;
+                return false;
+            }
+        }
+
+        /// <summary>هسته‌ی ارتباط با کنترلر نسل ۳۰ (UDP روی NetPort، پورت محلی ۲۳ مثل Traffic)</summary>
+        private LockerOpenResultDto SendCommandV30(Models.Gen_LockerRoom room, short boxNo, int duration)
+        {
+            if (room.NetPort == null || room.NetPort == 0)
+                return new LockerOpenResultDto { Success = false, Message = "پورت شبکه‌ی کنترلر (NetPort) در دیتابیس خالی است." };
+            if (room.ControllerID == null)
+                return new LockerOpenResultDto { Success = false, Message = "آدرس کنترلر (ControllerID) در دیتابیس تنظیم نشده." };
+
+            if (!EnsureCrpAuthed(out var authErr))
+                return new LockerOpenResultDto { Success = false, Message = authErr };
+
+            byte idx = (byte)room.ControllerIndex!.Value;
+            byte cid = (byte)room.ControllerID.Value;
+            int netPort = room.NetPort.Value;
+
+            try
+            {
+                // 1) سوکت UDP (یک بار برای کل برنامه — مثل Traffic: پورت محلی 23)
+                if (!_crpUdpOpened)
+                {
+                    try { _crpBasic.OpenUdp(23, netPort); }
+                    catch { _crpBasic.OpenUdp(0, netPort); } // اگر پورت 23 اشغال بود → پورت دلخواه
+                    _crpConn.Protocol = Protocols.UDP;
+                    _crpConn.IsOpen = IsOpen.Open;
+                    _crpUdpOpened = true;
+                }
+
+                // 2) معرفی کنترلر (آدرس + پورت)
+                IPAddress ip = IPAddress.Parse(room.IpAddress!);
+                EndPoint ep = new IPEndPoint(ip, netPort);
+                _crpBasic.ControllerInstantiation(idx, cid, ip, ep);
+
+                // 3) تست ارتباط (مثل دکمه‌ی تست ITPanel/Traffic)
+                if (!_crpBasic.AreYouThere(cid, Protocols.UDP, out byte devId, idx))
+                    return new LockerOpenResultDto
+                    {
+                        Success = false,
+                        Message = "کنترلر پاسخ نمی‌دهد (خاموش یا قطع اتصال).",
+                        Detail = "AreYouThere=false"
+                    };
+                _crpConn.ConnectedDeviceID = devId;
+
+                // 4) فرمان باز کردن کمد (justOpen=true — همان دکمه‌ی باز کردن Traffic)
+                byte dur = (byte)Math.Clamp(duration <= 0 ? 15 : duration, 1, 255);
+                byte r = _crpLocker.OpenLock((byte)boxNo, 0, dur, true, false, Protocols.UDP, idx);
+                bool ok = r == 1; // 1 = پاسخ DONE از کنترلر
+                return new LockerOpenResultDto
+                {
+                    Success = ok,
+                    Message = ok ? "فرمان ارسال شد." : "کنترلر فرمان را نپذیرفت.",
+                    Detail = "OpenLock=" + r
+                };
+            }
+            catch (Exception ex)
+            {
+                return new LockerOpenResultDto
+                {
+                    Success = false,
+                    Message = "خطا در ارتباط با کنترلر نسل ۳۰: " + ex.Message
+                };
+            }
         }
 
         private async Task<LockerOpenResultDto> Fail(int memberID, short roomID, short boxNo, string msg)

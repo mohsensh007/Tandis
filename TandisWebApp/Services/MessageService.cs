@@ -180,6 +180,74 @@ namespace TandisWebApp.Services
                 m.SenderMemberID != null &&
                 _db.Gen_Members.Any(gm => gm.MemberID == m.SenderMemberID && gm.ShiftID == shiftID));
 
+        /// <summary>✅ لیست پیام‌های ارسال‌شده توسط ادمین (جدیدترین اول) — جایگزین اینباکس</summary>
+        public async Task<List<AdminSentRowDto>> GetAdminSentAsync()
+        {
+            var rows = await _db.MsgMessages.AsNoTracking()
+                .Where(m => m.SenderUserID != null && m.IsActive)
+                .OrderByDescending(m => m.CreationDateTime)
+                .Select(m => new
+                {
+                    m.MessageID,
+                    m.TargetType,
+                    m.TargetRoleID,
+                    m.TargetSportCatID,
+                    m.TargetMemberID,
+                    m.Title,
+                    m.Body,
+                    m.CreationDate,
+                    m.CreationTime,
+                    m.IsSeen
+                })
+                .ToListAsync();
+
+            // ===== resolve نام گیرندگان (نقش / رشته / عضو) =====
+            var roleIDs = rows.Where(r => r.TargetType == 2 && r.TargetRoleID != null)
+                .Select(r => r.TargetRoleID!.Value).Distinct().ToList();
+            var roles = roleIDs.Count == 0
+                ? new Dictionary<int, string>()
+                : await _db.Set<Gen_PersonRole>().AsNoTracking()
+                    .Where(r => roleIDs.Contains(r.RoleID))
+                    .ToDictionaryAsync(r => r.RoleID, r => r.RoleDesc ?? "");
+
+            var sportIDs = rows.Where(r => r.TargetType == 3 && r.TargetSportCatID != null)
+                .Select(r => r.TargetSportCatID!.Value).Distinct().ToList();
+            var sports = sportIDs.Count == 0
+                ? new Dictionary<int, string>()
+                : await _db.Set<Gen_Sport_Category>().AsNoTracking()
+                    .Where(s => sportIDs.Contains(s.SportCatID))
+                    .ToDictionaryAsync(s => s.SportCatID, s => s.SportName ?? "");
+
+            var memberIDs = rows.Where(r => r.TargetType == 4 && r.TargetMemberID != null)
+                .Select(r => r.TargetMemberID!.Value).Distinct().ToList();
+            var members = memberIDs.Count == 0
+                ? new Dictionary<int, string>()
+                : await (from gm in _db.Gen_Members.AsNoTracking()
+                         join gp in _db.Gen_Persons.AsNoTracking() on gm.PersonID equals gp.PersonID
+                         where memberIDs.Contains(gm.MemberID)
+                         select new { gm.MemberID, gp.FullName })
+                    .ToDictionaryAsync(x => x.MemberID, x => x.FullName ?? "");
+
+            return rows.Select(r => new AdminSentRowDto
+            {
+                MessageID = r.MessageID,
+                TargetType = r.TargetType,
+                TargetLabel =
+                    r.TargetType == 1 ? "همه اعضا" :
+                    r.TargetType == 2 ? (r.TargetRoleID != null && roles.TryGetValue(r.TargetRoleID.Value, out var rn)
+                        ? "نقش: " + rn : "نقش") :
+                    r.TargetType == 3 ? (r.TargetSportCatID != null && sports.TryGetValue(r.TargetSportCatID.Value, out var sn)
+                        ? "رشته: " + sn : "رشته") :
+                    r.TargetType == 4 ? (r.TargetMemberID != null && members.TryGetValue(r.TargetMemberID.Value, out var mn)
+                        ? mn : "عضو") : "-",
+                Title = r.Title,
+                Body = r.Body,
+                CreationDate = r.CreationDate,
+                CreationTime = r.CreationTime,
+                IsSeen = r.IsSeen
+            }).ToList();
+        }
+
         public async Task MarkSeenAsync(long messageID)
         {
             var m = await _db.MsgMessages.FindAsync(messageID);

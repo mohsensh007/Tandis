@@ -14,7 +14,8 @@
         { sel: '#repList',      item: '.rep-card', perPage: 10, search: '#searchInput' },
         { sel: '#trafficRows',  item: '.trf-card', perPage: 10, search: null },
         { sel: '#registerRows', item: '.trf-card', perPage: 10, search: null },
-        { sel: '#financeRows',  item: 'tr',        perPage: 15, search: null }
+        { sel: '#financeRows',  item: 'tr',        perPage: 15, search: null },
+        { sel: '#tbodySent',  item: 'tr',        perPage: 15, search: '#txtSentSearch' }
     ];
 
     var state = {};
@@ -207,16 +208,20 @@
         /* جستجوی صفحات گزارش: بعد از هندلر خود صفحه اجرا می‌شود
            (phase target صفحه، bubble اینجا) پس همیشه حرف آخر را
            صفحه‌بندی می‌زند و نتیجهٔ نهایی درست می‌ماند */
-        document.addEventListener('keyup', function (e) {
+        /* ✅ جستجو: برای هر inputی که با cfg.search یکی باشد اعمال می‌شود
+           (قبلاً فقط #searchInput بود؛ حالا #txtSentSearch هم کار می‌کند) */
+        function onSearchInput(e) {
             var t = e.target;
-            if (!t || t.id !== 'searchInput') return;
+            if (!t || !t.id) return;
             CFG.forEach(function (cfg) {
-                if (cfg.search && document.querySelector(cfg.sel)) {
+                if (cfg.search === '#' + t.id && document.querySelector(cfg.sel)) {
                     st(cfg).page = 1;
                     apply(cfg, false);
                 }
             });
-        });
+        }
+        document.addEventListener('input', onSearchInput);
+        document.addEventListener('keyup', onSearchInput);
     }
 
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);

@@ -264,6 +264,13 @@ namespace TandisWebApp.Controllers
         public async Task<IActionResult> MessagesInboxApi()
             => Ok(new { success = true, data = await _messages.GetAdminInboxAsync(AdminShiftID) });
 
+        /// <summary>✅ لیست پیام‌های ارسال‌شده توسط ادمین — جایگزین اینباکس (چون عضو فعلاً نمی‌تواند پیامی به ادمین بفرستد)</summary>
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/Messages/Sent")]
+        public async Task<IActionResult> MessagesSentApi()
+            => Ok(new { success = true, data = await _messages.GetAdminSentAsync() });
+
         [AdminAuthorize]
         [HttpGet]
         [Route("api/Admin/Messages/UnreadCount")]

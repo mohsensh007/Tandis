@@ -1,110 +1,65 @@
-var replyToMsgID = 0;
-
 // ============================================================
-//  اینباکس مدیریت (با فیلتر جستجو + فقط خوانده‌نشده)
+//  📤 پیام‌های ارسال‌شده توسط ادمین (جایگزین اینباکس)
+//  ✅ چون عضو فعلاً نمی‌تواند پیامی به ادمین بفرستد، اینباکس حذف شد.
+//     جستجوی متنی و صفحه‌بندی لیست بلند با report-pager.js (#tbodySent).
 // ============================================================
-var inboxRows = [];
-var inboxFilter = { q: '', unreadOnly: false };
+var sentRows = [];
+var sentTarget = '';
 
-function renderInbox() {
-    var rows = inboxRows;
-    var q = (inboxFilter.q || '').trim().toLowerCase();
-    if (q) {
-        rows = rows.filter(function (m) {
-            return (m.senderName || '').toLowerCase().indexOf(q) !== -1
-                || (m.memberCode || '').indexOf(q) !== -1
-                || (m.mobile || '').indexOf(q) !== -1
-                || (m.title || '').toLowerCase().indexOf(q) !== -1
-                || (m.body || '').toLowerCase().indexOf(q) !== -1
-                || (m.creationDate || '').indexOf(q) !== -1;
-        });
-    }
-    if (inboxFilter.unreadOnly) {
-        rows = rows.filter(function (m) { return !m.isSeen; });
+function renderSent() {
+    var rows = sentRows;
+    if (sentTarget !== '') {
+        rows = rows.filter(function (m) { return String(m.targetType) === sentTarget; });
     }
 
-    var tb = $('#tbodyInbox');
-
+    var tb = $('#tbodySent');
     if (!rows.length) {
-        var anyFilter = inboxFilter.unreadOnly || (inboxFilter.q || '').trim().length > 0;
-        tb.html('<tr><td colspan="5" class="text-center py-3">' +
-            (anyFilter ? 'پیامی مطابق فیلتر پیدا نشد' : 'هیچ پیامی وجود ندارد') + '</td></tr>');
+        tb.html('<tr><td colspan="4" class="text-center py-3">پیام ارسال‌شده‌ای وجود ندارد</td></tr>');
         return;
     }
 
     var html = '';
     rows.forEach(function (m) {
-        html += '<tr class="' + (m.isSeen ? '' : 'table-light fw-bold') + '">' +
-            '<td>' + esc(m.senderName) + '<br><small class="text-muted">' + esc(m.memberCode || '') + '</small></td>' +
-            '<td>' + esc(m.mobile || '-') + '</td>' +
+        var status;
+        if (m.targetType === 4) {
+            status = m.isSeen
+                ? '<span class="badge bg-success">خوانده شد</span>'
+                : '<span class="badge bg-warning">خوانده نشده</span>';
+        } else {
+            status = '<span class="text-muted small">&mdash;</span>';
+        }
+
+        html += '<tr>' +
+            '<td class="text-nowrap"><span class="badge sent-badge">' + esc(m.targetLabel || '-') + '</span></td>' +
             '<td>' +
-            '<a href="/Admin/Messages/View/' + m.messageID + '" class="link-light text-decoration-none d-block">' +
             (m.title
                 ? '<div class="fw-bold mb-1">' + esc(m.title) + '</div>'
                 : '<div class="fw-bold mb-1 text-muted">(بدون عنوان)</div>') +
-            '<div class="text-muted small text-break">' +
-            esc(m.body.substring(0, 60)) + (m.body.length > 60 ? '…' : '') +
+            '<div class="text-muted small text-break" title="' + esc(m.body || '') + '">' +
+            esc((m.body || '').substring(0, 80)) + ((m.body || '').length > 80 ? '...' : '') +
             '</div>' +
-            '<div class="small mt-1" style="color:#7ab8ff;">🔍 مشاهده کامل پیام</div>' +
-            '</a>' +
             '</td>' +
             '<td class="text-nowrap small">' + esc(m.creationDate || '') + '<br>' + esc(m.creationTime || '') + '</td>' +
-            '<td>' +
-            '<button class="btn btn-sm btn-primary" onclick="openReply(' + m.messageID + ', \'' + esc(m.senderName) + '\', \'' + esc(m.body.replace(/'/g, "\\'")).substring(0, 100) + '\')"><i class="bi bi-reply"></i></button>' +
-            (!m.isSeen ? ' <button class="btn btn-sm btn-outline-success" onclick="markSeen(' + m.messageID + ')"><i class="bi bi-check2"></i></button>' : '') +
-            '</td>' +
+            '<td>' + status + '</td>' +
             '</tr>';
     });
     tb.html(html);
 }
 
-function loadInbox() {
-    apiCall('/api/Admin/Messages/Inbox', 'GET', null, function (res) {
+function loadSent() {
+    apiCall('/api/Admin/Messages/Sent', 'GET', null, function (res) {
         if (!res.success) return;
-        inboxRows = res.data || [];
-        renderInbox();
+        sentRows = res.data || [];
+        renderSent();
     });
 }
 
-// ✅ فیلترهای اینباکس (task 4)
-$('#txtInboxSearch').on('input', debounce(function () {
-    inboxFilter.q = $(this).val() || '';
-    renderInbox();
-}, 250));
-
-$('#chkInboxUnread').on('change', function () {
-    inboxFilter.unreadOnly = !!this.checked;
-    renderInbox();
+// فیلتر نوع گیرنده (جستجوی متنی با report-pager.js انجام می‌شود)
+$('#selSentTarget').on('change', function () {
+    sentTarget = this.value || '';
+    renderSent();
 });
 
-function markSeen(id) {
-    apiCall('/api/Admin/Messages/MarkSeen', 'POST', id, function () { loadInbox(); });
-}
-
-function openReply(id, name, body) {
-    replyToMsgID = id;
-    $('#replyTo').text(name);
-    $('#origBody').text(body);
-    $('#txtReplyBody').val('');
-    new bootstrap.Modal('#replyModal').show();
-}
-
-$('#btnSendReply').on('click', function () {
-    var body = $('#txtReplyBody').val().trim();
-    if (!body) return showToast('متن پاسخ خالی است', 'warning');
-    apiCall('/api/Admin/Messages/Reply', 'POST', { replyToMessageID: replyToMsgID, body: body }, function (res) {
-        if (res.success) {
-            showToast('پاسخ ارسال شد', 'success');
-            bootstrap.Modal.getInstance(document.getElementById('replyModal')).hide();
-            loadInbox();
-        } else {
-            showToast(res.message || 'خطا', 'error');
-        }
-    });
-});
-
-// ============================================================
-//  انتخاب گیرندگان (مودال روی همان صفحه پیام‌ها)
 // ============================================================
 var rec = {
     mode: 'all',      // all | role | sport
@@ -570,12 +525,12 @@ $('#btnSendBroadcast').on('click', function () {
 // ============================================================
 //  راه‌اندازی
 // ============================================================
-$('#btnRefreshInbox').on('click', loadInbox);
+$('#btnRefreshSent').on('click', loadSent);
 
 $(function () {
-    loadInbox();
+    loadSent();
     loadRoles();
     loadSports();
     updateScopeUI();
-    setInterval(loadInbox, 30000);
+    setInterval(loadSent, 60000);
 });

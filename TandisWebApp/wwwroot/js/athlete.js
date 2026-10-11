@@ -353,30 +353,94 @@
     /* ============================================================
        ۴) ✅ خلاصه تمرین امروز — fetch زنده + نمودار دایره‌ای
        ============================================================ */
-    var summaryChart = null;
-    function renderSummaryChart(data) {
-        var canvas = document.getElementById('summaryChart'), empty = document.getElementById('summaryEmpty');
-        if (!canvas) return;
-        if (!data || !data.length) { canvas.style.display = 'none'; if (empty) empty.style.display = 'block'; return; }
-        canvas.style.display = 'block'; if (empty) empty.style.display = 'none';
-        if (summaryChart) summaryChart.destroy();
-        summaryChart = new Chart(canvas.getContext('2d'), {
-            type: 'doughnut',
-            data: {
-                labels: data.map(function (x) { return x.name; }),
-                datasets: [{
-                    data: data.map(function (x) { return x.minutes; }),
-                    backgroundColor: ['#667eea', '#764ba2', '#66d3e8', '#38d9a9', '#ffa94d', '#ff6b81', '#8ab6ff', '#2bbfa0'],
-                    borderColor: 'rgba(0,0,0,.35)', borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'bottom', rtl: true, labels: { color: '#dce9ff' } },
-                    tooltip: { callbacks: { label: function (c) { return ' ' + c.label + ': ' + fa(c.parsed) + ' دقیقه'; } } }
-                }
-            }
+    /* ---- ✅ خلاصه تمرین: حلقه‌ی مجموع + بندهای انیمیشن‌دار هر حرکت ---- */
+    var SUM_COLORS = [
+        ['#66d3e8', '#3bc9db'], ['#667eea', '#764ba2'], ['#38d9a9', '#2bbfa0'],
+        ['#ffa94d', '#ff922b'], ['#ff6b81', '#fa5252'], ['#8ab6ff', '#5c7cfa'],
+        ['#f783ac', '#e64980'], ['#99e9f2', '#3bc9db']
+    ];
+
+    function sumCountUp(el, target, ms) {
+        if (!el) return;
+        var start = null, done = false;
+        function finalText() {
+            return fa(target % 1 ? Number(target).toFixed(1) : Math.round(target));
+        }
+        function finish() {
+            if (done) return;
+            done = true;
+            el.textContent = finalText();
+        }
+        function step(t) {
+            if (done) return;
+            if (start === null) start = t;
+            var p = Math.min(1, (t - start) / ms);
+            var eased = 1 - Math.pow(1 - p, 3);
+            var val = target * eased;
+            el.textContent = fa(target % 1 ? val.toFixed(1) : Math.round(val));
+            if (p < 1) requestAnimationFrame(step);
+            else finish();
+        }
+        requestAnimationFrame(step);
+        // ⏱ نگهبان: اگر rAF اجرا نشد (تب پس‌زمینه / مرورگر کم‌مصرف) عدد نهایی ست می‌شود
+        setTimeout(finish, ms + 150);
+    }
+
+    function renderSummary(data) {
+        var hero = document.getElementById('sumHero'),
+            list = document.getElementById('sumList'),
+            empty = document.getElementById('summaryEmpty');
+        if (!list) return;
+        list.innerHTML = '';
+        if (!data || !data.length) {
+            if (hero) hero.style.display = 'none';
+            if (empty) empty.style.display = 'block';
+            return;
+        }
+        if (hero) hero.style.display = '';
+        if (empty) empty.style.display = 'none';
+
+        var total = 0;
+        data.forEach(function (x) { total += Number(x.minutes) || 0; });
+
+        // حلقه‌ی مجموع (انیمیشن کشیده‌شدن)
+        var ring = document.querySelector('.sum-ring-fg');
+        if (ring) {
+            var C = 2 * Math.PI * 52;
+            ring.style.transition = 'none';
+            ring.style.strokeDasharray = C;
+            ring.style.strokeDashoffset = C;
+            void ring.getBoundingClientRect();
+            ring.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)';
+            ring.style.strokeDashoffset = '0';
+        }
+        sumCountUp(document.getElementById('sumTotalNum'), Math.round(total), 1200);
+        sumCountUp(document.getElementById('sumMoveCount'), data.length, 900);
+
+        data.forEach(function (x, i) {
+            var mins = Number(x.minutes) || 0;
+            var pct = total > 0 ? (mins / total) * 100 : 0;
+            var c = SUM_COLORS[i % SUM_COLORS.length];
+            var row = document.createElement('div');
+            row.className = 'sum-row';
+            row.style.setProperty('--d', (0.12 + i * 0.08) + 's');
+            row.style.setProperty('--c1', c[0]);
+            row.style.setProperty('--c2', c[1]);
+            row.innerHTML =
+                '<div class="sum-row-head">' +
+                '  <span class="sum-rank">' + fa(i + 1) + '</span>' +
+                '  <span class="sum-name"></span>' +
+                '  <span class="sum-min"><b class="sum-min-val">۰</b> دقیقه</span>' +
+                '</div>' +
+                '<div class="sum-bar"><i></i></div>' +
+                '<div class="sum-pct">' + fa(Math.round(pct)) + '٪ از کل تمرین امروز</div>';
+            row.querySelector('.sum-name').textContent = x.name || '—';
+            list.appendChild(row);
+
+            var bar = row.querySelector('.sum-bar i');
+            var target = Math.max(5, pct);
+            setTimeout(function () { bar.style.width = target + '%'; }, 80);
+            sumCountUp(row.querySelector('.sum-min-val'), mins, 1000);
         });
     }
     function openSummary() {
@@ -385,7 +449,7 @@
         fetch('/Athlete/Summary', { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
             .then(function (r) { return r.json(); })
             .then(function (res) {
-                renderSummaryChart((res && res.summary) || []);
+                renderSummary((res && res.summary) || []);
                 bootstrap.Modal.getOrCreateInstance(modalEl).show();
             })
             .catch(function () { toast('خطا در دریافت خلاصه تمرین', false); });
