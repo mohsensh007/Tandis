@@ -807,3 +807,127 @@
     color: #8a93a6;
     margin-top: 6px;
 }
+/* ============================================================
+   ✅ اصلاح چیدمان ریسپانسیو برای پنل ورزشکار
+   ============================================================ */
+
+/* wrapper برای محدود کردن عرض کمبو باکس */
+.acmb-wrapper {
+    width: 100%;
+    max-width: 100%; /* جلوگیری از زدن بیرون کادر */
+    overflow: hidden;
+}
+
+/* استایل اصلی کمبو باکس سفارشی */
+.acmb {
+    position: relative;
+    width: 100%;
+}
+
+.acmb-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap; /* جلوگیری از شکستن خط */
+    overflow: hidden; /* مخفی کردن اضافی */
+    text-overflow: ellipsis; /* نمایش سه نقطه (...) */
+}
+
+    .acmb-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(102, 211, 232, 0.5);
+    }
+
+/* مقدار انتخاب شده داخل دکمه */
+.acmb-val {
+    flex-grow: 1;
+    text-align: right;
+    padding-left: 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* آیکون فلش */
+.acmb-btn i {
+    flex-shrink: 0;
+    opacity: 0.7;
+}
+
+/* لیست کشویی */
+.acmb-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    display: none;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.acmb.open .acmb-menu {
+    display: block;
+}
+
+/* آیتم‌های لیست */
+.acmb-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+    .acmb-item:last-child {
+        border-bottom: none;
+    }
+
+    .acmb-item:hover {
+        background: rgba(102, 211, 232, 0.1);
+    }
+
+    .acmb-item.sel {
+        background: rgba(102, 211, 232, 0.2);
+        color: #66d3e8;
+        font-weight: bold;
+    }
+
+/* جستجو */
+.acmb-search {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 6px;
+    color: #fff;
+    outline: none;
+}
+
+/* ریسپانسیو موبایل: فونت کمی کوچکتر */
+@media (max-width: 768px) {
+    .acmb-btn {
+        font-size: 0.85rem;
+        padding: 6px 10px;
+    }
+
+    .ath-card-title {
+        font-size: 1.1rem;
+    }
+}

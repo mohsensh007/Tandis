@@ -9,11 +9,6 @@ namespace TandisWebApp.Services
     /// <summary>
     /// سرویس «ورزشکاران»: وضعیت تردد + دفترچه تمرین + لاگ کمد + خلاصه امروز.
     /// ✅ کاملاً با LINQ (EF Core) — بدون هیچ SQL خام.
-    /// ✅ هیچ جدولی نمی‌سازد؛ همه جدول‌ها باید از قبل در دیتابیس باشند:
-    ///    - تردد:             dbo.ACC_Traffic        (فقط دستگاه می‌نویسد → اینجا فقط خواندنی)
-    ///    - دفترچه تمرین:     dbo.ACC_AthleteSetLog  (Entity جدید بالا)
-    ///    - نام حرکات:        dbo.Gen_PrgmItem
-    ///    - لاگ باز کردن کمد: dbo.BoxLogOpenTb + dbo.Gen_Box
     /// </summary>
     public class AthleteService
     {
@@ -33,7 +28,7 @@ namespace TandisWebApp.Services
         /// <summary>بازدیدِ امروز عضو از داده‌ی واقعی دستگاه تردد</summary>
         public async Task<AthleteVisitDto?> GetTodayVisitAsync(int memberID)
         {
-            var today = _helper.GetToday();
+            var today = _helper.GetToday(); // فرمت شمسی: 1405/07/18
             var list = await GetVisitsAsync(memberID, 30);
             return list.FirstOrDefault(v => NormDate(v.VisitDate) == today);
         }
@@ -42,7 +37,6 @@ namespace TandisWebApp.Services
         public async Task<List<AthleteVisitDto>> GetVisitsAsync(int memberID, int take = 10)
             => await QueryTrafficAsync(memberID, take);
 
-        /// <summary>ترددهای واقعی عضو از جدول اصلی باشگاه (LINQ)</summary>
         private async Task<List<AthleteVisitDto>> QueryTrafficAsync(int memberID, int take)
         {
             var t = Math.Clamp(take, 1, 200);
@@ -54,25 +48,35 @@ namespace TandisWebApp.Services
                 .Select(x => new TrafficRow
                 {
                     VisitID = x.TrafficID,
-                    VisitDate = x.EntryDate,
-                    EnterTime = x.EntryTime,
-                    ExitTime = x.ExitTime,
+                    VisitDate = x.EntryDate,      // رشته شمسی
+                    EnterTime = x.EntryTime,      // رشته HH:mm:ss
+                    ExitTime = x.ExitTime,        // رشته HH:mm:ss یا NULL
                     SessionName = x.EntryDesc,
-                    BoxID = x.BoxID ?? 0
+                    BoxID = x.BoxID ?? 0          // short? -> short (اگر null بود 0)
                 })
                 .ToListAsync();
 
-            var now = DateTime.Now.TimeOfDay;
+            // ⏰ ساعت فعلی سیستم (برای محاسبه مدت حضورِ باز)
+            var nowTimeString = _helper.GetThisTime(); // فرض: "17:30:00"
+
             return rows.Select(r =>
             {
-                var t1 = ParseTime(r.EnterTime);
                 int? mins = null;
-                if (t1 != null)
+
+                // ✅ محاسبه مدت زمان بر اساس تفریق رشته‌های ساعت (بدون تبدیل تاریخ)
+                if (!string.IsNullOrWhiteSpace(r.EnterTime))
                 {
-                    var end = ParseTime(r.ExitTime) ?? now;
-                    var diff = end - t1.Value;
-                    if (diff >= TimeSpan.Zero) mins = (int)Math.Round(diff.TotalMinutes);
+                    var startSec = TimeToSeconds(r.EnterTime);
+                    var endSec = !string.IsNullOrWhiteSpace(r.ExitTime)
+                        ? TimeToSeconds(r.ExitTime)
+                        : TimeToSeconds(nowTimeString);
+
+                    if (startSec >= 0 && endSec >= 0 && endSec >= startSec)
+                    {
+                        mins = (endSec - startSec) / 60;
+                    }
                 }
+
                 return new AthleteVisitDto
                 {
                     VisitID = r.VisitID,
@@ -80,35 +84,59 @@ namespace TandisWebApp.Services
                     EnterTime = r.EnterTime,
                     ExitTime = r.ExitTime,
                     SessionName = r.SessionName,
-                    BoxID = r.BoxID == 0 ? null : r.BoxID,
+                    // 🔑 نکته مهم: اگر BoxID در دیتابیس 0 بود، null برگردان تا در کنترلر چک شود
+                    BoxID = r.BoxID > 0 ? (short?)r.BoxID : null,
                     IsOpen = string.IsNullOrWhiteSpace(r.ExitTime),
                     DurationMinutes = mins
                 };
             }).ToList();
         }
 
+        // کمکی: تبدیل "HH:mm:ss" به ثانیه
+        private static int TimeToSeconds(string? timeStr)
+        {
+            if (string.IsNullOrWhiteSpace(timeStr)) return -1;
+            var parts = timeStr.Split(':');
+            if (parts.Length < 2) return -1;
+
+            if (int.TryParse(parts[0], out var h) && int.TryParse(parts[1], out var m))
+            {
+                int s = 0;
+                if (parts.Length > 2) int.TryParse(parts[2], out s);
+                return h * 3600 + m * 60 + s;
+            }
+            return -1;
+        }
+
         /// <summary>آمار کارت وضعیت (هفته / ماه / روزهای پیاپی)</summary>
         public async Task<AthleteStatsDto> GetStatsAsync(int memberID, int setsDoneToday)
         {
             var list = await QueryTrafficAsync(memberID, 120);
-
             var st = new AthleteStatsDto { SetsDoneToday = setsDoneToday };
-            var todayDate = DateTime.Now.Date;
+
+            // برای محاسبه هفته/ماه، تاریخ شمسی رکورد را به میلادی تبدیل می‌کنیم
+            var todayMiladi = DateTime.Now.Date;
 
             foreach (var v in list)
             {
                 var d = FromShamsiOrToday(v.VisitDate);
-                if ((todayDate - d).TotalDays < 7) st.VisitsThisWeek++;
-                if (d.Year == todayDate.Year && d.Month == todayDate.Month)
+
+                // حضور در ۷ روز گذشته
+                if ((todayMiladi - d).TotalDays < 7) st.VisitsThisWeek++;
+
+                // حضور در ماه جاری
+                if (d.Year == todayMiladi.Year && d.Month == todayMiladi.Month)
                 {
                     st.VisitsThisMonth++;
                     if (v.DurationMinutes > 0) st.TotalMinutesThisMonth += v.DurationMinutes.Value;
                 }
             }
 
+            // روزهای پیاپی (Streak)
             var dates = list.Select(v => v.VisitDate).Distinct().ToHashSet();
-            var cursor = todayDate;
+            var cursor = todayMiladi;
             if (!dates.Contains(ShamsiOf(cursor))) cursor = cursor.AddDays(-1);
+
             while (dates.Contains(ShamsiOf(cursor)))
             {
                 st.StreakDays++;
@@ -121,7 +149,6 @@ namespace TandisWebApp.Services
         //  دفترچه تمرین — dbo.ACC_AthleteSetLog (LINQ)
         // ============================================================
 
-        /// <summary>لاگ‌های یک روزِ عضو برای یک برنامه</summary>
         public async Task<List<AthleteSetLogDto>> GetLogsAsync(int memberID, int prgID, string? logDate)
         {
             var date = string.IsNullOrWhiteSpace(logDate) ? _helper.GetToday() : logDate!;
@@ -154,7 +181,6 @@ namespace TandisWebApp.Services
                 .ToList();
         }
 
-        /// <summary>ذخیره وضعیت یک حرکت (تیک + زمان). زمان هرگز کم نمی‌شود.</summary>
         public async Task SaveSetAsync(int memberID, int prgID, int itemID, bool done, int seconds, string? note, string? logDate)
         {
             var date = string.IsNullOrWhiteSpace(logDate) ? _helper.GetToday() : logDate!;
@@ -182,14 +208,13 @@ namespace TandisWebApp.Services
             else
             {
                 existing.IsDone = done;
-                existing.DurationSec = Math.Max(existing.DurationSec, sec);   // ✅ زمان کم نمی‌شود
+                existing.DurationSec = Math.Max(existing.DurationSec, sec);
                 if (!string.IsNullOrWhiteSpace(note)) existing.Note = note;
             }
 
             await _db.SaveChangesAsync();
         }
 
-        /// <summary>تعداد حرکات انجام‌شده‌ی امروز عضو (برای آمار صفحه)</summary>
         public async Task<int> CountDoneTodayAsync(int memberID)
         {
             var today = _helper.GetToday();
@@ -198,7 +223,7 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
-        //  ✅ خلاصه تمرین امروز — نمودار دایره‌ای (LINQ group+join)
+        //  ✅ خلاصه تمرین امروز — نمودار دایره‌ای
         // ============================================================
         public async Task<List<AthleteSummaryItemDto>> GetTodaySummaryAsync(int memberID)
         {
@@ -217,14 +242,14 @@ namespace TandisWebApp.Services
             var list = await q.ToListAsync();
             return list.OrderByDescending(x => x.Minutes).ToList();
         }
-        // ============================================================
-        //  لاگ باز کردن کمد — dbo.BoxLogOpenTb (LINQ)
 
+        // ============================================================
+        //  لاگ باز کردن کمد — dbo.BoxLogOpenTb
+        // ============================================================
         public async Task LogLockerOpenAsync(int memberID, short lockerRoomID, short boxNo, bool success, string? message)
         {
             try
             {
-                // ✅ پیدا کردن BoxID از روی رختکن + شماره کمد (LINQ)
                 var boxId = await _db.Gen_Boxes.AsNoTracking()
                     .Where(b => b.LockerRoomID == lockerRoomID && b.BoxNo == boxNo)
                     .Select(b => b.BoxID)
@@ -242,7 +267,6 @@ namespace TandisWebApp.Services
                     Message = string.IsNullOrWhiteSpace(message) ? null : message,
                     OpenDate = now,
                     CreationDateTime = now
-                    // TerminalID دست‌نخورده NULL می‌مونه
                 });
 
                 await _db.SaveChangesAsync();
@@ -256,14 +280,6 @@ namespace TandisWebApp.Services
         // ============================================================
         //  کمکی‌ها
         // ============================================================
-        private static TimeSpan? ParseTime(string? hhmm)
-        {
-            if (string.IsNullOrWhiteSpace(hhmm)) return null;
-            var parts = hhmm.Split(':');
-            if (parts.Length < 2) return null;
-            if (!int.TryParse(parts[0], out var h) || !int.TryParse(parts[1], out var m)) return null;
-            return new TimeSpan(Math.Clamp(h, 0, 23), Math.Clamp(m, 0, 59), 0);
-        }
 
         internal static string ShamsiOf(DateTime d)
         {
@@ -279,6 +295,7 @@ namespace TandisWebApp.Services
                 if (p.Length == 3)
                 {
                     var pc = new PersianCalendar();
+                    // ✅ اصلاح: ۷ آرگومان لازم است (سال، ماه، روز، ساعت، دقیقه، ثانیه، میلی‌ثانیه)
                     return pc.ToDateTime(int.Parse(p[0]), int.Parse(p[1]), int.Parse(p[2]), 0, 0, 0, 0);
                 }
             }
@@ -294,7 +311,7 @@ namespace TandisWebApp.Services
             return $"{y:0000}/{m:00}/{day:00}";
         }
 
-        // ===== ردیف‌های واسط (فقط برای map بعد از ToList) =====
+        // ===== ردیف‌های واسط =====
         public class TrafficRow
         {
             public long VisitID { get; set; }

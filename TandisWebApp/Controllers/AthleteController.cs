@@ -13,7 +13,7 @@ namespace TandisWebApp.Controllers
     ///  ۱) وضعیت ورود/خروج امروز — فقط خواندنی از دستگاه تردد باشگاه (dbo.ACC_Traffic)
     ///  ۲) کنترل دسترسی: تا وقتی داخل باشگاهه → «کمد من» + «جدول تمرین من»
     ///     بعد از خروج → اون دو بسته می‌شن و فقط «خلاصه تمرین امروز» (نمودار دایره‌ای) باز می‌مونه
-    ///  ۳) جدول تمرین: انتخاب برنامه + روز، تیک هر حرکت با زمان سپری‌شده (Web_AthleteSetLog)
+    ///  ۳) جدول تمرین: انتخاب برنامه + روز، تیک هر حرکت با زمان سپری‌شده (dbo.ACC_AthleteSetLog)
     ///  ۴) باز کردن کمد رختکن (ارتباط با کنترلر از اطلاعات Gen_LockerRoom / Gen_Box)
     /// </summary>
     [MemberAuthorize]
@@ -62,7 +62,9 @@ namespace TandisWebApp.Controllers
                 RecentVisits = await _athlete.GetVisitsAsync(memberID, 8),
                 Programs = await _programs.GetMemberProgramsAsync(memberID),
 
-               
+                // ✅ کمد فقط وقتی داخل باشگاهه
+                MyLocker = isInside ? await GetMyLockerAsync(memberID, todayVisit) : null,
+
                 // ✅ خلاصه‌ی نمودار فقط وقتی خارج شده پر می‌شه
                 TodaySummary = isInside
                     ? new List<AthleteSummaryItemDto>()
@@ -83,6 +85,9 @@ namespace TandisWebApp.Controllers
             return v != null && v.IsOpen;
         }
 
+        // ============================================================
+        //  کمد اختصاصی عضو (از روی BoxID ثبت‌شده در ACC_Traffic)
+        // ============================================================
         private async Task<MyLockerDto?> GetMyLockerAsync(int memberID, AthleteVisitDto? visit = null)
         {
             visit ??= await _athlete.GetTodayVisitAsync(memberID);
@@ -137,24 +142,6 @@ namespace TandisWebApp.Controllers
             var result = await _locker.OpenBoxAsync(memberID, my.LockerRoomID, my.BoxNo);
             return Json(result);
         }
-
-        // ✅ موقتاً غیرفعال شد (درخواست کاربر): ثبت ورود/خروج از داخل اپ حذف شد و
-        //    ورود/خروج با دستگاه تردد باشگاه ثبت می‌شود. برای برگرداندن، کامنت را بردارید.
-        //
-        // [HttpPost("/Athlete/CheckIn")]
-        // public async Task<IActionResult> CheckIn([FromBody] AthleteCheckInRequest req)
-        // {
-        //     var v = await _athlete.CheckInAsync(MemberID, req?.EnterTime, req?.SessionName);
-        //     return Json(new { success = true, visit = v });
-        // }
-        //
-        // [HttpPost("/Athlete/CheckOut")]
-        // public async Task<IActionResult> CheckOut()
-        // {
-        //     var v = await _athlete.CheckOutAsync(MemberID);
-        //     if (v == null) return Json(new { success = false, message = "ورودی ثبت نشده است." });
-        //     return Json(new { success = true, visit = v });
-        // }
 
         // ============================================================
         //  جدول تمرین
@@ -220,27 +207,6 @@ namespace TandisWebApp.Controllers
         }
 
         // ============================================================
-        //  کمد رختکن (انتخاب دستی — برای سازگاری با کلاینت‌های قدیمی)
-        // ============================================================
-        /// <summary>🔒 فقط وقتی عضو داخل باشگاهه.</summary>
-        [HttpPost("/Athlete/OpenLocker")]
-        public async Task<IActionResult> OpenLocker([FromBody] AthleteOpenLockerRequest req)
-        {
-            // 🔒 نگهبان دسترسی
-            if (!await IsInsideAsync(MemberID))
-                return Json(new LockerOpenResultDto
-                {
-                    Success = false,
-                    Message = "برای باز کردن کمد باید داخل باشگاه باشید."
-                });
-
-            if (req == null || req.BoxNo <= 0)
-                return Json(new LockerOpenResultDto { Success = false, Message = "رختکن و شماره‌ی کمد را انتخاب کنید." });
-
-            var result = await _locker.OpenBoxAsync(MemberID, req.LockerRoomID, req.BoxNo);
-            return Json(result);
-        }
-        // ============================================================
         //  ✅ خلاصه تمرین امروز (نمودار دایره‌ای) — زنده، بدون رفرش صفحه
         // ============================================================
         [HttpGet("/Athlete/Summary")]
@@ -278,12 +244,6 @@ namespace TandisWebApp.Controllers
     }
 
     // ===== درخواست‌های JSON =====
-    public class AthleteCheckInRequest
-    {
-        public string? EnterTime { get; set; }
-        public string? SessionName { get; set; }
-    }
-
     public class AthleteSaveSetRequest
     {
         public int PrgID { get; set; }
@@ -292,11 +252,5 @@ namespace TandisWebApp.Controllers
         public int Seconds { get; set; }
         public string? Note { get; set; }
         public string? Date { get; set; }
-    }
-
-    public class AthleteOpenLockerRequest
-    {
-        public short LockerRoomID { get; set; }
-        public short BoxNo { get; set; }
     }
 }

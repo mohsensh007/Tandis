@@ -118,24 +118,34 @@
 
 @if (Model.IsInside)
 {
-    <!-- ===== کارت ۳: جدول تمرین (فقط وقتی داخل باشگاهه) ===== -->
+    <!-- ===== کارت ۳: جدول تمرین (با دکمه شروع) ===== -->
     <div class="ath-card mt-3">
         <div class="ath-card-title"><i class="bi bi-clipboard2-pulse-fill"></i> جدول تمرین من</div>
 
-        <div class="row g-2 mb-2">
-            <div class="col-6 col-md-4">
-                <div class="ath-sub mb-1">برنامه</div>
-                <div class="acmb" id="cmbProgram"></div>
-            </div>
-            <div class="col-6 col-md-4">
-                <div class="ath-sub mb-1">روز</div>
-                <div class="acmb" id="cmbDay"></div>
-            </div>
-            <div class="col-12 col-md-4 d-flex align-items-end">
-                <div class="w-100">
-                    <div class="d-flex justify-content-between ath-sub"><span>پیشرفت روز</span><b id="progressText" style="color:#86efac;">۰٪</b></div>
-                    <div class="ath-progress"><div id="progressBar"></div></div>
+        <!-- ✅ اصلاح گرید: در موبایل تک‌ستونه، در تبلت/دسکتاپ دو ستونه -->
+        <div class="row g-2 mb-3 align-items-end">
+
+            <!-- ستون برنامه -->
+            <div class="col-12 col-md-5">
+                <label class="form-label ath-sub mb-1 d-block">برنامه تمرینی</label>
+                <div class="acmb-wrapper" id="cmbProgramWrapper">
+                    <div class="acmb" id="cmbProgram"></div>
                 </div>
+            </div>
+
+            <!-- ستون روز -->
+            <div class="col-12 col-md-4">
+                <label class="form-label ath-sub mb-1 d-block">روز هفته</label>
+                <div class="acmb-wrapper" id="cmbDayWrapper">
+                    <div class="acmb" id="cmbDay"></div>
+                </div>
+            </div>
+
+            <!-- ستون پیشرفت (اختیاری - اگر جا نداشت مخفی شود) -->
+            <div class="col-12 col-md-3 d-none d-md-block text-center">
+                <div class="ath-sub mb-1">پیشرفت روز</div>
+                <div class="ath-progress" style="height:8px; margin-top:5px;"><div id="progressBarMini"></div></div>
+                <small id="progressTextMini" style="font-size:.7rem; color:#86efac;">۰٪</small>
             </div>
         </div>
 
