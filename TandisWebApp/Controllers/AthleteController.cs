@@ -59,7 +59,7 @@ namespace TandisWebApp.Controllers
                 WeekdayFa = WeekdayFa(DateTime.Now.DayOfWeek),
                 TodayVisit = todayVisit,
                 IsInside = isInside,
-                RecentVisits = await _athlete.GetVisitsAsync(memberID, 8),
+                //RecentVisits = await _athlete.GetVisitsAsync(memberID, 8),
                 Programs = await _programs.GetMemberProgramsAsync(memberID),
 
                 // ✅ کمد فقط وقتی داخل باشگاهه

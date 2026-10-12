@@ -1,54 +1,88 @@
 /* ============================================================
    athlete.css — سبک صفحه‌ی «ورزشکاران» پنل عضو
+   نسخه نهایی: اصلاح ریسپانسیو، حذف تکراری‌ها، بهینه‌سازی موبایل
    هماهنگ با تم بنفش/شیشه‌ای پنل
    ============================================================ */
 
 :root {
-    --ath-accent: #8b5cf6;
-    --ath-accent2: #6d28d9;
-    --ath-ok: #22c55e;
-    --ath-danger: #ef4444;
-    --ath-warn: #f59e0b;
-    --ath-card: rgba(255, 255, 255, .055);
+    --ath-accent: #8b5cf6; /* بنفش اصلی */
+    --ath-accent2: #6d28d9; /* بنفش تیره */
+    --ath-ok: #22c55e; /* سبز موفقیت */
+    --ath-danger: #ef4444; /* قرمز خطا */
+    --ath-warn: #f59e0b; /* نارنجی هشدار/تایمر */
+    --ath-cyan: #66d3e8; /* آبی فیروزه‌ای برای نکات */
+
+    --ath-card-bg: rgba(255, 255, 255, .055);
     --ath-border: rgba(255, 255, 255, .12);
+    --ath-text-main: #fff;
+    --ath-text-sub: #b9c2d4;
 }
 
+/* ===== پایه‌ها ===== */
+body {
+    font-family: 'Vazirmatn', Tahoma, sans-serif; /* اگر فونت وزیرمتن داری */
+}
+
+.ath-page-container {
+    padding-bottom: 40px; /* فضای پایین برای اسکرول راحت */
+}
+
+/* ===== کارت‌ها ===== */
 .ath-card {
-    background: var(--ath-card);
+    background: var(--ath-card-bg);
     border: 1px solid var(--ath-border);
     border-radius: 20px;
     padding: 18px;
-    color: #fff;
+    color: var(--ath-text-main);
     box-shadow: 0 10px 30px rgba(0, 0, 0, .22), inset 0 1px 0 rgba(255, 255, 255, .06);
     backdrop-filter: blur(10px);
     margin-bottom: 18px;
+    transition: transform .2s ease;
 }
+
+    .ath-card:hover {
+        transform: translateY(-2px);
+    }
 
 .ath-card-title {
     display: flex;
     align-items: center;
     gap: 10px;
     font-weight: 800;
-    font-size: 1.02rem;
+    font-size: 1.05rem;
     margin-bottom: 14px;
+    color: #fff;
 }
 
     .ath-card-title i {
-        font-size: 1.2rem;
+        font-size: 1.25rem;
         color: var(--ath-accent);
     }
 
 .ath-sub {
-    font-size: .74rem;
-    color: #b9c2d4;
+    font-size: .78rem;
+    color: var(--ath-text-sub);
     font-weight: 600;
+    line-height: 1.5;
 }
 
-/* ===== چیپ‌های آمار ===== */
+.ath-empty {
+    text-align: center;
+    color: #8a93a6;
+    padding: 24px 10px;
+    font-size: .88rem;
+    font-weight: 600;
+    background: rgba(0,0,0,.1);
+    border-radius: 12px;
+    margin-top: 10px;
+}
+
+/* ===== چیپ‌های آمار بالا ===== */
 .ath-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 10px;
+    margin-bottom: 20px;
 }
 
 @media (max-width: 767.98px) {
@@ -62,26 +96,50 @@
     border: 1px solid rgba(139, 92, 246, .32);
     border-radius: 16px;
     text-align: center;
-    padding: 12px 6px;
+    padding: 14px 8px;
 }
 
     .ath-stat b {
         display: block;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         font-weight: 800;
         color: #fff;
+        direction: ltr; /* اعداد انگلیسی/فارسی درست نمایش داده شوند */
     }
 
     .ath-stat span {
-        font-size: .68rem;
-        color: #b9c2d4;
+        font-size: .7rem;
+        color: var(--ath-text-sub);
         font-weight: 700;
+        margin-top: 4px;
+        display: block;
     }
 
-/* ===== کامپوبوکس سفارشی ===== */
+/* ===== گرید دو ستونه (کارت ورود + کمد) ===== */
+.ath-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0 18px;
+}
+
+@media (max-width: 991.98px) {
+    .ath-grid {
+        grid-template-columns: 1fr; /* در تبلت و موبایل تک ستونه */
+    }
+}
+
+/* ============================================================
+   ✅ کامپوبوکس سفارشی (Dropdown) - اصلاح شده برای موبایل
+   ============================================================ */
+.acmb-wrapper {
+    width: 100%;
+    position: relative;
+}
+
 .acmb {
     position: relative;
-    min-width: 180px;
+    width: 100%;
+    z-index: 10;
 }
 
 .acmb-btn {
@@ -96,30 +154,45 @@
     border-radius: 13px;
     padding: 10px 14px;
     font-weight: 700;
-    font-size: .88rem;
+    font-size: .9rem;
+    cursor: pointer;
     transition: all .2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* ⭐️ مهم: متن بلند تبدیل به ... می‌شود */
 }
 
     .acmb-btn:hover,
     .acmb.open .acmb-btn {
         border-color: var(--ath-accent);
         box-shadow: 0 0 0 3px rgba(139, 92, 246, .18);
+        background: rgba(255, 255, 255, .1);
     }
 
-    .acmb-btn i {
-        transition: transform .2s;
-        color: #b9c2d4;
-    }
+.acmb-val {
+    flex-grow: 1;
+    text-align: right;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
 
-    .acmb.open .acmb-btn i {
-        transform: rotate(180deg);
-    }
+.acmb-btn i.bi-chevron-down {
+    transition: transform .2s;
+    color: var(--ath-text-sub);
+    flex-shrink: 0;
+}
 
+.acmb.open .acmb-btn i.bi-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* لیست کشویی */
 .acmb-menu {
     position: absolute;
     top: calc(100% + 6px);
-    right: 0;
     left: 0;
+    right: 0;
     z-index: 1050;
     background: rgba(24, 28, 46, .98);
     border: 1px solid rgba(255, 255, 255, .14);
@@ -127,7 +200,9 @@
     box-shadow: 0 18px 40px rgba(0, 0, 0, .5);
     padding: 8px;
     display: none;
-    min-width: 210px;
+    max-height: 260px; /* ⭐️ محدود کردن ارتفاع برای جلوگیری از خروج از صفحه */
+    overflow-y: auto; /* ⭐️ اسکرول داخلی */
+    -webkit-overflow-scrolling: touch;
 }
 
 .acmb.open .acmb-menu {
@@ -140,10 +215,11 @@
     border: 1px solid rgba(255, 255, 255, .14);
     border-radius: 10px;
     color: #fff;
-    padding: 7px 11px;
-    font-size: .82rem;
-    margin-bottom: 6px;
+    padding: 8px 12px;
+    font-size: .85rem;
+    margin-bottom: 8px;
     outline: none;
+    box-sizing: border-box;
 }
 
     .acmb-search:focus {
@@ -151,21 +227,32 @@
     }
 
 .acmb-list {
-    max-height: 230px;
-    overflow-y: auto;
+    /* اسکرول بار زیبا */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,.2) transparent;
 }
 
+    .acmb-list::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .acmb-list::-webkit-scrollbar-thumb {
+        background: rgba(255,255,255,.2);
+        border-radius: 3px;
+    }
+
 .acmb-item {
-    padding: 9px 11px;
+    padding: 10px 12px;
     border-radius: 9px;
     cursor: pointer;
-    font-size: .84rem;
+    font-size: .88rem;
     font-weight: 600;
     color: #dfe5f0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 8px;
+    transition: background .15s;
 }
 
     .acmb-item:hover {
@@ -174,22 +261,26 @@
     }
 
     .acmb-item.sel {
-        background: rgba(139, 92, 246, .3);
+        background: rgba(139, 92, 246, .35);
         color: #fff;
+        border-right: 3px solid var(--ath-accent);
     }
 
     .acmb-item .badge {
-        font-size: .6rem;
+        font-size: .65rem;
+        padding: 2px 6px;
     }
 
 .acmb-empty {
-    padding: 10px;
+    padding: 12px;
     text-align: center;
     color: #8a93a6;
-    font-size: .78rem;
+    font-size: .8rem;
 }
 
-/* ===== دکمه‌های اصلی ===== */
+/* ============================================================
+   ✅ دکمه‌ها
+   ============================================================ */
 .ath-btn {
     border: none;
     border-radius: 13px;
@@ -202,32 +293,61 @@
     transition: all .2s;
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
+    width: 100%; /* پیش‌فرض تمام عرض در کارت‌ها */
 }
 
     .ath-btn:hover {
-        transform: translateY(-1px);
-        filter: brightness(1.08);
+        transform: translateY(-2px);
+        filter: brightness(1.1);
+    }
+
+    .ath-btn:active {
+        transform: translateY(0);
     }
 
     .ath-btn:disabled {
-        opacity: .55;
+        opacity: .6;
+        cursor: not-allowed;
         transform: none;
-        cursor: wait;
     }
 
-.ath-btn.outline {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, .25);
-    box-shadow: none;
+    .ath-btn.outline {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, .25);
+        box-shadow: none;
+        color: var(--ath-text-sub);
+    }
+
+    .ath-btn.danger {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        box-shadow: 0 8px 20px rgba(185, 28, 28, .3);
+    }
+
+/* دکمه شروع تمرین (سبز بزرگ) */
+.ath-start {
+    padding: 14px 20px;
+    font-size: 1.05rem;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    box-shadow: 0 10px 24px rgba(22, 163, 74, .38);
+    margin-top: 5px;
 }
 
-.ath-btn.danger {
-    background: linear-gradient(135deg, #ef4444, #b91c1c);
-    box-shadow: 0 8px 20px rgba(185, 28, 28, .3);
-}
+    .ath-start.stop {
+        background: linear-gradient(135deg, #ef4444, #b91c1c);
+        box-shadow: 0 10px 24px rgba(185, 28, 28, .35);
+    }
 
-/* ===== وضعیت ورود ===== */
+    .ath-start.finish {
+        background: linear-gradient(135deg, #f59e0b, #d97706); /* رنگ طلایی برای پایان */
+        box-shadow: 0 10px 24px rgba(245, 158, 11, .35);
+    }
+
+/* ============================================================
+   ✅ وضعیت ورود امروز
+   ============================================================ */
 .ath-checkin-ok {
     display: flex;
     align-items: center;
@@ -241,30 +361,109 @@
 }
 
 .ath-elapsed {
-    font-size: 1.35rem;
+    font-size: 1.4rem;
     font-weight: 800;
     direction: ltr;
     font-variant-numeric: tabular-nums;
     color: #86efac;
+    text-align: center;
+    min-width: 100px;
 }
 
-/* ===== لیست حرکات ===== */
-.ath-progress {
-    height: 9px;
+.ath-tip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .78rem;
+    font-weight: 700;
+    color: #93c5fd;
+    background: rgba(59, 130, 246, .1);
+    border: 1px solid rgba(59, 130, 246, .28);
+    border-radius: 12px;
+    padding: 10px 14px;
+    margin-top: 12px;
+}
+
+/* ============================================================
+   ✅ جدول تمرین (لیست حرکات)
+   ============================================================ */
+.ath-progress-container {
+    margin-bottom: 15px;
+}
+
+.ath-progress-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: .75rem;
+    color: var(--ath-text-sub);
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.ath-progress-bar-bg {
+    height: 10px;
     border-radius: 999px;
     background: rgba(255, 255, 255, .09);
     overflow: hidden;
-    margin: 10px 0 4px;
 }
 
-.ath-progress > div {
+.ath-progress-bar-fill {
     height: 100%;
     border-radius: 999px;
     background: linear-gradient(90deg, var(--ath-ok), #4ade80);
     width: 0%;
-    transition: width .4s;
+    transition: width .5s cubic-bezier(.22,1,.36,1);
 }
 
+/* نوار وضعیت جلسه */
+.ath-session-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 8px;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, .06);
+    border: 1px dashed rgba(255, 255, 255, .2);
+    border-radius: 13px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+    font-size: .82rem;
+    font-weight: 700;
+    color: #cbd5e1;
+}
+
+    .ath-session-bar b {
+        color: #86efac;
+        font-variant-numeric: tabular-nums;
+        direction: ltr;
+    }
+
+/* تایمر استراحت */
+.ath-rest {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    background: linear-gradient(135deg, rgba(245, 158, 11, .16), rgba(217, 119, 6, .1));
+    border: 1px solid rgba(245, 158, 11, .4);
+    border-radius: 14px;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    animation: fadeIn .3s ease;
+}
+
+    .ath-rest.show {
+        display: flex;
+    }
+
+    .ath-rest b {
+        direction: ltr;
+        font-size: 1.3rem;
+        font-variant-numeric: tabular-nums;
+        color: #fcd34d;
+    }
+
+/* ردیف حرکت */
 .ex-row {
     display: flex;
     align-items: center;
@@ -272,8 +471,8 @@
     background: rgba(255, 255, 255, .045);
     border: 1px solid rgba(255, 255, 255, .09);
     border-radius: 15px;
-    padding: 11px 13px;
-    margin-bottom: 9px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
     transition: all .25s;
 }
 
@@ -285,12 +484,37 @@
     .ex-row.running {
         border-color: var(--ath-warn);
         box-shadow: 0 0 0 3px rgba(245, 158, 11, .15);
+        background: rgba(245, 158, 11, .05);
     }
 
+    /* راهنمای حرکت بعدی */
+    .ex-row.ex-next {
+        border-color: rgba(102, 211, 232, .55);
+        box-shadow: 0 0 0 3px rgba(102, 211, 232, .14);
+    }
+
+    .ex-row.ex-pop {
+        animation: athPop .9s ease;
+    }
+
+@keyframes athPop {
+    0% {
+        transform: scale(1);
+    }
+
+    35% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
 .ex-check {
-    width: 30px;
-    height: 30px;
-    min-width: 30px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
     border-radius: 10px;
     border: 2px solid rgba(255, 255, 255, .28);
     background: rgba(255, 255, 255, .05);
@@ -308,11 +532,11 @@
         border-color: var(--ath-ok);
     }
 
-    .ex-row.done .ex-check {
-        background: var(--ath-ok);
-        border-color: var(--ath-ok);
-        color: #06281a;
-    }
+.ex-row.done .ex-check {
+    background: var(--ath-ok);
+    border-color: var(--ath-ok);
+    color: #06281a;
+}
 
 .ex-main {
     flex: 1;
@@ -321,41 +545,46 @@
 
 .ex-name {
     font-weight: 800;
-    font-size: .93rem;
+    font-size: .95rem;
+    margin-bottom: 4px;
+    word-break: break-word;
 }
 
 .ex-meta {
-    font-size: .72rem;
-    color: #b9c2d4;
+    font-size: .74rem;
+    color: var(--ath-text-sub);
     font-weight: 600;
-    margin-top: 2px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
 }
 
 .ex-tech {
     display: inline-block;
-    font-size: .63rem;
+    font-size: .65rem;
     background: rgba(139, 92, 246, .22);
     border: 1px solid rgba(139, 92, 246, .4);
     color: #ddd6fe;
     border-radius: 999px;
-    padding: 2px 9px;
-    margin: 3px 0 0 4px;
+    padding: 2px 8px;
     font-weight: 700;
 }
 
 .ex-timer {
     display: flex;
     align-items: center;
-    gap: 7px;
+    gap: 8px;
+    flex-shrink: 0;
 }
 
 .ex-time {
-    min-width: 52px;
+    min-width: 55px;
     text-align: center;
     direction: ltr;
     font-variant-numeric: tabular-nums;
     font-weight: 800;
-    font-size: .95rem;
+    font-size: 1rem;
     color: #cbd5e1;
 }
 
@@ -364,8 +593,8 @@
 }
 
 .btn-timer {
-    width: 38px;
-    height: 38px;
+    width: 40px;
+    height: 40px;
     border-radius: 12px;
     border: 1px solid rgba(255, 255, 255, .18);
     background: rgba(255, 255, 255, .07);
@@ -374,66 +603,45 @@
     align-items: center;
     justify-content: center;
     transition: all .2s;
+    cursor: pointer;
 }
 
     .btn-timer:hover {
         border-color: var(--ath-accent);
-        color: #fff;
+        background: rgba(139, 92, 246, .2);
     }
 
-    .ex-row.running .btn-timer {
-        background: var(--ath-warn);
-        border-color: var(--ath-warn);
-        color: #1f1300;
-    }
+.ex-row.running .btn-timer {
+    background: var(--ath-warn);
+    border-color: var(--ath-warn);
+    color: #1f1300;
+}
 
-/* ===== تایمر استراحت ===== */
-.ath-rest {
-    display: none;
+/* ============================================================
+   ✅ کمد من
+   ============================================================ */
+.ath-locker-info {
+    display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12px;
-    background: linear-gradient(135deg, rgba(245, 158, 11, .16), rgba(217, 119, 6, .1));
-    border: 1px solid rgba(245, 158, 11, .4);
-    border-radius: 14px;
-    padding: 10px 16px;
+    gap: 10px;
+    flex-wrap: wrap;
+    background: rgba(255, 255, 255, .05);
+    border: 1px solid rgba(255, 255, 255, .12);
+    border-radius: 13px;
+    padding: 12px 14px;
     margin-bottom: 12px;
+    font-size: .9rem;
+    font-weight: 700;
+    color: #e2e8f0;
 }
 
-    .ath-rest.show {
-        display: flex;
-    }
-
-    .ath-rest b {
-        direction: ltr;
-        font-size: 1.2rem;
-        font-variant-numeric: tabular-nums;
-        color: #fcd34d;
-    }
-
-/* ===== جدول تاریخچه ===== */
-.ath-table {
-    width: 100%;
-    color: #dfe5f0;
-    font-size: .84rem;
+.ath-locker-no {
+    color: #fbbf24;
+    font-weight: 800;
+    font-size: 1.1rem;
 }
 
-    .ath-table th {
-        color: #b9c2d4;
-        font-size: .72rem;
-        font-weight: 700;
-        border-bottom: 1px solid rgba(255, 255, 255, .12);
-        padding: 8px 6px;
-        white-space: nowrap;
-    }
-
-    .ath-table td {
-        padding: 9px 6px;
-        border-bottom: 1px solid rgba(255, 255, 255, .06);
-        white-space: nowrap;
-    }
-
-/* ===== نتیجه باز کردن کمد ===== */
 .ath-locker-msg {
     display: none;
     border-radius: 12px;
@@ -441,6 +649,7 @@
     font-weight: 700;
     font-size: .85rem;
     margin-top: 12px;
+    text-align: center;
 }
 
     .ath-locker-msg.ok {
@@ -457,132 +666,55 @@
         color: #fca5a5;
     }
 
-/* ===== نکته/یادآوری آب ===== */
-.ath-tip {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: .76rem;
-    font-weight: 700;
-    color: #93c5fd;
-    background: rgba(59, 130, 246, .1);
-    border: 1px solid rgba(59, 130, 246, .28);
-    border-radius: 12px;
-    padding: 9px 13px;
-    margin-top: 12px;
+
+/* ============================================================
+   ✅ پاپ‌آپ خلاصه تمرین (Modal & Chart)
+   ============================================================ */
+#summaryModal .modal-content {
+    background: rgba(16, 20, 36, .98);
+    border: 1px solid rgba(255, 255, 255, .15);
+    border-radius: 20px;
+    color: #fff;
+    box-shadow: 0 20px 50px rgba(0,0,0,.6);
 }
 
-.ath-empty {
-    text-align: center;
-    color: #8a93a6;
-    padding: 22px 10px;
-    font-size: .85rem;
-    font-weight: 600;
+#summaryModal .modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, .08);
+    padding: 15px 20px;
 }
 
-.ath-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0 18px;
-}
-
-@media (max-width: 991.98px) {
-    .ath-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* ===== ✅ دکمه «شروع تمرین» (بزرگ و لمس‌پسند) ===== */
-.ath-start {
-    justify-content: center;
-    padding: 14px 18px;
-    font-size: 1rem;
-    border-radius: 15px;
-    background: linear-gradient(135deg, #16a34a, #15803d);
-    box-shadow: 0 10px 24px rgba(22, 163, 74, .38);
-}
-
-    .ath-start.stop {
-        background: linear-gradient(135deg, #ef4444, #b91c1c);
-        box-shadow: 0 10px 24px rgba(185, 28, 28, .35);
-    }
-
-/* ===== ✅ نوار وضعیت جلسه (شروع / مدت / انجام‌شده) ===== */
-.ath-session-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    flex-wrap: wrap;
-    background: rgba(255, 255, 255, .06);
-    border: 1px dashed rgba(255, 255, 255, .2);
-    border-radius: 13px;
-    padding: 9px 12px;
-    margin-bottom: 10px;
-    font-size: .8rem;
-    font-weight: 700;
-    color: #cbd5e1;
-}
-
-    .ath-session-bar b {
-        color: #86efac;
-        font-variant-numeric: tabular-nums;
-    }
-
-/* ===== ✅ حرکت بعدی (راهنمای چشمی بعد از تیک) ===== */
-.ex-row.ex-next {
-    border-color: rgba(102, 211, 232, .55);
-    box-shadow: 0 0 0 3px rgba(102, 211, 232, .14);
-}
-
-    .ex-row.ex-next .ex-name::after {
-        content: '← بعدی';
-        display: inline-block;
-        margin-right: 8px;
-        font-size: .7rem;
-        font-weight: 800;
-        color: #66d3e8;
-        background: rgba(102, 211, 232, .14);
-        border: 1px solid rgba(102, 211, 232, .3);
-        border-radius: 999px;
-        padding: 1px 8px;
-        vertical-align: middle;
-    }
-
-.ex-row.ex-pop {
-    animation: athPop .9s ease;
-}
-
-@keyframes athPop {
-    0% { transform: scale(1); }
-    35% { transform: scale(1.02); }
-    100% { transform: scale(1); }
-}
-
-/* ===== ✅ «کمد من» ===== */
-.ath-locker-info {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    flex-wrap: wrap;
-    background: rgba(255, 255, 255, .05);
-    border: 1px solid rgba(255, 255, 255, .12);
-    border-radius: 13px;
-    padding: 11px 14px;
-    margin-bottom: 10px;
-    font-size: .85rem;
-    font-weight: 700;
-    color: #e2e8f0;
-}
-
-.ath-locker-no {
-    color: #fbbf24;
+#summaryModal .modal-title {
     font-weight: 800;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-/* ===== ✅ موبایل: هدف‌های لمسی بزرگ‌تر ===== */
+#summaryModal .modal-body {
+    padding: 20px;
+}
+
+#summaryChart {
+    max-height: 350px;
+    width: 100%;
+}
+
+/* ============================================================
+   📱 ریسپانسیو ویژه موبایل (< 576px)
+   ============================================================ */
 @media (max-width: 575.98px) {
+    .ath-card {
+        padding: 15px;
+        border-radius: 16px;
+    }
+
+    .ath-card-title {
+        font-size: .95rem;
+        margin-bottom: 12px;
+    }
+
+    /* افزایش اندازه اهداف لمسی */
     .ex-check {
         width: 38px;
         height: 38px;
@@ -590,344 +722,47 @@
         border-radius: 12px;
     }
 
+    .btn-timer {
+        width: 44px;
+        height: 44px;
+        border-radius: 14px;
+    }
+
     .ex-row {
-        padding: 13px 12px;
+        padding: 14px 12px;
         gap: 10px;
     }
 
     .ex-name {
-        font-size: .95rem;
+        font-size: .92rem;
     }
 
-    .btn-timer {
-        width: 44px;
-        height: 44px;
+    .ex-meta {
+        font-size: .72rem;
     }
 
     .ath-btn {
         padding: 13px 18px;
+        font-size: .95rem;
+    }
+
+    .ath-start {
+        padding: 16px 20px;
+        font-size: 1.1rem;
+    }
+
+    .acmb-btn {
+        padding: 12px 14px;
+        font-size: .9rem;
     }
 
     .ath-session-bar {
-        font-size: .75rem;
-    }
-}
-
-/* ============================================================
-   ✅ خلاصه تمرین امروز — کارت انیمیشن‌دار (حلقه + بندها)
-   ============================================================ */
-.sum-modal {
-    background: rgba(16, 20, 36, .97);
-    border: 1px solid rgba(255, 255, 255, .15);
-    border-radius: 18px;
-    color: #fff;
-    overflow: hidden;
-}
-
-    .sum-modal .modal-header {
-        border-bottom: 1px solid rgba(255, 255, 255, .08);
+        font-size: .78rem;
+        padding: 10px;
     }
 
-.sum-hero {
-    text-align: center;
-    padding: 2px 0 6px;
-}
-
-.sum-ring-wrap {
-    position: relative;
-    width: 152px;
-    height: 152px;
-    margin: 0 auto 8px;
-}
-
-.sum-ring {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-}
-
-.sum-ring-bg {
-    fill: none;
-    stroke: rgba(255, 255, 255, .08);
-    stroke-width: 10;
-}
-
-.sum-ring-fg {
-    fill: none;
-    stroke: url(#sumGrad);
-    stroke-width: 10;
-    stroke-linecap: round;
-}
-
-.sum-ring-wrap::after {
-    content: '';
-    position: absolute;
-    inset: 6px;
-    border-radius: 50%;
-    box-shadow: 0 0 30px rgba(102, 211, 232, .18) inset, 0 0 26px rgba(118, 75, 162, .22);
-    animation: sumPulse 2.8s ease-in-out infinite;
-    pointer-events: none;
-}
-
-@keyframes sumPulse {
-    0%, 100% { opacity: .45; }
-    50% { opacity: 1; }
-}
-
-.sum-ring-center {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-}
-
-.sum-total {
-    font-size: 2rem;
-    font-weight: 800;
-    line-height: 1;
-    background: linear-gradient(135deg, #66d3e8, #a78bfa);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-}
-
-.sum-total-unit {
-    font-size: .7rem;
-    font-weight: 700;
-    color: #8a93a6;
-}
-
-.sum-total-sub {
-    font-size: .68rem;
-    font-weight: 700;
-    color: #9fb3c8;
-}
-
-.sum-count {
-    font-size: .8rem;
-    font-weight: 700;
-    color: #86efac;
-}
-
-    .sum-count i {
-        color: #ffd200;
-    }
-
-.sum-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 14px;
-    max-height: 44vh;
-    overflow-y: auto;
-    padding-left: 2px;
-}
-
-.sum-row {
-    background: rgba(255, 255, 255, .05);
-    border: 1px solid rgba(255, 255, 255, .08);
-    border-radius: 14px;
-    padding: 10px 12px 9px;
-    opacity: 0;
-    transform: translateY(16px);
-    animation: sumIn .55s cubic-bezier(.22,1,.36,1) forwards;
-    animation-delay: var(--d, 0s);
-}
-
-@keyframes sumIn {
-    to { opacity: 1; transform: none; }
-}
-
-.sum-row-head {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-
-.sum-rank {
-    width: 22px;
-    height: 22px;
-    border-radius: 8px;
-    display: grid;
-    place-items: center;
-    font-size: .7rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, var(--c1), var(--c2));
-    color: #fff;
-    flex: 0 0 auto;
-}
-
-.sum-name {
-    flex: 1;
-    font-size: .84rem;
-    font-weight: 700;
-    color: #e9ecef;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-.sum-min {
-    font-size: .72rem;
-    color: #9fb3c8;
-    white-space: nowrap;
-    font-weight: 700;
-}
-
-    .sum-min b {
-        color: #66d3e8;
-        font-size: .98rem;
-        font-weight: 800;
-    }
-
-.sum-bar {
-    height: 9px;
-    border-radius: 99px;
-    background: rgba(255, 255, 255, .07);
-    overflow: hidden;
-}
-
-    .sum-bar i {
-        display: block;
-        height: 100%;
-        width: 0;
-        border-radius: 99px;
-        background: linear-gradient(90deg, var(--c1), var(--c2));
-        box-shadow: 0 0 12px var(--c2);
-        transition: width 1.05s cubic-bezier(.22,1,.36,1);
-    }
-
-.sum-pct {
-    font-size: .67rem;
-    font-weight: 700;
-    color: #8a93a6;
-    margin-top: 6px;
-}
-/* ============================================================
-   ✅ اصلاح چیدمان ریسپانسیو برای پنل ورزشکار
-   ============================================================ */
-
-/* wrapper برای محدود کردن عرض کمبو باکس */
-.acmb-wrapper {
-    width: 100%;
-    max-width: 100%; /* جلوگیری از زدن بیرون کادر */
-    overflow: hidden;
-}
-
-/* استایل اصلی کمبو باکس سفارشی */
-.acmb {
-    position: relative;
-    width: 100%;
-}
-
-.acmb-btn {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 8px 12px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    color: #fff;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap; /* جلوگیری از شکستن خط */
-    overflow: hidden; /* مخفی کردن اضافی */
-    text-overflow: ellipsis; /* نمایش سه نقطه (...) */
-}
-
-    .acmb-btn:hover {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(102, 211, 232, 0.5);
-    }
-
-/* مقدار انتخاب شده داخل دکمه */
-.acmb-val {
-    flex-grow: 1;
-    text-align: right;
-    padding-left: 8px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-/* آیکون فلش */
-.acmb-btn i {
-    flex-shrink: 0;
-    opacity: 0.7;
-}
-
-/* لیست کشویی */
-.acmb-menu {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    right: 0;
-    z-index: 100;
-    background: #1e293b;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-    display: none;
-    max-height: 250px;
-    overflow-y: auto;
-}
-
-.acmb.open .acmb-menu {
-    display: block;
-}
-
-/* آیتم‌های لیست */
-.acmb-item {
-    padding: 10px 12px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.9rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-    .acmb-item:last-child {
-        border-bottom: none;
-    }
-
-    .acmb-item:hover {
-        background: rgba(102, 211, 232, 0.1);
-    }
-
-    .acmb-item.sel {
-        background: rgba(102, 211, 232, 0.2);
-        color: #66d3e8;
-        font-weight: bold;
-    }
-
-/* جستجو */
-.acmb-search {
-    width: 100%;
-    padding: 8px 12px;
-    margin-bottom: 5px;
-    background: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 6px;
-    color: #fff;
-    outline: none;
-}
-
-/* ریسپانسیو موبایل: فونت کمی کوچکتر */
-@media (max-width: 768px) {
-    .acmb-btn {
-        font-size: 0.85rem;
-        padding: 6px 10px;
-    }
-
-    .ath-card-title {
-        font-size: 1.1rem;
+    /* تنظیمات نمودار در موبایل */
+    #summaryChart {
+        max-height: 280px;
     }
 }

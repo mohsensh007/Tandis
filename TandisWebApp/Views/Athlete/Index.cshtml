@@ -189,37 +189,6 @@ else
     </div>
 }
 
-<!-- ===== کارت ۴: تاریخچه حضور (همیشه) ===== -->
-<div class="ath-card mt-3">
-    <div class="ath-card-title"><i class="bi bi-calendar-check-fill"></i> آخرین حضورهای من</div>
-    @if (Model.RecentVisits.Count == 0)
-    {
-        <div class="ath-empty">هنوز ترددی ثبت نشده است.</div>
-    }
-    else
-    {
-        <div style="overflow-x:auto;">
-            <table class="ath-table">
-                <thead>
-                    <tr><th>تاریخ</th><th>ساعت ورود</th><th>ساعت خروج</th><th>مدت</th><th>سانس</th></tr>
-                </thead>
-                <tbody>
-                    @foreach (var v in Model.RecentVisits)
-                    {
-                        <tr>
-                            <td>@v.VisitDate</td>
-                            <td>@v.EnterTime</td>
-                            <td>@(v.ExitTime ?? "—")</td>
-                            <td>@(v.DurationMinutes.HasValue ? $"{v.DurationMinutes} دقیقه" : "در حال حضور")</td>
-                            <td>@(v.SessionName ?? "—")</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    }
-</div>
-
 <!-- ===== ✅ پاپ‌آپ خلاصه تمرین امروز (نمودار دایره‌ای) ===== -->
 <div class="modal fade" id="summaryModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
