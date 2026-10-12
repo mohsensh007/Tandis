@@ -1,5 +1,8 @@
 using System.Net;
+using System.Net.Http.Json;
+using System.Net.NetworkInformation;
 using System.Reflection;
+using System.Text.Json;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using TandisWebApp.Data;
@@ -26,17 +29,22 @@ namespace TandisWebApp.Services
     ///
     /// ⚠️ کتابخانه‌ها در Libs پروژه‌اند. نسخه‌ی CrpCommunications از Tools/ITPanel/V2.3.6 آمده؛
     ///     فلگ 32BITREQUIRED آن پاک شده تا روی .NET 10 (x64) لود شود (کد IL خالص است).
+    /// ⚠️ آنتی‌دیباگ آن هم حذف شده: کانستراکتور <Module> آن با call به R.F() (پرتابException
+    ///     وقتی دیباگر وصل است) اجرا می‌شد و کل بارگذاری کتابخانه را می‌شکست (TypeInitializationException).
+    ///     پچ: آن call با nop جایگزین شده (ابزار crppatch). نسخه‌ی اصلی: Libs/CrpCommunications.dll.orig-backup
     /// </summary>
     public class LockerService
     {
         private readonly FullSportDbContext _db;
         private readonly AthleteService _athlete;
+        private readonly IConfiguration _cfg;
         private static readonly SemaphoreSlim _commLock = new(1, 1);
 
-        public LockerService(FullSportDbContext db, AthleteService athlete)
+        public LockerService(FullSportDbContext db, AthleteService athlete, IConfiguration cfg)
         {
             _db = db;
             _athlete = athlete;
+            _cfg = cfg;
         }
 
         /// <summary>لیست رختکن‌ها + کمدهای فعال هر کدام (برای کامپوبوکس صفحه)</summary>
@@ -93,17 +101,27 @@ namespace TandisWebApp.Services
             if (box == null)
                 return await Fail(memberID, lockerRoomID, boxNo, "شماره‌ی کمد در این رختکن وجود ندارد.");
 
+            int duration = box.DelayTime ?? 15; // مدت باز ماندن کمد (ثانیه) — مثل DelayTime در Traffic
             LockerOpenResultDto result;
-            // کنترلر یک خط ارتباطی مشترک (سریال/UDP) دارد — فرمان‌ها را صف می‌کنیم
-            await _commLock.WaitAsync();
-            try
+
+            // 🌐 کنترلر فقط بسته‌های IP سیستمِ ServerIP (۱۹۲.۱۶۸.۱.۱۷۲) را قبول می‌کند؛
+            //    اگر این برنامه روی سیستم دیگری اجرا می‌شود، فرمان باید از طریق سرور رله شود.
+            if (!string.IsNullOrWhiteSpace(room.ServerIP) && !IsLocalIp(room.ServerIP))
             {
-                int duration = box.DelayTime ?? 15; // مدت باز ماندن کمد (ثانیه) — مثل DelayTime در Traffic
-                result = await Task.Run(() => SendCommand(room, boxNo, duration));
+                result = await RelayOpenAsync(room, boxNo, duration);
             }
-            finally
+            else
             {
-                _commLock.Release();
+                // کنترلر یک خط ارتباطی مشترک (سریال/UDP) دارد — فرمان‌ها را صف می‌کنیم
+                await _commLock.WaitAsync();
+                try
+                {
+                    result = await Task.Run(() => SendCommand(room, boxNo, duration));
+                }
+                finally
+                {
+                    _commLock.Release();
+                }
             }
             await _athlete.LogLockerOpenAsync(memberID, lockerRoomID, boxNo, result.Success, result.Message);
 
@@ -178,6 +196,10 @@ namespace TandisWebApp.Services
         //    → ControllerInstantiation → AreYouThere → OpenLock
         // ============================================================
 
+        // ⚠️ پورت محلی UDP: نباید 23 باشد! Traffic.exe روی همین سرور پورت 23 را bind کرده و
+        //    جواب‌های کنترلر را می‌گیرد (AreYouThere=false). تست زنده: پورت 23232 جواب می‌گیرد.
+        private const int CrpUdpLocalPort = 23232;
+
         // وضعیت ارتباط (کتابخانه state استاتیک دارد — مثل Traffic.exe کل برنامه یک نمونه دارد)
         private static readonly ItTandisLockerManagement _crpLocker = new ItTandisLockerManagement();
         private static readonly BasicCommands _crpBasic = new BasicCommands();
@@ -238,8 +260,8 @@ namespace TandisWebApp.Services
                 // 1) سوکت UDP (یک بار برای کل برنامه — مثل Traffic: پورت محلی 23)
                 if (!_crpUdpOpened)
                 {
-                    try { _crpBasic.OpenUdp(23, netPort); }
-                    catch { _crpBasic.OpenUdp(0, netPort); } // اگر پورت 23 اشغال بود → پورت دلخواه
+                    try { _crpBasic.OpenUdp(CrpUdpLocalPort, netPort); }
+                    catch { _crpBasic.OpenUdp(0, netPort); } // اگر پورت هم اشغال بود → پورت دلخواه سیستم
                     _crpConn.Protocol = Protocols.UDP;
                     _crpConn.IsOpen = IsOpen.Open;
                     _crpUdpOpened = true;
@@ -278,6 +300,84 @@ namespace TandisWebApp.Services
                     Success = false,
                     Message = "خطا در ارتباط با کنترلر نسل ۳۰: " + ex.Message
                 };
+            }
+        }
+
+        // ============================================================
+        //  رله‌ی فرمان: ارسال از سیستمی که IP آن به‌عنوان ServerIP کنترلر تعریف شده
+        // ============================================================
+
+        /// <summary>آیا این IP متعلق به همین سیستم است؟ (فقط IPهای واقعی کارت‌های شبکه)</summary>
+        private static bool IsLocalIp(string ip)
+        {
+            if (!IPAddress.TryParse(ip.Trim(), out var target)) return false;
+            foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+                foreach (var ua in ni.GetIPProperties().UnicastAddresses)
+                    if (ua.Address.Equals(target)) return true;
+            return false;
+        }
+
+        /// <summary>فرمان باز کردن کمد را از طریق سرورِ کنترلر (آدرس از ServerIP دیتابیس) رله می‌کند.</summary>
+        private async Task<LockerOpenResultDto> RelayOpenAsync(Models.Gen_LockerRoom room, short boxNo, int duration)
+        {
+            int port = 5104;
+            int.TryParse(_cfg["LockerRelay:Port"], out port);
+            if (port <= 0 || port > 65535) port = 5104;
+            string? secret = _cfg["LockerRelay:Secret"];
+            string url = $"http://{room.ServerIP}:{port}/api/LockerRelay/Open";
+
+            try
+            {
+                using var http = new HttpClient { Timeout = TimeSpan.FromSeconds(20) };
+                var req = new HttpRequestMessage(HttpMethod.Post, url)
+                {
+                    Content = JsonContent.Create(new LockerRelayRequestDto
+                    {
+                        LockerRoomID = room.LockerRoomID,
+                        BoxNo = boxNo,
+                        Duration = duration
+                    })
+                };
+                if (!string.IsNullOrWhiteSpace(secret))
+                    req.Headers.Add("X-Locker-Relay-Key", secret);
+
+                var resp = await http.SendAsync(req);
+                resp.EnsureSuccessStatusCode();
+                var dto = await resp.Content.ReadFromJsonAsync<LockerOpenResultDto>(
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                return dto ?? new LockerOpenResultDto
+                {
+                    Success = false,
+                    Message = "پاسخ خالی از سرور کنترلر (" + room.ServerIP + ")."
+                };
+            }
+            catch (Exception ex)
+            {
+                return new LockerOpenResultDto
+                {
+                    Success = false,
+                    Message = $"ارسال فرمان از طریق سرور {room.ServerIP} ممکن نشد — آیا برنامه روی آن سیستم در حال اجراست؟",
+                    Detail = ex.Message
+                };
+            }
+        }
+
+        /// <summary>✅ endpoint رله (LockerRelayController): اجرای مستقیم فرمان روی سیستمِ ServerIP — بدون رله‌ی مجدد.</summary>
+        public async Task<LockerOpenResultDto> OpenRelayedAsync(short lockerRoomID, short boxNo, int duration)
+        {
+            var room = await _db.Gen_LockerRooms.AsNoTracking()
+                .FirstOrDefaultAsync(r => r.LockerRoomID == lockerRoomID);
+            if (room == null)
+                return new LockerOpenResultDto { Success = false, Message = "رختکن پیدا نشد." };
+
+            await _commLock.WaitAsync();
+            try
+            {
+                return await Task.Run(() => SendCommand(room, boxNo, duration <= 0 ? 15 : duration));
+            }
+            finally
+            {
+                _commLock.Release();
             }
         }
 

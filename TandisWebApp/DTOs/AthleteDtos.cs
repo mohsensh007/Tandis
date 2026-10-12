@@ -113,4 +113,12 @@ namespace TandisWebApp.DTOs
         public string Name { get; set; } = string.Empty;
         public double Minutes { get; set; }
     }
+
+    // ===== ✅ درخواست رله‌ی باز کردن کمد (سیستم‌های دیگر → سرورِ ServerIP) =====
+    public class LockerRelayRequestDto
+    {
+        public short LockerRoomID { get; set; }
+        public short BoxNo { get; set; }
+        public int Duration { get; set; }
+    }
 }

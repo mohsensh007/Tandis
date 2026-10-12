@@ -140,7 +140,10 @@ namespace TandisWebApp.Controllers
                 });
 
             var result = await _locker.OpenBoxAsync(memberID, my.LockerRoomID, my.BoxNo);
-            return Json(result);
+
+            // ✅ حفظ PascalCase — چون athlete.js با r.Success / r.Message می‌خونه
+            return new JsonResult(result,
+                new System.Text.Json.JsonSerializerOptions { PropertyNamingPolicy = null });
         }
 
         // ============================================================
