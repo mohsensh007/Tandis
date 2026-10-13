@@ -136,6 +136,8 @@ builder.Services.AddScoped<FaceDeviceService>();
 // ✅ گوشه «ورزشکاران»: ثبت ورود/خروج، دفترچه تمرین و باز کردن کمد (ارتباط با کنترلر)
 builder.Services.AddScoped<AthleteService>();
 builder.Services.AddScoped<LockerService>();
+// ✅ تحلیل بدن عضو: BMI / BMR / TDEE / پروتئین / کالری هدف / نمودار تغییرات
+builder.Services.AddScoped<BodyAnalysisService>();
 builder.Services.AddHttpContextAccessor();
 
 // ✅ ایجنت POS: ارسال تراکنش‌های «در انتظار وب‌اپ» به دستگاه کارخوان و ثبت جواب در DB
@@ -217,6 +219,61 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
+
+// ============================================================
+// 5.5) ساخت جداول «تحلیل بدن» در صورت نبود (idempotent — بدون EF Migration)
+// ============================================================
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var db = scope.ServiceProvider.GetRequiredService<FullSportDbContext>();
+        await db.Database.ExecuteSqlRawAsync("""
+            IF OBJECT_ID(N'dbo.Ath_BodyProfile', N'U') IS NULL
+            BEGIN
+                CREATE TABLE dbo.Ath_BodyProfile
+                (
+                    MemberID         INT          NOT NULL CONSTRAINT PK_Ath_BodyProfile PRIMARY KEY,
+                    HeightCm         DECIMAL(5,1) NULL,
+                    ActivityLevel    TINYINT      NOT NULL CONSTRAINT DF_Ath_BodyProfile_Activity DEFAULT 2,
+                    SportHistory     TINYINT      NOT NULL CONSTRAINT DF_Ath_BodyProfile_History DEFAULT 0,
+                    Goal             TINYINT      NOT NULL CONSTRAINT DF_Ath_BodyProfile_Goal DEFAULT 3,
+                    SessionsPerWeek  TINYINT      NOT NULL CONSTRAINT DF_Ath_BodyProfile_Sessions DEFAULT 3,
+                    CreationDate     DATETIME     NULL,
+                    ModificationTime DATETIME     NULL
+                );
+            END;
+            IF OBJECT_ID(N'dbo.Ath_BodyRecord', N'U') IS NULL
+            BEGIN
+                CREATE TABLE dbo.Ath_BodyRecord
+                (
+                    RecordID       INT           IDENTITY(1,1) NOT NULL CONSTRAINT PK_Ath_BodyRecord PRIMARY KEY,
+                    MemberID       INT           NOT NULL,
+                    RecordDate     CHAR(10)      NOT NULL,
+                    RecordDateTime DATETIME      NULL,
+                    WeightKg       DECIMAL(5,1)  NULL,
+                    WaistCm        DECIMAL(5,1)  NULL,
+                    AbdomenCm      DECIMAL(5,1)  NULL,
+                    ChestCm        DECIMAL(5,1)  NULL,
+                    ArmCm          DECIMAL(5,1)  NULL,
+                    ThighCm        DECIMAL(5,1)  NULL,
+                    HipCm          DECIMAL(5,1)  NULL
+                );
+                CREATE NONCLUSTERED INDEX IX_Ath_BodyRecord_Member
+                    ON dbo.Ath_BodyRecord (MemberID, RecordDate);
+                ALTER TABLE dbo.Ath_BodyRecord WITH CHECK
+                    ADD CONSTRAINT FK_Ath_BodyRecord_Profile
+                    FOREIGN KEY (MemberID) REFERENCES dbo.Ath_BodyProfile (MemberID);
+            END;
+            """);
+    }
+    catch (Exception ex)
+    {
+        // ساخت جدول شکست خورد ولی نباید بالا آمدن اپ را متوقف کند
+        app.Services.GetRequiredService<ILogger<Program>>()
+            .LogWarning(ex, "ساخت جداول تحلیل بدن (Ath_Body*) انجام نشد");
+    }
+}
 
 // ============================================================
 // 6) Middleware Pipeline

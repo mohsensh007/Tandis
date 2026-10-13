@@ -79,6 +79,10 @@ namespace TandisWebApp.Data
         public DbSet<Msg_Message> MsgMessages { get; set; }
         public DbSet<Msg_Read> MsgReads { get; set; }
         public DbSet<BoxLogOpenTb> BoxLogOpenTbs { get; set; } = null!;
+
+        // ==================== Ath - تحلیل بدن ====================
+        public DbSet<Ath_BodyProfile> Ath_BodyProfiles { get; set; } = null!;
+        public DbSet<Ath_BodyRecord> Ath_BodyRecords { get; set; } = null!;
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -110,6 +114,28 @@ namespace TandisWebApp.Data
             modelBuilder.Entity<Msg_Message>()
                 .Property(m => m.CreationDateTime)
                 .HasDefaultValueSql("getdate()");
+
+            // دقت اعشار اندازه‌گیری‌های بدن
+            modelBuilder.Entity<Ath_BodyProfile>()
+                .Property(p => p.HeightCm).HasPrecision(5, 1);
+            modelBuilder.Entity<Ath_BodyRecord>()
+                .Property(r => r.WeightKg).HasPrecision(5, 1);
+            modelBuilder.Entity<Ath_BodyRecord>()
+                .Property(r => r.WaistCm).HasPrecision(5, 1);
+            modelBuilder.Entity<Ath_BodyRecord>()
+                .Property(r => r.AbdomenCm).HasPrecision(5, 1);
+            modelBuilder.Entity<Ath_BodyRecord>()
+                .Property(r => r.ChestCm).HasPrecision(5, 1);
+            modelBuilder.Entity<Ath_BodyRecord>()
+                .Property(r => r.ArmCm).HasPrecision(5, 1);
+            modelBuilder.Entity<Ath_BodyRecord>()
+                .Property(r => r.ThighCm).HasPrecision(5, 1);
+            modelBuilder.Entity<Ath_BodyRecord>()
+                .Property(r => r.HipCm).HasPrecision(5, 1);
+
+            // ایندکس برای تاریخچه اندازه‌گیری هر عضو
+            modelBuilder.Entity<Ath_BodyRecord>()
+                .HasIndex(r => new { r.MemberID, r.RecordDate });
         }
     }
 }

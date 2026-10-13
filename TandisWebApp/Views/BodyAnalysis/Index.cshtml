@@ -1,0 +1,364 @@
+@model TandisWebApp.DTOs.BodyAnalysisPageDto
+@{
+    ViewData["Title"] = "تحلیل بدن";
+    Layout = "_Layout";
+
+    var pc = new System.Globalization.PersianCalendar();
+    var today = $"{pc.GetYear(DateTime.Now):0000}/{pc.GetMonth(DateTime.Now):00}/{pc.GetDayOfMonth(DateTime.Now):00}";
+}
+
+<link rel="stylesheet" href="~/css/body-analysis.css?v=1" />
+
+<!-- ===== داده اولیه برای JS ===== -->
+<script id="ba-data" type="application/json">
+    @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new
+    {
+        metrics = Model.Metrics,
+        today = today,
+        fullName = Model.FullName,
+        memberId = Model.MemberID,
+        age = Model.Age,
+        gender = Model.Gender,
+        birthDate = Model.BirthDate,
+        profile = new
+        {
+            heightCm = Model.Profile.HeightCm,
+            activityLevel = Model.Profile.ActivityLevel,
+            sportHistory = Model.Profile.SportHistory,
+            goal = Model.Profile.Goal,
+            sessionsPerWeek = Model.Profile.SessionsPerWeek
+        },
+        latest = Model.Latest == null ? null : new
+        {
+            recordId = Model.Latest.RecordID,
+            recordDate = Model.Latest.RecordDate,
+            weightKg = Model.Latest.WeightKg,
+            waistCm = Model.Latest.WaistCm,
+            abdomenCm = Model.Latest.AbdomenCm,
+            chestCm = Model.Latest.ChestCm,
+            armCm = Model.Latest.ArmCm,
+            thighCm = Model.Latest.ThighCm,
+            hipCm = Model.Latest.HipCm
+        },
+        records = Model.Records.Select(r => new
+        {
+            recordId = r.RecordID,
+            recordDate = r.RecordDate,
+            weightKg = r.WeightKg,
+            waistCm = r.WaistCm,
+            abdomenCm = r.AbdomenCm,
+            chestCm = r.ChestCm,
+            armCm = r.ArmCm,
+            thighCm = r.ThighCm,
+            hipCm = r.HipCm
+        }).ToList()
+    }))
+</script>
+
+<!-- ===== هدر ===== -->
+<div class="ba-header">
+    <h4><i class="bi bi-clipboard2-pulse-fill"></i> تحلیل بدن من</h4>
+    <a href="/MyProgram" class="ba-back"><i class="bi bi-arrow-right"></i> برنامه‌های من</a>
+</div>
+
+<!-- ===== چیپ‌های هویتی (از دیتابیس) ===== -->
+<div class="ba-id-chips">
+    <span class="ba-id-chip ba-chip-name"><i class="bi bi-person-fill"></i> <span id="baFullName">@Model.FullName</span></span>
+    <span class="ba-id-chip"><i class="bi bi-calendar2-heart"></i> سن: <span id="baAge">@(Model.Age.HasValue ? $"{Model.Age} سال" : "—")</span></span>
+    <span class="ba-id-chip"><i class="bi bi-gender-ambiguous"></i> جنسیت: <span id="baGender">@(Model.Gender == null ? "—" : (Model.Gender == true ? "مرد" : "زن"))</span></span>
+</div>
+
+@if (Model.Gender == null || Model.Age == null)
+{
+    <div class="ba-note" style="margin-top:0; margin-bottom:14px;">
+        <i class="bi bi-exclamation-triangle-fill"></i>
+        <span>برای محاسبه دقیق، جنسیت یا تاریخ تولد شما در سیستم ثبت نشده است. لطفاً از بخش <a href="/Profile" style="color:#66d3e8; font-weight:800;">پروفایل</a> آن را تکمیل کنید.</span>
+    </div>
+}
+
+<div class="ba-top-grid">
+    <!-- ===== کارت ۱: پروفایل (قد و شرایط عمومی) ===== -->
+    <div class="ba-card">
+        <div class="ba-card-title"><i class="bi bi-rulers"></i> اطلاعات پایه</div>
+
+        <div class="ba-form-grid">
+            <div class="ba-field">
+                <label class="ba-label">قد</label>
+                <div class="ba-input-group">
+                    <input type="number" id="baHeight" class="ba-input" min="50" max="260" step="0.5"
+                           placeholder="مثلاً 178" value="@(Model.Profile.HeightCm?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "")" />
+                    <span class="ba-unit">سانتی‌متر</span>
+                </div>
+            </div>
+            <div class="ba-field">
+                <label class="ba-label">میزان فعالیت روزانه</label>
+                <select id="baActivity" class="ba-select">
+                    <option value="1" selected="@(Model.Profile.ActivityLevel == 1)">کم‌تحرک — ورزش ندارد</option>
+                    <option value="2" selected="@(Model.Profile.ActivityLevel == 2)">سبک — ۱ تا ۳ روز در هفته</option>
+                    <option value="3" selected="@(Model.Profile.ActivityLevel == 3)">متوسط — ۳ تا ۵ روز در هفته</option>
+                    <option value="4" selected="@(Model.Profile.ActivityLevel == 4)">زیاد — ۶ تا ۷ روز در هفته</option>
+                    <option value="5" selected="@(Model.Profile.ActivityLevel == 5)">خیلی زیاد — ورزش سنگین</option>
+                </select>
+            </div>
+            <div class="ba-field">
+                <label class="ba-label">سابقه ورزشی</label>
+                <select id="baHistory" class="ba-select">
+                    <option value="0" selected="@(Model.Profile.SportHistory == 0)">بدون سابقه</option>
+                    <option value="1" selected="@(Model.Profile.SportHistory == 1)">کمتر از ۶ ماه</option>
+                    <option value="2" selected="@(Model.Profile.SportHistory == 2)">۶ ماه تا ۱ سال</option>
+                    <option value="3" selected="@(Model.Profile.SportHistory == 3)">۱ تا ۳ سال</option>
+                    <option value="4" selected="@(Model.Profile.SportHistory == 4)">۳ تا ۵ سال</option>
+                    <option value="5" selected="@(Model.Profile.SportHistory == 5)">بیش از ۵ سال</option>
+                </select>
+            </div>
+            <div class="ba-field">
+                <label class="ba-label">هدف ورزشی</label>
+                <select id="baGoal" class="ba-select">
+                    <option value="1" selected="@(Model.Profile.Goal == 1)">چربی‌سوزی و کاهش وزن</option>
+                    <option value="2" selected="@(Model.Profile.Goal == 2)">عضله‌سازی و افزایش وزن</option>
+                    <option value="3" selected="@(Model.Profile.Goal == 3)">حفظ تناسب</option>
+                </select>
+            </div>
+            <div class="ba-field">
+                <label class="ba-label">جلسات تمرین در هفته</label>
+                <div class="ba-input-group">
+                    <input type="number" id="baSessions" class="ba-input" min="0" max="14" step="1"
+                           placeholder="مثلاً 3" value="@Model.Profile.SessionsPerWeek" />
+                    <span class="ba-unit">جلسه</span>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="ba-btn" id="btnSaveProfile"><i class="bi bi-check2-circle"></i> ذخیره اطلاعات پایه</button>
+    </div>
+
+    <!-- ===== کارت ۲: ثبت اندازه‌گیری ===== -->
+    <div class="ba-card">
+        <div class="ba-card-title">
+            <i class="bi bi-ruler-fill"></i> اندازه‌گیری جدید
+            <span class="ba-card-hint">ثبت مجدد در همان تاریخ = ویرایش</span>
+        </div>
+
+        <div class="ba-field">
+            <label class="ba-label">تاریخ اندازه‌گیری</label>
+            <input type="text" id="baDate" class="ba-input" placeholder="1404/07/22" dir="ltr" style="text-align:right;" value="@today" />
+        </div>
+
+        <div class="ba-form-grid">
+            <div class="ba-field">
+                <label class="ba-label">وزن</label>
+                <div class="ba-input-group">
+                    <input type="number" id="baWeight" class="ba-input" min="20" max="400" step="0.1" placeholder="مثلاً 82.5" />
+                    <span class="ba-unit">کیلوگرم</span>
+                </div>
+            </div>
+            <div class="ba-field">
+                <label class="ba-label">دور کمر</label>
+                <div class="ba-input-group">
+                    <input type="number" id="baWaist" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 84" />
+                    <span class="ba-unit">سانتی‌متر</span>
+                </div>
+            </div>
+            <div class="ba-field">
+                <label class="ba-label">دور شکم</label>
+                <div class="ba-input-group">
+                    <input type="number" id="baAbdomen" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 90" />
+                    <span class="ba-unit">سانتی‌متر</span>
+                </div>
+            </div>
+            <div class="ba-field">
+                <label class="ba-label">دور سینه</label>
+                <div class="ba-input-group">
+                    <input type="number" id="baChest" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 100" />
+                    <span class="ba-unit">سانتی‌متر</span>
+                </div>
+            </div>
+            <div class="ba-field">
+                <label class="ba-label">دور بازو</label>
+                <div class="ba-input-group">
+                    <input type="number" id="baArm" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 32" />
+                    <span class="ba-unit">سانتی‌متر</span>
+                </div>
+            </div>
+            <div class="ba-field">
+                <label class="ba-label">دور ران</label>
+                <div class="ba-input-group">
+                    <input type="number" id="baThigh" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 56" />
+                    <span class="ba-unit">سانتی‌متر</span>
+                </div>
+            </div>
+            <div class="ba-field">
+                <label class="ba-label">دور باسن</label>
+                <div class="ba-input-group">
+                    <input type="number" id="baHip" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 98" />
+                    <span class="ba-unit">سانتی‌متر</span>
+                </div>
+            </div>
+        </div>
+
+        <button type="button" class="ba-btn" id="btnSaveRecord"><i class="bi bi-plus-circle-fill"></i> ثبت اندازه‌گیری</button>
+    </div>
+</div>
+
+<!-- ===== کارت نتایج محاسبات ===== -->
+<div class="ba-card">
+    <div class="ba-card-title">
+        <i class="bi bi-graph-up-arrow"></i> نتایج محاسبات
+        <span class="ba-card-hint" id="baUpdatedHint"></span>
+    </div>
+
+    <div id="baNoData" class="ba-empty" style="display:none;">
+        <i class="bi bi-clipboard2-data"></i>
+        برای محاسبه شاخص‌ها، ابتدا «قد» را در اطلاعات پایه و سپس «وزن» را در اندازه‌گیری ثبت کنید.
+    </div>
+
+    <div class="ba-metrics" id="baMetrics" style="display:none;">
+        <div class="ba-metric ba-highlight" id="mBmi">
+            <i class="bi bi-body-text ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit"></div>
+            <div class="ba-m-label">شاخص توده بدنی (BMI)</div>
+            <span class="ba-m-badge">—</span>
+        </div>
+        <div class="ba-metric" id="mBmr">
+            <i class="bi bi-fire ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit">کالری / روز</div>
+            <div class="ba-m-label">سوخت‌وساز پایه (BMR)</div>
+        </div>
+        <div class="ba-metric" id="mTdee">
+            <i class="bi bi-lightning-charge-fill ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit">کالری / روز</div>
+            <div class="ba-m-label">کالری روزانه (TDEE)</div>
+            <span class="ba-m-badge">—</span>
+        </div>
+        <div class="ba-metric" id="mProtein">
+            <i class="bi bi-egg-fill ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit">گرم / روز</div>
+            <div class="ba-m-label">پروتئین روزانه</div>
+            <span class="ba-m-badge">—</span>
+        </div>
+        <div class="ba-metric ba-highlight" id="mGoalKcal">
+            <i class="bi bi-bullseye ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit">کالری / روز</div>
+            <div class="ba-m-label">کالری هدف</div>
+            <span class="ba-m-badge">—</span>
+        </div>
+        <div class="ba-metric" id="mCut">
+            <i class="bi bi-arrow-down-right-circle ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit">کالری / روز</div>
+            <div class="ba-m-label">کالری چربی‌سوزی</div>
+        </div>
+        <div class="ba-metric" id="mBulk">
+            <i class="bi bi-arrow-up-right-circle ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit">کالری / روز</div>
+            <div class="ba-m-label">کالری عضله‌سازی</div>
+        </div>
+        <div class="ba-metric" id="mTarget">
+            <i class="bi bi-flag ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit">کیلوگرم</div>
+            <div class="ba-m-label">وزن هدف پیشنهادی</div>
+            <span class="ba-m-badge">—</span>
+        </div>
+        <div class="ba-metric" id="mTrend">
+            <i class="bi bi-graph-up ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit">کیلوگرم</div>
+            <div class="ba-m-label">تغییرات وزن</div>
+            <span class="ba-m-badge">—</span>
+        </div>
+        <div class="ba-metric" id="mWhtr">
+            <i class="bi bi-arrows-angle-expand ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit">کمر / قد</div>
+            <div class="ba-m-label">نسبت کمر به قد</div>
+            <span class="ba-m-badge">—</span>
+        </div>
+        <div class="ba-metric" id="mBodyFat">
+            <i class="bi bi-droplet-half ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit">درصد (تخمینی)</div>
+            <div class="ba-m-label">چربی بدن (Deurenberg)</div>
+        </div>
+        <div class="ba-metric" id="mIdeal">
+            <i class="bi bi-heart-pulse ba-m-icon"></i>
+            <div class="ba-m-value">—</div>
+            <div class="ba-m-unit">کیلوگرم</div>
+            <div class="ba-m-label">بازه وزن سالم</div>
+        </div>
+    </div>
+
+    <div class="ba-note" id="baAdviceNote" style="display:none;">
+        <i class="bi bi-lightbulb-fill"></i>
+        <span id="baAdviceText"></span>
+    </div>
+</div>
+
+<!-- ===== کارت نمودار ===== -->
+<div class="ba-card">
+    <div class="ba-card-title">
+        <i class="bi bi-activity"></i> نمودار تغییرات در طول زمان
+    </div>
+
+    <div class="ba-chart-toolbar" id="baChartToolbar">
+        <button type="button" class="ba-chip active" data-key="weightKg" data-label="وزن" data-unit="کیلوگرم">وزن</button>
+        <button type="button" class="ba-chip" data-key="waistCm" data-label="دور کمر" data-unit="سانتی‌متر">دور کمر</button>
+        <button type="button" class="ba-chip" data-key="abdomenCm" data-label="دور شکم" data-unit="سانتی‌متر">دور شکم</button>
+        <button type="button" class="ba-chip" data-key="chestCm" data-label="دور سینه" data-unit="سانتی‌متر">دور سینه</button>
+        <button type="button" class="ba-chip" data-key="armCm" data-label="دور بازو" data-unit="سانتی‌متر">دور بازو</button>
+        <button type="button" class="ba-chip" data-key="thighCm" data-label="دور ران" data-unit="سانتی‌متر">دور ران</button>
+        <button type="button" class="ba-chip" data-key="hipCm" data-label="دور باسن" data-unit="سانتی‌متر">دور باسن</button>
+    </div>
+
+    <div class="ba-chart-box" id="baChartBox">
+        <div class="ba-chart-empty"><i class="bi bi-bar-chart-line"></i>هنوز داده‌ای برای نمایش نمودار ثبت نشده است.</div>
+    </div>
+
+    <div class="ba-legend" id="baLegend" style="display:none;">
+        <span><i class="dot" style="background:#66d3e8;"></i> مقدار ثبت‌شده</span>
+        <span><i class="dot" style="background:#8b5cf6;"></i> میانگین کل</span>
+        <span id="baChartStat"></span>
+    </div>
+</div>
+
+<!-- ===== کارت تاریخچه ===== -->
+<div class="ba-card">
+    <div class="ba-card-title">
+        <i class="bi bi-clock-history"></i> تاریخچه اندازه‌گیری‌ها
+        <span class="ba-card-hint" id="baRecCount"></span>
+    </div>
+
+    <div id="baTableEmpty" class="ba-empty" style="display:none;">
+        <i class="bi bi-inbox"></i>
+        هنوز اندازه‌گیری‌ای ثبت نکرده‌اید.
+    </div>
+
+    <div class="ba-table-wrap" id="baTableWrap" style="display:none;">
+        <table class="ba-table">
+            <thead>
+                <tr>
+                    <th>تاریخ</th>
+                    <th>وزن</th>
+                    <th>کمر</th>
+                    <th>شکم</th>
+                    <th>سینه</th>
+                    <th>بازو</th>
+                    <th>ران</th>
+                    <th>باسن</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody id="baTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/body-analysis.js?v=1"></script>
+}
