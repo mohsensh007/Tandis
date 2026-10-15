@@ -63,17 +63,19 @@ namespace TandisWebApp.Controllers
         }
 
         // ============================================================
-        //  API — ثبت اندازه‌گیری جدید / ویرایش همان روز
+        //  API — ثبت اندازه‌گیری جدید (افزودن به تاریخچه)
         // ============================================================
         [HttpPost("/api/BodyAnalysis/SaveRecord")]
         public async Task<IActionResult> SaveRecord([FromBody] BodyRecordSaveRequest req)
         {
             if (req == null) return Json(new { success = false, message = "درخواست نامعتبر است." });
+
             var err = await _body.SaveRecordAsync(MemberID, req);
             if (err.Length > 0) return Json(new { success = false, message = err });
 
+            // دریافت مجدد کل صفحه (شامل لیست آپدیت شده‌ی تاریخچه) برای ارسال به فرانت
             var page = await _body.GetPageAsync(MemberID);
-            return Json(new { success = true, message = "اندازه‌گیری ثبت شد.", data = page });
+            return Json(new { success = true, message = "اندازه‌گیری با موفقیت ثبت شد.", data = page });
         }
 
         // ============================================================

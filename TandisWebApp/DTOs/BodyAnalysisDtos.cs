@@ -19,6 +19,7 @@ namespace TandisWebApp.DTOs
     {
         public int RecordID { get; set; }
         public string RecordDate { get; set; } = string.Empty;   // شمسی
+        public DateTime? RecordDateTime { get; set; }
         public decimal? WeightKg { get; set; }
         public decimal? WaistCm { get; set; }
         public decimal? AbdomenCm { get; set; }

@@ -12,8 +12,6 @@ namespace TandisWebApp.Services
     ///  ۴) پروتئین روزانه (ISSN)   ۵) کالری هدف (کاهش چربی / عضله‌سازی)
     ///  ۶) وزن هدف (بازه BMI سالم + فرمول Devine)   ۷) روند تغییرات وزن
     ///  ۸) نسبت دور کمر به قد
-    /// منابع: WHO (BMI) — Academy of Nutrition and Dietetics (Mifflin-St Jeor)
-    ///        ISSN (پروتئین) — NHS (نسبت کمر به قد)
     /// </summary>
     public class BodyAnalysisService
     {
@@ -56,7 +54,7 @@ namespace TandisWebApp.Services
             => h < SportHistoryLabels.Length ? SportHistoryLabels[h] : SportHistoryLabels[0];
 
         // ============================================================
-        //  خواندن کل صفحه
+        //  ✅ خواندن کل صفحه (پروفایل + همه رکوردهای تاریخچه + آخرین رکورد)
         // ============================================================
         public async Task<BodyAnalysisPageDto?> GetPageAsync(int memberID)
         {
@@ -72,9 +70,11 @@ namespace TandisWebApp.Services
             var profile = await _db.Ath_BodyProfiles.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.MemberID == memberID);
 
+            // ✅ اصلاح ۱: مرتب‌سازی بر اساس RecordDateTime (میلادی دقیق) به جای RecordDate (رشته شمسی)
+            // این‌طور حتی اگر در یک روز چند رکورد ثبت شود، ترتیب درست می‌ماند
             var records = await _db.Ath_BodyRecords.AsNoTracking()
                 .Where(r => r.MemberID == memberID)
-                .OrderBy(r => r.RecordDate)
+                .OrderBy(r => r.RecordDateTime).ThenBy(r => r.RecordID)
                 .ToListAsync();
 
             var page = new BodyAnalysisPageDto
@@ -92,7 +92,9 @@ namespace TandisWebApp.Services
                     Goal = profile.Goal,
                     SessionsPerWeek = profile.SessionsPerWeek
                 },
+                // ✅ همه رکوردها به JS می‌روند (برای نمودار تغییرات)
                 Records = records.Select(ToDto).ToList(),
+                // ✅ آخرین رکورد = آخرین آیتم لیست مرتب‌شده
                 Latest = records.Count > 0 ? ToDto(records[records.Count - 1]) : null
             };
 
@@ -101,7 +103,7 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
-        //  ذخیره پروفایل (قد و غیره)
+        //  ذخیره پروفایل (قد و غیره) — بدون تغییر
         // ============================================================
         public async Task<string> SaveProfileAsync(int memberID, BodyProfileDto dto)
         {
@@ -129,7 +131,8 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
-        //  ثبت اندازه‌گیری (ثبت مجدد در همان تاریخ = ویرایش)
+        //  ✅ ثبت اندازه‌گیری — همیشه رکورد جدید (Insert)
+        //  (ثبت مجدد = یک نقطه‌ی جدید در تاریخچه، نه بازنویسی قبلی)
         // ============================================================
         public async Task<string> SaveRecordAsync(int memberID, BodyRecordSaveRequest req)
         {
@@ -160,24 +163,23 @@ namespace TandisWebApp.Services
                 await _db.SaveChangesAsync();
             }
 
-            var rec = await _db.Ath_BodyRecords
-                .FirstOrDefaultAsync(r => r.MemberID == memberID && r.RecordDate == date);
-
-            if (rec == null)
+            // ✅ اصلاح ۲: همیشه یک رکورد جدید بساز — بدون چک/آپدیت قبلی
+            var now = DateTime.Now;
+            var rec = new Ath_BodyRecord
             {
-                rec = new Ath_BodyRecord { MemberID = memberID, RecordDate = date };
-                _db.Ath_BodyRecords.Add(rec);
-            }
+                MemberID = memberID,
+                RecordDate = date,
+                RecordDateTime = now,      // ← برای مرتب‌سازی دقیق
+                WeightKg = req.WeightKg,
+                WaistCm = req.WaistCm,
+                AbdomenCm = req.AbdomenCm,
+                ChestCm = req.ChestCm,
+                ArmCm = req.ArmCm,
+                ThighCm = req.ThighCm,
+                HipCm = req.HipCm
+            };
 
-            rec.RecordDateTime = DateTime.Now;
-            rec.WeightKg = req.WeightKg;
-            rec.WaistCm = req.WaistCm;
-            rec.AbdomenCm = req.AbdomenCm;
-            rec.ChestCm = req.ChestCm;
-            rec.ArmCm = req.ArmCm;
-            rec.ThighCm = req.ThighCm;
-            rec.HipCm = req.HipCm;
-
+            _db.Ath_BodyRecords.Add(rec);
             await _db.SaveChangesAsync();
             return "";
         }
@@ -194,7 +196,7 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
-        //  ✅ محاسبات — بر اساس فرمول‌های تحقیق‌شده
+        //  ✅ محاسبات — بدون تغییر (روی لیست مرتب‌شده کار می‌کند)
         // ============================================================
         public BodyMetricsDto Compute(BodyAnalysisPageDto page, List<Ath_BodyRecord> recordsAsc)
         {
@@ -213,10 +215,9 @@ namespace TandisWebApp.Services
 
             m.HasEnoughData = heightCm != null && weightKg != null && age != null && page.Gender != null;
 
-            // با داده ناقص هم بخش‌های ممکن محاسبه می‌شوند (مثلاً BMI بدون سن)
             if (heightCm == null || weightKg == null)
             {
-                AppendTrend(m, recordsAsc);   // روند وزن به قد/سن نیاز ندارد
+                AppendTrend(m, recordsAsc);
                 return m;
             }
 
@@ -226,14 +227,11 @@ namespace TandisWebApp.Services
             int a = age ?? 0;
             bool hasAgeGender = age != null && page.Gender != null;
 
-            // ---- ۱) BMI = وزن / قد² ----
             var bmi = w / (hm * hm);
             m.Bmi = Math.Round(bmi, 1);
             m.BmiCategory = BmiCategory(bmi, out var advice);
             m.BmiAdvice = advice;
 
-            // ---- ۶) وزن هدف (فقط قد لازم دارد) ----
-            //      بازه سالم BMI (18.5–24.9) × قد²  +  فرمول Devine
             decimal bmiMin = 18.5m * hm * hm;
             decimal bmiMax = 24.9m * hm * hm;
             m.IdealWeightMin = Math.Round(bmiMin, 1);
@@ -241,14 +239,12 @@ namespace TandisWebApp.Services
 
             if (page.Gender != null)
             {
-                // Devine — قد بر حسب اینچ، بالاتر از ۱۵۲ سانت
                 decimal inches = h / 2.54m;
                 decimal over5ft = Math.Max(0m, inches - 60m);
                 decimal devine = male ? 50m + 2.3m * over5ft : 45.5m + 2.3m * over5ft;
                 m.DevineWeight = Math.Round(devine, 1);
             }
 
-            // وزن هدف پیشنهادی: اگر خارج از بازه سالمه → لبه‌ی نزدیک‌تر بازه، داخل بازه → میانه بازه برای چربی‌سوزی
             decimal target;
             if (w > bmiMax) target = page.Profile.Goal == 2 ? bmiMax : Math.Max(bmiMin, bmiMax);
             else if (w < bmiMin) target = bmiMin;
@@ -257,7 +253,6 @@ namespace TandisWebApp.Services
                 : w;
             m.TargetWeight = Math.Round(target, 1);
 
-            // ---- ۸) نسبت دور کمر به قد (WtHR) — NHS: هدف < 0.5 ----
             if (waistCm != null)
             {
                 var ratio = waistCm.Value / h;
@@ -268,25 +263,19 @@ namespace TandisWebApp.Services
                     : "خیلی بالا 🔴";
             }
 
-            // ---- ۷) روند تغییرات وزن ----
             AppendTrend(m, recordsAsc);
 
-            // ---- ۴) پروتئین روزانه — فقط وزن لازم دارد (ISSN: ۱٫۴ تا ۲٫۰ گرم/کیلو) ----
-            //      چربی‌سوزی: بالای بازه (حفظ عضله در کسری کالری) | عضله‌سازی: ۲٫۰ | حفظ: ۱٫۶
             decimal perKg = page.Profile.Goal switch { 1 => 2.0m, 2 => 2.0m, _ => 1.6m };
             m.ProteinG = Math.Round(w * perKg);
             m.ProteinAdvice = page.Profile.Goal == 3
                 ? $"{perKg:0.0} گرم به ازای هر کیلوگرم وزن (روزانه)"
                 : $"{perKg:0.0} گرم به ازای هر کیلوگرم — بالای بازه پیشنهادی ISSN برای حفظ عضله";
 
-            // از اینجا به بعد به سن/جنسیت نیاز است
             if (!hasAgeGender) return m;
 
-            // ---- ۲) BMR — Mifflin-St Jeor ----
             decimal bmr = 10m * w + 6.25m * h - 5m * a + (male ? 5m : -161m);
             m.Bmr = Math.Round(bmr);
 
-            // ---- ۳) TDEE = BMR × ضریب فعالیت ----
             var act = ActivityLevels.FirstOrDefault(x => x.Level == page.Profile.ActivityLevel);
             if (act.Label == null) act = ActivityLevels[1];
             m.ActivityFactor = act.Factor;
@@ -294,8 +283,6 @@ namespace TandisWebApp.Services
             var tdee = bmr * act.Factor;
             m.Tdee = Math.Round(tdee);
 
-            // ---- ۵) کالری هدف ----
-            //      کاهش چربی: TDEE − 500 (کف: BMR و ۱۲۰۰/۱۵۰۰) | عضله‌سازی: TDEE + 10٪
             var cut = tdee - 500m;
             var cutFloor = Math.Max(bmr, male ? 1500m : 1200m);
             if (cut < cutFloor) cut = cutFloor;
@@ -311,15 +298,12 @@ namespace TandisWebApp.Services
                 _ => m.Tdee
             };
 
-            // ---- مکمل: تخمین چربی بدن — Deurenberg ----
-            //      %BF = 1.20×BMI + 0.23×سن − 10.8×جنس − 5.4   (جنس: مرد=1، زن=0)
             var bf = 1.20m * bmi + 0.23m * a - 10.8m * (male ? 1m : 0m) - 5.4m;
             if (bf > 3 && bf < 70) m.BodyFatPct = Math.Round(bf, 1);
 
             return m;
         }
 
-        /// <summary>روند تغییرات وزن — بدون نیاز به قد/سن</summary>
         private static void AppendTrend(BodyMetricsDto m, List<Ath_BodyRecord> recordsAsc)
         {
             var withWeight = recordsAsc.Where(r => r.WeightKg != null).ToList();
@@ -353,7 +337,6 @@ namespace TandisWebApp.Services
             advice = "چاقی شدید — حتماً با پزشک مشورت کنید."; return "چاقی درجه ۳";
         }
 
-        /// <summary>محاسبه سن از تاریخ تولد شمسی/میلادی ذخیره‌شده در Gen_Person</summary>
         private int? CalcAge(string? birthDate)
         {
             if (string.IsNullOrWhiteSpace(birthDate)) return null;
@@ -364,12 +347,12 @@ namespace TandisWebApp.Services
                 if (parts.Length != 3) return null;
                 int y = int.Parse(parts[0]), mo = int.Parse(parts[1]), d = int.Parse(parts[2]);
                 DateTime b = y > 1600
-                    ? new DateTime(y, mo, d)                    // میلادی
-                    : pc.ToDateTime(y, mo, d, 0, 0, 0, 0);      // شمسی
+                    ? new DateTime(y, mo, d)
+                    : pc.ToDateTime(y, mo, d, 0, 0, 0, 0);
                 var today = DateTime.Today;
                 int age = today.Year - b.Year;
                 if (today < b.AddYears(age)) age--;
- return age is > 0 and < 130 ? age : null;
+                return age is > 0 and < 130 ? age : null;
             }
             catch { return null; }
         }
@@ -378,6 +361,7 @@ namespace TandisWebApp.Services
         {
             RecordID = r.RecordID,
             RecordDate = r.RecordDate,
+            RecordDateTime = r.RecordDateTime,   // ✅ برای مرتب‌سازی در JS
             WeightKg = r.WeightKg,
             WaistCm = r.WaistCm,
             AbdomenCm = r.AbdomenCm,
