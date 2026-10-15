@@ -183,26 +183,34 @@ body {
     flex-shrink: 0;
 }
 
-.acmb.open .acmb-btn i.bi-chevron-down {
-    transform: rotate(180deg);
+/* ✅ کلید ۱: هیچ‌جا منو رو کلیپ نکن */
+.acmb-wrapper {
+    overflow: visible !important;
 }
 
-/* لیست کشویی */
+.acmb {
+    overflow: visible !important;
+}
+
+/* ✅ کلید ۲: منو دیگر absolute-داخل-کارت نیست؛ fixed-روی-body می‌شود */
 .acmb-menu {
-    position: absolute;
-    top: calc(100% + 6px);
-    left: 0;
-    right: 0;
-    z-index: 1050;
+    position: fixed; /* به‌جای absolute */
+    z-index: 2000; /* بالاتر از مودال/نوارها */
+    max-height: 280px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     background: rgba(24, 28, 46, .98);
     border: 1px solid rgba(255, 255, 255, .14);
     border-radius: 14px;
-    box-shadow: 0 18px 40px rgba(0, 0, 0, .5);
+    box-shadow: 0 18px 40px rgba(0, 0, 0, .55);
     padding: 8px;
-    display: none;
-    max-height: 260px; /* ⭐️ محدود کردن ارتفاع برای جلوگیری از خروج از صفحه */
-    overflow-y: auto; /* ⭐️ اسکرول داخلی */
-    -webkit-overflow-scrolling: touch;
+    display: none; /* JS با style.display کنترل می‌کند */
+    direction: rtl;
+}
+
+/* فلش دکمه همچنان با کلاس .acmb.open می‌چرخد (منو دیگر فرزندش نیست) */
+.acmb.open .acmb-btn i.bi-chevron-down {
+    transform: rotate(180deg);
 }
 
 .acmb.open .acmb-menu {

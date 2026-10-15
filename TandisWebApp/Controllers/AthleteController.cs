@@ -236,7 +236,7 @@ namespace TandisWebApp.Controllers
 
         private static string WeekdayAbbr(DayOfWeek d) => WeekdayFa(d) switch
         {
-            "شنبه" => "شنب",
+            "شنبه" => "شنبه",
             "یکشنبه" => "یکشنبه",
             "دوشنبه" => "دوشنبه",
             "سه‌شنبه" => "سه‌شنبه",
