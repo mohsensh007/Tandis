@@ -267,8 +267,12 @@
         bar.addEventListener('click', function (e) {
             var chip = e.target.closest('.ba-chip');
             if (!chip) return;
-            bar.querySelectorAll('.ba-chip').forEach(function (c) { c.classList.remove('active'); });
+            bar.querySelectorAll('.ba-chip').forEach(function (c) {
+                c.classList.remove('active');
+                c.setAttribute('aria-pressed', 'false');
+            });
             chip.classList.add('active');
+            chip.setAttribute('aria-pressed', 'true');
             chartKey = chip.getAttribute('data-key');
             chartLabel = chip.getAttribute('data-label');
             chartUnit = chip.getAttribute('data-unit');
@@ -301,15 +305,15 @@
         var html = '';
         records.forEach(function (r) {
             html += '<tr>' +
-                '<td>' + esc(r.recordDate) + '</td>' +
-                '<td>' + num(r.weightKg, 1) + '</td>' +
-                '<td>' + num(r.waistCm, 1) + '</td>' +
-                '<td>' + num(r.abdomenCm, 1) + '</td>' +
-                '<td>' + num(r.chestCm, 1) + '</td>' +
-                '<td>' + num(r.armCm, 1) + '</td>' +
-                '<td>' + num(r.thighCm, 1) + '</td>' +
-                '<td>' + num(r.hipCm, 1) + '</td>' +
-                '<td><button type="button" class="ba-row-del" data-id="' + r.recordId + '">حذف</button></td>' +
+                '<td data-label="تاریخ">' + esc(r.recordDate) + '</td>' +
+                '<td data-label="وزن">' + num(r.weightKg, 1) + '</td>' +
+                '<td data-label="کمر">' + num(r.waistCm, 1) + '</td>' +
+                '<td data-label="شکم">' + num(r.abdomenCm, 1) + '</td>' +
+                '<td data-label="سینه">' + num(r.chestCm, 1) + '</td>' +
+                '<td data-label="بازو">' + num(r.armCm, 1) + '</td>' +
+                '<td data-label="ران">' + num(r.thighCm, 1) + '</td>' +
+                '<td data-label="باسن">' + num(r.hipCm, 1) + '</td>' +
+                '<td data-label="عملیات"><button type="button" class="ba-row-del" data-id="' + r.recordId + '">حذف اندازه‌گیری</button></td>' +
                 '</tr>';
         });
         body.innerHTML = html;

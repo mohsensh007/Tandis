@@ -557,3 +557,151 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ============================================================
+   بهینه‌سازی mobile-first و دسترسی‌پذیری
+   ============================================================ */
+.ba-field-hint {
+    display: block;
+    margin-top: 5px;
+    color: var(--ba-text-sub);
+    font-size: .7rem;
+    font-weight: 600;
+}
+
+.ba-btn:focus-visible,
+.ba-chip:focus-visible,
+.ba-row-del:focus-visible,
+.ba-back:focus-visible,
+.ba-input:focus-visible,
+.ba-select:focus-visible {
+    outline: 3px solid rgba(102,211,232,.9);
+    outline-offset: 3px;
+}
+
+.ba-chart-toolbar {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 3px 2px 8px;
+    scrollbar-width: thin;
+}
+
+.ba-chip {
+    min-height: 44px;
+    flex: 0 0 auto;
+}
+
+.ba-table caption {
+    caption-side: top;
+}
+
+@media (max-width: 767.98px) {
+    .ba-header {
+        align-items: stretch;
+    }
+
+    .ba-header h4,
+    .ba-back {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    .ba-card {
+        border-radius: 16px;
+        padding: 14px;
+    }
+
+    .ba-top-grid,
+    .ba-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .ba-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+    }
+
+    .ba-metric {
+        padding: 12px 8px;
+        min-width: 0;
+    }
+
+    .ba-metric .ba-m-value {
+        font-size: 1.15rem;
+    }
+
+    /* تاریخچه در موبایل به کارت‌های خوانا تبدیل می‌شود. */
+    .ba-table-wrap {
+        border: 0;
+        overflow: visible;
+    }
+
+    .ba-table,
+    .ba-table tbody,
+    .ba-table tr,
+    .ba-table td {
+        display: block;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .ba-table {
+        font-size: .82rem;
+    }
+
+    .ba-table thead {
+        display: none;
+    }
+
+    .ba-table tbody tr {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 7px 10px;
+        padding: 12px 10px;
+        margin-bottom: 10px;
+        background: rgba(255,255,255,.045);
+        border: 1px solid rgba(255,255,255,.10);
+        border-radius: 14px;
+    }
+
+    .ba-table tbody td {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 5px 0;
+        border: 0;
+        text-align: left;
+    }
+
+    .ba-table tbody td::before {
+        content: attr(data-label);
+        color: var(--ba-text-sub);
+        font-size: .7rem;
+        font-weight: 700;
+    }
+
+    .ba-table tbody td:last-child {
+        grid-column: 1 / -1;
+        justify-content: stretch;
+        padding-top: 8px;
+        border-top: 1px solid rgba(255,255,255,.08);
+    }
+
+    .ba-table tbody td:last-child .ba-row-del {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .ba-chart-box {
+        padding-inline: 2px;
+    }
+}
+
+@media (max-width: 380px) {
+    .ba-metrics {
+        grid-template-columns: 1fr;
+    }
+}

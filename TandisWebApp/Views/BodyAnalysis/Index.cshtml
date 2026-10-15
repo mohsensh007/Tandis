@@ -7,7 +7,7 @@
     var today = $"{pc.GetYear(DateTime.Now):0000}/{pc.GetMonth(DateTime.Now):00}/{pc.GetDayOfMonth(DateTime.Now):00}";
 }
 
-<link rel="stylesheet" href="~/css/body-analysis.css?v=1" />
+<link rel="stylesheet" href="~/css/body-analysis.css?v=2" />
 
 <!-- ===== داده اولیه برای JS ===== -->
 <script id="ba-data" type="application/json">
@@ -32,6 +32,7 @@
         {
             recordId = Model.Latest.RecordID,
             recordDate = Model.Latest.RecordDate,
+            recordDateTime = Model.Latest.RecordDateTime,
             weightKg = Model.Latest.WeightKg,
             waistCm = Model.Latest.WaistCm,
             abdomenCm = Model.Latest.AbdomenCm,
@@ -44,6 +45,7 @@
         {
             recordId = r.RecordID,
             recordDate = r.RecordDate,
+            recordDateTime = r.RecordDateTime,
             weightKg = r.WeightKg,
             waistCm = r.WaistCm,
             abdomenCm = r.AbdomenCm,
@@ -83,7 +85,7 @@
 
         <div class="ba-form-grid">
             <div class="ba-field">
-                <label class="ba-label">قد</label>
+                <label for="baHeight" class="ba-label">قد</label>
                 <div class="ba-input-group">
                     <input type="number" id="baHeight" class="ba-input" min="50" max="260" step="0.5"
                            placeholder="مثلاً 178" value="@(Model.Profile.HeightCm?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "")" />
@@ -91,7 +93,7 @@
                 </div>
             </div>
             <div class="ba-field">
-                <label class="ba-label">میزان فعالیت روزانه</label>
+                <label for="baActivity" class="ba-label">میزان فعالیت روزانه</label>
                 <select id="baActivity" class="ba-select">
                     <option value="1" selected="@(Model.Profile.ActivityLevel == 1)">کم‌تحرک — ورزش ندارد</option>
                     <option value="2" selected="@(Model.Profile.ActivityLevel == 2)">سبک — ۱ تا ۳ روز در هفته</option>
@@ -101,7 +103,7 @@
                 </select>
             </div>
             <div class="ba-field">
-                <label class="ba-label">سابقه ورزشی</label>
+                <label for="baHistory" class="ba-label">سابقه ورزشی</label>
                 <select id="baHistory" class="ba-select">
                     <option value="0" selected="@(Model.Profile.SportHistory == 0)">بدون سابقه</option>
                     <option value="1" selected="@(Model.Profile.SportHistory == 1)">کمتر از ۶ ماه</option>
@@ -112,7 +114,7 @@
                 </select>
             </div>
             <div class="ba-field">
-                <label class="ba-label">هدف ورزشی</label>
+                <label for="baGoal" class="ba-label">هدف ورزشی</label>
                 <select id="baGoal" class="ba-select">
                     <option value="1" selected="@(Model.Profile.Goal == 1)">چربی‌سوزی و کاهش وزن</option>
                     <option value="2" selected="@(Model.Profile.Goal == 2)">عضله‌سازی و افزایش وزن</option>
@@ -120,7 +122,7 @@
                 </select>
             </div>
             <div class="ba-field">
-                <label class="ba-label">جلسات تمرین در هفته</label>
+                <label for="baSessions" class="ba-label">جلسات تمرین در هفته</label>
                 <div class="ba-input-group">
                     <input type="number" id="baSessions" class="ba-input" min="0" max="14" step="1"
                            placeholder="مثلاً 3" value="@Model.Profile.SessionsPerWeek" />
@@ -136,59 +138,60 @@
     <div class="ba-card">
         <div class="ba-card-title">
             <i class="bi bi-ruler-fill"></i> اندازه‌گیری جدید
-            <span class="ba-card-hint">ثبت مجدد در همان تاریخ = ویرایش</span>
+            <span class="ba-card-hint">هر ثبت، آخرین ورودی محاسبات می‌شود</span>
         </div>
 
         <div class="ba-field">
-            <label class="ba-label">تاریخ اندازه‌گیری</label>
-            <input type="text" id="baDate" class="ba-input" placeholder="1404/07/22" dir="ltr" style="text-align:right;" value="@today" />
+            <label for="baDate" class="ba-label">تاریخ اندازه‌گیری</label>
+            <input type="text" id="baDate" class="ba-input" placeholder="1404/07/22" inputmode="numeric" pattern="[0-9۰-۹]{4}/[0-9۰-۹]{2}/[0-9۰-۹]{2}" dir="ltr" style="text-align:right;" value="@today" aria-describedby="baDateHint" />
+            <small id="baDateHint" class="ba-field-hint">فرمت تاریخ: سال/ماه/روز</small>
         </div>
 
         <div class="ba-form-grid">
             <div class="ba-field">
-                <label class="ba-label">وزن</label>
+                <label for="baWeight" class="ba-label">وزن</label>
                 <div class="ba-input-group">
                     <input type="number" id="baWeight" class="ba-input" min="20" max="400" step="0.1" placeholder="مثلاً 82.5" />
                     <span class="ba-unit">کیلوگرم</span>
                 </div>
             </div>
             <div class="ba-field">
-                <label class="ba-label">دور کمر</label>
+                <label for="baWaist" class="ba-label">دور کمر</label>
                 <div class="ba-input-group">
                     <input type="number" id="baWaist" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 84" />
                     <span class="ba-unit">سانتی‌متر</span>
                 </div>
             </div>
             <div class="ba-field">
-                <label class="ba-label">دور شکم</label>
+                <label for="baAbdomen" class="ba-label">دور شکم</label>
                 <div class="ba-input-group">
                     <input type="number" id="baAbdomen" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 90" />
                     <span class="ba-unit">سانتی‌متر</span>
                 </div>
             </div>
             <div class="ba-field">
-                <label class="ba-label">دور سینه</label>
+                <label for="baChest" class="ba-label">دور سینه</label>
                 <div class="ba-input-group">
                     <input type="number" id="baChest" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 100" />
                     <span class="ba-unit">سانتی‌متر</span>
                 </div>
             </div>
             <div class="ba-field">
-                <label class="ba-label">دور بازو</label>
+                <label for="baArm" class="ba-label">دور بازو</label>
                 <div class="ba-input-group">
                     <input type="number" id="baArm" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 32" />
                     <span class="ba-unit">سانتی‌متر</span>
                 </div>
             </div>
             <div class="ba-field">
-                <label class="ba-label">دور ران</label>
+                <label for="baThigh" class="ba-label">دور ران</label>
                 <div class="ba-input-group">
                     <input type="number" id="baThigh" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 56" />
                     <span class="ba-unit">سانتی‌متر</span>
                 </div>
             </div>
             <div class="ba-field">
-                <label class="ba-label">دور باسن</label>
+                <label for="baHip" class="ba-label">دور باسن</label>
                 <div class="ba-input-group">
                     <input type="number" id="baHip" class="ba-input" min="10" max="300" step="0.5" placeholder="مثلاً 98" />
                     <span class="ba-unit">سانتی‌متر</span>
@@ -212,7 +215,7 @@
         برای محاسبه شاخص‌ها، ابتدا «قد» را در اطلاعات پایه و سپس «وزن» را در اندازه‌گیری ثبت کنید.
     </div>
 
-    <div class="ba-metrics" id="baMetrics" style="display:none;">
+    <div class="ba-metrics" id="baMetrics" style="display:none;" aria-live="polite" aria-label="نتایج محاسبات">
         <div class="ba-metric ba-highlight" id="mBmi">
             <i class="bi bi-body-text ba-m-icon"></i>
             <div class="ba-m-value">—</div>
@@ -307,13 +310,13 @@
     </div>
 
     <div class="ba-chart-toolbar" id="baChartToolbar">
-        <button type="button" class="ba-chip active" data-key="weightKg" data-label="وزن" data-unit="کیلوگرم">وزن</button>
-        <button type="button" class="ba-chip" data-key="waistCm" data-label="دور کمر" data-unit="سانتی‌متر">دور کمر</button>
-        <button type="button" class="ba-chip" data-key="abdomenCm" data-label="دور شکم" data-unit="سانتی‌متر">دور شکم</button>
-        <button type="button" class="ba-chip" data-key="chestCm" data-label="دور سینه" data-unit="سانتی‌متر">دور سینه</button>
-        <button type="button" class="ba-chip" data-key="armCm" data-label="دور بازو" data-unit="سانتی‌متر">دور بازو</button>
-        <button type="button" class="ba-chip" data-key="thighCm" data-label="دور ران" data-unit="سانتی‌متر">دور ران</button>
-        <button type="button" class="ba-chip" data-key="hipCm" data-label="دور باسن" data-unit="سانتی‌متر">دور باسن</button>
+        <button type="button" class="ba-chip active" aria-pressed="true" data-key="weightKg" data-label="وزن" data-unit="کیلوگرم">وزن</button>
+        <button type="button" class="ba-chip" aria-pressed="false" data-key="waistCm" data-label="دور کمر" data-unit="سانتی‌متر">دور کمر</button>
+        <button type="button" class="ba-chip" aria-pressed="false" data-key="abdomenCm" data-label="دور شکم" data-unit="سانتی‌متر">دور شکم</button>
+        <button type="button" class="ba-chip" aria-pressed="false" data-key="chestCm" data-label="دور سینه" data-unit="سانتی‌متر">دور سینه</button>
+        <button type="button" class="ba-chip" aria-pressed="false" data-key="armCm" data-label="دور بازو" data-unit="سانتی‌متر">دور بازو</button>
+        <button type="button" class="ba-chip" aria-pressed="false" data-key="thighCm" data-label="دور ران" data-unit="سانتی‌متر">دور ران</button>
+        <button type="button" class="ba-chip" aria-pressed="false" data-key="hipCm" data-label="دور باسن" data-unit="سانتی‌متر">دور باسن</button>
     </div>
 
     <div class="ba-chart-box" id="baChartBox">
@@ -341,17 +344,10 @@
 
     <div class="ba-table-wrap" id="baTableWrap" style="display:none;">
         <table class="ba-table">
+            <caption class="visually-hidden">تاریخچه اندازه‌گیری‌های بدن</caption>
             <thead>
                 <tr>
-                    <th>تاریخ</th>
-                    <th>وزن</th>
-                    <th>کمر</th>
-                    <th>شکم</th>
-                    <th>سینه</th>
-                    <th>بازو</th>
-                    <th>ران</th>
-                    <th>باسن</th>
-                    <th></th>
+                    <th scope="col">تاریخ</th><th scope="col">وزن</th><th scope="col">کمر</th><th scope="col">شکم</th><th scope="col">سینه</th><th scope="col">بازو</th><th scope="col">ران</th><th scope="col">باسن</th><th scope="col">عملیات</th>
                 </tr>
             </thead>
             <tbody id="baTableBody"></tbody>
@@ -360,5 +356,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/body-analysis.js?v=1"></script>
+    <script src="~/js/body-analysis.js?v=2"></script>
 }
