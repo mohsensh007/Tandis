@@ -63,7 +63,10 @@ namespace TandisWebApp.Controllers
         {
             var result = await _auth.LoginAsync(req);
             if (!result.Success)
-                return BadRequest(result);
+                // اعتبارنامه نادرست یک نتیجه معمولی در جریان ورود است؛
+                // ۲۰۰ برگردان تا frontend بتواند پیام واقعی result را نمایش دهد
+                // و خطای کاذب 400 در console ایجاد نشود.
+                return Ok(result);
 
             // حذف کوکی ادمین (اگر کاربر قبلاً به‌عنوان مدیر وارد شده بوده)
             // تا توکن عضو اولویت پیدا کند و Session مدیر با عضو تداخل نکند.

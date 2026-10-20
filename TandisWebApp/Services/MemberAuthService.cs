@@ -35,11 +35,25 @@ namespace TandisWebApp.Services
         {
             try
             {
+                if (req == null || string.IsNullOrWhiteSpace(req.NationalCode) || string.IsNullOrEmpty(req.Password))
+                {
+                    return new ApiResponse<LoginResponse>
+                    {
+                        Success = false,
+                        Message = "کد ملی و رمز عبور را وارد کنید"
+                    };
+                }
+
+                // ورودی موبایل ممکن است با ارقام فارسی/عربی ارسال شود.
+                // کد ملی را فقط برای جست‌وجو normalize می‌کنیم؛ رمز عبور trim نمی‌شود.
+                var rawNationalCode = req.NationalCode.Trim();
+                var nationalCode = NormalizeDigits(rawNationalCode);
+
                 // جستجوی عضو با کد ملی و رمز
                 var member = await (
                     from m in _db.Gen_Members
                     join p in _db.Gen_Persons on m.PersonID equals p.PersonID
-                    where p.NationalCode == req.NationalCode
+                    where (p.NationalCode == nationalCode || p.NationalCode == rawNationalCode)
                        && m.KioskPass == req.Password
                     select new { m, p }
                 ).FirstOrDefaultAsync();
@@ -91,6 +105,17 @@ namespace TandisWebApp.Services
                     Message = "خطا در پردازش درخواست"
                 };
             }
+        }
+
+        private static string NormalizeDigits(string value)
+        {
+            return value.Replace('۰', '0').Replace('۱', '1').Replace('۲', '2')
+                .Replace('۳', '3').Replace('۴', '4').Replace('۵', '5')
+                .Replace('۶', '6').Replace('۷', '7').Replace('۸', '8')
+                .Replace('۹', '9').Replace('٠', '0').Replace('١', '1')
+                .Replace('٢', '2').Replace('٣', '3').Replace('٤', '4')
+                .Replace('٥', '5').Replace('٦', '6').Replace('٧', '7')
+                .Replace('٨', '8').Replace('٩', '9');
         }
 
         /// <summary>
