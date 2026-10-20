@@ -19,6 +19,7 @@
         '.ch-main-card',
         '.ch-share-card',
         '.ch-side-card',
+        '.shift-banner',
         '.admin-setting-card'
     ].join(',');
     var cardIndex = 0;

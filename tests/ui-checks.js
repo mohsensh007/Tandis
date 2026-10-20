@@ -156,5 +156,11 @@
     });
     var report = read('TandisWebApp/Views/Home/Reports.cshtml');
     check(report.indexOf('member-reports.css') >= 0 && read('TandisWebApp/wwwroot/css/member-reports.css').indexOf('tr.finance-record') >= 0, 'mobile financial rows share desktop data/pager hooks');
+    var adminLayout = read('TandisWebApp/Views/Shared/_AdminLayout.cshtml');
+    var adminResponsive = read('TandisWebApp/wwwroot/css/admin-responsive.css');
+    var adminMotion = read('TandisWebApp/wwwroot/js/admin-motion.js');
+    check(adminLayout.indexOf('admin-responsive.css') >= 0 && adminLayout.indexOf('data-admin-shell') >= 0 && adminLayout.indexOf('admin-motion.js') >= 0, 'admin layout loads the shared mobile and motion layer');
+    check(adminResponsive.indexOf('table-responsive') >= 0 && adminResponsive.indexOf('rep-card') >= 0 && adminResponsive.indexOf('prefers-reduced-motion: reduce') >= 0, 'admin responsive layer covers reports, tables and reduced motion');
+    check(adminMotion.indexOf('IntersectionObserver') >= 0 && adminMotion.indexOf('prefers-reduced-motion') >= 0 && adminMotion.indexOf('MutationObserver') >= 0, 'admin motion layer reveals static and dynamic cards accessibly');
     log('Completed ' + count + ' JavaScript/UI checks (mock DOM, not visual or database integration).');
 })();
