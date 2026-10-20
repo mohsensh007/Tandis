@@ -17,9 +17,12 @@ function loadMemberMessages(showModal) {
                 // ✅ برچسب هوشمند: مربی یا مدیریت
                 var label;
                 if (isIn) {
-                    label = m.peerMemberID ? ('🏋️ از مربی: ' + esc(m.peerName || '')) : '📥 از مدیریت';
+                    label = m.peerMemberID
+                        ? ('<i class="bi bi-person-badge" aria-hidden="true"></i> از مربی: ' + esc(m.peerName || ''))
+                        : '<i class="bi bi-megaphone" aria-hidden="true"></i> از مدیریت';
                 } else {
-                    label = m.peerMemberID ? ('📤 به مربی: ' + esc(m.peerName || '')) : '📤 به مدیریت';
+                    label = '<i class="bi bi-send" aria-hidden="true"></i> ' +
+                        (m.peerMemberID ? ('به مربی: ' + esc(m.peerName || '')) : 'به مدیریت');
                 }
 
                 html += '<div class="msg-card p-3 ' + (isIn ? 'msg-in' : 'msg-out') + '">' +
@@ -32,7 +35,7 @@ function loadMemberMessages(showModal) {
                     '<span class="msg-short">' + esc(shortText) + '</span>' +
                     (needToggle
                         ? '<span class="msg-full" style="display:none;">' + esc(m.body) + '</span>' +
-                        '<a href="#" class="msg-toggle d-block mt-1">مشاهده بیشتر ▼</a>'
+                        '<a href="#" class="msg-toggle d-block mt-1">مشاهده بیشتر <i class="bi bi-chevron-down" aria-hidden="true"></i></a>'
                         : '') +
                     '</div>' +
                     /* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
@@ -74,12 +77,12 @@ $(function () {
             body.removeClass('show-full');
             body.find('.msg-full').hide();
             body.find('.msg-short').show();
-            $(this).text('مشاهده بیشتر ▼');
+            $(this).html('مشاهده بیشتر <i class="bi bi-chevron-down" aria-hidden="true"></i>');
         } else {
             body.addClass('show-full');
             body.find('.msg-full').show();
             body.find('.msg-short').hide();
-            $(this).text('بستن ▲');
+            $(this).html('بستن <i class="bi bi-chevron-up" aria-hidden="true"></i>');
         }
     });
 

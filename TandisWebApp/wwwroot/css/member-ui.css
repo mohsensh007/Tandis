@@ -1,0 +1,687 @@
+/* Member-only refinements. Keep data in its own scroll region, not off the page. */
+body.member-ui {
+    --member-accent: #66d3e8;
+    --member-purple: #667eea;
+    --member-purple-deep: #764ba2;
+}
+
+body.member-ui .member-main {
+    min-width: 0;
+    padding-right: max(12px, env(safe-area-inset-right));
+    padding-left: max(12px, env(safe-area-inset-left));
+}
+
+body.member-ui .member-main > *,
+body.member-ui .member-main .row > * {
+    min-width: 0;
+}
+
+body.member-ui :where(.btn, .btn-close, .bn-item, .coach-back-pill, .btn-back-glass,
+    .mpl-back-pill, .mp-back-pill, .mpf-chip, .rp-btn, .msg-toggle, .tandis-toast-close) {
+    min-width: 44px;
+    min-height: 44px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+body.member-ui :where(.coach-back-pill, .btn-back-glass, .mpl-back-pill, .mp-back-pill) {
+    justify-content: center;
+    max-width: 100%;
+    line-height: 1.6;
+}
+
+body.member-ui :where(.form-control, .form-select) {
+    min-width: 0;
+    max-width: 100%;
+}
+
+body.member-ui :where(input.form-control, .form-select) {
+    min-height: 44px;
+}
+
+body.member-ui :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid var(--member-accent);
+    outline-offset: 3px;
+}
+
+body.member-ui .bi {
+    flex-shrink: 0;
+}
+
+/* A two-row narrow header leaves space for the complete club name at 320px. */
+body.member-ui .member-header .container-fluid {
+    padding-right: max(12px, env(safe-area-inset-right)) !important;
+    padding-left: max(12px, env(safe-area-inset-left)) !important;
+}
+
+body.member-ui .navbar-brand-club {
+    display: grid !important;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+    gap: 8px 12px;
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    white-space: normal;
+}
+
+body.member-ui .navbar-brand-club:hover {
+    transform: none;
+}
+
+body.member-ui .club-logo {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: center;
+    width: auto;
+    max-width: 44px;
+    height: auto !important;
+    max-height: 38px;
+    object-fit: contain;
+}
+
+body.member-ui .header-clock {
+    grid-column: 2;
+    grid-row: 1;
+    justify-self: stretch;
+    min-width: 0;
+    padding: 6px 8px;
+    background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18));
+    border-color: rgba(102,211,232,.35);
+}
+
+body.member-ui .hc-time {
+    font-size: 1.05rem;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+body.member-ui .hc-date {
+    font-size: .65rem;
+    line-height: 1.65;
+    white-space: normal;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+body.member-ui .club-name-wrap {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    justify-self: stretch;
+    min-width: 0;
+    margin: 0;
+    padding: 6px 10px;
+    background: linear-gradient(135deg, rgba(102,126,234,.20), rgba(118,75,162,.16));
+    border: 1px solid rgba(102,211,232,.30);
+    border-radius: 12px;
+    text-align: center;
+}
+
+body.member-ui .club-name {
+    max-width: none;
+    font-size: .9rem;
+    line-height: 1.7;
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
+}
+
+body.member-ui .member-header .navbar-collapse,
+body.member-ui .member-header .navbar-nav {
+    min-width: 0;
+}
+
+body.member-ui .member-header .nav-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+}
+
+body.member-ui #memberBell .bi {
+    font-size: 1.25rem;
+}
+
+body.member-ui .member-user-name {
+    max-width: 16rem;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+body.member-ui .member-message-menu {
+    width: min(300px, calc(100vw - 24px));
+    min-width: 0;
+    max-height: min(480px, 75vh);
+    max-height: min(480px, 75dvh);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+body.member-ui .member-message-menu :is(.dropdown-item, .dropdown-header, .badge) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+body.member-ui .member-message-menu .dropdown-item {
+    min-height: 44px;
+}
+
+body.member-ui .member-message-title {
+    line-height: 1.65;
+}
+
+/* Bottom navigation: the same local icon family as the dashboard. */
+body.member-ui #bottomNav {
+    overflow: visible;
+    padding: 8px 4px 6px;
+    background: linear-gradient(135deg, rgba(37,44,78,.96), rgba(45,31,64,.96)) !important;
+}
+
+body.member-ui #bottomNav::before,
+body.member-ui #bottomNav::after {
+    display: none;
+}
+
+body.member-ui #bottomNav .bn-item {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 60px;
+    padding: 6px 2px;
+    gap: 5px;
+    font-size: .72rem;
+    line-height: 1.45;
+    text-align: center;
+    color: #bdc9e0;
+}
+
+body.member-ui .bn-icon {
+    display: block;
+    font-size: 1.4rem;
+    line-height: 1;
+    transition: transform .2s, color .2s;
+}
+
+body.member-ui #bottomNav .bn-active {
+    color: var(--member-accent);
+}
+
+body.member-ui .bn-active .bn-icon {
+    transform: translateY(-2px);
+}
+
+body.member-ui #bottomNav .bn-glow {
+    position: absolute;
+    transform: translateX(0);
+    background: linear-gradient(90deg, var(--member-purple), var(--member-accent));
+    box-shadow: 0 0 14px rgba(102,211,232,.55);
+}
+
+/* The modal body is the scroll region; titles and dismiss actions stay reachable. */
+body.member-ui .modal-dialog {
+    width: calc(100% - 24px - env(safe-area-inset-left) - env(safe-area-inset-right));
+    margin: calc(12px + env(safe-area-inset-top)) auto calc(12px + env(safe-area-inset-bottom));
+}
+
+body.member-ui .modal-dialog-centered {
+    min-height: calc(100% - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+body.member-ui .modal-dialog-scrollable {
+    height: calc(100% - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+body.member-ui .modal-content {
+    min-width: 0;
+    max-height: calc(100vh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+body.member-ui .modal-body {
+    min-height: 0;
+    overflow-y: auto;
+    overflow-wrap: anywhere;
+    overscroll-behavior: contain;
+}
+
+body.member-ui .modal-title {
+    min-width: 0;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+}
+
+body.member-ui .modal-header .btn-close {
+    flex: 0 0 44px;
+    box-sizing: border-box;
+    width: 44px;
+    height: 44px;
+    padding: 14px;
+    margin-block: -.375rem;
+    margin-inline-start: auto;
+    margin-inline-end: -.375rem;
+}
+
+body.member-ui .member-logout-icon {
+    font-size: 2.6rem;
+    color: var(--member-accent);
+}
+
+body.member-ui .member-logout-actions {
+    flex-wrap: wrap;
+}
+
+body.member-ui .member-logout-actions > * {
+    flex: 1 1 110px !important;
+}
+
+/* Dashboard text wraps rather than shrinking financial values or truncating names. */
+body.member-ui .home-profile-summary {
+    flex-wrap: wrap;
+}
+
+body.member-ui .home-profile-summary > .flex-grow-1 {
+    flex: 1 1 180px;
+}
+
+body.member-ui .home-avatar-wrap {
+    width: 72px;
+    height: 72px;
+    flex: 0 0 auto;
+}
+
+body.member-ui .member-home :is(#dashFullName, .nav-title, .cf-title, .mp-entry-title,
+    .mp-entry-sub, .sans-name, .sans-coach, .ss-title, .tf-title, .tf-detail, .tf-check-name) {
+    overflow-wrap: anywhere;
+    line-height: 1.7;
+}
+
+body.member-ui .member-home :is(.membership-chip, .status-chip, .mp-entry-count, .sans-pill,
+    .ss-price, .tf-price, .ss-time-pill, .tf-pill) {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+body.member-ui .member-home .nav-card {
+    height: 100%;
+    min-height: 112px;
+    gap: 6px;
+}
+
+body.member-ui .member-home .nav-icon {
+    font-size: 1.75rem;
+}
+
+body.member-ui .member-home .cf-card {
+    padding: 14px 12px;
+}
+
+body.member-ui .member-home .cf-title {
+    max-width: 100%;
+    text-align: center;
+}
+
+body.member-ui #cfDots {
+    flex-wrap: wrap;
+    max-width: 288px;
+    margin-inline: auto;
+}
+
+body.member-ui .member-home .cf-dot {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    transform: none;
+}
+
+body.member-ui .member-home .cf-dot::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.4);
+    transition: background .2s, transform .2s;
+}
+
+body.member-ui .member-home .cf-dot.on::after {
+    background: var(--member-accent);
+    transform: scale(1.4);
+}
+
+body.member-ui .member-home :is(.btn-all-menu, .ss-btn, .ss-btn-cancel, .ss-tab,
+    .tf-tab, .ss-day, .tf-filterbtn, .tf-fp-link, .tf-check) {
+    min-width: 44px;
+    min-height: 44px;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+body.member-ui .member-home .tf-tab {
+    flex-basis: calc(50% - 6px);
+}
+
+body.member-ui .member-home :is(.ss-sub, .tf-detail, .tf-fp-head) {
+    flex-wrap: wrap;
+}
+
+body.member-ui .member-home :is(#singleSessionList, #tarefeList) {
+    max-height: none;
+    overflow: visible;
+}
+
+body.member-ui .member-home .tf-check {
+    position: relative;
+}
+
+/* Keep custom checkboxes keyboard-operable without changing their value handling. */
+body.member-ui .member-home .tf-check input {
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+body.member-ui .member-home .tf-check:focus-within {
+    outline: 2px solid var(--member-accent);
+    outline-offset: 2px;
+}
+
+body.member-ui .member-home .mp-entry-inner {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 14px;
+}
+
+body.member-ui .member-home .mp-entry-info {
+    flex: 1 1 140px;
+}
+
+body.member-ui .member-home .mp-entry-right {
+    flex-wrap: wrap;
+    margin-inline-start: auto;
+}
+
+body.member-ui .member-home .credit-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    color: var(--member-accent);
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, rgba(102,126,234,.24), rgba(118,75,162,.22));
+    border: 1px solid rgba(102,211,232,.3);
+}
+
+body.member-ui .member-home .credit-top {
+    flex-wrap: wrap;
+}
+
+body.member-ui .member-home .credit-label {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+body.member-ui .member-home .credit-amount {
+    display: block;
+    padding: 8px;
+}
+
+body.member-ui .member-home .credit-value {
+    display: block;
+    min-width: 0;
+    font-size: 1rem;
+    line-height: 1.7;
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
+}
+
+/* Fixed overlays get their own viewport-bound scrolling and safe-area padding. */
+body.member-ui .allmenu-overlay:not(.open) {
+    pointer-events: none;
+}
+
+body.member-ui .allmenu-panel {
+    padding: calc(16px + env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
+        calc(24px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+    overscroll-behavior: contain;
+    background: rgba(15,23,42,.92);
+}
+
+body.member-ui .allmenu-header {
+    position: sticky;
+    top: env(safe-area-inset-top);
+    z-index: 1;
+    gap: 12px;
+    padding-bottom: 8px;
+    background: rgba(15,23,42,.96);
+}
+
+body.member-ui .allmenu-close {
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+}
+
+body.member-ui .allmenu-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+body.member-ui .allmenu-item {
+    min-width: 0;
+    min-height: 112px;
+    padding: 16px 10px;
+    text-align: center;
+    line-height: 1.75;
+    overflow-wrap: anywhere;
+}
+
+body.member-ui .am-icon {
+    color: var(--member-accent);
+}
+
+body.member-ui .ss-confirm-panel {
+    width: min(380px, calc(100% - 32px - env(safe-area-inset-left) - env(safe-area-inset-right)));
+    max-height: calc(100vh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    max-height: calc(100dvh - 32px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+body.member-ui .ss-confirm-btns {
+    flex-wrap: wrap;
+}
+
+body.member-ui .ss-confirm-btns > button {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+/* Existing member lists: contain long labels and keep every table column available. */
+body.member-ui :is(#stuffList, #serviceList, #catList, #categoryList, #basketTotal,
+    #sanseList, #renewInfo, .mpl-head, .mp-info, .mp-ex, .mp-day-head, .ms-name) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+body.member-ui #stuffList .card-body > .d-flex {
+    flex-wrap: wrap;
+}
+
+body.member-ui #stuffList input[type="number"].form-control {
+    display: block !important;
+    width: 100% !important;
+    max-width: 7rem;
+    margin-inline: auto;
+    margin-bottom: .5rem;
+}
+
+body.member-ui #basketTotal > .btn {
+    float: none !important;
+    display: block;
+    margin-top: 12px;
+}
+
+body.member-ui :is(#catList .list-group-item-action, #categoryList .cat-item) {
+    min-height: 44px;
+    max-width: 100%;
+}
+
+body.member-ui :is(.mpl-head, .mp-info, .mp-ex-top, .mp-day-head) {
+    flex-wrap: wrap;
+}
+
+body.member-ui #messagesList .msg-card > .d-flex {
+    flex-wrap: wrap;
+    gap: 6px 12px;
+}
+
+body.member-ui :is(#docList, #trafficList, #historyList, #basketList) .table-responsive {
+    max-width: 100%;
+    overscroll-behavior-x: contain;
+}
+
+body.member-ui :is(#docList, #trafficList, #historyList, #basketList) table {
+    min-width: 560px;
+}
+
+body.member-ui #historyList table {
+    min-width: 800px;
+}
+
+body.member-ui :is(#docList, #trafficList, #historyList, #basketList) :is(th, td) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 479.98px) {
+    body.member-ui :is(#stuffList, #serviceList, #tarefeList) > .row > .col-6,
+    body.member-ui .home-credit-grid > .col-6 {
+        width: 100%;
+    }
+}
+
+@media (min-width: 420px) and (max-width: 767.98px) {
+    body.member-ui .navbar-brand-club {
+        grid-template-columns: 44px minmax(112px, .9fr) minmax(0, 1fr);
+    }
+
+    body.member-ui .club-name-wrap {
+        grid-column: 3;
+        grid-row: 1;
+    }
+}
+
+@media (min-width: 480px) {
+    body.member-ui .allmenu-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+    body.member-ui {
+        padding-bottom: calc(104px + env(safe-area-inset-bottom));
+    }
+
+    body.member-ui .member-main > .d-flex.justify-content-between {
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    body.member-ui :is(#singleSessionModal, #tarefeModal) :is(.modal-header, .modal-body) {
+        padding: 12px !important;
+    }
+
+    body.member-ui #datePickerModal .modal-body {
+        padding: 10px;
+    }
+
+    body.member-ui #datePickerModal :is(#prevMonth, #nextMonth) {
+        width: 44px;
+        height: 44px;
+        flex: 0 0 44px;
+    }
+
+    body.member-ui #datePickerModal .cal-table {
+        table-layout: fixed;
+        border-spacing: 2px;
+    }
+
+    body.member-ui #datePickerModal .cal-table th {
+        overflow-wrap: anywhere;
+        line-height: 1.7;
+    }
+}
+
+@media (min-width: 768px) {
+    body.member-ui .member-header .container-fluid {
+        flex-wrap: nowrap;
+        gap: 16px;
+    }
+
+    body.member-ui .navbar-brand-club {
+        display: flex !important;
+        flex: 0 1 34rem;
+        width: auto;
+        max-width: 60%;
+        padding: 4px 10px;
+        background: linear-gradient(135deg, rgba(102,126,234,.18), rgba(118,75,162,.14));
+        border: 1px solid rgba(102,211,232,.28);
+        border-radius: 14px;
+    }
+
+    body.member-ui .club-logo,
+    body.member-ui .header-clock {
+        flex-shrink: 0;
+    }
+
+    body.member-ui .club-name-wrap {
+        flex: 1 1 auto;
+        padding: 4px;
+        border: 0;
+        background: none;
+    }
+
+    body.member-ui .member-header .navbar-nav {
+        margin-inline-start: auto;
+    }
+
+    body.member-ui .home-avatar-wrap {
+        width: 88px;
+        height: 88px;
+    }
+
+    body.member-ui .member-home .tf-tab {
+        flex-basis: 0;
+    }
+
+    body.member-ui .allmenu-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.member-ui :is(.bn-item, .bn-icon, .bn-glow, .cf-card, .cf-dot,
+        .allmenu-item, .allmenu-backdrop, .mp-entry) {
+        transition: none;
+    }
+
+    body.member-ui .cf-dot::after {
+        transition: none;
+    }
+
+    body.member-ui .ss-confirm-panel {
+        animation: none;
+    }
+}

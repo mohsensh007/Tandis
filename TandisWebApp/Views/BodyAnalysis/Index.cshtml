@@ -7,7 +7,7 @@
     var today = $"{pc.GetYear(DateTime.Now):0000}/{pc.GetMonth(DateTime.Now):00}/{pc.GetDayOfMonth(DateTime.Now):00}";
 }
 
-<link rel="stylesheet" href="~/css/body-analysis.css?v=2" />
+<link rel="stylesheet" href="~/css/body-analysis.css" asp-append-version="true" />
 
 <!-- ===== داده اولیه برای JS ===== -->
 <script id="ba-data" type="application/json">
@@ -54,7 +54,7 @@
             thighCm = r.ThighCm,
             hipCm = r.HipCm
         }).ToList()
-    }))
+    }, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)))
 </script>
 
 <!-- ===== هدر ===== -->
@@ -137,7 +137,7 @@
     <!-- ===== کارت ۲: ثبت اندازه‌گیری ===== -->
     <div class="ba-card">
         <div class="ba-card-title">
-            <i class="bi bi-ruler-fill"></i> اندازه‌گیری جدید
+            <i class="bi bi-rulers"></i> اندازه‌گیری جدید
             <span class="ba-card-hint">هر ثبت، آخرین ورودی محاسبات می‌شود</span>
         </div>
 
@@ -210,86 +210,124 @@
         <span class="ba-card-hint" id="baUpdatedHint"></span>
     </div>
 
+    <!-- آخرین اندازه‌گیری همیشه کنار نتایج نمایش داده می‌شود تا مشخص باشد محاسبات بر اساس کدام ورودی هستند. -->
+    <div class="ba-latest-measurement" id="baLatestMeasurement" aria-live="polite" aria-label="آخرین اندازه‌گیری">
+        <div class="ba-latest-head">
+            <div class="ba-latest-title">
+                <span class="ba-latest-icon"><i class="bi bi-activity"></i></span>
+                <span>
+                    <strong>آخرین اندازه‌گیری</strong>
+                    <small>محاسبات این صفحه بر اساس همین ورودی انجام می‌شود</small>
+                </span>
+            </div>
+            <span class="ba-latest-date" id="baLatestDate">—</span>
+        </div>
+        <div class="ba-latest-grid" id="baLatestGrid">
+            <div class="ba-latest-item ba-latest-primary"><span><i class="bi bi-speedometer2"></i> وزن</span><strong id="baLatestWeight">—</strong><small>کیلوگرم</small></div>
+            <div class="ba-latest-item"><span><i class="bi bi-arrows-collapse"></i> دور کمر</span><strong id="baLatestWaist">—</strong><small>سانتی‌متر</small></div>
+            <div class="ba-latest-item"><span><i class="bi bi-circle-half"></i> دور شکم</span><strong id="baLatestAbdomen">—</strong><small>سانتی‌متر</small></div>
+            <div class="ba-latest-item"><span><i class="bi bi-person-standing"></i> دور سینه</span><strong id="baLatestChest">—</strong><small>سانتی‌متر</small></div>
+            <div class="ba-latest-item"><span><i class="bi bi-hand-index-thumb"></i> دور بازو</span><strong id="baLatestArm">—</strong><small>سانتی‌متر</small></div>
+            <div class="ba-latest-item"><span><i class="bi bi-person-walking"></i> دور ران</span><strong id="baLatestThigh">—</strong><small>سانتی‌متر</small></div>
+            <div class="ba-latest-item"><span><i class="bi bi-record-circle"></i> دور باسن</span><strong id="baLatestHip">—</strong><small>سانتی‌متر</small></div>
+        </div>
+        <div class="ba-latest-empty" id="baLatestEmpty" style="display:none;">
+            <i class="bi bi-rulers"></i> هنوز اندازه‌گیری‌ای ثبت نشده است.
+        </div>
+    </div>
+
     <div id="baNoData" class="ba-empty" style="display:none;">
         <i class="bi bi-clipboard2-data"></i>
         برای محاسبه شاخص‌ها، ابتدا «قد» را در اطلاعات پایه و سپس «وزن» را در اندازه‌گیری ثبت کنید.
     </div>
 
-    <div class="ba-metrics" id="baMetrics" style="display:none;" aria-live="polite" aria-label="نتایج محاسبات">
-        <div class="ba-metric ba-highlight" id="mBmi">
+    <div class="ba-metrics" id="baMetrics" style="display:none;" aria-label="نتایج محاسبات">
+        <div class="ba-metric ba-highlight" id="mBmi" data-help-key="bmi">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح شاخص توده بدنی" title="توضیح شاخص توده بدنی"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-body-text ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit"></div>
             <div class="ba-m-label">شاخص توده بدنی (BMI)</div>
             <span class="ba-m-badge">—</span>
         </div>
-        <div class="ba-metric" id="mBmr">
+        <div class="ba-metric" id="mBmr" data-help-key="bmr">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح سوخت‌وساز پایه" title="توضیح سوخت‌وساز پایه"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-fire ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit">کالری / روز</div>
             <div class="ba-m-label">سوخت‌وساز پایه (BMR)</div>
         </div>
-        <div class="ba-metric" id="mTdee">
+        <div class="ba-metric" id="mTdee" data-help-key="tdee">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح کالری روزانه" title="توضیح کالری روزانه"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-lightning-charge-fill ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit">کالری / روز</div>
             <div class="ba-m-label">کالری روزانه (TDEE)</div>
             <span class="ba-m-badge">—</span>
         </div>
-        <div class="ba-metric" id="mProtein">
+        <div class="ba-metric" id="mProtein" data-help-key="protein">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح پروتئین روزانه" title="توضیح پروتئین روزانه"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-egg-fill ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit">گرم / روز</div>
             <div class="ba-m-label">پروتئین روزانه</div>
             <span class="ba-m-badge">—</span>
         </div>
-        <div class="ba-metric ba-highlight" id="mGoalKcal">
+        <div class="ba-metric ba-highlight" id="mGoalKcal" data-help-key="goalCalories">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح کالری هدف" title="توضیح کالری هدف"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-bullseye ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit">کالری / روز</div>
             <div class="ba-m-label">کالری هدف</div>
             <span class="ba-m-badge">—</span>
         </div>
-        <div class="ba-metric" id="mCut">
+        <div class="ba-metric" id="mCut" data-help-key="cutCalories">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح کالری چربی‌سوزی" title="توضیح کالری چربی‌سوزی"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-arrow-down-right-circle ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit">کالری / روز</div>
             <div class="ba-m-label">کالری چربی‌سوزی</div>
         </div>
-        <div class="ba-metric" id="mBulk">
+        <div class="ba-metric" id="mBulk" data-help-key="bulkCalories">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح کالری عضله‌سازی" title="توضیح کالری عضله‌سازی"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-arrow-up-right-circle ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit">کالری / روز</div>
             <div class="ba-m-label">کالری عضله‌سازی</div>
         </div>
-        <div class="ba-metric" id="mTarget">
+        <div class="ba-metric" id="mTarget" data-help-key="targetWeight">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح وزن هدف پیشنهادی" title="توضیح وزن هدف پیشنهادی"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-flag ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit">کیلوگرم</div>
             <div class="ba-m-label">وزن هدف پیشنهادی</div>
             <span class="ba-m-badge">—</span>
         </div>
-        <div class="ba-metric" id="mTrend">
+        <div class="ba-metric" id="mTrend" data-help-key="trend">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح تغییرات وزن" title="توضیح تغییرات وزن"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-graph-up ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit">کیلوگرم</div>
             <div class="ba-m-label">تغییرات وزن</div>
             <span class="ba-m-badge">—</span>
         </div>
-        <div class="ba-metric" id="mWhtr">
+        <div class="ba-metric" id="mWhtr" data-help-key="waistToHeight">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح نسبت کمر به قد" title="توضیح نسبت کمر به قد"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-arrows-angle-expand ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit">کمر / قد</div>
             <div class="ba-m-label">نسبت کمر به قد</div>
             <span class="ba-m-badge">—</span>
         </div>
-        <div class="ba-metric" id="mBodyFat">
+        <div class="ba-metric" id="mBodyFat" data-help-key="bodyFat">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح درصد چربی بدن" title="توضیح درصد چربی بدن"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-droplet-half ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit">درصد (تخمینی)</div>
             <div class="ba-m-label">چربی بدن (Deurenberg)</div>
         </div>
-        <div class="ba-metric" id="mIdeal">
+        <div class="ba-metric" id="mIdeal" data-help-key="idealWeight">
+            <button type="button" class="ba-help-btn" aria-haspopup="dialog" aria-controls="baMetricHelpModal" aria-label="توضیح بازه وزن سالم" title="توضیح بازه وزن سالم"><i class="bi bi-exclamation-circle" aria-hidden="true"></i></button>
             <i class="bi bi-heart-pulse ba-m-icon"></i>
             <div class="ba-m-value">—</div>
             <div class="ba-m-unit">کیلوگرم</div>
@@ -301,6 +339,28 @@
         <i class="bi bi-lightbulb-fill"></i>
         <span id="baAdviceText"></span>
     </div>
+</div>
+
+<!-- ===== توضیح اختصاصی هر کارت محاسبات ===== -->
+<div class="ba-help-modal" id="baMetricHelpModal" aria-hidden="true" hidden>
+    <div class="ba-help-backdrop" data-ba-help-close></div>
+    <section class="ba-help-dialog" tabindex="-1" role="dialog" aria-modal="true" aria-labelledby="baHelpTitle" aria-describedby="baHelpIntro">
+        <header class="ba-help-head">
+            <div class="ba-help-title-wrap">
+                <span class="ba-help-icon" id="baHelpIcon"><i class="bi bi-question-circle"></i></span>
+                <div>
+                    <h2 id="baHelpTitle">راهنمای شاخص</h2>
+                    <span id="baHelpValue" class="ba-help-current-value"></span>
+                </div>
+            </div>
+            <button type="button" class="ba-help-close" data-ba-help-close aria-label="بستن توضیحات"><i class="bi bi-x-lg"></i></button>
+        </header>
+        <div class="ba-help-body">
+            <p id="baHelpIntro"></p>
+            <ul id="baHelpPoints" class="ba-help-points"></ul>
+            <div class="ba-help-note"><i class="bi bi-shield-check"></i><span>این اعداد برای راهنمایی اولیه هستند و جایگزین تشخیص پزشک یا برنامه تخصصی مربی نمی‌شوند.</span></div>
+        </div>
+    </section>
 </div>
 
 <!-- ===== کارت نمودار ===== -->
@@ -328,6 +388,7 @@
         <span><i class="dot" style="background:#8b5cf6;"></i> میانگین کل</span>
         <span id="baChartStat"></span>
     </div>
+    <p class="ba-field-hint">ترتیب نمودار بر اساس زمان ثبت ورودی‌هاست؛ هر ثبت، حتی در یک روز، یک نقطه جدا دارد.</p>
 </div>
 
 <!-- ===== کارت تاریخچه ===== -->
@@ -356,5 +417,5 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/body-analysis.js?v=2"></script>
+    <script src="~/js/body-analysis.js" asp-append-version="true"></script>
 }

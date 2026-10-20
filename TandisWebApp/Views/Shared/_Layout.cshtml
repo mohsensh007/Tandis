@@ -35,13 +35,13 @@
 <html lang="fa" dir="rtl">
 <head>
     <!-- Web App Manifest برای PWA -->
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="~/manifest.json" asp-append-version="true" />
 
     <!-- Meta tags مخصوص Apple iOS -->
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="تندیس" />
-    <link rel="apple-touch-icon" href="/images/app-icon.png" />
+    <link rel="apple-touch-icon" href="~/images/app-icon.png" asp-append-version="true" />
 
     <!-- جلوگیری از ذخیره‌سازی در کش برای آپدیت‌های سریع‌تر -->
     <meta name="mobile-web-app-capable" content="yes" />
@@ -50,11 +50,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#0f172a" />
     <title>@ViewData["Title"] - تندیس</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css?v=7" />
-    <link rel="stylesheet" href="~/css/panels.css?v=4" />
-    <link rel="stylesheet" href="~/css/admin-style.css?v=9" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/panels.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-style.css" asp-append-version="true" />
 
     <style>
         /* ===== نوار پایین شناور (فقط موبایل) ===== */
@@ -371,8 +371,9 @@
             padding-top: calc(8px + env(safe-area-inset-top));
         }
     </style>
+    <link rel="stylesheet" href="~/css/member-ui.css" asp-append-version="true" />
 </head>
-<body class="admin-glass-body">
+<body class="admin-glass-body member-ui">
     @if (!isAuthenticated)
     {
         <script>
@@ -382,11 +383,11 @@
     }
     else
     {
-        <nav class="navbar navbar-expand-md navbar-dark">
+        <nav class="navbar navbar-expand-md navbar-dark member-header" aria-label="ناوبری اصلی">
             <div class="container-fluid px-3">
                 <!-- ✅ لوگو + اسم باشگاه (شیشه‌ای + گرادیانت) -->
                 <a class="navbar-brand navbar-brand-club" href="@(isCoach ? "/Coach" : "/Home")">
-                    <img src="~/images/logo2.png" alt="@clubName" height="38" class="club-logo" />
+                    <img src="~/images/logo2.png" alt="" height="38" class="club-logo" asp-append-version="true" />
                     <!-- ✅ ساعت دیجیتال + تاریخ (بین لوگو و اسم باشگاه) -->
                     <div class="header-clock">
                         <span class="hc-time" id="hdrTime">--:--:--</span>
@@ -407,20 +408,20 @@
                     <ul class="navbar-nav align-items-center gap-2">
                         <!-- زنگوله -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link position-relative px-2" href="#" id="memberBell" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-bell-fill" style="font-size:20px;"></i>
+                            <a class="nav-link position-relative px-2" href="#" id="memberBell" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="پیام‌های جدید (@unreadCount)">
+                                <i class="bi bi-bell-fill" aria-hidden="true"></i>
                                 @if (unreadCount > 0)
                                 {
                                     <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:10px;">@unreadCount</span>
                                 }
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end" style="min-width:min(300px, calc(100vw - 24px));">
-                                <li class="dropdown-header fw-bold">🔔 پیام‌های جدید</li>
+                            <ul class="dropdown-menu dropdown-menu-end member-message-menu" aria-labelledby="memberBell">
+                                <li class="dropdown-header fw-bold"><i class="bi bi-bell-fill" aria-hidden="true"></i> پیام‌های جدید</li>
                                 <li><hr class="dropdown-divider"></li>
 
                                 @if (msgPreview.Count == 0)
                                 {
-                                    <li><span class="dropdown-item text-muted small">پیام جدیدی ندارید ✅</span></li>
+                                    <li><span class="dropdown-item-text text-muted small">پیام جدیدی ندارید <i class="bi bi-check-circle" aria-hidden="true"></i></span></li>
                                 }
                                 else
                                 {
@@ -447,15 +448,15 @@
                                                 <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
                                                     @if (pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0)
                                                     {
-                                                        <span class="badge bg-success small">🏋️ از @pm.PeerName</span>
+                                                        <span class="badge bg-success small"><i class="bi bi-person-badge" aria-hidden="true"></i> از @pm.PeerName</span>
                                                     }
                                                     else
                                                     {
-                                                        <span class="badge bg-primary small">📢 از مدیریت</span>
+                                                        <span class="badge bg-primary small"><i class="bi bi-megaphone" aria-hidden="true"></i> از مدیریت</span>
                                                     }
                                                     <span class="badge bg-danger" style="font-size:10px;">جدید</span>
                                                 </div>
-                                                <div class="fw-bold text-truncate">@label</div>
+                                                <div class="fw-bold member-message-title">@label</div>
                                                 <div class="text-muted" style="font-size:11px;">@pm.CreationDate @pm.CreationTime</div>
                                             </a>
                                         </li>
@@ -477,15 +478,15 @@
                         <!-- نام کاربر -->
                         <li class="nav-item">
                             <span class="nav-link d-flex align-items-center gap-2">
-                                <i class="bi bi-person-circle"></i>
-                                <span class="d-none d-md-inline">@fullName</span>
+                                <i class="bi bi-person-circle" aria-hidden="true"></i>
+                                <span class="d-none d-md-inline member-user-name">@fullName</span>
                             </span>
                         </li>
 
                         <!-- خروج (با تأیید) -->
                         <li class="nav-item">
-                            <a class="nav-link text-danger js-logout" href="/Account/Logout" title="خروج">
-                                <i class="bi bi-box-arrow-right"></i>
+                            <a class="nav-link text-danger js-logout" href="/Account/Logout" title="خروج" aria-label="خروج از حساب">
+                                <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
                             </a>
                         </li>
                     </ul>
@@ -493,22 +494,22 @@
             </div>
         </nav>
 
-        <div class="container mt-3">
+        <main class="container mt-3 member-main" id="mainContent">
             @RenderBody()
-        </div>
+        </main>
 
         <!-- ✅ فوتر حذف شد -->
         <!-- ========== نوار پایین شناور (فقط موبایل) ========== -->
-        <nav class="purple-style bottom-nav d-md-none" id="bottomNav">
+        <nav class="purple-style bottom-nav d-md-none" id="bottomNav" aria-label="ناوبری پایین">
             <span class="bn-glow" id="bnGlow"></span>
 
             <a href="@(isCoach ? "/Coach" : "/Home")" class="bn-item" data-key="home">
-                <img src="~/images/Home.webp" alt="خانه" />
+                <i class="bi bi-house-door-fill bn-icon" aria-hidden="true"></i>
                 <span>خانه</span>
             </a>
             <a href="/Profile/Messages" class="bn-item" data-key="messages">
                 <span class="position-relative d-inline-block">
-                    <img src="~/images/Notification.webp" alt="پیام‌ها" />
+                    <i class="bi bi-chat-dots-fill bn-icon" aria-hidden="true"></i>
                     @if (unreadCount > 0)
                     {
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:9px;">@unreadCount</span>
@@ -517,26 +518,26 @@
                 <span>پیام‌ها</span>
             </a>
             <a href="/Home/Reports" class="bn-item" data-key="reports">
-                <img src="~/images/Reports.webp" alt="گزارش‌ها" />
+                <i class="bi bi-bar-chart-line-fill bn-icon" aria-hidden="true"></i>
                 <span>گزارش‌ها</span>
             </a>
             <a href="/Profile" class="bn-item" data-key="profile">
-                <img src="~/images/Profile.webp" alt="پروفایل" />
+                <i class="bi bi-person-circle bn-icon" aria-hidden="true"></i>
                 <span>پروفایل</span>
             </a>
             <a href="/Account/Logout" class="bn-item js-logout" data-key="exit">
-                <img src="~/images/Exit.webp" alt="خروج" />
+                <i class="bi bi-box-arrow-right bn-icon" aria-hidden="true"></i>
                 <span>خروج</span>
             </a>
         </nav>
 
         <!-- مودال لیست پیام‌های عضو -->
-        <div class="modal fade" id="memberMessagesModal" tabindex="-1">
+        <div class="modal fade" id="memberMessagesModal" tabindex="-1" aria-labelledby="memberMessagesTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-scrollable modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">📨 پیام‌های من</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <h5 class="modal-title" id="memberMessagesTitle"><i class="bi bi-envelope-paper" aria-hidden="true"></i> پیام‌های من</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>
                     </div>
                     <div class="modal-body">
                         <div id="messagesList" class="d-flex flex-column gap-2">
@@ -592,14 +593,14 @@
         *@
 
         <!-- مودال تأیید خروج -->
-        <div class="modal fade" id="logoutConfirmModal" tabindex="-1">
+        <div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-sm">
                 <div class="purple-style modal-content logout-modal">
                     <div class="modal-body text-center p-4">
-                        <div style="font-size:3rem">🚪</div>
-                        <h6 class="mt-2 mb-1">خروج از حساب</h6>
+                        <div class="member-logout-icon"><i class="bi bi-box-arrow-right" aria-hidden="true"></i></div>
+                        <h6 class="mt-2 mb-1" id="logoutConfirmTitle">خروج از حساب</h6>
                         <p class="small text-muted mb-3">آیا مطمئن هستید که می‌خواهید خارج شوید؟</p>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 member-logout-actions">
                             <a href="/Account/Logout" class="btn btn-danger btn-sm flex-fill">بله، خارج شو</a>
                             <button type="button" class="btn btn-secondary btn-sm flex-fill" data-bs-dismiss="modal">انصراف</button>
                         </div>
@@ -608,11 +609,11 @@
             </div>
         </div>
 
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-        <script src="~/js/jalali-calendar.js"></script>
-        <script src="~/js/site.js?v=6"></script>
-        <script src="~/js/report-pager.js?v=2"></script>
+        <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+        <script src="~/js/jalali-calendar.js" asp-append-version="true"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/report-pager.js" asp-append-version="true"></script>
         <script src="~/js/payment.js" asp-append-version="true"></script>
         <script src="~/js/member-messages.js" asp-append-version="true"></script>
 
@@ -663,7 +664,11 @@
                 }
 
                 // --- علامت‌گذاری آیتم فعال ---
-                items.forEach(function (i) { i.classList.toggle('bn-active', i === current); });
+                items.forEach(function (i) {
+                    i.classList.toggle('bn-active', i === current);
+                    if (i === current) i.setAttribute('aria-current', 'page');
+                    else i.removeAttribute('aria-current');
+                });
 
                 if (current) {
                     if (lastItem && lastItem !== current) {

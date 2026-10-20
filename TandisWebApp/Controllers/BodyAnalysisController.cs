@@ -14,6 +14,7 @@ namespace TandisWebApp.Controllers
     ///  ۴) نمودار تغییرات برای دیدن پیشرفت
     /// </summary>
     [MemberAuthorize]
+    [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
     public class BodyAnalysisController : Controller
     {
         private readonly BodyAnalysisService _body;

@@ -2,12 +2,13 @@
     ViewData["Title"] = "داشبورد";
 }
 
+<div class="member-home">
 <!-- ========== هدر پروفایل ========== -->
-<div class="card mb-3">
+<div class="card mb-3 home-profile-card">
     <div class="purple-style card-body">
-        <div class="d-flex align-items-center gap-3">
-            <div class="position-relative" style="width:88px;height:88px;flex:0 0 auto;">
-                <div id="homeAvatar" class="avatar-circle w-100 h-100">👤</div>
+        <div class="d-flex align-items-center gap-3 home-profile-summary">
+            <div class="position-relative home-avatar-wrap">
+                <div id="homeAvatar" class="avatar-circle w-100 h-100"><i class="bi bi-person-fill" aria-hidden="true"></i></div>
                 <img id="homeFaceImg" src="/Profile/MyFace" alt=""
                      style="position:absolute; top:0; right:0; width:100%; height:100%;
                 object-fit:cover; border-radius:50%; display:none;"
@@ -15,7 +16,7 @@
                      onerror="this.style.display='none';" />
             </div>
             <div class="flex-grow-1" style="min-width:0">
-                <h5 class="mb-2 text-truncate" id="dashFullName">در حال بارگذاری...</h5>
+                <h5 class="mb-2" id="dashFullName">در حال بارگذاری...</h5>
                 <div class="mb-2">
                     <span class="membership-chip">
                         <i class="bi bi-person-vcard-fill"></i>
@@ -42,61 +43,61 @@
 <div class="row g-2 mb-3 d-none d-md-flex" id="navMenu">
     <div class="col-4 col-md-2">
         <a href="/Register/Renew" class="purple-style nav-card">
-            <div class="nav-icon">🔄</div>
-            <div class="nav-title">ثبت نام(تمدید دوره)</div>
+            <div class="nav-icon"><i class="bi bi-arrow-repeat" aria-hidden="true"></i></div>
+            <div class="nav-title">ثبت‌نام / تمدید دوره</div>
         </a>
     </div>
     <div class="col-4 col-md-2">
         <a href="/Ticket" class="purple-style nav-card">
-            <div class="nav-icon">🎟️</div>
+            <div class="nav-icon"><i class="bi bi-ticket-perforated-fill" aria-hidden="true"></i></div>
             <div class="nav-title">بلیط</div>
         </a>
     </div>
     <div class="col-4 col-md-2">
         <a href="#" class="purple-style nav-card" id="navSingleSession" data-action="singleSession">
-            <div class="nav-icon">⚡</div>
+            <div class="nav-icon"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i></div>
             <div class="nav-title">تک جلسه</div>
         </a>
     </div>
     <div class="col-4 col-md-2">
         <a href="#" class="purple-style nav-card" id="navTarefe" data-action="tarefe">
-            <div class="nav-icon">💳</div>
+            <div class="nav-icon"><i class="bi bi-credit-card-2-front-fill" aria-hidden="true"></i></div>
             <div class="nav-title">تعرفه‌ها</div>
         </a>
     </div>
     <div class="col-4 col-md-2">
         <a href="/Shop" class="purple-style nav-card">
-            <div class="nav-icon">🛒</div>
+            <div class="nav-icon"><i class="bi bi-cart3" aria-hidden="true"></i></div>
             <div class="nav-title">فروشگاه</div>
         </a>
     </div>
     <div class="col-4 col-md-2">
         <a href="/Shop/Buffet" class="purple-style nav-card">
-            <div class="nav-icon">🍔</div>
+            <div class="nav-icon"><i class="bi bi-cup-hot-fill" aria-hidden="true"></i></div>
             <div class="nav-title">بوفه</div>
         </a>
     </div>
     <div class="col-4 col-md-2">
         <a href="/Service" class="purple-style nav-card">
-            <div class="nav-icon">💆</div>
+            <div class="nav-icon"><i class="bi bi-flower1" aria-hidden="true"></i></div>
             <div class="nav-title">خدمات</div>
         </a>
     </div>
     <div class="col-4 col-md-2">
         <a href="/Accounting" class="purple-style nav-card">
-            <div class="nav-icon">💰</div>
+            <div class="nav-icon"><i class="bi bi-wallet2" aria-hidden="true"></i></div>
             <div class="nav-title">مالی</div>
         </a>
     </div>
     <div class="col-4 col-md-2">
         <a href="/Home/Reports" class="purple-style nav-card">
-            <div class="nav-icon">📊</div>
+            <div class="nav-icon"><i class="bi bi-bar-chart-line-fill" aria-hidden="true"></i></div>
             <div class="nav-title">گزارش‌ها</div>
         </a>
     </div>
     <div class="col-4 col-md-2">
         <a href="/Profile" class="purple-style nav-card">
-            <div class="nav-icon">👤</div>
+            <div class="nav-icon"><i class="bi bi-person-circle" aria-hidden="true"></i></div>
             <div class="nav-title">پروفایل</div>
         </a>
     </div>
@@ -105,25 +106,25 @@
 </div>
 
 <!-- ========== کاروسل سه‌بعدی (فقط موبایل) ========== -->
-<div id="navCarousel" class="d-md-none mb-3">
+<div id="navCarousel" class="d-md-none mb-3" role="region" aria-label="بخش‌های باشگاه">
     <div class="cf-stage" id="cfStage"></div>
-    <div id="cfLabel" class="fw-bold text-center mt-2"></div>
+    <div id="cfLabel" class="fw-bold text-center mt-2" aria-live="polite"></div>
     <div id="cfDots" class="d-flex justify-content-center gap-1 mt-2"></div>
 </div>
 <div class="text-center mt-2 mb-3 d-md-none">
-    <button type="button" class="btn btn-sm btn-all-menu" id="btnAllMenu">
+    <button type="button" class="btn btn-sm btn-all-menu" id="btnAllMenu" aria-controls="allMenuOverlay" aria-expanded="false" aria-haspopup="dialog">
         <i class="bi bi-grid-3x3-gap-fill me-1"></i> نمایش همه
     </button>
 </div>
 
 <!-- ========== منوی همه بخش‌ها ========== -->
-<div class="allmenu-overlay" id="allMenuOverlay">
+<div class="allmenu-overlay" id="allMenuOverlay" role="dialog" aria-modal="true" aria-labelledby="allMenuTitle" aria-hidden="true">
     <div class="allmenu-backdrop"></div>
     <div class="allmenu-panel">
         <div class="allmenu-header">
-            <span class="fw-bold">همه بخش‌ها</span>
-            <button type="button" class="allmenu-close" id="btnCloseMenu" title="بستن">
-                <i class="bi bi-x-lg"></i>
+            <span class="fw-bold" id="allMenuTitle">همه بخش‌ها</span>
+            <button type="button" class="allmenu-close" id="btnCloseMenu" title="بستن" aria-label="بستن منو">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
             </button>
         </div>
         <div class="allmenu-grid" id="allMenuGrid"></div>
@@ -131,20 +132,20 @@
 </div>
 
 <!-- ========== ✅ مودال تک جلسه ========== -->
-<div class="modal fade" id="singleSessionModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+<div class="modal fade" id="singleSessionModal" tabindex="-1" aria-hidden="true" aria-labelledby="singleSessionTitle">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
         <div class="modal-content purple-style" style="border-radius:20px; overflow:hidden; border:1px solid rgba(102,211,232,.35);">
             <div class="modal-header border-0" style="padding:18px 20px;">
-                <h5 class="modal-title fw-bold text-white">
+                <h5 class="modal-title fw-bold text-white" id="singleSessionTitle">
                     <i class="bi bi-lightning-charge-fill" style="color:#66d3e8"></i>
                     خرید تک جلسه
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="بستن"></button>
             </div>
             <div class="modal-body" style="padding:16px 20px 20px;">
                 <div class="ss-tabs">
-                    <button type="button" class="ss-tab active" data-mode="today">⚡ امروز</button>
-                    <button type="button" class="ss-tab" data-mode="week">📅 تا ۷ روز آینده</button>
+                    <button type="button" class="ss-tab active" data-mode="today"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> امروز</button>
+                    <button type="button" class="ss-tab" data-mode="week"><i class="bi bi-calendar-week" aria-hidden="true"></i> تا ۷ روز آینده</button>
                 </div>
                 <div class="ss-days" id="ssDays" style="display:none;"></div>
                 <div id="singleSessionList">
@@ -162,7 +163,7 @@
 <div class="ss-confirm-overlay" id="ssConfirmOverlay">
     <div class="ss-confirm-backdrop"></div>
     <div class="ss-confirm-panel">
-        <div class="ss-confirm-icon">⚡</div>
+        <div class="ss-confirm-icon"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i></div>
         <div class="ss-confirm-text" id="ssConfirmText"></div>
         <div class="ss-confirm-btns">
             <button type="button" class="ss-btn-cancel" id="ssConfirmCancel">انصراف</button>
@@ -172,22 +173,22 @@
 </div>
 
 <!-- ========== ✅ مودال تعرفه‌ها (۴ تب) ========== -->
-<div class="modal fade" id="tarefeModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
+<div class="modal fade" id="tarefeModal" tabindex="-1" aria-hidden="true" aria-labelledby="tarefeTitle">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
         <div class="modal-content purple-style" style="border-radius:20px; overflow:hidden; border:1px solid rgba(102,211,232,.35);">
             <div class="modal-header border-0" style="padding:18px 20px;">
-                <h5 class="modal-title fw-bold text-white">
+                <h5 class="modal-title fw-bold text-white" id="tarefeTitle">
                     <i class="bi bi-credit-card-2-front-fill" style="color:#66d3e8"></i>
                     تعرفه‌ها
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="بستن"></button>
             </div>
             <div class="modal-body" style="padding:16px 20px 20px;">
                 <div class="tf-tabs">
-                    <button type="button" class="tf-tab active" data-tf="shahriye">📚 شهریه</button>
-                    <button type="button" class="tf-tab" data-tf="ticket">🎟️ بلیط</button>
-                    <button type="button" class="tf-tab" data-tf="service">💆 خدمات</button>
-                    <button type="button" class="tf-tab" data-tf="single">⚡ تک جلسه</button>
+                    <button type="button" class="tf-tab active" data-tf="shahriye"><i class="bi bi-journal-text" aria-hidden="true"></i> شهریه</button>
+                    <button type="button" class="tf-tab" data-tf="ticket"><i class="bi bi-ticket-perforated-fill" aria-hidden="true"></i> بلیط</button>
+                    <button type="button" class="tf-tab" data-tf="service"><i class="bi bi-flower1" aria-hidden="true"></i> خدمات</button>
+                    <button type="button" class="tf-tab" data-tf="single"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> تک جلسه</button>
                 </div>
                 <div class="tf-filterbar" id="tfFilterBar" style="display:none;">
                     <button type="button" class="tf-filterbtn" id="btnTfFilter">
@@ -895,7 +896,7 @@
     }
 
     .am-icon, .cf-icon, .nav-icon {
-        filter: grayscale(1) sepia(1) hue-rotate(190deg) saturate(4) brightness(1.05);
+        color: #66d3e8;
     }
 
     .sans-card {
@@ -1469,7 +1470,7 @@
     <div class="purple-style card-body">
         <div id="activeSanses" class="row g-3">
             <div class="empty-state">
-                <div class="empty-icon">⏳</div>
+                <div class="empty-icon"><i class="bi bi-hourglass-split" aria-hidden="true"></i></div>
                 در حال بارگذاری...
             </div>
         </div>
@@ -1477,12 +1478,12 @@
 </div>
 
 <!-- ========== کارت‌های آمار مالی ========== -->
-<div class="row g-3 mb-3">
+<div class="row g-3 mb-3 home-credit-grid">
     <div class="col-6 col-md-3">
         <div class="card credit-card h-100">
             <div class="purple-style card-body">
                 <div class="credit-top">
-                    <div class="credit-icon"><img src="~/images/icon-credit-sport.webp" alt="" /></div>
+                    <div class="credit-icon"><i class="bi bi-activity" aria-hidden="true"></i></div>
                     <div class="credit-label">اعتبار ورزشی</div>
                 </div>
                 <div class="credit-amount">
@@ -1496,7 +1497,7 @@
         <div class="card credit-card h-100">
             <div class="purple-style card-body">
                 <div class="credit-top">
-                    <div class="credit-icon"><img src="~/images/icon-credit-shop.webp" alt="" /></div>
+                    <div class="credit-icon"><i class="bi bi-bag-check" aria-hidden="true"></i></div>
                     <div class="credit-label">اعتبار فروشگاه</div>
                 </div>
                 <div class="credit-amount">
@@ -1510,7 +1511,7 @@
         <div class="card credit-card h-100">
             <div class="purple-style card-body">
                 <div class="credit-top">
-                    <div class="credit-icon"><img src="~/images/icon-credit-service.webp" alt="" /></div>
+                    <div class="credit-icon"><i class="bi bi-flower1" aria-hidden="true"></i></div>
                     <div class="credit-label">اعتبار خدمات</div>
                 </div>
                 <div class="credit-amount">
@@ -1524,7 +1525,7 @@
         <div class="card credit-card h-100">
             <div class="purple-style card-body">
                 <div class="credit-top">
-                    <div class="credit-icon"><img src="~/images/icon-credit-debit.webp" alt="" /></div>
+                    <div class="credit-icon"><i class="bi bi-cash-stack" aria-hidden="true"></i></div>
                     <div class="credit-label" id="debitLabel">بدهی</div>
                 </div>
                 <div class="credit-amount" id="debitAmountBox">
@@ -1534,6 +1535,8 @@
             </div>
         </div>
     </div>
+</div>
+
 </div>
 
 @section Scripts {
@@ -1676,7 +1679,7 @@
                     emptyMsg = 'امروز هیچ سانس تک‌جلسه‌ای در دسترس نیست';
                 }
                 $list.html('<div class="ss-empty">' +
-                    '<div class="ss-empty-icon">📭</div>' +
+                    '<div class="ss-empty-icon"><i class="bi bi-inbox" aria-hidden="true"></i></div>' +
                     '<div class="fw-bold text-white mb-1">' + emptyMsg + '</div>' +
                     '<div class="small">فقط سانس‌هایی که جلسه دارن و <strong>SessionAmount &gt; 0</strong> باشن نمایش داده می‌شن.</div>' +
                     '</div>');
@@ -1876,27 +1879,27 @@
             var data = (tfSelectedCatIDs.length === 0) ? all : all.filter(function (s) {
                 return tfSelectedCatIDs.indexOf(Number(s.sportCatID)) !== -1;
             });
-            renderTarefeGenericList(data, 'shahriye', '📚',
+            renderTarefeGenericList(data, 'shahriye', 'bi-journal-text',
                 tfSelectedCatIDs.length === 0
                     ? 'هیچ سانس ورزشی تعریف نشده است'
                     : 'هیچ سانسی در رشته‌های انتخاب‌شده یافت نشد');
         }
 
         function renderTarefeTicket(data) {
-            renderTarefeGenericList(data, 'ticket', '🎟️', 'هیچ تعرفه بلیطی تعریف نشده است');
+            renderTarefeGenericList(data, 'ticket', 'bi-ticket-perforated-fill', 'هیچ تعرفه بلیطی تعریف نشده است');
         }
         function renderTarefeService(data) {
-            renderTarefeGenericList(data, 'service', '💆', 'هیچ خدمتی تعریف نشده است');
+            renderTarefeGenericList(data, 'service', 'bi-flower1', 'هیچ خدمتی تعریف نشده است');
         }
         function renderTarefeSingle(data) {
-            renderTarefeGenericList(data, 'single', '⚡', 'هیچ سانس تک‌جلسه‌ای تعریف نشده است');
+            renderTarefeGenericList(data, 'single', 'bi-lightning-charge-fill', 'هیچ سانس تک‌جلسه‌ای تعریف نشده است');
         }
 
         function renderTarefeGenericList(data, tab, emptyIcon, emptyMsg) {
             var $list = $('#tarefeList');
             if (!data || data.length === 0) {
                 $list.html('<div class="tf-empty">' +
-                    '<div class="tf-empty-icon">' + emptyIcon + '</div>' +
+                    '<div class="tf-empty-icon"><i class="bi ' + emptyIcon + '" aria-hidden="true"></i></div>' +
                     '<div class="fw-bold text-white mb-1">' + emptyMsg + '</div>' +
                     '</div>');
                 return;
@@ -1960,6 +1963,9 @@
             var overlay = document.getElementById('allMenuOverlay');
             if (!overlay) return;
             document.body.appendChild(overlay);
+            var menuTrigger = document.getElementById('btnAllMenu');
+            var previousFocus = null;
+            var closeTimer = null;
             var $grid = $('#allMenuGrid');
             $('#navMenu .nav-card').each(function (i) {
                 var href = $(this).attr('href');
@@ -1974,19 +1980,44 @@
             $grid.on('click', '.allmenu-item[data-action="singleSession"]', function (e) { e.preventDefault(); closeMenu(); setTimeout(openSingleSessionModal, 300); });
             $grid.on('click', '.allmenu-item[data-action="tarefe"]', function (e) { e.preventDefault(); closeMenu(); setTimeout(openTarefeModal, 300); });
             function openMenu() {
+                clearTimeout(closeTimer);
+                previousFocus = document.activeElement;
                 document.body.classList.add('menu-open');
                 overlay.style.display = 'block';
-                requestAnimationFrame(function () { requestAnimationFrame(function () { overlay.classList.add('open'); }); });
+                overlay.setAttribute('aria-hidden', 'false');
+                menuTrigger.setAttribute('aria-expanded', 'true');
+                requestAnimationFrame(function () {
+                    requestAnimationFrame(function () {
+                        if (!document.body.classList.contains('menu-open')) return;
+                        overlay.classList.add('open');
+                        document.getElementById('btnCloseMenu').focus();
+                    });
+                });
             }
             function closeMenu() {
+                if (overlay.style.display !== 'block') return;
                 overlay.classList.remove('open');
                 document.body.classList.remove('menu-open');
-                setTimeout(function () { overlay.style.display = 'none'; }, 350);
+                menuTrigger.setAttribute('aria-expanded', 'false');
+                if (previousFocus && document.body.contains(previousFocus)) previousFocus.focus();
+                overlay.setAttribute('aria-hidden', 'true');
+                closeTimer = setTimeout(function () { overlay.style.display = 'none'; }, 350);
             }
             $('#btnAllMenu').on('click', openMenu);
             $('#btnCloseMenu').on('click', closeMenu);
             $('.allmenu-backdrop').on('click', closeMenu);
-            $(document).on('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+            $(document).on('keydown', function (e) {
+                if (!document.body.classList.contains('menu-open')) return;
+                if (e.key === 'Escape') { e.preventDefault(); closeMenu(); return; }
+                if (e.key !== 'Tab') return;
+                var focusable = overlay.querySelectorAll('a[href], button:not([disabled])');
+                var first = focusable[0], last = focusable[focusable.length - 1];
+                if (e.shiftKey && (document.activeElement === first || !overlay.contains(document.activeElement))) {
+                    e.preventDefault(); last.focus();
+                } else if (!e.shiftKey && (document.activeElement === last || !overlay.contains(document.activeElement))) {
+                    e.preventDefault(); first.focus();
+                }
+            });
         })();
 
         // --- ساخت دایره درصدی SVG ---
@@ -2038,7 +2069,6 @@
                         avatar.innerHTML = '<img src="data:image/png;base64,' + d.personImageBase64 + '" style="width:100%;height:100%;object-fit:cover" />';
                     }
                 }
-                fitCreditValues();
 
                 
 
@@ -2057,23 +2087,12 @@
                 loadDashboardCredits();
 
         
-        function fitCreditValues() {
-            document.querySelectorAll('.credit-value').forEach(function (el) {
-                el.style.fontSize = '';
-                var size = 1.05;
-                while (el.scrollWidth > el.clientWidth + 1 && size > 0.68) {
-                    size -= 0.05;
-                    el.style.fontSize = size.toFixed(2) + 'rem';
-                }
-            });
-        }
-        window.addEventListener('resize', fitCreditValues);
 
         // --- بارگذاری سانس‌های فعال ---
         apiCall('/api/Register/ActiveSanses', 'GET', null, function (res) {
             var $box = $('#activeSanses');
             if (!res.success || !res.data || res.data.length === 0) {
-                $box.html('<div class="empty-state"><div class="empty-icon">🎟️</div>شما در حال حاضر سانس فعالی ندارید.<br><a href="/Register/Renew" class="btn btn-sm btn-primary mt-2">تمدید دوره</a></div>');
+                $box.html('<div class="empty-state"><div class="empty-icon"><i class="bi bi-ticket-perforated" aria-hidden="true"></i></div>شما در حال حاضر سانس فعالی ندارید.<br><a href="/Register/Renew" class="btn btn-sm btn-primary mt-2">تمدید دوره</a></div>');
                 $('#activeSansesCount').text('۰');
                 return;
             }
@@ -2130,7 +2149,7 @@
                 $c.append('<div class="cf-icon">' + it.icon + '</div>');
                 $c.append('<div class="cf-title">' + it.title + '</div>');
                 $stage.append($c);
-                $dots.append('<span class="cf-dot" data-index="' + i + '"></span>');
+                $dots.append('<button type="button" class="cf-dot" data-index="' + i + '" aria-label="' + esc(it.title) + '" aria-pressed="false"></button>');
             });
             function layout() {
                 $stage.find('.cf-card').each(function () {
@@ -2146,9 +2165,12 @@
                     else { t = 'translateX(0) translateZ(-460px)'; o = 0; }
                     $(this).css({ transform: t, opacity: o, zIndex: z });
                     $(this).toggleClass('cf-active', d === 0);
+                    $(this).attr('tabindex', d === 0 ? '0' : '-1');
+                    $(this).attr('aria-hidden', d > 3 ? 'true' : 'false');
                 });
                 $('#cfLabel').text(items[active].title);
-                $dots.find('.cf-dot').removeClass('on').filter('[data-index="' + active + '"]').addClass('on');
+                $dots.find('.cf-dot').removeClass('on').attr('aria-pressed', 'false')
+                    .filter('[data-index="' + active + '"]').addClass('on').attr('aria-pressed', 'true');
             }
             function go(delta) { active = ((active + delta) % n + n) % n; layout(); }
             $stage.on('click', '.cf-card', function (e) {
@@ -2167,6 +2189,13 @@
                 var i = +$(this).attr('data-index');
                 var rel = ((i - active) % n + n) % n;
                 go(rel <= half ? rel : rel - n);
+            });
+            $stage.on('keydown', '.cf-card', function (e) {
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    go(e.key === 'ArrowLeft' ? 1 : -1);
+                    $stage.find('.cf-active').trigger('focus');
+                }
             });
             var sx = 0, sy = 0, tracking = false;
             var stage = $stage[0];

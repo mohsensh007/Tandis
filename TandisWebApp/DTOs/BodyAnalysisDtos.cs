@@ -17,6 +17,7 @@ namespace TandisWebApp.DTOs
     /// <summary>یک اندازه‌گیری (ردیف نمودار)</summary>
     public class BodyRecordDto
     {
+        [System.Text.Json.Serialization.JsonPropertyName("recordId")]
         public int RecordID { get; set; }
         public string RecordDate { get; set; } = string.Empty;   // شمسی
         public DateTime? RecordDateTime { get; set; }

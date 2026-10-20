@@ -70,11 +70,11 @@ namespace TandisWebApp.Services
             var profile = await _db.Ath_BodyProfiles.AsNoTracking()
                 .FirstOrDefaultAsync(x => x.MemberID == memberID);
 
-            // ✅ اصلاح ۱: مرتب‌سازی بر اساس RecordDateTime (میلادی دقیق) به جای RecordDate (رشته شمسی)
-            // این‌طور حتی اگر در یک روز چند رکورد ثبت شود، ترتیب درست می‌ماند
+            // RecordID is the database-generated insertion order. A backdated measurement,
+            // missing legacy timestamp or a server-clock adjustment cannot select an older input.
             var records = await _db.Ath_BodyRecords.AsNoTracking()
                 .Where(r => r.MemberID == memberID)
-                .OrderBy(r => r.RecordDateTime).ThenBy(r => r.RecordID)
+                .OrderBy(r => r.RecordID)
                 .ToListAsync();
 
             var page = new BodyAnalysisPageDto
@@ -137,6 +137,7 @@ namespace TandisWebApp.Services
         public async Task<string> SaveRecordAsync(int memberID, BodyRecordSaveRequest req)
         {
             // اعتبارسنجی
+            if (req.WeightKg == null) return "وزن را وارد کنید.";
             if (req.WeightKg is <= 20 or > 400) return "وزن باید بین ۲۰ تا ۴۰۰ کیلوگرم باشد.";
             foreach (var (v, name) in new[]
                      {
@@ -196,10 +197,11 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
-        //  ✅ محاسبات — بدون تغییر (روی لیست مرتب‌شده کار می‌کند)
+        // محاسبات و روند همیشه همان ترتیب ثبت پایگاه داده را استفاده می‌کنند.
         // ============================================================
         public BodyMetricsDto Compute(BodyAnalysisPageDto page, List<Ath_BodyRecord> recordsAsc)
         {
+            recordsAsc = recordsAsc.OrderBy(r => r.RecordID).ToList();
             var m = new BodyMetricsDto
             {
                 Age = page.Age,

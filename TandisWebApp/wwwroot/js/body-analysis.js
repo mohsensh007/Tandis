@@ -15,7 +15,7 @@
     function num(v, digits) {
         if (v === null || v === undefined || v === '') return '—';
         var x = Number(v);
-        if (isNaN(x)) return '—';
+        if (!isFinite(x)) return '—';
         return x.toFixed(digits === undefined ? 0 : digits).replace(/\.0+$/, '');
     }
     function esc(s) {
@@ -33,6 +33,190 @@
         var x = Number(v);
         return isNaN(x) ? null : x;
     }
+
+    function latestRecord() {
+        if (D && D.latest) return D.latest;
+        var records = (D && D.records) || [];
+        return records.length ? records[records.length - 1] : null;
+    }
+
+    /* ============================================================
+       نمایش آخرین اندازه‌گیری کنار نتایج
+       ============================================================ */
+    function renderLatestMeasurement() {
+        var latest = latestRecord();
+        var empty = document.getElementById('baLatestEmpty');
+        var grid = document.getElementById('baLatestGrid');
+        var date = document.getElementById('baLatestDate');
+        if (!grid) return;
+
+        if (!latest) {
+            grid.style.display = 'none';
+            if (empty) empty.style.display = '';
+            if (date) date.textContent = 'بدون رکورد';
+            return;
+        }
+
+        grid.style.display = '';
+        if (empty) empty.style.display = 'none';
+        if (date) date.textContent = latest.recordDate ? 'تاریخ اندازه‌گیری: ' + fa(latest.recordDate) : 'تاریخ نامشخص';
+
+        var values = {
+            baLatestWeight: latest.weightKg,
+            baLatestWaist: latest.waistCm,
+            baLatestAbdomen: latest.abdomenCm,
+            baLatestChest: latest.chestCm,
+            baLatestArm: latest.armCm,
+            baLatestThigh: latest.thighCm,
+            baLatestHip: latest.hipCm
+        };
+
+        Object.keys(values).forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) el.textContent = fa(num(values[id], 1));
+        });
+    }
+
+    /* توضیح‌ها عمداً برای هر کارت جدا نوشته شده‌اند تا راهنمایی عمومی و مبهم نباشند. */
+    var METRIC_HELP = {
+        bmi: {
+            title: 'شاخص توده بدنی (BMI)', icon: 'bi-body-text',
+            intro: 'BMI نسبت وزن به مجذور قد است و یک تصویر سریع از محدوده وزن نسبت به قد می‌دهد.',
+            points: ['کمتر از ۱۸٫۵ معمولاً کمبود وزن، ۱۸٫۵ تا ۲۴٫۹ محدوده سالم و ۲۵ به بالا محدوده اضافه‌وزن در نظر گرفته می‌شود.', 'این شاخص حجم عضله، فرم بدن و محل تجمع چربی را جدا نمی‌کند؛ ورزشکاران عضلانی ممکن است BMI بالاتری داشته باشند.', 'عدد این کارت با وزن آخرین اندازه‌گیری و قد ثبت‌شده در اطلاعات پایه محاسبه شده است.']
+        },
+        bmr: {
+            title: 'سوخت‌وساز پایه (BMR)', icon: 'bi-fire',
+            intro: 'BMR مقدار تقریبی انرژی‌ای است که بدن در حالت استراحت برای عملکردهای حیاتی مثل تنفس و گردش خون مصرف می‌کند.',
+            points: ['این عدد با فرمول Mifflin–St Jeor و بر حسب کیلوکالری در روز برآورد می‌شود؛ کالری کل روز یا هدف رژیم نیست.', 'فرمول محاسبه از وزن آخرین اندازه‌گیری، قد، سن و جنسیت استفاده می‌کند.', 'اثر فعالیت، تمرین و مصرف انرژی روزمره را در کارت TDEE ببینید.']
+        },
+        tdee: {
+            title: 'کالری روزانه (TDEE)', icon: 'bi-lightning-charge-fill',
+            intro: 'TDEE برآورد کالری مورد نیاز بدن در یک روز معمولی با توجه به سطح فعالیت شماست.',
+            points: ['TDEE از BMR ضربدر ضریب فعالیت انتخاب‌شده در اطلاعات پایه به دست می‌آید.', 'این مقدار نقطه شروع است؛ شدت واقعی تمرین، شغل، خواب و تغییرات وزن می‌توانند نیاز شما را تغییر دهند.', 'ضریب فعالیتی که در محاسبه استفاده شده در برچسب همین کارت نمایش داده می‌شود.']
+        },
+        protein: {
+            title: 'پروتئین روزانه', icon: 'bi-egg-fill',
+            intro: 'این عدد مقدار تقریبی پروتئین روزانه برای حمایت از حفظ یا ساخت عضله است.',
+            points: ['مقدار بر اساس وزن آخرین اندازه‌گیری و هدف ورزشی انتخاب‌شده محاسبه می‌شود.', 'برای چربی‌سوزی و عضله‌سازی مقدار بالاتری در نظر گرفته شده تا حفظ توده عضلانی بهتر پشتیبانی شود.', 'بیماری‌های کلیوی، بارداری یا شرایط پزشکی نیازمند نظر پزشک یا متخصص تغذیه هستند.']
+        },
+        goalCalories: {
+            title: 'کالری هدف', icon: 'bi-bullseye',
+            intro: 'کالری هدف پیشنهادی بر اساس هدف ورزشی فعلی شما انتخاب می‌شود.',
+            points: ['برای چربی‌سوزی مقدار کارت کالری چربی‌سوزی و برای عضله‌سازی مقدار کارت کالری عضله‌سازی انتخاب می‌شود.', 'اگر هدف روی حفظ تناسب باشد، کالری هدف برابر با TDEE نمایش داده می‌شود.', 'هدف ورزشی را از کارت اطلاعات پایه تغییر دهید و ذخیره کنید تا نتیجه جدید محاسبه شود.']
+        },
+        cutCalories: {
+            title: 'کالری چربی‌سوزی', icon: 'bi-arrow-down-right-circle',
+            intro: 'این مقدار برآورد کالری روزانه برای ایجاد کسری ملایم و کمک به کاهش چربی است.',
+            points: ['مقدار اولیه برابر TDEE منهای ۵۰۰ کیلوکالری است.', 'کف محاسبه، بزرگ‌ترِ BMR و ۱۵۰۰ برای مردان یا ۱۲۰۰ برای زنان است. بنابراین در بعضی شرایط، خروجی حتی می‌تواند کمتر از TDEE نباشد؛ آن را نسخه رژیم تلقی نکنید.', 'کاهش وزن پایدار معمولاً با پیگیری روند چند هفته‌ای و تنظیم برنامه توسط متخصص بهتر ارزیابی می‌شود.']
+        },
+        bulkCalories: {
+            title: 'کالری عضله‌سازی', icon: 'bi-arrow-up-right-circle',
+            intro: 'این عدد برآورد کالری روزانه با مازاد ملایم برای پشتیبانی از عضله‌سازی است.',
+            points: ['مقدار پیشنهادی حدود ۱۰ درصد بیشتر از TDEE است.', 'افزایش کالری به‌تنهایی عضله نمی‌سازد؛ تمرین مقاومتی، پروتئین کافی و خواب نیز ضروری هستند.', 'روند وزن و اندازه‌ها را هفتگی بررسی کنید تا مقدار مازاد در صورت نیاز تنظیم شود.']
+        },
+        targetWeight: {
+            title: 'وزن هدف پیشنهادی', icon: 'bi-flag',
+            intro: 'وزن هدف یک پیشنهاد محاسباتی بر پایه محدوده سالم BMI و هدف انتخاب‌شده است.',
+            points: ['اگر وزن از محدوده سالم فاصله داشته باشد، نزدیک‌ترین نقطه مناسب در محدوده سالم پیشنهاد می‌شود.', 'اگر در محدوده سالم باشید، هدف حفظ وزن یا حرکت به سمت میانه محدوده با توجه به هدف شماست.', 'این عدد هدف قطعی پزشکی نیست و باید با فرم بدن، عضله و نظر مربی تفسیر شود.']
+        },
+        trend: {
+            title: 'تغییرات وزن', icon: 'bi-graph-up',
+            intro: 'این کارت اختلاف وزن آخرین اندازه‌گیری و اولین اندازه‌گیری ثبت‌شده را نشان می‌دهد.',
+            points: ['عدد مثبت یعنی وزن نسبت به اولین ثبت افزایش داشته و عدد منفی یعنی کاهش داشته است.', 'برای نمایش روند واقعی حداقل دو اندازه‌گیری لازم است.', 'مقایسه را با فاصله‌های زمانی مشابه و شرایط اندازه‌گیری نزدیک انجام دهید.']
+        },
+        waistToHeight: {
+            title: 'نسبت دور کمر به قد', icon: 'bi-arrows-angle-expand',
+            intro: 'این نسبت از تقسیم دور کمر بر قد به دست می‌آید و شاخصی ساده برای بررسی چربی مرکزی بدن است.',
+            points: ['مقدار کمتر از ۰٫۵ معمولاً وضعیت مناسب‌تری را نشان می‌دهد.', 'مقادیر بالاتر می‌توانند نشان‌دهنده ریسک بیشتر چربی شکمی باشند و در کارت با هشدار نمایش داده می‌شوند.', 'دقت نتیجه به محل ثابت اندازه‌گیری دور کمر و ثبت درست قد وابسته است.']
+        },
+        bodyFat: {
+            title: 'درصد چربی بدن', icon: 'bi-droplet-half',
+            intro: 'این درصد یک تخمین ریاضی از چربی بدن است که از BMI، سن و جنسیت به دست می‌آید.',
+            points: ['روش Deurenberg تخمینی است و با سنجش تخصصی مانند DEXA یا آنالیزور معتبر یکسان نیست.', 'تغییرات این عدد را در طول زمان و همراه با وزن و دور کمر بررسی کنید.', 'اگر سن یا جنسیت کامل نباشد، این شاخص محاسبه نمی‌شود.']
+        },
+        idealWeight: {
+            title: 'بازه وزن سالم', icon: 'bi-heart-pulse',
+            intro: 'این بازه محدوده وزنی حاصل از BMI حدود ۱۸٫۵ تا ۲۴٫۹ برای قد ثبت‌شده شماست.',
+            points: ['بازه برای قد شما محاسبه می‌شود و برای همه افراد یکسان نیست.', 'برچسب دوین در صورت وجود جنسیت، یک تخمین تک‌مقداری دیگر برای وزن ایده‌آل است.', 'بازه سالم به‌تنهایی کیفیت ترکیب بدن یا مقدار عضله را مشخص نمی‌کند.']
+        }
+    };
+
+    /* A real modal: background is inert, focus stays inside and returns to its trigger. */
+    var helpModal = document.getElementById('baMetricHelpModal');
+    var helpTrigger = null;
+    var helpBackground = [];
+
+    function closeMetricHelp() {
+        if (!helpModal || helpModal.hidden) return;
+        helpModal.hidden = true;
+        helpModal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('ba-help-open');
+        helpBackground.forEach(function (entry) {
+            entry.element.inert = entry.inert;
+        });
+        helpBackground = [];
+        if (helpTrigger && document.body.contains(helpTrigger)) helpTrigger.focus();
+    }
+
+    function openMetricHelp(trigger) {
+        var card = trigger.closest('[data-help-key]');
+        var help = card && METRIC_HELP[card.getAttribute('data-help-key')];
+        if (!helpModal || !help) return;
+        if (helpModal.parentNode !== document.body) document.body.appendChild(helpModal);
+        document.getElementById('baHelpTitle').textContent = help.title;
+        document.getElementById('baHelpIntro').textContent = help.intro;
+        document.getElementById('baHelpIcon').innerHTML = '<i class="bi ' + help.icon + '" aria-hidden="true"></i>';
+        document.getElementById('baHelpPoints').innerHTML = help.points.map(function (point) {
+            return '<li>' + esc(point) + '</li>';
+        }).join('');
+        var value = card.querySelector('.ba-m-value').textContent;
+        var unit = card.querySelector('.ba-m-unit').textContent;
+        document.getElementById('baHelpValue').textContent = value === '—'
+            ? 'برای این شاخص اطلاعات کافی ثبت نشده است.'
+            : 'نتیجه فعلی شما: ' + value + ' ' + unit;
+        helpTrigger = trigger;
+        helpBackground = [];
+        Array.prototype.forEach.call(document.body.children, function (element) {
+            if (element === helpModal || element.tagName === 'SCRIPT' || element.tagName === 'STYLE') return;
+            helpBackground.push({ element: element, inert: element.inert });
+            element.inert = true;
+        });
+        helpModal.hidden = false;
+        helpModal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('ba-help-open');
+        helpModal.querySelector('.ba-help-close').focus();
+    }
+
+    document.addEventListener('click', function (event) {
+        var trigger = event.target.closest('.ba-help-btn');
+        if (trigger) { openMetricHelp(trigger); return; }
+        if (helpModal && !helpModal.hidden && event.target.closest('[data-ba-help-close]')) closeMetricHelp();
+    });
+
+    document.addEventListener('keydown', function (event) {
+        if (!helpModal || helpModal.hidden) return;
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+            closeMetricHelp();
+        } else if (event.key === 'Tab') {
+            var controls = helpModal.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]');
+            var first = controls[0];
+            var last = controls[controls.length - 1];
+            if (!helpModal.contains(document.activeElement) ||
+                (event.shiftKey && document.activeElement === first) ||
+                (!event.shiftKey && document.activeElement === last)) {
+                event.preventDefault();
+                (event.shiftKey ? last : first).focus();
+            }
+        }
+    });
+
+    document.addEventListener('focusin', function (event) {
+        if (helpModal && !helpModal.hidden && !helpModal.contains(event.target)) {
+            helpModal.querySelector('.ba-help-close').focus();
+        }
+    });
 
     /* ============================================================
        رندر چیپ‌های هویتی
@@ -69,22 +253,31 @@
         var note = document.getElementById('baAdviceNote');
         if (!wrap) return;
 
-        if (m.bmi === null || m.bmi === undefined) {
+        var latest = latestRecord();
+        var hint = document.getElementById('baUpdatedHint');
+        if (hint) hint.textContent = latest ? 'بر اساس آخرین ورودی: ' + fa(latest.recordDate || '') : 'هنوز ورودی ثبت نشده';
+        if (!latest) {
             wrap.style.display = 'none';
             if (empty) empty.style.display = '';
             if (note) note.style.display = 'none';
             return;
         }
         wrap.style.display = '';
-        if (empty) empty.style.display = 'none';
+        if (empty) {
+            empty.style.display = m.bmi == null ? '' : 'none';
+            empty.textContent = !D.profile || !D.profile.heightCm
+                ? 'آخرین اندازه‌گیری شما محفوظ است. برای محاسبه شاخص‌های وابسته به قد، اطلاعات پایه را تکمیل و ذخیره کنید.'
+                : 'وزن در آخرین ورودی ثبت نشده است. برای محاسبه شاخص‌های وابسته به وزن، یک اندازه‌گیری کامل ثبت کنید.';
+        }
 
         // BMI
         var bmiTone = 'ok', bmiBadge = m.bmiCategory || '—';
-        if (m.bmi < 18.5) bmiTone = 'warn';
+        if (m.bmi == null) bmiTone = null;
+        else if (m.bmi < 18.5) bmiTone = 'warn';
         else if (m.bmi < 25) bmiTone = 'ok';
         else if (m.bmi < 30) bmiTone = 'warn';
         else bmiTone = 'danger';
-        setMetric('mBmi', num(m.bmi, 1), 'کیلوگرم بر مترمربع', bmiBadge, bmiTone);
+        setMetric('mBmi', fa(num(m.bmi, 1)), 'کیلوگرم بر مترمربع', bmiBadge, bmiTone);
 
         // BMR / TDEE
         setMetric('mBmr', fa(num(m.bmr)), null, null, null);
@@ -136,7 +329,7 @@
 
         // نکته راهنما
         var adviceParts = [];
-        if (!m.hasEnoughData) adviceParts.push('برای محاسبه BMR، کالری و پروتئین، تاریخ تولد و جنسیت لازم است — از بخش پروفایل کامل کنید.');
+        if (!m.hasEnoughData) adviceParts.push('برای شاخص‌های انرژی و تخمین چربی، قد، وزن، تاریخ تولد و جنسیت باید کامل باشند. شاخص‌های قابل محاسبه همچنان نمایش داده می‌شوند.');
         if (m.bmiAdvice) adviceParts.push(m.bmiAdvice);
         if (m.proteinAdvice) adviceParts.push('پروتئین: ' + m.proteinAdvice);
         if (m.activityLabel) adviceParts.push('فعالیت روزانه: ' + m.activityLabel);
@@ -151,8 +344,6 @@
             } else note.style.display = 'none';
         }
 
-        var hint = document.getElementById('baUpdatedHint');
-        if (hint) hint.textContent = D.records && D.records.length ? 'آخرین اندازه‌گیری: ' + fa((D.latest && D.latest.recordDate) || '') : '';
     }
 
     /* ============================================================
@@ -161,12 +352,15 @@
     var chartKey = 'weightKg';
     var chartLabel = 'وزن';
     var chartUnit = 'کیلوگرم';
+    var chartObserver = null;
+    var chartWidth = 0;
 
     function renderChart() {
         var box = document.getElementById('baChartBox');
         if (!box) return;
+        if (chartObserver) chartObserver.disconnect();
         var records = (D.records || []).filter(function (r) {
-            return r[chartKey] !== null && r[chartKey] !== undefined && r[chartKey] !== '';
+            return r[chartKey] != null && r[chartKey] !== '' && isFinite(Number(r[chartKey]));
         });
 
         var legend = document.getElementById('baLegend');
@@ -183,10 +377,15 @@
         var min = Math.min.apply(null, vals);
         var max = Math.max.apply(null, vals);
         var avg = vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
-        if (min === max) { min -= 1; max += 1; }
+        var margin = Math.max(1, (max - min) * .18);
+        min -= margin;
+        max += margin;
 
-        var W = 700, H = 300;
-        var padR = 18, padL = 44, padT = 26, padB = 34;
+        // Match the real container width, keeping labels readable instead of scaling a 700px SVG down.
+        chartWidth = box.clientWidth || 360;
+        var W = Math.max(250, Math.min(1000, chartWidth - 12));
+        var H = W < 480 ? 250 : 300;
+        var padR = 34, padL = 46, padT = 30, padB = 36;
         var iw = W - padL - padR, ih = H - padT - padB;
 
         function xAt(i) {
@@ -196,14 +395,16 @@
         function yAt(v) { return padT + ih - ((v - min) / (max - min)) * ih; }
 
         var svg = [];
-        svg.push('<svg viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="نمودار ' + esc(chartLabel) + '">');
+        var description = fa(records.length) + ' ثبت؛ آخرین مقدار: ' + fa(num(vals[vals.length - 1], 1)) + ' ' + chartUnit;
+        svg.push('<svg class="ba-chart-svg" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="baChartTitle baChartDesc">' +
+            '<title id="baChartTitle">نمودار ' + esc(chartLabel) + '</title><desc id="baChartDesc">' + esc(description) + '. جزئیات هر ثبت در تاریخچه اندازه‌گیری‌ها در دسترس است.</desc>');
 
         // پس‌زمینه گرادیان مسیر
         svg.push('<defs>' +
-            '<linearGradient id="baLineGrad" x1="0" y1="0" x2="1" y2="0">' +
-            '<stop offset="0%" stop-color="#66d3e8"/><stop offset="100%" stop-color="#8b5cf6"/>' +
+            '<linearGradient id="baLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">' +
+            '<stop offset="0%" stop-color="#66d3e8"/><stop offset="100%" stop-color="#a78bfa"/>' +
             '</linearGradient>' +
-            '<linearGradient id="baAreaGrad" x1="0" y1="0" x2="0" y2="1">' +
+            '<linearGradient id="baAreaGrad" x1="0%" y1="0%" x2="0%" y2="100%">' +
             '<stop offset="0%" stop-color="#66d3e8" stop-opacity="0.34"/>' +
             '<stop offset="100%" stop-color="#66d3e8" stop-opacity="0"/>' +
             '</linearGradient>' +
@@ -214,40 +415,56 @@
         for (var t = 0; t <= ticks; t++) {
             var vv = min + ((max - min) * t / ticks);
             var yy = yAt(vv);
-            svg.push('<line x1="' + padL + '" y1="' + yy + '" x2="' + (W - padR) + '" y2="' + yy +
+            svg.push('<line class="ba-grid-line" x1="' + padL + '" y1="' + yy + '" x2="' + (W - padR) + '" y2="' + yy +
                 '" stroke="rgba(255,255,255,.08)" stroke-width="1"/>');
-            svg.push('<text x="' + (padL - 7) + '" y="' + (yy + 4) + '" text-anchor="end" fill="#8a93a6" font-size="11" font-family="Vazirmatn,Tahoma">' +
-                num(vv, 1) + '</text>');
+            svg.push('<text x="' + (padL - 9) + '" y="' + (yy + 4) + '" text-anchor="end" direction="ltr" fill="#b9c2d4" font-size="12" font-family="Sahel,Tahoma">' +
+                fa(num(vv, 1)) + '</text>');
         }
 
         // خط میانگین (بنفش‌کم‌رنگ)
         var avgY = yAt(avg);
-        svg.push('<line x1="' + padL + '" y1="' + avgY + '" x2="' + (W - padR) + '" y2="' + avgY +
-            '" stroke="#8b5cf6" stroke-width="1.4" stroke-dasharray="6 5" opacity="0.75"/>');
+        svg.push('<line class="ba-average-line" x1="' + padL + '" y1="' + avgY + '" x2="' + (W - padR) + '" y2="' + avgY +
+            '" stroke="#a78bfa" stroke-width="1.4" stroke-dasharray="5 6" opacity="0.75"/>');
 
         // مسیر خط + ناحیه
         var pts = records.map(function (r, i) { return { x: xAt(i), y: yAt(Number(r[chartKey])), d: r.recordDate, v: Number(r[chartKey]) }; });
-        var linePath = pts.map(function (p, i) { return (i === 0 ? 'M' : 'L') + p.x.toFixed(1) + ' ' + p.y.toFixed(1); }).join(' ');
+        // Horizontal control tangents keep the curve within each measured interval (no overshoot).
+        var linePath = pts.map(function (p, i) {
+            if (i === 0) return 'M' + p.x.toFixed(1) + ' ' + p.y.toFixed(1);
+            var previous = pts[i - 1], mid = (previous.x + p.x) / 2;
+            return 'C' + mid.toFixed(1) + ' ' + previous.y.toFixed(1) + ' ' + mid.toFixed(1) + ' ' + p.y.toFixed(1) + ' ' + p.x.toFixed(1) + ' ' + p.y.toFixed(1);
+        }).join(' ');
         var areaPath = linePath + ' L' + pts[pts.length - 1].x.toFixed(1) + ' ' + (padT + ih) + ' L' + pts[0].x.toFixed(1) + ' ' + (padT + ih) + ' Z';
-        svg.push('<path d="' + areaPath + '" fill="url(#baAreaGrad)"/>');
-        svg.push('<path d="' + linePath + '" fill="none" stroke="url(#baLineGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');
+        svg.push('<path class="ba-chart-area" d="' + areaPath + '" fill="url(#baAreaGrad)"/>');
+        svg.push('<path class="ba-chart-line" pathLength="1000" d="' + linePath + '" fill="none" stroke="url(#baLineGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>');
 
         // نقاط + برچسب تاریخ
         pts.forEach(function (p, i) {
-            svg.push('<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="5" fill="#101426" stroke="#66d3e8" stroke-width="2.5"/>');
-            var showLbl = pts.length <= 8 || i === 0 || i === pts.length - 1 || i === Math.floor(pts.length / 2);
+            var last = i === pts.length - 1;
+            var delayIndex = pts.length > 1 ? Math.round(i * 8 / (pts.length - 1)) : 0;
+            svg.push('<circle class="ba-chart-point' + (last ? ' ba-chart-point-last' : '') + '" style="--ba-point-index:' + delayIndex + ';animation-delay:' + (0.42 + delayIndex * .07).toFixed(2) + 's" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + (last ? 6 : 4) + '" fill="' + (last ? '#66d3e8' : '#18233b') + '" stroke="' + (last ? '#d9fbff' : '#66d3e8') + '" stroke-width="2"><title>' + esc(fa(p.d) + ' — ' + fa(num(p.v, 1)) + ' ' + chartUnit) + '</title></circle>');
+            var labelLimit = W < 480 ? 3 : 6;
+            var showLbl = pts.length <= labelLimit || i === 0 || last || (i % Math.ceil((pts.length - 1) / (labelLimit - 1)) === 0 && i < pts.length - 2);
             if (showLbl) {
-                svg.push('<text x="' + p.x.toFixed(1) + '" y="' + (p.y - 11).toFixed(1) + '" text-anchor="middle" fill="#dce9ff" font-size="11" font-weight="700" font-family="Vazirmatn,Tahoma">' +
-                    num(p.v, 1) + '</text>');
-            }
-            if (pts.length <= 10 || i % Math.ceil(pts.length / 8) === 0 || i === pts.length - 1) {
-                svg.push('<text x="' + p.x.toFixed(1) + '" y="' + (H - 10) + '" text-anchor="middle" fill="#8a93a6" font-size="10.5" font-family="Vazirmatn,Tahoma" direction="ltr">' +
-                    shortDate(p.d) + '</text>');
+                svg.push('<text class="ba-chart-label" x="' + p.x.toFixed(1) + '" y="' + (p.y - 14).toFixed(1) + '" text-anchor="middle" direction="ltr" fill="#e7f4ff" font-size="13" font-weight="700" font-family="Sahel,Tahoma">' +
+                    fa(num(p.v, 1)) + '</text>');
+                svg.push('<text x="' + p.x.toFixed(1) + '" y="' + (H - 10) + '" text-anchor="middle" fill="#b9c2d4" font-size="12" font-family="Sahel,Tahoma" direction="ltr">' +
+                    esc(fa(shortDate(p.d))) + '</text>');
             }
         });
 
         svg.push('</svg>');
         box.innerHTML = svg.join('');
+        var chart = box.querySelector('svg');
+        if (typeof IntersectionObserver !== 'undefined') {
+            chartObserver = new IntersectionObserver(function (entries) {
+                if (entries[0].isIntersecting) {
+                    chart.classList.add('ba-chart-visible');
+                    chartObserver.disconnect();
+                }
+            }, { threshold: .15 });
+            chartObserver.observe(chart);
+        } else chart.classList.add('ba-chart-visible');
 
         if (legend) {
             legend.style.display = '';
@@ -267,6 +484,7 @@
         bar.addEventListener('click', function (e) {
             var chip = e.target.closest('.ba-chip');
             if (!chip) return;
+            if (chartKey === chip.getAttribute('data-key')) return;
             bar.querySelectorAll('.ba-chip').forEach(function (c) {
                 c.classList.remove('active');
                 c.setAttribute('aria-pressed', 'false');
@@ -279,6 +497,15 @@
             renderChart();
         });
     })();
+
+    var chartResizeTimer;
+    window.addEventListener('resize', function () {
+        clearTimeout(chartResizeTimer);
+        chartResizeTimer = setTimeout(function () {
+            var box = document.getElementById('baChartBox');
+            if (box && box.clientWidth && Math.abs(box.clientWidth - chartWidth) > 8) renderChart();
+        }, 120);
+    });
 
     /* ============================================================
        جدول تاریخچه
@@ -325,12 +552,14 @@
         var id = Number(btn.getAttribute('data-id'));
         if (!id) return;
         if (!confirm('این اندازه‌گیری حذف شود؟')) return;
+        btn.disabled = true;
         apiCall('/api/BodyAnalysis/DeleteRecord', 'POST', { recordId: id }, function (res) {
+            btn.disabled = false;
             if (res && res.success) {
                 showToast(res.message || 'حذف شد', 'success');
                 applyPage(res.data);
             } else showToast((res && res.message) || 'خطا در حذف', 'error');
-        });
+        }, function () { btn.disabled = false; });
     });
 
     /* ============================================================
@@ -338,8 +567,10 @@
        ============================================================ */
     function applyPage(page) {
         if (!page) return;
+        closeMetricHelp();
         D = page;
         renderIdentity();
+        renderLatestMeasurement();
         renderMetrics();
         renderChart();
         renderTable();
@@ -353,7 +584,7 @@
         if (!btn) return;
         btn.addEventListener('click', function () {
             var height = toNum(document.getElementById('baHeight').value);
-            if (height !== null && (height < 50 || height > 260)) {
+            if (height !== null && (height <= 50 || height > 260)) {
                 showToast('قد باید بین ۵۰ تا ۲۶۰ سانتی‌متر باشد', 'error'); return;
             }
             var payload = {
@@ -409,7 +640,16 @@
 
     /* ---------- رندر اولیه ---------- */
     renderIdentity();
+    renderLatestMeasurement();
     renderMetrics();
     renderChart();
     renderTable();
+
+    // A browser back/forward-cache restore must not resurrect an older calculation.
+    window.addEventListener('pageshow', function (event) {
+        if (!event.persisted) return;
+        apiCall('/api/BodyAnalysis/Data', 'GET', null, function (res) {
+            if (res && res.success) applyPage(res.data);
+        });
+    });
 })();

@@ -1,0 +1,457 @@
+/* Member reports: scoped to this view and its body-level calendar. */
+.member-reports {
+    min-width: 0;
+    color: #edf2ff;
+}
+
+.member-reports-heading {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+}
+
+.member-reports-heading h1 {
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.member-reports .btn-back-glass,
+.member-reports .att-cal-btn,
+.member-reports .rp-btn,
+.member-reports .member-report-retry {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+body.admin-glass-body .member-reports .member-reports-card:hover {
+    transform: none;
+}
+
+.member-reports .card-body {
+    padding: clamp(.75rem, 2.5vw, 1.5rem);
+    min-width: 0;
+}
+
+.member-reports .coach-list-header {
+    gap: .75rem;
+    padding: .75rem 1rem;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.member-reports .att-cal-btn {
+    flex: 0 0 44px;
+}
+
+.member-reports .nav-tabs-custom {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .375rem;
+    width: 100%;
+    padding: .25rem;
+    border: 1px solid rgba(102, 211, 232, .2);
+    border-radius: 14px;
+    background: rgba(15, 23, 42, .35);
+}
+
+.member-reports .nav-tabs-custom .nav-item {
+    min-width: 0;
+}
+
+.member-reports .nav-tabs-custom .nav-link {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    width: 100%;
+    height: 100%;
+    min-height: 48px;
+    padding: .65rem .4rem;
+    font-size: .875rem;
+    line-height: 1.8;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-align: center;
+    text-overflow: clip;
+}
+
+.member-reports .nav-tabs-custom .nav-link i {
+    color: #66d3e8;
+    font-size: 1.1rem;
+}
+
+body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
+    color: #fff !important;
+}
+
+.member-reports .nav-tabs-custom .nav-link:not(.active):hover {
+    background: rgba(102, 126, 234, .22);
+}
+
+.member-reports .nav-tabs-custom .nav-link.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    box-shadow: inset 0 -3px 0 #66d3e8;
+    color: #fff;
+}
+
+.member-reports :is(button, a, [tabindex]):focus-visible,
+#attCalOverlay.member-reports-calendar :is(button, [tabindex]):focus-visible {
+    outline: 3px solid #66d3e8;
+    outline-offset: 3px;
+    box-shadow: 0 0 0 5px rgba(15, 23, 42, .8);
+}
+
+.member-reports .tab-pane:focus-visible {
+    outline-offset: -3px;
+}
+
+.member-reports .member-finance-list,
+.member-reports .tab-content,
+.member-reports .tab-pane {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.member-reports .member-finance-table {
+    width: 100%;
+    table-layout: fixed;
+    margin-bottom: 0;
+    overflow: visible;
+    --bs-table-bg: transparent;
+}
+
+.member-reports .member-finance-table th:nth-child(1) { width: 18%; }
+.member-reports .member-finance-table th:nth-child(2) { width: 17%; }
+.member-reports .member-finance-table th:nth-child(3) { width: 39%; }
+.member-reports .member-finance-table th:nth-child(4) { width: 26%; }
+
+.member-reports .member-finance-table :is(th, td) {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.9;
+    text-align: start;
+}
+
+.member-reports .finance-label {
+    display: none;
+}
+
+.member-reports .finance-amount-value {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: .35rem;
+    max-width: 100%;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+.member-reports bdi {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-variant-numeric: tabular-nums;
+}
+
+.member-reports .finance-credit,
+.member-reports .rgh-green { color: #8fe3b0; }
+.member-reports .finance-debit,
+.member-reports .rgh-red { color: #ffadb7; }
+.member-reports .rgh-blue { color: #66d3e8; }
+
+.member-reports .finance-currency {
+    color: #d3ddef;
+    font-size: .8rem;
+    font-weight: 500;
+}
+
+.member-reports :is(.badge-credit, .badge-debit) {
+    display: inline-block;
+    max-width: 100%;
+    font-size: .78rem;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.member-reports .badge-credit {
+    background: rgba(20, 83, 65, .85);
+    border: 1px solid rgba(143, 227, 176, .4);
+    color: #b9f5ce;
+}
+
+.member-reports .badge-debit {
+    background: rgba(113, 37, 64, .7);
+    border: 1px solid rgba(255, 173, 183, .4);
+    color: #ffcad1;
+}
+
+.member-reports .member-report-state {
+    padding: 1.5rem .75rem;
+    color: #d3ddef;
+    text-align: center;
+    overflow-wrap: anywhere;
+}
+
+.member-reports .member-report-state > i {
+    display: block;
+    margin-bottom: .5rem;
+    color: #66d3e8;
+    font-size: 2rem;
+}
+
+.member-reports .member-report-state p {
+    margin: 0;
+    line-height: 1.9;
+}
+
+.member-reports .member-report-retry {
+    margin-top: .75rem;
+    color: #edf2ff;
+    background: rgba(102, 126, 234, .2);
+    border: 1px solid rgba(102, 211, 232, .5);
+    border-radius: 10px;
+    padding: .4rem 1rem;
+}
+
+.member-reports .rgh-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: .5rem;
+    margin-bottom: 1rem;
+}
+
+.member-reports .rgh-stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: .35rem;
+    min-width: 0;
+    padding: .85rem .5rem;
+    text-align: center;
+    background: rgba(15, 23, 42, .35);
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 14px;
+}
+
+.member-reports .rgh-num {
+    font-size: 1.05rem;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+}
+
+.member-reports .rgh-lbl {
+    color: #c5d1e5;
+    font-size: .8rem;
+    line-height: 1.7;
+}
+
+.member-reports .trf-card {
+    background: rgba(15, 23, 42, .38);
+    border-color: rgba(255, 255, 255, .18);
+}
+
+.member-reports .trf-head {
+    width: 100%;
+    min-height: 72px;
+    border: 0;
+    border-radius: 13px;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: start;
+}
+
+.member-reports .trf-head:focus-visible {
+    outline-offset: -4px;
+}
+
+.member-reports .trf-head:hover {
+    background: rgba(102, 126, 234, .12);
+}
+
+.member-reports .trf-line {
+    flex-wrap: wrap;
+    gap: .25rem .4rem;
+    font-size: .875rem;
+    line-height: 1.9;
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: anywhere;
+    text-overflow: clip;
+}
+
+.member-reports .trf-line > b {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.member-reports .trf-line > i {
+    color: #66d3e8;
+}
+
+.member-reports .trf-toggle {
+    width: 36px;
+    height: 36px;
+}
+
+.member-reports .trf-details[hidden] { display: none; }
+.member-reports .trf-details:not([hidden]) { display: block; }
+
+.member-reports .trf-drow {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: .4rem 1rem;
+    align-items: baseline;
+    padding: .6rem 0;
+    font-size: .85rem;
+    line-height: 1.9;
+    overflow-wrap: anywhere;
+}
+
+.member-reports .trf-drow > span { color: #c5d1e5; }
+.member-reports .trf-drow > b { min-width: 0; text-align: end; }
+.member-reports .trf-drow .hd-icon { font-size: .9rem; }
+
+.member-reports .trf-day {
+    display: inline-block;
+    margin-inline-start: .25rem;
+    padding: .05rem .5rem;
+    color: #66d3e8;
+    background: rgba(102, 211, 232, .12);
+    border: 1px solid rgba(102, 211, 232, .3);
+    border-radius: 999px;
+    font-size: .75rem;
+    text-shadow: none;
+}
+
+.member-reports .rp-nav { padding: .25rem; }
+.member-reports .rp-btn { justify-content: center; padding-inline: .65rem; }
+.member-reports .rp-info { font-size: .8rem; line-height: 1.8; overflow-wrap: anywhere; }
+
+/* A single set of rows keeps report-pager.js authoritative at every width. */
+@media (max-width: 767.98px) {
+    .member-reports .nav-tabs-custom .nav-link {
+        flex-direction: column;
+        gap: .2rem;
+        padding: .5rem .25rem;
+        font-size: .8rem;
+    }
+
+    .member-reports .member-finance-table,
+    .member-reports .member-finance-table tbody { display: block; }
+
+    .member-reports .member-finance-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    body.admin-glass-body .member-reports .member-finance-table tbody tr.finance-record {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .7rem 1rem;
+        padding: 1rem;
+        margin-bottom: .75rem;
+        background: rgba(15, 23, 42, .5) !important;
+        border: 1px solid rgba(102, 211, 232, .25);
+        border-radius: 14px;
+    }
+
+    body.admin-glass-body .member-reports .member-finance-table tbody td {
+        display: block;
+        min-width: 0;
+        padding: 0;
+        border: 0;
+        box-shadow: none;
+    }
+
+    .member-reports .finance-label {
+        display: block;
+        margin-bottom: .25rem;
+        color: #c5d1e5;
+        font-size: .78rem;
+        font-weight: 500;
+    }
+
+    .member-reports .finance-description,
+    .member-reports .finance-amount { grid-column: 1 / -1; }
+
+    body.admin-glass-body .member-reports .member-finance-table .finance-amount {
+        padding-top: .7rem;
+        border-top: 1px solid rgba(255, 255, 255, .15);
+    }
+
+    .member-reports .finance-amount-value { font-size: 1.05rem; }
+    .member-reports .finance-state-row { display: block; }
+    .member-reports .rgh-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 380px) {
+    .member-reports .trf-head { gap: .5rem; padding: .75rem .5rem; }
+    .member-reports .trf-num { width: 28px; height: 28px; }
+    .member-reports .trf-toggle { width: 28px; height: 32px; }
+    .member-reports .trf-drow { grid-template-columns: minmax(0, 1fr); gap: .1rem; }
+    .member-reports .trf-drow > b { text-align: start; }
+}
+
+/* This overlay is moved outside the reports wrapper so it cannot be clipped. */
+#attCalOverlay.member-reports-calendar {
+    display: flex;
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+
+#attCalOverlay.member-reports-calendar[hidden] { display: none; }
+
+#attCalOverlay.member-reports-calendar .att-cal-panel {
+    min-width: 0;
+    max-height: calc(100vh - 32px);
+    max-height: calc(100dvh - 32px);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+}
+
+#attCalOverlay.member-reports-calendar .att-cal-head {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr) 44px 44px;
+    gap: 4px;
+    padding: .6rem .5rem;
+}
+
+#attCalOverlay.member-reports-calendar :is(.att-nav, .att-close) {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+}
+
+#attCalOverlay.member-reports-calendar .att-cal-title {
+    margin: 0;
+    font-size: .9rem;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+#attCalOverlay.member-reports-calendar :is(.att-grid, .att-week) {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+}
+
+#attCalOverlay.member-reports-calendar .att-day { min-width: 0; font-variant-numeric: tabular-nums; }
+#attCalOverlay.member-reports-calendar .att-future { color: #c5d1e5; }
+#attCalOverlay.member-reports-calendar :is(.att-legend, .att-stats) { flex-wrap: wrap; gap: .5rem; }
+
+@media (prefers-reduced-motion: reduce) {
+    .member-reports *,
+    #attCalOverlay.member-reports-calendar * { transition: none !important; }
+}

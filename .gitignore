@@ -5,6 +5,7 @@
 **/bin/
 **/obj/
 **/.freebuff/
+.test-output/
 
 # User files
 *.user

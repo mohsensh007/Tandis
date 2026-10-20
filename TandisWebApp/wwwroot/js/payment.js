@@ -35,12 +35,12 @@
     function ensureModal() {
         if (document.getElementById('posPayModal')) return;
         var html =
-            '<div class="modal fade" id="posPayModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">' +
+            '<div class="modal fade" id="posPayModal" tabindex="-1" aria-labelledby="posPayTitle" data-bs-backdrop="static" data-bs-keyboard="false">' +
             '  <div class="modal-dialog modal-dialog-centered">' +
             '    <div class="purple-style modal-content">' +
             '      <div class="modal-header">' +
             '        <h5 class="modal-title" id="posPayTitle">پرداخت</h5>' +
-            '        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
+            '        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="بستن"></button>' +
             '      </div>' +
             '      <div class="modal-body text-center">' +
             // ---- مرحله انتخاب ----
@@ -51,8 +51,8 @@
             '          <div id="posPayCreditNote" class="alert alert-danger py-2" style="display:none">' +
             '            اعتبار کافی نیست — فقط پرداخت با دستگاه POS فعال است</div>' +
             '          <div class="d-grid gap-2">' +
-            '            <button type="button" id="posPayBtnCredit" class="btn btn-success btn-lg">💳 پرداخت از اعتبار</button>' +
-            '            <button type="button" id="posPayBtnPos" class="btn btn-primary btn-lg">🏧 پرداخت با دستگاه POS</button>' +
+            '            <button type="button" id="posPayBtnCredit" class="btn btn-success btn-lg"><i class="bi bi-credit-card" aria-hidden="true"></i> پرداخت از اعتبار</button>' +
+            '            <button type="button" id="posPayBtnPos" class="btn btn-primary btn-lg"><i class="bi bi-credit-card-2-front" aria-hidden="true"></i> پرداخت با دستگاه POS</button>' +
             '          </div>' +
             '        </div>' +
             // ---- مرحله انتظار POS ----
