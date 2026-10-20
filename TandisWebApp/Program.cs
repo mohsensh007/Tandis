@@ -47,7 +47,7 @@ var jwtSettings = builder.Configuration.GetSection("JwtSettings");
 var configuredSecretKey = jwtSettings["SecretKey"];
 var secretKey = string.IsNullOrWhiteSpace(configuredSecretKey)
     ? builder.Environment.IsDevelopment()
-        ? "TandisWebApp-development-only-key-change-me-2026-unsafe"
+        ? JwtService.DevelopmentSecretKey
         : throw new InvalidOperationException("JwtSettings:SecretKey must be provided through environment configuration in production")
     : configuredSecretKey;
 var issuer = jwtSettings["Issuer"] ?? "TandisWebApp";

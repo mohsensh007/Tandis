@@ -10,20 +10,25 @@ namespace TandisWebApp.Services
     /// </summary>
     public class JwtService
     {
-        private readonly IConfiguration _config;
+        // فقط برای اجرای Development؛ secret واقعی باید از environment بیاید.
+        public const string DevelopmentSecretKey = "TandisWebApp-development-only-key-change-me-2026-unsafe";
 
-        public JwtService(IConfiguration config)
+        private readonly IConfiguration _config;
+        private readonly IHostEnvironment _environment;
+
+        public JwtService(IConfiguration config, IHostEnvironment environment)
         {
             _config = config;
+            _environment = environment;
         }
 
         /// <summary>ساخت توکن JWT برای یک عضو</summary>
         public string GenerateToken(int memberID, string fullName, string? mobile, short? shiftID,int roleID =1)
         {
             var jwtSettings = _config.GetSection("JwtSettings");
-            var secretKey = jwtSettings["SecretKey"]!;
-            var issuer = jwtSettings["Issuer"]!;
-            var audience = jwtSettings["Audience"]!;
+            var secretKey = ResolveSecretKey();
+            var issuer = jwtSettings["Issuer"] ?? "TandisWebApp";
+            var audience = jwtSettings["Audience"] ?? "TandisWebAppUsers";
             var expiryMin = int.Parse(jwtSettings["ExpiryMinutes"] ?? "1440");
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
@@ -59,9 +64,9 @@ namespace TandisWebApp.Services
         public string GenerateAdminToken(short userID, string username, string displayName, short shiftID)
         {
             var jwtSettings = _config.GetSection("JwtSettings");
-            var secretKey = jwtSettings["SecretKey"]!;
-            var issuer = jwtSettings["Issuer"]!;
-            var audience = jwtSettings["Audience"]!;
+            var secretKey = ResolveSecretKey();
+            var issuer = jwtSettings["Issuer"] ?? "TandisWebApp";
+            var audience = jwtSettings["Audience"] ?? "TandisWebAppUsers";
             var expiryMin = int.Parse(jwtSettings["ExpiryMinutes"] ?? "1440");
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
@@ -87,6 +92,19 @@ namespace TandisWebApp.Services
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private string ResolveSecretKey()
+        {
+            var configuredSecretKey = _config["JwtSettings:SecretKey"];
+            if (!string.IsNullOrWhiteSpace(configuredSecretKey))
+                return configuredSecretKey;
+
+            if (_environment.IsDevelopment())
+                return DevelopmentSecretKey;
+
+            throw new InvalidOperationException(
+                "JwtSettings:SecretKey must be provided through environment configuration in production");
         }
     }
 }
