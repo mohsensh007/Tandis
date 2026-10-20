@@ -44,8 +44,18 @@
         var memberRole = 0;
         var isAdminLogin = false;   // ✅ flag برای تشخیص ادمین/عضو در فرم تغییر رمز
 
+        // ورودی کد ملی ممکن است با کیبورد فارسی یا عربی وارد شود.
+        // قبل از تشخیص مسیر ورود، آن را به رقم لاتین تبدیل می‌کنیم تا
+        // کد ملی عضو به اشتباه به endpoint ورود مدیر نرود.
+        function normalizeLoginDigits(value) {
+            return String(value || '')
+                .replace(/[۰-۹]/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); })
+                .replace(/[٠-٩]/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); });
+        }
+
         $('#btnLogin').click(function () {
-            var nc = $.trim($('#txtNationalCode').val());
+            var nc = normalizeLoginDigits($.trim($('#txtNationalCode').val()));
+            $('#txtNationalCode').val(nc);
             var pw = $('#txtPassword').val();
 
             // === تشخیص مسیر ورود: کد ملی ۱۰ رقمی → عضو / بقیه → نام کاربری (ادمین و پرسنل) ===
