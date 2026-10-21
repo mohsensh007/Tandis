@@ -3,14 +3,15 @@
     Layout = "_AdminLayout";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-3">
+<div class="admin-reports-page">
+<div class="d-flex justify-content-between align-items-center mb-3 admin-reports-header">
     <h5 class="mb-0"><i class="bi bi-graph-up-arrow hd-icon"></i> گزارش‌های مدیریتی</h5>
     <a href="/Admin" class="purple-style btn-back-glass"><i class="bi bi-arrow-right"></i> داشبورد</a>
 </div>
 
-<div class="row g-3">
-    <div class="col-md-6 col-lg-3">
-        <a href="/Admin/TrafficReport" class="text-decoration-none">
+<div class="row g-3 admin-reports-grid">
+    <div class="col-md-6 col-lg-3 admin-report-col">
+        <a href="/Admin/TrafficReport" class="text-decoration-none admin-report-link">
             <div class="purple-style report-card h-100">
                 <div class="rc-icon" style="background: linear-gradient(135deg, #1E6FD9, #66D3E8);">
                     <i class="bi bi-arrow-left-right"></i>
@@ -22,8 +23,8 @@
         </a>
     </div>
 
-    <div class="col-md-6 col-lg-3">
-        <a href="/Admin/RegisterReport" class="text-decoration-none">
+    <div class="col-md-6 col-lg-3 admin-report-col">
+        <a href="/Admin/RegisterReport" class="text-decoration-none admin-report-link">
             <div class="purple-style report-card h-100">
                 <div class="rc-icon" style="background: linear-gradient(135deg, #1E6FD9, #66D3E8);">
                     <i class="bi bi-arrow-repeat"></i>
@@ -35,8 +36,8 @@
         </a>
     </div>
 
-    <div class="col-md-6 col-lg-3">
-        <a href="/Admin/FinanceReport" class="text-decoration-none">
+    <div class="col-md-6 col-lg-3 admin-report-col">
+        <a href="/Admin/FinanceReport" class="text-decoration-none admin-report-link">
             <div class="purple-style report-card h-100">
                 <div class="rc-icon" style="background: linear-gradient(135deg, #1E6FD9, #66D3E8);">
                     <i class="bi bi-cash-stack"></i>
@@ -48,8 +49,8 @@
         </a>
     </div>
 
-    <div class="col-md-6 col-lg-3">
-        <a href="/Admin/TicketSalesReport" class="text-decoration-none">
+    <div class="col-md-6 col-lg-3 admin-report-col">
+        <a href="/Admin/TicketSalesReport" class="text-decoration-none admin-report-link">
             <div class="purple-style report-card h-100">
                 <div class="rc-icon" style="background: linear-gradient(135deg, #1E6FD9, #66D3E8);">
                     <i class="bi bi-cart-check"></i>
@@ -61,8 +62,8 @@
         </a>
     </div>
 
-    <div class="col-md-6 col-lg-3">
-        <a href="/Admin/ServicesReport" class="text-decoration-none">
+    <div class="col-md-6 col-lg-3 admin-report-col">
+        <a href="/Admin/ServicesReport" class="text-decoration-none admin-report-link">
             <div class="purple-style report-card h-100">
                 <div class="rc-icon" style="background: linear-gradient(135deg, #1E6FD9, #66D3E8);">
                     <i class="bi bi-tools"></i>
@@ -74,8 +75,8 @@
         </a>
     </div>
 
-    <div class="col-md-6 col-lg-3">
-        <a href="/Admin/GuestSessionReport" class="text-decoration-none">
+    <div class="col-md-6 col-lg-3 admin-report-col">
+        <a href="/Admin/GuestSessionReport" class="text-decoration-none admin-report-link">
             <div class="purple-style report-card h-100">
                 <div class="rc-icon" style="background: linear-gradient(135deg, #1E6FD9, #66D3E8);">
                     <i class="bi bi-person-badge"></i>
@@ -87,8 +88,8 @@
         </a>
     </div>
 
-    <div class="col-md-6 col-lg-3">
-        <a href="/Admin/ExpenseReport" class="text-decoration-none">
+    <div class="col-md-6 col-lg-3 admin-report-col">
+        <a href="/Admin/ExpenseReport" class="text-decoration-none admin-report-link">
             <div class="purple-style report-card h-100">
                 <div class="rc-icon" style="background: linear-gradient(135deg, #1E6FD9, #66D3E8);">
                     <i class="bi bi-wallet2"></i>
@@ -100,11 +101,49 @@
         </a>
     </div>
 </div>
+</div>
 
 <style>
     .hd-icon {
         color: #66d3e8;
         margin-left: 6px;
+    }
+
+    .admin-reports-page {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .admin-reports-header {
+        min-width: 0;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .admin-reports-header h5 {
+        min-width: 0;
+        line-height: 1.55;
+    }
+
+    .admin-reports-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem !important;
+        margin: 0 !important;
+    }
+
+    .admin-reports-grid > .admin-report-col {
+        display: flex;
+        width: 100%;
+        min-width: 0;
+        max-width: none;
+        padding: 0;
+    }
+
+    .admin-report-link {
+        display: block;
+        width: 100%;
+        min-width: 0;
     }
 
     .btn-back-glass {
@@ -139,6 +178,7 @@
             }
 
     .report-card {
+        width: 100%;
         position: relative;
         background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
         border: 1px solid rgba(255,255,255,.14);
@@ -202,5 +242,37 @@
 
     .report-card:hover .rc-arrow {
         transform: translateX(-4px);
+    }
+
+    @@media (min-width: 768px) {
+        .admin-reports-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @@media (min-width: 1200px) {
+        .admin-reports-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+    }
+
+    @@media (max-width: 575.98px) {
+        .admin-reports-header {
+            align-items: stretch !important;
+        }
+
+        .admin-reports-header h5,
+        .admin-reports-header .btn-back-glass {
+            width: 100%;
+        }
+
+        .admin-reports-header .btn-back-glass {
+            justify-content: center;
+        }
+
+        .report-card {
+            min-height: 156px;
+            padding: 20px 16px;
+        }
     }
 </style>

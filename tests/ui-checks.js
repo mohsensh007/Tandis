@@ -164,6 +164,9 @@
     check(adminMotion.indexOf('IntersectionObserver') >= 0 && adminMotion.indexOf('prefers-reduced-motion') >= 0 && adminMotion.indexOf('MutationObserver') >= 0, 'admin motion layer reveals static and dynamic cards accessibly');
     check(adminLayout.indexOf('notifBadge') < 0 && adminLayout.indexOf('loadNotifBell') < 0, 'admin notification bell is removed when members cannot message admins');
     check(adminLayout.indexOf('abn-switching') >= 0 && adminResponsive.indexOf('adminNavJelly') >= 0, 'admin bottom navigation has a jelly active-item transition');
+    check(adminResponsive.indexOf('abn-active::after') < 0, 'admin bottom navigation keeps one active background layer');
+    var reportsPage = read('TandisWebApp/Views/Admin/Reports.cshtml');
+    check(reportsPage.indexOf('admin-reports-grid') >= 0 && reportsPage.indexOf('admin-report-link') >= 0 && reportsPage.indexOf('grid-template-columns: minmax(0, 1fr)') >= 0, 'admin report cards use a full-width mobile grid');
     var adminIndex = read('TandisWebApp/Views/Admin/Index.cshtml');
     var adminMessages = read('TandisWebApp/Views/Admin/Messages.cshtml');
     var adminMessagesCss = read('TandisWebApp/wwwroot/css/admin-messages.css');

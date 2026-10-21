@@ -1286,24 +1286,6 @@ body.admin-glass-body .admin-bottom-nav .abn-item.abn-active {
     text-shadow: 0 0 16px rgba(102, 211, 232, .28);
 }
 
-body.admin-glass-body .admin-bottom-nav .abn-item.abn-active::after {
-    content: "";
-    position: absolute;
-    inset: 5px 8px auto;
-    height: 38px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, rgba(118, 103, 232, .22), rgba(102, 211, 232, .10));
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
-    pointer-events: none;
-    z-index: -1;
-}
-
-body.admin-glass-body .admin-bottom-nav .abn-item i,
-body.admin-glass-body .admin-bottom-nav .abn-item span {
-    position: relative;
-    z-index: 1;
-}
-
 body.admin-glass-body .admin-bottom-nav .abn-item.abn-switching {
     animation: adminNavJelly .68s cubic-bezier(.22, .9, .35, 1.25);
 }
