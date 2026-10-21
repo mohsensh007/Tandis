@@ -593,16 +593,18 @@
         *@
 
         <!-- مودال تأیید خروج -->
-        <div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmTitle" aria-hidden="true">
+        <div class="modal fade" id="logoutConfirmModal" tabindex="-1" aria-labelledby="logoutConfirmTitle" aria-describedby="logoutConfirmDescription" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-sm">
                 <div class="purple-style modal-content logout-modal">
                     <div class="modal-body text-center p-4">
                         <div class="member-logout-icon"><i class="bi bi-box-arrow-right" aria-hidden="true"></i></div>
                         <h6 class="mt-2 mb-1" id="logoutConfirmTitle">خروج از حساب</h6>
-                        <p class="small text-muted mb-3">آیا مطمئن هستید که می‌خواهید خارج شوید؟</p>
+                        <p class="small text-muted mb-3" id="logoutConfirmDescription">آیا مطمئن هستید که می‌خواهید خارج شوید؟</p>
                         <div class="d-flex gap-2 member-logout-actions">
-                            <a href="/Account/Logout" class="btn btn-danger btn-sm flex-fill">بله، خارج شو</a>
                             <button type="button" class="btn btn-secondary btn-sm flex-fill" data-bs-dismiss="modal">انصراف</button>
+                            <button type="button" class="btn btn-danger btn-sm flex-fill" id="btnConfirmMemberLogout">
+                                <i class="bi bi-box-arrow-right me-1" aria-hidden="true"></i> خروج
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -708,7 +710,10 @@
         <script>
             $(document).on('click', '.js-logout', function (e) {
                 e.preventDefault();
-                new bootstrap.Modal(document.getElementById('logoutConfirmModal')).show();
+                bootstrap.Modal.getOrCreateInstance(document.getElementById('logoutConfirmModal')).show();
+            });
+            $('#btnConfirmMemberLogout').on('click', function () {
+                window.location.href = '/Account/Logout';
             });
         </script>
 

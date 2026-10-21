@@ -4,14 +4,14 @@
     Layout = "_Layout";
 }
 
-<link rel="stylesheet" href="~/css/athlete.css?v=5" />
+<link rel="stylesheet" href="~/css/athlete.css?v=6" />
 
 <!-- ===== داده‌های اولیه برای JS ===== -->
 <script id="athlete-data" type="application/json">
     @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new
     {
             today = Model.TodayShamsi,
-                weekday = Model.WeekdayFa,
+                weekdayFa = Model.WeekdayFa,
                 // ✅ وضعیت حضور: true = داخل باشگاه (ورود باز) | false = خروج زده
                 isInside = Model.IsInside,
                 programs = Model.Programs.Select(p => new
@@ -40,7 +40,7 @@
                         Transport = Model.MyLocker.Transport
                 }
                 // ❌ summary اینجا نیست — از endpoint زنده /Athlete/Summary خونده می‌شه
-        }))
+        }, new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)))
 </script>
 
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
@@ -190,40 +190,47 @@ else
 }
 
 <!-- ===== ✅ پاپ‌آپ خلاصه تمرین امروز (نمودار دایره‌ای) ===== -->
-<div class="modal fade" id="summaryModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content" style="background:rgba(16,20,36,.97);border:1px solid rgba(255,255,255,.15);border-radius:18px;color:#fff;">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="bi bi-pie-chart-fill" style="color:#66d3e8;"></i> خلاصه تمرین امروز</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-        <div id="sumHero" class="sum-hero" style="display:none;">
-            <div class="sum-ring-wrap">
-                <svg viewBox="0 0 120 120" class="sum-ring" aria-hidden="true">
-                    <defs>
-                        <linearGradient id="sumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#66d3e8" />
-                            <stop offset="100%" stop-color="#764ba2" />
-                        </linearGradient>
-                    </defs>
-                    <circle class="sum-ring-bg" cx="60" cy="60" r="52" />
-                    <circle class="sum-ring-fg" cx="60" cy="60" r="52" />
-                </svg>
-                <div class="sum-ring-center">
-                    <div class="sum-total"><span id="sumTotalNum">۰</span></div>
-                    <div class="sum-total-unit">دقیقه تمرین</div>
-                    <div class="sum-total-sub">مجموع امروز</div>
+<div class="modal fade summary-modal" id="summaryModal" tabindex="-1" aria-labelledby="summaryModalTitle" aria-describedby="summaryModalDescription" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable summary-modal-dialog">
+        <div class="modal-content summary-modal-content">
+            <div class="modal-header summary-modal-header">
+                <div class="summary-modal-heading">
+                    <span class="summary-modal-icon" aria-hidden="true"><i class="bi bi-pie-chart-fill"></i></span>
+                    <div>
+                        <h5 class="modal-title" id="summaryModalTitle">خلاصه تمرین امروز</h5>
+                        <p class="summary-modal-kicker" id="summaryModalDescription">زمان ثبت‌شده برای حرکت‌های امروز</p>
+                    </div>
                 </div>
+                <button type="button" class="btn-close btn-close-white summary-modal-close" data-bs-dismiss="modal" aria-label="بستن خلاصه تمرین" title="بستن"></button>
             </div>
-            <div class="sum-count"><i class="bi bi-trophy-fill"></i> <span id="sumMoveCount">۰</span> حرکت با موفقیت انجام شد</div>
-        </div>
-        <div id="sumList" class="sum-list"></div>
-        <div id="summaryEmpty" class="ath-empty" style="display:none;">امروز هیچ حرکتی ثبت نشده است.</div>            </div>
+            <div class="modal-body summary-modal-body">
+                <div id="sumHero" class="sum-hero" style="display:none;" aria-live="polite">
+                    <div class="sum-ring-wrap">
+                        <svg viewBox="0 0 120 120" class="sum-ring" role="img" aria-label="حلقه پیشرفت تمرین امروز" focusable="false">
+                            <defs>
+                                <linearGradient id="sumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#66d3e8" />
+                                    <stop offset="100%" stop-color="#764ba2" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="sum-ring-bg" cx="60" cy="60" r="52" fill="none" />
+                            <circle class="sum-ring-fg" cx="60" cy="60" r="52" fill="none" />
+                        </svg>
+                        <div class="sum-ring-center">
+                            <div class="sum-total"><span id="sumTotalNum">۰</span></div>
+                            <div class="sum-total-unit">دقیقه تمرین</div>
+                            <div class="sum-total-sub">زمان ثبت‌شده امروز</div>
+                        </div>
+                    </div>
+                    <div class="sum-count"><i class="bi bi-trophy-fill" aria-hidden="true"></i> <strong id="sumMoveCount">۰</strong> <span>حرکت با موفقیت انجام شد</span></div>
+                </div>
+                <div id="sumList" class="sum-list" role="list" aria-live="polite"></div>
+                <div id="summaryEmpty" class="ath-empty sum-empty" style="display:none;" role="status">امروز هیچ حرکت ثبت‌شده‌ای پیدا نشد.<br /><span>با ثبت زمان یک حرکت، خلاصه‌ی امروز اینجا نمایش داده می‌شود.</span></div>
+            </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <script src="~/js/athlete.js?v=5"></script>
+    <script src="~/js/athlete.js?v=6"></script>
 }

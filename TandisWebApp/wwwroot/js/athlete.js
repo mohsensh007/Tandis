@@ -456,21 +456,32 @@
         ['#f783ac', '#e64980'], ['#99e9f2', '#3bc9db']
     ];
 
+    function summaryReducedMotion() {
+        return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    }
+
+    function formatSummaryNumber(value) {
+        var n = Math.round((Number(value) || 0) * 10) / 10;
+        return fa(n % 1 ? n.toFixed(1) : String(Math.round(n)));
+    }
+
     function sumCountUp(el, target, ms) {
         if (!el) return;
         var start = null, done = false;
-        function finalText() { return fa(target % 1 ? Number(target).toFixed(1) : Math.round(target)); }
+        target = Number(target) || 0;
+        function finalText() { return formatSummaryNumber(target); }
         function finish() { if (done) return; done = true; el.textContent = finalText(); }
+        if (summaryReducedMotion() || !window.requestAnimationFrame || ms <= 0) { finish(); return; }
         function step(t) {
             if (done) return;
             if (start === null) start = t;
             var p = Math.min(1, (t - start) / ms);
             var eased = 1 - Math.pow(1 - p, 3);
             var val = target * eased;
-            el.textContent = fa(target % 1 ? val.toFixed(1) : Math.round(val));
-            if (p < 1) requestAnimationFrame(step); else finish();
+            el.textContent = formatSummaryNumber(target % 1 ? val : Math.round(val));
+            if (p < 1) window.requestAnimationFrame(step); else finish();
         }
-        requestAnimationFrame(step);
+        window.requestAnimationFrame(step);
         setTimeout(finish, ms + 150);
     }
 
@@ -489,27 +500,38 @@
         if (empty) empty.style.display = 'none';
 
         var total = 0;
-        data.forEach(function (x) { total += Number(x.minutes) || 0; });
+        data.forEach(function (x) { total += Math.max(0, Number(x.minutes) || 0); });
+        total = Math.round(total * 10) / 10;
 
         var ring = document.querySelector('.sum-ring-fg');
         if (ring) {
             var C = 2 * Math.PI * 52;
+            var reduced = summaryReducedMotion();
+            var progress = data.length ? 100 : 0;
+            var targetOffset = C * (1 - progress / 100);
             ring.style.transition = 'none';
             ring.style.strokeDasharray = C;
             ring.style.strokeDashoffset = C;
             void ring.getBoundingClientRect();
-            ring.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.22,1,.36,1)';
-            ring.style.strokeDashoffset = '0';
+            if (reduced || !window.requestAnimationFrame) {
+                ring.style.strokeDashoffset = targetOffset;
+            } else {
+                window.requestAnimationFrame(function () {
+                    ring.style.transition = 'stroke-dashoffset 1.15s cubic-bezier(.22,1,.36,1)';
+                    ring.style.strokeDashoffset = targetOffset;
+                });
+            }
         }
-        sumCountUp(document.getElementById('sumTotalNum'), Math.round(total), 1200);
+        sumCountUp(document.getElementById('sumTotalNum'), total, 1200);
         sumCountUp(document.getElementById('sumMoveCount'), data.length, 900);
 
         data.forEach(function (x, i) {
-            var mins = Number(x.minutes) || 0;
-            var pct = total > 0 ? (mins / total) * 100 : 0;
+            var mins = Math.max(0, Number(x.minutes) || 0);
+            var pct = total > 0 ? Math.min(100, Math.max(0, (mins / total) * 100)) : 0;
             var c = SUM_COLORS[i % SUM_COLORS.length];
             var row = document.createElement('div');
             row.className = 'sum-row';
+            row.setAttribute('role', 'listitem');
             row.style.setProperty('--d', (0.12 + i * 0.08) + 's');
             row.style.setProperty('--c1', c[0]);
             row.style.setProperty('--c2', c[1]);
@@ -525,8 +547,9 @@
             list.appendChild(row);
 
             var bar = row.querySelector('.sum-bar i');
-            var target = Math.max(5, pct);
-            setTimeout(function () { bar.style.width = target + '%'; }, 80);
+            var target = pct > 0 ? Math.max(5, pct) : 0;
+            if (summaryReducedMotion()) bar.style.width = target + '%';
+            else setTimeout(function () { bar.style.width = target + '%'; }, 80);
             sumCountUp(row.querySelector('.sum-min-val'), mins, 1000);
         });
     }

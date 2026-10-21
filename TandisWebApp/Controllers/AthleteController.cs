@@ -176,7 +176,7 @@ namespace TandisWebApp.Controllers
             var items = prg.Items.Where(i => (i.DayTitle ?? "بدون روز") == dayTitle).ToList();
             var logs = await _athlete.GetLogsAsync(memberID, prgID, date);
 
-            // ✅ حفظ حالت PascalCase — چون athlete.js با data.Items / it.ItemID می‌خونه
+            // ✅ پاسخ با camelCase — مطابق athlete.js (data.items / it.itemID)
             return new JsonResult(new AthleteDayDto
             {
                 PrgID = prgID,
@@ -186,11 +186,7 @@ namespace TandisWebApp.Controllers
                 Items = items,
                 Logs = logs
             },
-            new System.Text.Json.JsonSerializerOptions
-            {
-                PropertyNamingPolicy = null,          // بدون تبدیل به camelCase
-                PropertyNameCaseInsensitive = true
-            });
+            new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web));
         }
 
         /// <summary>ذخیره وضعیت یک حرکت (تیک + زمان سپری‌شده). 🔒 فقط وقتی عضو داخل باشگاهه.</summary>

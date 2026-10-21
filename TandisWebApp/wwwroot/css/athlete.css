@@ -676,36 +676,378 @@ body {
 
 
 /* ============================================================
-   ✅ پاپ‌آپ خلاصه تمرین (Modal & Chart)
+   ✅ پاپ‌آپ خلاصه تمرین (Modal & Summary Ring)
    ============================================================ */
-#summaryModal .modal-content {
-    background: rgba(16, 20, 36, .98);
-    border: 1px solid rgba(255, 255, 255, .15);
-    border-radius: 20px;
-    color: #fff;
-    box-shadow: 0 20px 50px rgba(0,0,0,.6);
+#summaryModal .modal-dialog {
+    width: min(36rem, calc(100% - 1rem - env(safe-area-inset-left) - env(safe-area-inset-right)));
+    max-width: none;
+    margin: max(.5rem, env(safe-area-inset-top)) auto max(.5rem, env(safe-area-inset-bottom));
 }
 
-#summaryModal .modal-header {
-    border-bottom: 1px solid rgba(255, 255, 255, .08);
-    padding: 15px 20px;
+#summaryModal .modal-dialog-centered {
+    min-height: calc(100% - 1rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+}
+
+#summaryModal .modal-content {
+    position: relative;
+    min-width: 0;
+    max-height: calc(100vh - 1rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    max-height: calc(100dvh - 1rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    overflow: hidden;
+    color: #f8fbff;
+    background:
+        radial-gradient(circle at 8% 0%, rgba(102, 211, 232, .22), transparent 34%),
+        radial-gradient(circle at 100% 100%, rgba(118, 75, 162, .22), transparent 42%),
+        linear-gradient(145deg, rgba(37, 27, 76, .98), rgba(15, 29, 56, .98)) !important;
+    border: 1px solid rgba(180, 170, 255, .32);
+    border-radius: 1.35rem;
+    box-shadow: 0 24px 70px rgba(6, 8, 24, .66), inset 0 1px 0 rgba(255, 255, 255, .12);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    backdrop-filter: blur(22px) saturate(140%);
+}
+
+#summaryModal .modal-content::before {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    content: "";
+    pointer-events: none;
+    background: linear-gradient(120deg, rgba(255, 255, 255, .07), transparent 28%, transparent 72%, rgba(102, 211, 232, .04));
+}
+
+#summaryModal .modal-header,
+#summaryModal .modal-body {
+    position: relative;
+    z-index: 1;
+}
+
+#summaryModal .summary-modal-header {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid rgba(255, 255, 255, .11);
+    background: linear-gradient(135deg, rgba(118, 75, 162, .28), rgba(102, 211, 232, .09));
+}
+
+#summaryModal .summary-modal-heading {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+#summaryModal .summary-modal-icon {
+    display: inline-grid;
+    flex: 0 0 2.6rem;
+    width: 2.6rem;
+    height: 2.6rem;
+    place-items: center;
+    color: #e6fbff;
+    font-size: 1.15rem;
+    background: linear-gradient(135deg, rgba(102, 211, 232, .35), rgba(118, 75, 162, .52));
+    border: 1px solid rgba(160, 235, 246, .42);
+    border-radius: .9rem;
+    box-shadow: 0 8px 22px rgba(35, 155, 190, .2);
 }
 
 #summaryModal .modal-title {
+    min-width: 0;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(1rem, 3.6vw, 1.16rem);
+    font-weight: 900;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+#summaryModal .summary-modal-kicker {
+    margin: .12rem 0 0;
+    color: #b8c9e4;
+    font-size: .72rem;
+    font-weight: 700;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+#summaryModal .summary-modal-close {
+    flex: 0 0 2.75rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    margin: 0;
+    padding: .85rem;
+    opacity: .96;
+    background-color: rgba(255, 255, 255, .09);
+    background-size: .82rem;
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: .85rem;
+    transition: background-color .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+#summaryModal .summary-modal-close:hover,
+#summaryModal .summary-modal-close:focus-visible {
+    opacity: 1;
+    background-color: rgba(102, 211, 232, .2);
+    border-color: rgba(154, 237, 248, .65);
+    transform: translateY(-1px);
+}
+
+#summaryModal .summary-modal-body {
+    min-height: 0;
+    padding: clamp(1rem, 3.8vw, 1.5rem);
+    overflow-y: auto;
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
+    overscroll-behavior: contain;
+    scrollbar-color: rgba(177, 166, 255, .5) transparent;
+    scrollbar-width: thin;
+}
+
+#summaryModal .summary-modal-body::-webkit-scrollbar {
+    width: .4rem;
+}
+
+#summaryModal .summary-modal-body::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(102, 211, 232, .6), rgba(118, 75, 162, .75));
+    border-radius: 999px;
+}
+
+#summaryModal .sum-hero {
+    display: grid;
+    grid-template-columns: minmax(8.8rem, 10.5rem) minmax(0, 1fr);
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+    padding: clamp(.95rem, 3vw, 1.2rem);
+    background: linear-gradient(135deg, rgba(102, 211, 232, .1), rgba(118, 75, 162, .2));
+    border: 1px solid rgba(148, 224, 243, .22);
+    border-radius: 1.15rem;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
+}
+
+#summaryModal .sum-ring-wrap {
+    position: relative;
+    width: min(100%, 10.5rem);
+    aspect-ratio: 1;
+    margin-inline: auto;
+    isolation: isolate;
+}
+
+#summaryModal .sum-ring {
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+}
+
+#summaryModal .sum-ring-bg,
+#summaryModal .sum-ring-fg {
+    fill: none;
+    stroke-width: 10;
+    vector-effect: non-scaling-stroke;
+}
+
+#summaryModal .sum-ring-bg {
+    stroke: rgba(214, 231, 255, .14);
+}
+
+#summaryModal .sum-ring-fg {
+    stroke: url("#sumGrad");
+    stroke-linecap: round;
+    stroke-dasharray: 326.7256;
+    stroke-dashoffset: 326.7256;
+    filter: drop-shadow(0 0 7px rgba(102, 211, 232, .42));
+    transition: stroke-dashoffset 1.15s cubic-bezier(.22, 1, .36, 1);
+}
+
+#summaryModal .sum-ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    pointer-events: none;
+}
+
+#summaryModal .sum-total {
+    color: #fff;
+    font-size: clamp(1.75rem, 8vw, 2.35rem);
+    font-weight: 900;
+    line-height: 1.05;
+    direction: ltr;
+    font-variant-numeric: tabular-nums;
+    text-shadow: 0 4px 18px rgba(102, 211, 232, .2);
+}
+
+#summaryModal .sum-total-unit {
+    margin-top: .3rem;
+    color: #dffbff;
+    font-size: .76rem;
     font-weight: 800;
-    font-size: 1.1rem;
+}
+
+#summaryModal .sum-total-sub {
+    margin-top: .18rem;
+    color: #aebed8;
+    font-size: .66rem;
+    font-weight: 700;
+}
+
+#summaryModal .sum-count {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: center;
+    gap: .42rem;
+    min-width: 0;
+    padding: .85rem .9rem;
+    color: #dce8fb;
+    font-size: .86rem;
+    font-weight: 800;
+    line-height: 1.75;
+    text-align: center;
+    overflow-wrap: anywhere;
 }
 
-#summaryModal .modal-body {
-    padding: 20px;
+#summaryModal .sum-count i {
+    flex: 0 0 auto;
+    color: #7be6f3;
+    font-size: 1.2rem;
 }
 
-#summaryChart {
-    max-height: 350px;
-    width: 100%;
+#summaryModal .sum-count strong {
+    flex: 0 0 auto;
+    color: #fff;
+    font-size: 1.15rem;
+    direction: ltr;
+    font-variant-numeric: tabular-nums;
+}
+
+#summaryModal .sum-list {
+    display: grid;
+    gap: .72rem;
+    min-width: 0;
+    margin-top: 1rem;
+}
+
+#summaryModal .sum-row {
+    min-width: 0;
+    padding: .82rem .86rem .78rem;
+    background: linear-gradient(135deg, rgba(255, 255, 255, .075), rgba(255, 255, 255, .035));
+    border: 1px solid rgba(255, 255, 255, .13);
+    border-radius: 1rem;
+    box-shadow: 0 9px 20px rgba(7, 12, 31, .18), inset 0 1px 0 rgba(255, 255, 255, .05);
+    animation: summaryRowIn .55s both cubic-bezier(.22, 1, .36, 1);
+    animation-delay: var(--d, 0s);
+}
+
+@keyframes summaryRowIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#summaryModal .sum-row-head {
+    display: grid;
+    grid-template-columns: 2rem minmax(0, 1fr) auto;
+    align-items: start;
+    gap: .62rem;
+    min-width: 0;
+}
+
+#summaryModal .sum-rank {
+    display: inline-grid;
+    width: 2rem;
+    height: 2rem;
+    place-items: center;
+    color: #fff;
+    font-size: .84rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--c1), var(--c2));
+    border-radius: .72rem;
+    box-shadow: 0 5px 14px rgba(118, 75, 162, .28);
+    direction: ltr;
+}
+
+#summaryModal .sum-name {
+    min-width: 0;
+    color: #fff;
+    font-size: .9rem;
+    font-weight: 850;
+    line-height: 1.8;
+    text-align: right;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+#summaryModal .sum-min {
+    max-width: 100%;
+    color: #c7d7ef;
+    font-size: .76rem;
+    font-weight: 700;
+    line-height: 1.65;
+    white-space: nowrap;
+    direction: rtl;
+}
+
+#summaryModal .sum-min b {
+    color: #fff;
+    font-size: .92rem;
+    direction: ltr;
+    font-variant-numeric: tabular-nums;
+}
+
+#summaryModal .sum-bar {
+    height: .48rem;
+    margin-top: .72rem;
+    overflow: hidden;
+    background: rgba(219, 232, 255, .1);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 999px;
+}
+
+#summaryModal .sum-bar i {
+    display: block;
+    width: 0;
+    height: 100%;
+    min-width: 0;
+    background: linear-gradient(90deg, var(--c1), var(--c2));
+    border-radius: inherit;
+    box-shadow: 0 0 12px rgba(102, 211, 232, .35);
+    transition: width .9s cubic-bezier(.22, 1, .36, 1);
+}
+
+#summaryModal .sum-pct {
+    margin-top: .42rem;
+    color: #9fb1ce;
+    font-size: .69rem;
+    font-weight: 700;
+    line-height: 1.6;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+#summaryModal .sum-empty {
+    margin-top: 0;
+    padding: 1.5rem 1rem;
+    color: #dce8fb;
+    background: linear-gradient(135deg, rgba(102, 211, 232, .08), rgba(118, 75, 162, .15));
+    border: 1px dashed rgba(150, 221, 239, .32);
+    border-radius: 1rem;
+    line-height: 1.9;
+}
+
+#summaryModal .sum-empty span {
+    color: #aebed8;
+    font-size: .78rem;
 }
 
 /* ============================================================
@@ -769,8 +1111,87 @@ body {
         padding: 10px;
     }
 
-    /* تنظیمات نمودار در موبایل */
-    #summaryChart {
-        max-height: 280px;
+    #summaryModal .modal-dialog {
+        width: calc(100% - .75rem - env(safe-area-inset-left) - env(safe-area-inset-right));
+    }
+
+    #summaryModal .summary-modal-header {
+        padding: .85rem .9rem;
+    }
+
+    #summaryModal .summary-modal-body {
+        padding: .9rem .82rem 1rem;
+    }
+
+    #summaryModal .sum-hero {
+        grid-template-columns: 1fr;
+        gap: .65rem;
+        text-align: center;
+    }
+
+    #summaryModal .sum-ring-wrap {
+        width: min(9.5rem, 60vw);
+    }
+
+    #summaryModal .sum-count {
+        padding: .45rem .4rem .1rem;
+    }
+}
+
+@media (max-width: 360px) {
+    #summaryModal .summary-modal-heading {
+        gap: .55rem;
+    }
+
+    #summaryModal .summary-modal-icon {
+        flex-basis: 2.35rem;
+        width: 2.35rem;
+        height: 2.35rem;
+    }
+
+    #summaryModal .summary-modal-kicker {
+        font-size: .66rem;
+    }
+
+    #summaryModal .sum-hero {
+        padding: .78rem;
+    }
+
+    #summaryModal .sum-ring-wrap {
+        width: 8.25rem;
+    }
+
+    #summaryModal .sum-row {
+        padding-inline: .7rem;
+    }
+
+    #summaryModal .sum-row-head {
+        grid-template-columns: 1.9rem minmax(0, 1fr);
+        gap: .5rem;
+    }
+
+    #summaryModal .sum-rank {
+        width: 1.9rem;
+        height: 1.9rem;
+    }
+
+    #summaryModal .sum-min {
+        grid-column: 2;
+        justify-self: start;
+        margin-top: -.18rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #summaryModal .summary-modal-close,
+    #summaryModal .sum-ring-fg,
+    #summaryModal .sum-bar i,
+    #summaryModal .sum-row {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    #summaryModal .sum-ring-fg {
+        stroke-dashoffset: 0 !important;
     }
 }
