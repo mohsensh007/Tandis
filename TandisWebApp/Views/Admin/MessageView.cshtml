@@ -4,18 +4,19 @@
     Layout = "_AdminLayout";
 }
 
-<div class="row justify-content-center">
-    <div class="col-12 col-lg-8">
-        <div class="card mb-3">
-            <div class="card-header d-flex justify-content-between align-items-center">
+<div class="admin-message-view-page">
+<div class="row justify-content-center message-view-row">
+    <div class="col-12 col-lg-8 message-view-col">
+        <div class="card mb-3 message-view-card">
+            <div class="card-header d-flex justify-content-between align-items-center message-view-header">
                 <h5 class="mb-0">📨 جزئیات پیام</h5>
-                <a href="/Admin/Messages" class="btn btn-sm btn-outline-light">
+                <a href="/Admin/Messages" class="btn btn-sm btn-outline-light message-view-back">
                     <i class="bi bi-arrow-right me-1"></i> بازگشت به اینباکس
                 </a>
             </div>
-            <div class="card-body">
+            <div class="card-body message-view-body">
                 <!-- ✅ چهره فرستنده (نسخه ادمین) -->
-                <div class="text-center mb-3">
+                <div class="text-center mb-3 message-view-avatar">
                     <img src="/Admin/Face/@Model.PersonID"
                          alt="چهره فرستنده"
                          class="rounded-circle border border-light"
@@ -23,21 +24,21 @@
                          onerror="this.style.display='none';" />
                 </div>
 
-                <div class="row g-3 mb-3 small">
-                    <div class="col-6 col-md-3">
-                        <span class="text-muted">فرستنده</span><br>
+                <div class="row g-3 mb-3 small message-view-meta">
+                    <div class="col-6 col-md-3 message-meta-item">
+                        <span class="text-muted message-meta-label">فرستنده</span>
                         <strong>@Model.SenderName</strong>
                     </div>
-                    <div class="col-6 col-md-3">
-                        <span class="text-muted">کد عضویت</span><br>
+                    <div class="col-6 col-md-3 message-meta-item">
+                        <span class="text-muted message-meta-label">کد عضویت</span>
                         @(Model.MemberCode ?? "-")
                     </div>
-                    <div class="col-6 col-md-3">
-                        <span class="text-muted">موبایل</span><br>
+                    <div class="col-6 col-md-3 message-meta-item">
+                        <span class="text-muted message-meta-label">موبایل</span>
                         @(Model.Mobile ?? "-")
                     </div>
-                    <div class="col-6 col-md-3">
-                        <span class="text-muted">تاریخ</span><br>
+                    <div class="col-6 col-md-3 message-meta-item">
+                        <span class="text-muted message-meta-label">تاریخ</span>
                         @Model.CreationDate @Model.CreationTime
                     </div>
                 </div>
@@ -49,25 +50,27 @@
                     <h4 class="mb-3 fw-bold">@Model.Title</h4>
                 }
 
-                <div class="msg-body-box p-3">@Model.Body</div>
+                <div class="msg-body-box p-3 message-view-content">@Model.Body</div>
             </div>
         </div>
 
-        <div class="card">
+        <div class="card message-view-reply-card">
             <div class="card-header">
                 <h6 class="mb-0">✏️ پاسخ به این پیام</h6>
             </div>
-            <div class="card-body">
+            <div class="card-body message-view-reply-body">
                 <textarea class="form-control mb-2" id="txtReplyBody" rows="4" placeholder="متن پاسخ..."></textarea>
-                <button class="btn btn-primary" id="btnSendReply" data-id="@Model.MessageID">
+                <button class="btn btn-primary message-view-reply-button" id="btnSendReply" data-id="@Model.MessageID">
                     <i class="bi bi-reply-fill me-1"></i> ارسال پاسخ
                 </button>
             </div>
         </div>
     </div>
 </div>
+</div>
 
 @section Scripts {
+    <link rel="stylesheet" href="~/css/admin-messages.css?v=1" />
     <script>
         $('#btnSendReply').on('click', function () {
             var body = $('#txtReplyBody').val().trim();

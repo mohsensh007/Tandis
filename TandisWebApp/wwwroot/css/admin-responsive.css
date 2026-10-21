@@ -44,6 +44,34 @@ body.admin-glass-body .container-fluid {
 body.admin-glass-body .admin-shell {
     width: 100%;
     overflow-x: hidden;
+    padding-inline: 0 !important;
+}
+
+/* یک قرارداد gutter برای هم‌ترازی کارت‌ها در تمام صفحات ادمین */
+body.admin-glass-body .admin-shell > .row,
+body.admin-glass-body .admin-shell > .admin-settings-section > .row {
+    --bs-gutter-x: 1rem;
+    --bs-gutter-y: 1rem;
+    margin-inline: 0;
+}
+
+body.admin-glass-body .admin-shell > .row > [class*="col-"],
+body.admin-glass-body .admin-shell > .admin-settings-section > .row > [class*="col-"] {
+    display: flex;
+    min-width: 0;
+}
+
+body.admin-glass-body .admin-shell .dash-card,
+body.admin-glass-body .admin-shell .report-card,
+body.admin-glass-body .admin-shell .rep-filter,
+body.admin-glass-body .admin-shell .ch-main-card,
+body.admin-glass-body .admin-shell .ch-share-card,
+body.admin-glass-body .admin-shell .ch-side-card,
+body.admin-glass-body .admin-shell .admin-setting-card,
+body.admin-glass-body .admin-shell .card {
+    width: 100%;
+    min-width: 0;
+    margin-inline: 0;
 }
 
 body.admin-glass-body .admin-shell .row,
@@ -1226,6 +1254,10 @@ body.admin-glass-body .admin-bottom-nav .abn-item {
     text-decoration: none;
 }
 
+body.admin-glass-body .admin-bottom-nav .abn-item {
+    isolation: isolate;
+}
+
 body.admin-glass-body .admin-bottom-nav .abn-item:hover,
 body.admin-glass-body .admin-bottom-nav .abn-item:focus-visible {
     background: rgba(102, 211, 232, .1);
@@ -1247,6 +1279,60 @@ body.admin-glass-body .admin-bottom-nav .abn-item.abn-active {
 
 body.admin-glass-body .admin-bottom-nav .abn-item.abn-active i {
     color: var(--admin-turquoise);
+}
+
+body.admin-glass-body .admin-bottom-nav .abn-item.abn-active {
+    font-weight: 850;
+    text-shadow: 0 0 16px rgba(102, 211, 232, .28);
+}
+
+body.admin-glass-body .admin-bottom-nav .abn-item.abn-active::after {
+    content: "";
+    position: absolute;
+    inset: 5px 8px auto;
+    height: 38px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(118, 103, 232, .22), rgba(102, 211, 232, .10));
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .08);
+    pointer-events: none;
+    z-index: -1;
+}
+
+body.admin-glass-body .admin-bottom-nav .abn-item i,
+body.admin-glass-body .admin-bottom-nav .abn-item span {
+    position: relative;
+    z-index: 1;
+}
+
+body.admin-glass-body .admin-bottom-nav .abn-item.abn-switching {
+    animation: adminNavJelly .68s cubic-bezier(.22, .9, .35, 1.25);
+}
+
+body.admin-glass-body .admin-bottom-nav .abn-item.abn-switching i {
+    animation: adminNavIconPop .68s cubic-bezier(.22, .9, .35, 1.25);
+}
+
+body.admin-glass-body .admin-bottom-nav .abn-glow {
+    width: 44px;
+    height: 6px;
+    top: 3px;
+    background: linear-gradient(90deg, var(--admin-purple), var(--admin-turquoise), var(--admin-purple));
+    box-shadow: 0 0 18px rgba(102, 211, 232, .72), 0 0 28px rgba(118, 75, 162, .52);
+}
+
+@keyframes adminNavJelly {
+    0% { transform: translateY(0) scale(1); }
+    28% { transform: translateY(-4px) scale(1.08, .92); }
+    52% { transform: translateY(1px) scale(.94, 1.06); }
+    76% { transform: translateY(-2px) scale(1.03, .98); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes adminNavIconPop {
+    0% { transform: translateY(-2px) scale(1.1) rotate(0); }
+    45% { transform: translateY(-5px) scale(1.22) rotate(-8deg); }
+    70% { transform: translateY(-1px) scale(1.04) rotate(5deg); }
+    100% { transform: translateY(-2px) scale(1.1) rotate(0); }
 }
 
 body.admin-glass-body .admin-bottom-nav .abn-item span {

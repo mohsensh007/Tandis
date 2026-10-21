@@ -4,46 +4,47 @@
 }
 
 <!-- ========== کارت اصلی نمودار ========== -->
-<div class="purple-style dash-card ch-main-card mb-3">
+<div class="purple-style dash-card ch-main-card mb-3" data-admin-motion="card">
     <div class="ch-main-head">
         <div>
             <div class="ch-main-title"><i class="bi bi-activity hd-icon"></i> <span id="chMainTitle">فعالیت باشگاه</span></div>
             <div class="ch-main-sub" id="chMainSub">نمای کلی همه بخش‌ها</div>
         </div>
         <!-- انتخاب سری فعال -->
-        <div class="ch-pills" id="chSeriePills">
-            <button type="button" class="ch-pill" data-serie="traffic">ترددها</button>
-            <button type="button" class="ch-pill" data-serie="register">ثبت‌نام و تمدید</button>
-            <button type="button" class="ch-pill" data-serie="ticket">بلیط</button>
-            <button type="button" class="ch-pill" data-serie="service">خدمات</button>
-            <button type="button" class="ch-pill" data-serie="finance">دریافتی‌ها</button>
+        <div class="ch-pills" id="chSeriePills" role="tablist" aria-label="سری نمودار">
+            <button type="button" class="ch-pill" data-serie="traffic" role="tab" aria-selected="false">ترددها</button>
+            <button type="button" class="ch-pill" data-serie="register" role="tab" aria-selected="false">ثبت‌نام و تمدید</button>
+            <button type="button" class="ch-pill" data-serie="ticket" role="tab" aria-selected="false">بلیط</button>
+            <button type="button" class="ch-pill" data-serie="service" role="tab" aria-selected="false">خدمات</button>
+            <button type="button" class="ch-pill" data-serie="finance" role="tab" aria-selected="false">دریافتی‌ها</button>
         </div>
     </div>
 
     <!-- دلتا + انتخاب دوره -->
     <div class="ch-toolbar">
         <div class="ch-delta" id="chDelta">-</div>
-        <div class="ch-pills ch-period" id="chPeriodPills">
-            <button type="button" class="ch-pill" data-period="day">روزانه</button>
-            <button type="button" class="ch-pill" data-period="week">هفتگی</button>
-            <button type="button" class="ch-pill" data-period="month">ماهانه</button>
-            <button type="button" class="ch-pill" data-period="year">سالانه</button>
+        <div class="ch-pills ch-period" id="chPeriodPills" role="tablist" aria-label="بازه نمودار">
+            <button type="button" class="ch-pill" data-period="day" role="tab" aria-selected="false">روزانه</button>
+            <button type="button" class="ch-pill" data-period="week" role="tab" aria-selected="false">هفتگی</button>
+            <button type="button" class="ch-pill" data-period="month" role="tab" aria-selected="false">ماهانه</button>
+            <button type="button" class="ch-pill" data-period="year" role="tab" aria-selected="false">سالانه</button>
         </div>
     </div>
 
     <!-- نوار پیمایش + بازه تاریخ‌ها -->
     <div class="ch-rangebar">
-        <button type="button" class="ch-navbtn" id="chPrev" title="دوره قبل"><i class="bi bi-chevron-right"></i></button>
+        <button type="button" class="ch-navbtn" id="chPrev" title="دوره قبل" aria-label="نمایش دوره قبل"><i class="bi bi-chevron-right"></i></button>
         <div class="ch-ranges">
             <div class="ch-range cur"><span class="ch-range-dot"></span><span id="chRangeCur">-</span></div>
             <div class="ch-range prev"><span class="ch-range-dot"></span><span id="chRangePrev">-</span></div>
         </div>
-        <button type="button" class="ch-navbtn" id="chNext" title="دوره بعد" disabled><i class="bi bi-chevron-left"></i></button>
+        <button type="button" class="ch-navbtn" id="chNext" title="دوره بعد" aria-label="نمایش دوره بعد" disabled><i class="bi bi-chevron-left"></i></button>
     </div>
 
     <!-- نمودار خطی SVG -->
     <div class="ch-chart-wrap">
-        <svg id="chChart" viewBox="0 0 900 320" preserveAspectRatio="none" class="ch-chart">
+        <svg id="chChart" viewBox="0 0 900 320" preserveAspectRatio="none" class="ch-chart" role="img" aria-labelledby="chChartTitle" tabindex="0">
+            <title id="chChartTitle">نمودار فعالیت باشگاه</title>
             <defs>
                 <linearGradient id="chAreaGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stop-color="rgba(13,110,253,.35)"/>
@@ -54,14 +55,14 @@
             <g id="chAxisY"></g>
             <g id="chAxisX"></g>
             <path id="chAreaPrev" fill="none" stroke="rgba(159,179,200,.55)" stroke-width="1.8" stroke-dasharray="5 5"/>
-            <path id="chLinePrev" fill="none" stroke="rgba(159,179,200,.75)" stroke-width="1.6"/>
+            <path id="chLinePrev" fill="none" stroke="rgba(159,179,200,.75)" stroke-width="1.6" pathLength="1"/>
             <path id="chArea" fill="url(#chAreaGrad)" stroke="none"/>
-            <path id="chLine" fill="none" stroke="#4d8df6" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"/>
+            <path id="chLine" fill="none" stroke="#4d8df6" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" pathLength="1"/>
             <line id="chCursor" x1="0" y1="0" x2="0" y2="320" stroke="rgba(255,255,255,.55)" stroke-width="1.2" style="display:none"/>
             <circle id="chDot" r="4.5" fill="#4d8df6" stroke="#0e1a30" stroke-width="2" style="display:none"/>
             <circle id="chDotPrev" r="3.5" fill="rgba(159,179,200,.9)" stroke="#0e1a30" stroke-width="1.6" style="display:none"/>
         </svg>
-        <div class="ch-tooltip" id="chTooltip" style="display:none"></div>
+        <div class="ch-tooltip" id="chTooltip" role="tooltip" style="display:none"></div>
     </div>
 
     <div class="ch-legend">
@@ -681,6 +682,8 @@
     }
 </style>
 
+<link rel="stylesheet" href="~/css/admin-charts.css?v=1" />
+
 @section Scripts {
     <script>
         var chState = { period: 'day', serie: 'traffic', offset: 0, cur: [], prev: [] };
@@ -692,34 +695,58 @@
             finance:  { title: 'دریافتی‌ها',          field: 'financeAmount' }
         };
 
-        function chVal(p, field) { return Number(p[field] || 0); }
+        function chVal(p, field) {
+            var value = Number(p && p[field] || 0);
+            return isFinite(value) ? Math.max(0, value) : 0;
+        }
+
+        function chEsc(value) {
+            return String(value === null || value === undefined ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function chAxisValue(value) {
+            var abs = Math.abs(Number(value) || 0);
+            if (abs >= 1000000000) return faNum((value / 1000000000).toFixed(1)) + ' میلیارد';
+            if (abs >= 1000000) return faNum((value / 1000000).toFixed(1)) + ' م';
+            if (abs >= 1000) return faNum((value / 1000).toFixed(1)) + ' هز.';
+            return faNum(value);
+        }
+
+        function chPointLabel(point) {
+            var label = point && (point.shortLabel || point.bucketKey || '');
+            return String(label).replace(/\s+/g, ' ').trim();
+        }
 
         // ===== رندر نمودار خطی =====
-        function chRender() {
+        function chRender(animate) {
             var svg = $('#chChart');
             var isMobile = window.matchMedia('(max-width: 767.98px)').matches;
-            var W = 900, H = 320, padT = 14, padB = 26, padX = isMobile ? 74 : 44;
+            var svgEl = document.getElementById('chChart');
+            var renderedWidth = svgEl && svgEl.clientWidth ? svgEl.clientWidth : (isMobile ? 320 : 900);
+            var W = isMobile ? Math.max(360, Math.round(renderedWidth * 1.08)) : 900;
+            var H = 320, padT = 14, padB = 26, padX = isMobile ? 68 : 44;
             var innerW = W - padX * 2, innerH = H - padT - padB;
-            var cfg = chSerieKeys[chState.serie];
+            var cfg = chSerieKeys[chState.serie] || chSerieKeys.traffic;
             var cur = chState.cur, prev = chState.prev;
             var n = cur.length;
+
+            svg.attr('viewBox', '0 0 ' + W + ' ' + H);
 
             var maxV = 1;
             cur.forEach(function (p) { maxV = Math.max(maxV, chVal(p, cfg.field)); });
             prev.forEach(function (p) { maxV = Math.max(maxV, chVal(p, cfg.field)); });
             var niceMax = maxV;
-            var mag = Math.pow(10, Math.floor(Math.log10(maxV)));
+            var mag = Math.pow(10, Math.floor(Math.log10(Math.max(1, maxV))));
             niceMax = Math.ceil(maxV / mag) * mag;
-            if (niceMax === 0) niceMax = 1;
+            if (!isFinite(niceMax) || niceMax <= 0) niceMax = 1;
 
             var x = function (i) { return padX + (n <= 1 ? innerW / 2 : i * innerW / (n - 1)); };
             var y = function (v) { return padT + innerH - (v / niceMax) * innerH; };
-            var yPrev = function (v) {
-                // دوره قبل ممکن است طول متفاوت داشته باشد → بر اساس ایندکس از انتها تراز می‌کنیم
-                var off = prev.length - n;
-                return padT + innerH - (v / niceMax) * innerH;
-            };
-
             // --- گرید + محور Y ---
             var gridHtml = '', axY = '';
             var steps = 4;
@@ -727,19 +754,19 @@
                 var gy = padT + innerH * g / steps;
                 var gv = Math.round(niceMax * (1 - g / steps));
                 gridHtml += '<line class="' + (g === steps ? 'ch-gridline-main' : 'ch-gridline') + '" x1="' + padX + '" y1="' + gy + '" x2="' + (W - padX) + '" y2="' + gy + '"/>';
-                axY += '<text class="ch-axlabel" x="' + (padX - 8) + '" y="' + (gy + 4) + '" text-anchor="end">' + faNum(gv) + '</text>';
+                axY += '<text class="ch-axlabel" x="' + (padX - 8) + '" y="' + (gy + 4) + '" text-anchor="end">' + chEsc(chAxisValue(gv)) + '</text>';
             }
             $('#chGrid').html(gridHtml);
             $('#chAxisY').html(axY);
 
             // --- برچسب‌های X: سالانه/هفتگی همه، ماهانه هر چند روز یکی؛ بدون عدد روی خط نمودار ---
             var axX = '';
-            var labelEvery = (n <= 12) ? 1 : (n <= 31 ? 5 : Math.ceil(n / 8));
+            var maxLabels = isMobile ? 5 : 9;
+            var labelEvery = n <= maxLabels ? 1 : Math.ceil((n - 1) / (maxLabels - 1));
             cur.forEach(function (p, i) {
                 if (i % labelEvery !== 0 && i !== n - 1) return;
-                // آخرین نقطه اگر خیلی به برچسب قبلی چسبیده، نمایش داده نمی‌شود
-                if (i === n - 1 && n > 12 && (n - 1) % labelEvery !== 0 && (n - 1) % labelEvery < labelEvery * 0.5) return;
-                axX += '<text class="ch-axlabel" x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle">' + (p.shortLabel || p.bucketKey) + '</text>';
+                if (i === n - 1 && n > maxLabels && (n - 1) % labelEvery !== 0 && (n - 1) % labelEvery < labelEvery * 0.5) return;
+                axX += '<text class="ch-axlabel" x="' + x(i) + '" y="' + (H - 8) + '" text-anchor="middle">' + chEsc(chPointLabel(p)) + '</text>';
             });
             $('#chAxisX').html(axX);
 
@@ -753,7 +780,11 @@
             }
             var lineD = linePath(cur, cfg.field);
             $('#chLine').attr('d', lineD);
-            $('#chArea').attr('d', lineD + 'L' + x(n - 1).toFixed(1) + ' ' + (padT + innerH) + ' L' + x(0).toFixed(1) + ' ' + (padT + innerH) + ' Z');
+            if (n > 0) {
+                $('#chArea').attr('d', lineD + 'L' + x(n - 1).toFixed(1) + ' ' + (padT + innerH) + ' L' + x(0).toFixed(1) + ' ' + (padT + innerH) + ' Z');
+            } else {
+                $('#chArea').attr('d', '');
+            }
 
             // دوره قبل: تراز از انتها (هم‌پوشان با تقویم جاری)
             var off = Math.max(0, prev.length - n);
@@ -770,6 +801,15 @@
             $('#chAreaPrev').attr('d', '').hide();
 
             chState._x = x; chState._y = y; chState._padT = padT; chState._innerH = innerH; chState._padX = padX; chState._W = W; chState._H = H;
+            var chartEl = document.getElementById('chChart');
+            if (chartEl) {
+                chartEl.classList.remove('ch-chart-animate');
+                chartEl.setAttribute('aria-label', cfg.title + '؛ بازه ' + ($('#chRangeCur').text() || '-'));
+                if (animate !== false) {
+                    void chartEl.offsetWidth;
+                    chartEl.classList.add('ch-chart-animate');
+                }
+            }
         }
 
         // ===== اسپارک‌لاین کارت‌ها =====
@@ -782,7 +822,9 @@
             var d = '';
             arr.forEach(function (p, i) { d += (i === 0 ? 'M' : 'L') + x(i).toFixed(1) + ' ' + y(chVal(p, field)).toFixed(1) + ' '; });
             $card.find('.ch-spark-line').attr('d', d);
-            $card.find('.ch-spark-area').attr('d', d + 'L' + x(arr.length - 1).toFixed(1) + ' ' + (H - pad) + ' L' + x(0).toFixed(1) + ' ' + (H - pad) + ' Z');
+            $card.find('.ch-spark-area').attr('d', arr.length
+                ? d + 'L' + x(arr.length - 1).toFixed(1) + ' ' + (H - pad) + ' L' + x(0).toFixed(1) + ' ' + (H - pad) + ' Z'
+                : '');
         }
 
         // ===== درصد تغییر =====
@@ -799,14 +841,18 @@
                 chState.cur = d.points || [];
                 chState.prev = d.pointsPrev || [];
 
-                $('#chMainTitle').text(chSerieKeys[chState.serie].title);
+                var activeCfg = chSerieKeys[chState.serie] || chSerieKeys.traffic;
+                $('#chMainTitle').text(activeCfg.title);
+                $('#chChartTitle').text('نمودار ' + activeCfg.title);
                 $('#chRangeCur').text(d.currentRangeLabel || '-');
                 $('#chRangePrev').text('دوره قبل: ' + (d.previousRangeLabel || '-'));
                 $('#chNext').prop('disabled', !d.canGoNext);
                 $('#chPeriodPills .ch-pill').removeClass('active')
-                    .filter('[data-period="' + chState.period + '"]').addClass('active');
+                    .filter('[data-period="' + chState.period + '"]').addClass('active').attr('aria-selected', 'true')
+                    .siblings('.ch-pill').attr('aria-selected', 'false');
                 $('#chSeriePills .ch-pill').removeClass('active')
-                    .filter('[data-serie="' + chState.serie + '"]').addClass('active');
+                    .filter('[data-serie="' + chState.serie + '"]').addClass('active').attr('aria-selected', 'true')
+                    .siblings('.ch-pill').attr('aria-selected', 'false');
                 $('.ch-side-card[data-serie]').removeClass('serie-on')
                     .filter('[data-serie="' + chState.serie + '"]').addClass('serie-on');
 
@@ -816,11 +862,11 @@
 
                 // --- کارت‌ها: هر کارت فقط اسپارک همان بخش را می‌گیرد ---
                 var series = {
-                    traffic:  { t: d.traffic,  el: '#chTraffic',  field: 'trafficCount',  isMoney: false, share: d.trafficShare },
-                    register: { t: d.register, el: '#chRegister', field: 'registerCount', isMoney: false, share: d.registerShare },
-                    ticket:   { t: d.ticket,   el: '#chTicket',   field: 'ticketCount',   isMoney: false, share: d.ticketShare },
-                    service:  { t: d.service,  el: '#chService',  field: 'serviceCount',  isMoney: false, share: d.serviceShare },
-                    finance:  { t: d.finance,  el: '#chFinance',  field: 'financeAmount', isMoney: true,  share: d.financeShare }
+                    traffic:  { t: d.traffic || {},  el: '#chTraffic',  field: 'trafficCount',  isMoney: false, share: d.trafficShare },
+                    register: { t: d.register || {}, el: '#chRegister', field: 'registerCount', isMoney: false, share: d.registerShare },
+                    ticket:   { t: d.ticket || {},   el: '#chTicket',   field: 'ticketCount',   isMoney: false, share: d.ticketShare },
+                    service:  { t: d.service || {},  el: '#chService',  field: 'serviceCount',  isMoney: false, share: d.serviceShare },
+                    finance:  { t: d.finance || {},  el: '#chFinance',  field: 'financeAmount', isMoney: true,  share: d.financeShare }
                 };
                 $.each(series, function (k, s) {
                     $(s.el + 'Total').text(faNum(s.t.total));
@@ -856,6 +902,7 @@
             var $center = $body.find('.ch-donut-center');
             var $legend = $body.find('.ch-share-legend');
             $segs.empty();
+            $segs.removeClass('is-rendered');
             $legend.empty();
 
             var slices = (share && share.slices) ? share.slices : [];
@@ -869,7 +916,7 @@
             var svgNS = 'http://www.w3.org/2000/svg';
             slices.forEach(function (sl, i) {
                 var color = chDonutColors[i % chDonutColors.length];
-                var dash = sl.percent;
+                var dash = Math.max(0, Math.min(100, Number(sl.percent) || 0));
                 // ✅ ساخت عنصر SVG با namespace درست (jQuery.append در SVG کار نمی‌کند)
                 var c = document.createElementNS(svgNS, 'circle');
                 c.setAttribute('cx', '21'); c.setAttribute('cy', '21'); c.setAttribute('r', r);
@@ -880,46 +927,49 @@
                 acc += dash;
                 $legend.append(
                     '<div class="ch-lg-row"><i style="background:' + color + '"></i>' +
-                    '<span class="ch-lg-name" title="' + sl.label.replace(/"/g, '') + '">' + sl.label + '</span>' +
-                    '<span class="ch-lg-pct">' + sl.percentDisplay + '</span></div>'
+                    '<span class="ch-lg-name" title="' + chEsc(sl.label || '') + '">' + chEsc(sl.label || '') + '</span>' +
+                    '<span class="ch-lg-pct">' + chEsc(sl.percentDisplay || '۰٪') + '</span></div>'
                 );
             });
-            if (share.othersValue > 0) {
+            if (share && Number(share.othersValue) > 0) {
                 $legend.append(
                     '<div class="ch-lg-row ch-lg-others"><i style="background:rgba(255,255,255,.25)"></i>' +
                     '<span class="ch-lg-name">سایر سانس‌ها</span>' +
-                    '<span class="ch-lg-pct">' + share.othersPercentDisplay + '</span></div>'
+                    '<span class="ch-lg-pct">' + chEsc(share.othersPercentDisplay || '۰٪') + '</span></div>'
                 );
             }
-            $center.text(slices[0].percentDisplay.replace('٪', ''));
+            $center.text(String(slices[0].percentDisplay || '۰٪').replace('٪', ''));
+            $segs.addClass('is-rendered');
         }
 
         // ===== تولتیپ با حرکت ماوس (همیشه داخل کادر نمودار) =====
         $(document).on('mousemove', '#chChart', function (e) {
             if (!chState._x || !chState.cur.length) return;
             var rect = this.getBoundingClientRect();
+            if (!rect.width) return;
             var relX = (e.clientX - rect.left) / rect.width * chState._W;
             var n = chState.cur.length;
             var innerW = chState._W - chState._padX * 2;
             var idx = Math.round((relX - chState._padX) / (innerW / Math.max(1, n - 1)));
             idx = Math.max(0, Math.min(n - 1, idx));
 
-            var cx = chState._x(idx), cy = chState._y(chVal(chState.cur[idx], chSerieKeys[chState.serie].field));
+            var cfg = chSerieKeys[chState.serie] || chSerieKeys.traffic;
+            var cx = chState._x(idx), cy = chState._y(chVal(chState.cur[idx], cfg.field));
             $('#chCursor').attr({ x1: cx, x2: cx, y1: chState._padT, y2: chState._padT + chState._innerH }).show();
             $('#chDot').attr({ cx: cx, cy: cy }).show();
 
             var off = Math.max(0, chState.prev.length - n);
             var pp = chState.prev[idx + off];
             if (pp) {
-                $('#chDotPrev').attr({ cx: cx, cy: chState._y(chVal(pp, chSerieKeys[chState.serie].field)) }).show();
+                $('#chDotPrev').attr({ cx: cx, cy: chState._y(chVal(pp, cfg.field)) }).show();
             } else {
                 $('#chDotPrev').hide();
             }
 
-            var field = chSerieKeys[chState.serie].field;
+            var field = cfg.field;
             var isMoney = field === 'financeAmount';
             var val = chVal(chState.cur[idx], field);
-            var html = '<div class="tt-date">' + (chState.cur[idx].fullLabel || chState.cur[idx].bucketKey) + '</div>' +
+            var html = '<div class="tt-date">' + chEsc(chState.cur[idx].fullLabel || chState.cur[idx].bucketKey || '') + '</div>' +
                 '<div>' + (isMoney ? faNum(val) + ' ریال' : faNum(val)) + '</div>';
             if (pp) {
                 var pv = chVal(pp, field);
@@ -931,17 +981,24 @@
             var wrapOff = $(this).parent().offset();
             var px = e.clientX - wrapOff.left, py = e.clientY - wrapOff.top;
             var tw = $tt.outerWidth() || 120, th = $tt.outerHeight() || 50;
-            var ww = $(this).parent().width();
+            var ww = $(this).parent().width() || rect.width;
+            var wh = $(this).parent().height() || rect.height;
             var left = px + 14;
             if (left + tw > ww - 4) left = px - tw - 14;      // اگر از راست می‌زند بیرون → سمت چپ ماوس
             if (left < 4) left = 4;
+            if (left + tw > ww - 4) left = Math.max(4, ww - tw - 4);
             var top = py - th - 8;
             if (top < 4) top = py + 16;                        // اگر از بالا می‌زند بیرون → زیر ماوس
+            if (top + th > wh - 4) top = Math.max(4, wh - th - 4);
             $tt.css({ left: left, top: top });
         });
 
         $(document).on('mouseleave', '#chChart', function () {
             $('#chCursor, #chDot, #chDotPrev, #chTooltip').hide();
+        });
+
+        $(window).on('resize', function () {
+            if (chState.cur.length) chRender(false);
         });
 
         // ===== رویدادها =====
@@ -955,8 +1012,19 @@
             chLoad();
         });
         $(document).on('click', '.ch-side-card[data-serie]', function () {
-            chState.serie = $(this).data('serie');
+            var serie = $(this).data('serie');
+            if (!chSerieKeys[serie]) return;
+            chState.serie = serie;
             chLoad();
+        });
+        $('.ch-side-card[data-serie]').each(function () {
+            if (!chSerieKeys[$(this).data('serie')]) return;
+            $(this).attr({ role: 'button', tabindex: '0' });
+        });
+        $(document).on('keydown', '.ch-side-card[data-serie]', function (e) {
+            if (e.key !== 'Enter' && e.key !== ' ') return;
+            e.preventDefault();
+            $(this).trigger('click');
         });
         // پیمایش دوره قبل/بعد
         $(document).on('click', '#chPrev', function () {

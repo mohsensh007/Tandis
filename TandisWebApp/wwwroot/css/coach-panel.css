@@ -1,0 +1,863 @@
+/* =====================================================
+   Coach panel — mobile-first glass UI layer
+   Scoped to the coach shell so public/member pages stay unchanged.
+   ===================================================== */
+
+body.coach-glass-body {
+    --coach-bg: #0b1023;
+    --coach-surface: rgba(255, 255, 255, .075);
+    --coach-surface-strong: rgba(255, 255, 255, .12);
+    --coach-border: rgba(255, 255, 255, .15);
+    --coach-border-soft: rgba(255, 255, 255, .09);
+    --coach-purple: #7667e8;
+    --coach-purple-deep: #4f3b91;
+    --coach-blue: #4d8df6;
+    --coach-turquoise: #66d3e8;
+    --coach-mint: #38d9a9;
+    --coach-danger: #ff6b81;
+    --coach-text: #f4f7ff;
+    --coach-muted: #a9b7ca;
+    --coach-control-height: 44px;
+    --coach-radius: 18px;
+    max-width: 100%;
+    overflow-x: hidden;
+    background:
+        radial-gradient(circle at 12% 8%, rgba(118, 103, 232, .18), transparent 30rem),
+        radial-gradient(circle at 88% 20%, rgba(102, 211, 232, .12), transparent 26rem),
+        var(--coach-bg) !important;
+    color: var(--coach-text);
+}
+
+body.coach-glass-body *,
+body.coach-glass-body *::before,
+body.coach-glass-body *::after {
+    box-sizing: border-box;
+}
+
+body.coach-glass-body,
+body.coach-glass-body .container,
+body.coach-glass-body .container-fluid,
+body.coach-glass-body .coach-main,
+body.coach-glass-body .row,
+body.coach-glass-body [class*="col-"] {
+    min-width: 0;
+    max-width: 100%;
+}
+
+body.coach-glass-body .coach-main {
+    width: 100%;
+    padding-inline: clamp(10px, 2.5vw, 24px);
+}
+
+body.coach-glass-body img,
+body.coach-glass-body svg,
+body.coach-glass-body video,
+body.coach-glass-body canvas {
+    max-width: 100%;
+}
+
+body.coach-glass-body a,
+body.coach-glass-body button,
+body.coach-glass-body input,
+body.coach-glass-body select,
+body.coach-glass-body textarea {
+    -webkit-tap-highlight-color: transparent;
+}
+
+body.coach-glass-body :is(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    [tabindex]
+):focus-visible {
+    outline: 2px solid var(--coach-turquoise);
+    outline-offset: 3px;
+}
+
+body.coach-glass-body input,
+body.coach-glass-body select,
+body.coach-glass-body textarea {
+    min-width: 0;
+    max-width: 100%;
+    font: inherit;
+}
+
+/* Shell and navigation --------------------------------------------------- */
+body.coach-glass-body .coach-top-nav {
+    max-width: 100%;
+    overflow: hidden;
+    background: rgba(11, 16, 35, .78) !important;
+    border-bottom-color: rgba(102, 211, 232, .14);
+    box-shadow: 0 8px 26px rgba(4, 8, 24, .2);
+}
+
+body.coach-glass-body .coach-top-nav .container-fluid {
+    min-width: 0;
+    max-width: 100%;
+    gap: 8px;
+}
+
+body.coach-glass-body .coach-top-nav .navbar-brand {
+    min-width: 0;
+    max-width: min(56vw, 250px);
+    min-height: 44px;
+}
+
+body.coach-glass-body .coach-top-nav .navbar-brand span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.coach-glass-body .coach-top-nav .nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--coach-control-height);
+    padding: 8px 10px;
+    border: 1px solid transparent;
+}
+
+body.coach-glass-body .btn-logout-glass,
+body.coach-glass-body .coach-back-pill,
+body.coach-glass-body .cm-back-pill,
+body.coach-glass-body .pg-new-btn,
+body.coach-glass-body .pd-edit-btn,
+body.coach-glass-body .pg-view-btn,
+body.coach-glass-body .pg-edit-btn,
+body.coach-glass-body .pg-del-btn,
+body.coach-glass-body .class-btn,
+body.coach-glass-body .cm-apply,
+body.coach-glass-body .cm-month,
+body.coach-glass-body .pe-add-btn,
+body.coach-glass-body .pe-save-btn,
+body.coach-glass-body .combo-add-btn {
+    min-height: var(--coach-control-height);
+}
+
+body.coach-glass-body .coach-bottom-nav {
+    right: max(10px, calc(env(safe-area-inset-right) + 6px));
+    bottom: max(10px, env(safe-area-inset-bottom));
+    left: max(10px, calc(env(safe-area-inset-left) + 6px));
+    width: auto;
+    max-width: calc(100vw - 20px - env(safe-area-inset-left) - env(safe-area-inset-right));
+    min-width: 0;
+    min-height: 64px;
+    padding: 6px;
+    border-color: rgba(102, 211, 232, .16);
+    background: rgba(11, 16, 35, .92) !important;
+    box-shadow: 0 14px 34px rgba(4, 8, 24, .42), inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+body.coach-glass-body .coach-bottom-nav .cbn-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 48px;
+    padding: 7px 4px 5px;
+    border-radius: 14px;
+    line-height: 1.25;
+}
+
+body.coach-glass-body .coach-bottom-nav .cbn-item span {
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Shared surfaces -------------------------------------------------------- */
+body.coach-glass-body .purple-style,
+body.coach-glass-body .coach-banner,
+body.coach-glass-body .coach-card,
+body.coach-glass-body .cstat-card,
+body.coach-glass-body .cc-card,
+body.coach-glass-body .cs-card,
+body.coach-glass-body .sd-card,
+body.coach-glass-body .sd-box,
+body.coach-glass-body .ms-card,
+body.coach-glass-body .ch-box,
+body.coach-glass-body .ch-form-card,
+body.coach-glass-body .cm-filter,
+body.coach-glass-body .cm-card,
+body.coach-glass-body .cm-box,
+body.coach-glass-body .pg-card,
+body.coach-glass-body .pd-info,
+body.coach-glass-body .pd-day,
+body.coach-glass-body .pe-card,
+body.coach-glass-body .cc-empty,
+body.coach-glass-body .cs-empty,
+body.coach-glass-body .ms-empty,
+body.coach-glass-body .pg-empty {
+    min-width: 0;
+    max-width: 100%;
+    border-color: var(--coach-border) !important;
+    background: linear-gradient(145deg, rgba(118, 103, 232, .16), rgba(255, 255, 255, .055)) !important;
+    color: var(--coach-text);
+    box-shadow: 0 8px 26px rgba(5, 10, 32, .18);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+
+body.coach-glass-body .coach-banner,
+body.coach-glass-body .coach-card,
+body.coach-glass-body .cstat-card,
+body.coach-glass-body .cc-card,
+body.coach-glass-body .cs-card,
+body.coach-glass-body .sd-card,
+body.coach-glass-body .sd-box,
+body.coach-glass-body .ms-card,
+body.coach-glass-body .ch-box,
+body.coach-glass-body .ch-form-card,
+body.coach-glass-body .cm-filter,
+body.coach-glass-body .cm-card,
+body.coach-glass-body .cm-box,
+body.coach-glass-body .pg-card,
+body.coach-glass-body .pd-info,
+body.coach-glass-body .pd-day,
+body.coach-glass-body .pe-card {
+    transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease, background-color .24s ease;
+}
+
+body.coach-glass-body .cstat-card,
+body.coach-glass-body .cc-card,
+body.coach-glass-body .cs-card,
+body.coach-glass-body .pg-card,
+body.coach-glass-body .ms-card {
+    overflow: hidden !important;
+}
+
+body.coach-glass-body .cstat-card:hover,
+body.coach-glass-body .cc-card:hover,
+body.coach-glass-body .cs-card:hover,
+body.coach-glass-body .pg-card:hover,
+body.coach-glass-body .ms-card:hover {
+    border-color: rgba(102, 211, 232, .48) !important;
+    box-shadow: 0 14px 36px rgba(5, 10, 32, .3);
+    transform: translateY(-2px);
+}
+
+body.coach-glass-body .coach-card-head,
+body.coach-glass-body .sd-box-head,
+body.coach-glass-body .cm-box-head,
+body.coach-glass-body .stu-head {
+    background: linear-gradient(135deg, var(--coach-purple), var(--coach-purple-deep)) !important;
+    color: #fff;
+}
+
+body.coach-glass-body .coach-card-head,
+body.coach-glass-body .sd-box-head,
+body.coach-glass-body .cm-box-head {
+    line-height: 1.6;
+}
+
+/* Page headers, labels and pills ---------------------------------------- */
+body.coach-glass-body h1,
+body.coach-glass-body h2,
+body.coach-glass-body h3,
+body.coach-glass-body h4,
+body.coach-glass-body h5,
+body.coach-glass-body h6,
+body.coach-glass-body .class-title,
+body.coach-glass-body .cc-title,
+body.coach-glass-body .cs-name,
+body.coach-glass-body .pg-name,
+body.coach-glass-body .ms-name,
+body.coach-glass-body .cmr-name,
+body.coach-glass-body .pd-ex-name,
+body.coach-glass-body .ch-title,
+body.coach-glass-body .cb-title {
+    min-width: 0;
+    max-width: 100%;
+    color: #fff;
+    overflow-wrap: anywhere;
+}
+
+body.coach-glass-body .coach-banner,
+body.coach-glass-body .cs-head-bar,
+body.coach-glass-body .cm-box-head,
+body.coach-glass-body .pd-info {
+    flex-wrap: wrap;
+}
+
+body.coach-glass-body .cb-chip,
+body.coach-glass-body .cs-count,
+body.coach-glass-body .status-badge,
+body.coach-glass-body .stt,
+body.coach-glass-body .pg-badge,
+body.coach-glass-body .mp-badge,
+body.coach-glass-body .pd-badge,
+body.coach-glass-body .class-pill,
+body.coach-glass-body .cc-pill,
+body.coach-glass-body .cs-pill,
+body.coach-glass-body .pg-pill,
+body.coach-glass-body .pd-pill,
+body.coach-glass-body .pd-pill-sm,
+body.coach-glass-body .cm-rev,
+body.coach-glass-body .cm-new,
+body.coach-glass-body .cm-box-count,
+body.coach-glass-body .ms-unread {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+body.coach-glass-body .status-badge,
+body.coach-glass-body .stt,
+body.coach-glass-body .pg-badge,
+body.coach-glass-body .mp-badge,
+body.coach-glass-body .pd-badge {
+    white-space: normal !important;
+    text-align: center;
+}
+
+body.coach-glass-body .class-pill,
+body.coach-glass-body .cc-pill,
+body.coach-glass-body .cs-pill,
+body.coach-glass-body .pg-pill,
+body.coach-glass-body .pd-pill,
+body.coach-glass-body .pd-pill-sm {
+    line-height: 1.55;
+}
+
+/* Forms and controls ----------------------------------------------------- */
+body.coach-glass-body .glass-search,
+body.coach-glass-body .cm-input,
+body.coach-glass-body .pe-input,
+body.coach-glass-body .ch-input,
+body.coach-glass-body .stu-search {
+    width: 100%;
+    min-width: 0;
+    min-height: var(--coach-control-height);
+    border-color: rgba(255, 255, 255, .18) !important;
+    background: rgba(255, 255, 255, .075) !important;
+    color: #fff !important;
+}
+
+body.coach-glass-body .glass-search::placeholder,
+body.coach-glass-body .ch-input::placeholder,
+body.coach-glass-body .pe-input::placeholder,
+body.coach-glass-body .stu-search::placeholder {
+    color: rgba(207, 220, 239, .62);
+}
+
+body.coach-glass-body .glass-search:focus,
+body.coach-glass-body .cm-input:focus,
+body.coach-glass-body .pe-input:focus,
+body.coach-glass-body .ch-input:focus,
+body.coach-glass-body .stu-search:focus {
+    border-color: var(--coach-turquoise) !important;
+    background: rgba(255, 255, 255, .12) !important;
+    box-shadow: 0 0 0 .22rem rgba(102, 211, 232, .14);
+    outline: none;
+}
+
+body.coach-glass-body select.pe-input option,
+body.coach-glass-body select.form-select option,
+body.coach-glass-body select option {
+    background: #10172b;
+    color: #fff;
+}
+
+body.coach-glass-body .cm-input,
+body.coach-glass-body .pe-input {
+    flex: 1 1 auto;
+}
+
+body.coach-glass-body .cm-cal-btn,
+body.coach-glass-body .pe-cal-btn,
+body.coach-glass-body .cm-nav-btn,
+body.coach-glass-body .cmr-toggle,
+body.coach-glass-body .pe-del-item,
+body.coach-glass-body .combo-del,
+body.coach-glass-body .stu-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    min-width: var(--coach-control-height);
+    min-height: var(--coach-control-height);
+}
+
+body.coach-glass-body .cmr-toggle,
+body.coach-glass-body .pe-del-item,
+body.coach-glass-body .combo-del,
+body.coach-glass-body .stu-close {
+    width: var(--coach-control-height);
+}
+
+/* Dashboard, class and student cards ------------------------------------ */
+body.coach-glass-body .cb-icon,
+body.coach-glass-body .cstat-icon,
+body.coach-glass-body .cc-icon,
+body.coach-glass-body .cs-avatar,
+body.coach-glass-body .sd-avatar,
+body.coach-glass-body .pg-avatar,
+body.coach-glass-body .ms-avatar {
+    flex: 0 0 auto;
+}
+
+body.coach-glass-body .cstat-card {
+    min-height: 142px;
+}
+
+body.coach-glass-body .cstat-value {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    font-size: clamp(1.1rem, 5vw, 1.6rem);
+}
+
+body.coach-glass-body .class-card,
+body.coach-glass-body .cc-card,
+body.coach-glass-body .cs-card,
+body.coach-glass-body .pg-card {
+    min-width: 0;
+    height: 100%;
+}
+
+body.coach-glass-body .class-time,
+body.coach-glass-body .cc-schedule,
+body.coach-glass-body .cs-mobile,
+body.coach-glass-body .pg-dates,
+body.coach-glass-body .sd-sub,
+body.coach-glass-body .cmr-date,
+body.coach-glass-body .ch-time {
+    overflow-wrap: anywhere;
+}
+
+body.coach-glass-body .cc-title,
+body.coach-glass-body .cc-sub,
+body.coach-glass-body .cs-name,
+body.coach-glass-body .pg-name,
+body.coach-glass-body .cmr-name {
+    white-space: normal !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.coach-glass-body .class-btn,
+body.coach-glass-body .pg-view-btn,
+body.coach-glass-body .pg-edit-btn,
+body.coach-glass-body .pg-del-btn,
+body.coach-glass-body .pg-new-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
+}
+
+/* Messages and chat ------------------------------------------------------ */
+body.coach-glass-body .ms-card,
+body.coach-glass-body .ch-box,
+body.coach-glass-body .ch-form-card {
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+body.coach-glass-body .ms-card {
+    min-height: 64px;
+}
+
+body.coach-glass-body .ms-preview,
+body.coach-glass-body .ms-full,
+body.coach-glass-body .ch-body,
+body.coach-glass-body .ch-title {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+body.coach-glass-body .ms-preview {
+    white-space: normal !important;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+body.coach-glass-body .ch-box {
+    min-height: 220px;
+    max-height: min(62dvh, 560px) !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+body.coach-glass-body .ch-bubble {
+    min-width: 0;
+    max-width: min(88%, 720px) !important;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+/* Commission report and calendar --------------------------------------- */
+body.coach-glass-body .cm-filter .row,
+body.coach-glass-body .cm-box-body,
+body.coach-glass-body .cmr-card,
+body.coach-glass-body .cmr-head,
+body.coach-glass-body .cmr-details,
+body.coach-glass-body .cmr-total {
+    min-width: 0;
+    max-width: 100%;
+}
+
+body.coach-glass-body .cmr-head {
+    min-height: 64px;
+}
+
+body.coach-glass-body .cmr-amount {
+    max-width: 42%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    direction: ltr;
+    text-align: left;
+}
+
+body.coach-glass-body .cmr-drow {
+    display: grid;
+    grid-template-columns: minmax(72px, auto) minmax(0, 1fr);
+    align-items: start;
+}
+
+body.coach-glass-body .cmr-drow b {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+body.coach-glass-body .sd-line {
+    min-width: 0;
+    max-width: 100%;
+    flex-wrap: wrap;
+    overflow-wrap: anywhere;
+}
+
+body.coach-glass-body #datePickerModal .modal-dialog {
+    width: auto;
+    max-width: min(460px, calc(100vw - 24px));
+    margin-inline: auto;
+}
+
+body.coach-glass-body #datePickerModal .cal-table {
+    width: 100%;
+    table-layout: fixed;
+    border-spacing: 3px;
+}
+
+body.coach-glass-body #datePickerModal .cal-table th,
+body.coach-glass-body #datePickerModal .cal-table td {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: center;
+}
+
+/* Program pages and editor ---------------------------------------------- */
+body.coach-glass-body .pd-info {
+    align-items: flex-start;
+    line-height: 1.7;
+}
+
+body.coach-glass-body .pd-info > div {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+body.coach-glass-body .pd-day-head {
+    min-width: 0;
+    flex-wrap: wrap;
+}
+
+body.coach-glass-body .pd-day-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+body.coach-glass-body .pd-day-count {
+    margin-inline-start: auto;
+}
+
+body.coach-glass-body .pd-ex,
+body.coach-glass-body .pd-combo,
+body.coach-glass-body .pe-item-card,
+body.coach-glass-body .combo-slot,
+body.coach-glass-body .tech-fields {
+    min-width: 0;
+    max-width: 100%;
+}
+
+body.coach-glass-body .pd-combo-row,
+body.coach-glass-body .combo-slot .row,
+body.coach-glass-body .pe-item-card .row {
+    min-width: 0;
+}
+
+body.coach-glass-body .pd-combo-name,
+body.coach-glass-body .pd-tech,
+body.coach-glass-body .pd-note,
+body.coach-glass-body .tech-head,
+body.coach-glass-body .ds-title,
+body.coach-glass-body .ds-selected {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+body.coach-glass-body .pe-card {
+    overflow: visible;
+}
+
+body.coach-glass-body .pe-item-card {
+    overflow: hidden;
+}
+
+body.coach-glass-body .ds-chips {
+    min-width: 0;
+}
+
+body.coach-glass-body .ds-chip {
+    min-height: var(--coach-control-height);
+    line-height: 1.35;
+}
+
+body.coach-glass-body .pe-save-btn {
+    justify-content: center;
+}
+
+body.coach-glass-body .combo-slot {
+    padding-inline-start: calc(var(--coach-control-height) - 4px);
+}
+
+/* Student picker overlays ------------------------------------------------ */
+body.coach-glass-body .stu-overlay {
+    padding: max(12px, env(safe-area-inset-top)) max(12px, env(safe-area-inset-right)) max(12px, env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
+}
+
+body.coach-glass-body .stu-panel {
+    width: 100%;
+    max-width: 560px;
+    max-height: min(86dvh, 720px);
+    min-width: 0;
+}
+
+body.coach-glass-body .stu-list,
+body.coach-glass-body .stu-row,
+body.coach-glass-body .stu-name,
+body.coach-glass-body .stu-sub {
+    min-width: 0;
+    max-width: 100%;
+}
+
+body.coach-glass-body .stu-row {
+    min-height: var(--coach-control-height);
+    overflow-wrap: anywhere;
+}
+
+/* Motion ----------------------------------------------------------------- */
+body.coach-glass-body .coach-motion-item {
+    animation: coachPanelIn .42s cubic-bezier(.22, .9, .35, 1) both;
+    animation-delay: var(--coach-motion-delay, 0ms);
+}
+
+@keyframes coachPanelIn {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 10px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Small screens ---------------------------------------------------------- */
+@media (max-width: 767.98px) {
+    body.coach-glass-body .coach-main {
+        margin-top: .75rem !important;
+        margin-bottom: 1rem !important;
+        padding-inline: 10px;
+    }
+
+    body.coach-glass-body .row.g-3 {
+        --bs-gutter-x: .75rem;
+        --bs-gutter-y: .75rem;
+    }
+
+    body.coach-glass-body .coach-banner {
+        gap: 9px;
+        padding: 12px !important;
+    }
+
+    body.coach-glass-body .cb-chip {
+        flex: 1 1 100%;
+        justify-content: center;
+        white-space: normal;
+        text-align: center;
+    }
+
+    body.coach-glass-body .cstat-card,
+    body.coach-glass-body .sd-card,
+    body.coach-glass-body .cm-card {
+        padding: 14px 10px !important;
+    }
+
+    body.coach-glass-body .class-card,
+    body.coach-glass-body .cc-card,
+    body.coach-glass-body .cs-card,
+    body.coach-glass-body .pg-card,
+    body.coach-glass-body .pe-item-card {
+        padding: 13px !important;
+    }
+
+    body.coach-glass-body .coach-card-head,
+    body.coach-glass-body .sd-box-head,
+    body.coach-glass-body .cm-box-head {
+        padding-inline: 13px;
+    }
+
+    body.coach-glass-body .ms-card {
+        padding: 13px !important;
+    }
+
+    body.coach-glass-body .ch-bubble {
+        max-width: 92% !important;
+    }
+
+    body.coach-glass-body .cmr-head {
+        align-items: flex-start;
+        flex-wrap: wrap;
+        padding: 11px 12px;
+    }
+
+    body.coach-glass-body .cmr-mid {
+        flex-basis: calc(100% - var(--coach-control-height) - 10px);
+    }
+
+    body.coach-glass-body .cmr-amount {
+        flex: 1 1 auto;
+        max-width: calc(100% - var(--coach-control-height) - 10px);
+        margin-inline-start: auto;
+        text-align: right;
+    }
+
+    body.coach-glass-body .cmr-toggle {
+        margin-inline-start: auto;
+    }
+
+    body.coach-glass-body .cmr-total {
+        align-items: flex-start;
+        flex-direction: column;
+        padding: 11px 13px;
+    }
+
+    body.coach-glass-body .pd-info {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    body.coach-glass-body .pd-day-count {
+        margin-inline-start: 0;
+    }
+
+    body.coach-glass-body .stu-panel {
+        max-height: calc(100dvh - 24px);
+        border-radius: 18px;
+    }
+
+    body.coach-glass-body .stu-body {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    body.coach-glass-body .coach-top-nav .container-fluid {
+        padding-inline: 10px !important;
+    }
+
+    body.coach-glass-body .coach-top-nav .navbar-brand {
+        max-width: calc(100% - 100px);
+        font-size: .9rem;
+    }
+
+    body.coach-glass-body .coach-top-nav .navbar-brand img {
+        width: 30px;
+        height: 30px;
+    }
+
+    body.coach-glass-body .coach-top-nav .btn-logout-glass {
+        padding-inline: 11px;
+    }
+
+    body.coach-glass-body .cm-filter .row > [class*="col-"] {
+        width: 100%;
+        flex: 0 0 100%;
+    }
+
+    body.coach-glass-body .cm-box-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    body.coach-glass-body .cmr-drow {
+        grid-template-columns: minmax(64px, auto) minmax(0, 1fr);
+        gap: 8px;
+    }
+
+    body.coach-glass-body #itemsBox .col-3,
+    body.coach-glass-body .combo-slot .col-3 {
+        width: 50%;
+        flex: 0 0 50%;
+    }
+
+    body.coach-glass-body #btnSave,
+    body.coach-glass-body .pe-save-btn {
+        width: 100%;
+    }
+
+    body.coach-glass-body .ch-row {
+        margin-bottom: 8px;
+    }
+
+    body.coach-glass-body .ch-bubble {
+        max-width: 96% !important;
+        padding-inline: 11px;
+    }
+}
+
+@media (max-width: 360px) {
+    body.coach-glass-body .coach-main {
+        padding-inline: 8px;
+    }
+
+    body.coach-glass-body .coach-bottom-nav .cbn-item {
+        font-size: .61rem;
+    }
+
+    body.coach-glass-body .class-pill,
+    body.coach-glass-body .cc-pill,
+    body.coach-glass-body .cs-pill,
+    body.coach-glass-body .pg-pill,
+    body.coach-glass-body .pd-pill {
+        padding-inline: 8px;
+        font-size: .68rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.coach-glass-body *,
+    body.coach-glass-body *::before,
+    body.coach-glass-body *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+    }
+
+    body.coach-glass-body .coach-motion-item {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}

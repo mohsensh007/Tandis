@@ -90,7 +90,7 @@
             {
                 <div class="cmr-card">
                     <!-- سر کارت: نام + تاریخ + دریافتی -->
-                    <div class="cmr-head">
+                    <div class="cmr-head" role="button" tabindex="0" aria-expanded="false">
                         <div class="cmr-mid">
                             <div class="cmr-name">@r.StudentName</div>
                             <div class="cmr-date"><i class="bi bi-calendar3"></i> @(r.StartDate ?? "-")</div>
@@ -616,7 +616,8 @@
         // ===== باز/بسته کردن جزئیات کارت =====
         $(document).on('click', '.cmr-head', function () {
             var $c = $(this).closest('.cmr-card');
-            $c.toggleClass('open');
+            var isOpen = $c.toggleClass('open').hasClass('open');
+            $(this).attr('aria-expanded', isOpen ? 'true' : 'false');
             $c.find('.cmr-details').slideToggle(200);
         });
 

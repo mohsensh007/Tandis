@@ -14,7 +14,7 @@ function renderSent() {
 
     var tb = $('#tbodySent');
     if (!rows.length) {
-        tb.html('<tr><td colspan="4" class="text-center py-3">پیام ارسال‌شده‌ای وجود ندارد</td></tr>');
+        tb.html('<tr class="sent-empty"><td colspan="4" class="text-center py-3">پیام ارسال‌شده‌ای وجود ندارد</td></tr>');
         return;
     }
 
@@ -29,9 +29,9 @@ function renderSent() {
             status = '<span class="text-muted small">&mdash;</span>';
         }
 
-        html += '<tr>' +
-            '<td class="text-nowrap"><span class="badge sent-badge">' + esc(m.targetLabel || '-') + '</span></td>' +
-            '<td>' +
+        html += '<tr class="sent-message-row">' +
+            '<td class="text-nowrap" data-label="گیرنده"><span class="badge sent-badge">' + esc(m.targetLabel || '-') + '</span></td>' +
+            '<td data-label="پیام">' +
             (m.title
                 ? '<div class="fw-bold mb-1">' + esc(m.title) + '</div>'
                 : '<div class="fw-bold mb-1 text-muted">(بدون عنوان)</div>') +
@@ -39,8 +39,8 @@ function renderSent() {
             esc((m.body || '').substring(0, 80)) + ((m.body || '').length > 80 ? '...' : '') +
             '</div>' +
             '</td>' +
-            '<td class="text-nowrap small">' + esc(m.creationDate || '') + '<br>' + esc(m.creationTime || '') + '</td>' +
-            '<td>' + status + '</td>' +
+            '<td class="text-nowrap small" data-label="تاریخ">' + esc(m.creationDate || '') + '<br>' + esc(m.creationTime || '') + '</td>' +
+            '<td data-label="وضعیت">' + status + '</td>' +
             '</tr>';
     });
     tb.html(html);

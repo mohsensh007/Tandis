@@ -28,7 +28,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css?v=7" />
     <link rel="stylesheet" href="~/css/panels.css?v=4" />
-    <link rel="stylesheet" href="~/css/admin-responsive.css?v=1" />
+    <link rel="stylesheet" href="~/css/admin-responsive.css?v=2" />
 
     <style>
         /* ===== نوار پایین شناور پنل ادمین ===== */
@@ -429,8 +429,8 @@
             .admin-shell {
                 margin-top: .75rem !important;
                 margin-bottom: 1rem !important;
-                padding-left: 10px;
-                padding-right: 10px;
+                padding-left: 0;
+                padding-right: 0;
             }
 
             .shift-banner {
@@ -493,22 +493,6 @@
                     <span class="d-none d-md-inline">تغییر رمز</span>
                 </button>
 
-                <!-- زنگوله پیام‌ها -->
-                <div class="dropdown">
-                    <a class="nav-link position-relative p-2" href="#" role="button" data-bs-toggle="dropdown">
-                        <i class="bi bi-bell-fill text-light" style="font-size:20px;"></i>
-                        <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:10px;display:none;">0</span>
-                    </a>
-                    <ul class="dropdown-menu dropdown-menu-end" style="min-width:min(300px, calc(100vw - 24px));max-height:400px;overflow-y:auto;">
-                        <li class="dropdown-header fw-bold">پیام‌های جدید</li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li id="notifList"><a class="dropdown-item text-muted small">در حال بارگذاری...</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item text-center text-primary fw-bold" href="/Admin/Messages">مشاهده همه پیام‌ها</a></li>
-                    </ul>
-                </div>
-
-              
                 <!-- خروج (فقط دسکتاپ) -->
                 <a class="d-none d-md-inline-flex btn-logout-glass js-logout" href="/Admin/Logout">
                     <i class="bi bi-box-arrow-left"></i> خروج
@@ -718,31 +702,6 @@
             window.repSortAndRender();
         });
 
-        // === زنگوله پیام‌ها ===
-        function loadNotifBell() {
-            $.get('/api/Admin/Messages/UnreadCount', function (res) {
-                if (res.success) {
-                    var badge = $('#notifBadge');
-                    if (res.count > 0) badge.text(faNum(res.count)).show();
-                    else badge.hide();
-                }
-            });
-            $.get('/api/Admin/Messages/Inbox', function (res) {
-                if (res.success && res.data && res.data.length) {
-                    var html = '';
-                    res.data.slice(0, 5).forEach(function (m) {
-                        html += '<a class="dropdown-item small py-2' + (m.isSeen ? '' : ' fw-bold') + '" href="/Admin/Messages">' +
-                            '<div class="text-truncate">' + esc(m.senderName) + '</div>' +
-                            '<div class="text-muted text-truncate" style="font-size:11px;">' + esc((m.title || m.body).substring(0, 60)) + '</div>' +
-                        '</a>';
-                    });
-                    $('#notifList').html(html);
-                } else {
-                    $('#notifList').html('<span class="dropdown-item text-muted small">پیامی نیست</span>');
-                }
-            });
-        }
-
         // ===== 🔑 تغییر رمز از داخل پنل =====
         $('#btnOpenChangePass').on('click', function () {
             $('#cpOld, #cpNew, #cpConf').val('');
@@ -821,13 +780,24 @@
                 glow.classList.add('show');
             }
 
+            function animateActive(item) {
+                if (!item) return;
+                item.classList.remove('abn-switching');
+                void item.offsetWidth;
+                item.classList.add('abn-switching');
+                window.setTimeout(function () { item.classList.remove('abn-switching'); }, 700);
+            }
+
             items.forEach(function (i) { i.classList.toggle('abn-active', i === current); });
 
             if (current) {
                 if (lastItem && lastItem !== current) {
                     placeAt(lastItem, false);
                     requestAnimationFrame(function () {
-                        requestAnimationFrame(function () { placeAt(current, true); });
+                        requestAnimationFrame(function () {
+                            animateActive(current);
+                            placeAt(current, true);
+                        });
                     });
                 } else {
                     placeAt(current, false);
@@ -838,10 +808,6 @@
             window.addEventListener('resize', function () { placeAt(current, false); });
         })();
 
-        $(function () {
-            loadNotifBell();
-            setInterval(loadNotifBell, 30000); // هر ۳۰ ثانیه
-        });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

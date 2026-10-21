@@ -8,7 +8,7 @@
     <div id="loginForm">
         <div class="mb-3">
             <label class="form-label">کد ملی / نام کاربری</label>
-            <input type="text" id="txtNationalCode" class="form-control" placeholder="کد ملی ۱۰ رقم یا نام کاربری مدیر" />
+            <input type="text" id="txtNationalCode" class="form-control" placeholder="کد ملی ۱۰ رقم یا نام کاربری مدیر" inputmode="numeric" autocomplete="username" dir="ltr" />
         </div>
         <div class="mb-3">
             <label class="form-label">رمز عبور</label>
@@ -53,6 +53,17 @@
                 .replace(/[٠-٩]/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); });
         }
 
+        function limitNationalCodeInput() {
+            var input = $('#txtNationalCode');
+            var value = normalizeLoginDigits(input.val());
+            if (/^\d+$/.test(value) && value.length > 10) {
+                value = value.slice(0, 10);
+            }
+            if (input.val() !== value) input.val(value);
+        }
+
+        $('#txtNationalCode').on('input', limitNationalCodeInput);
+
         $('#btnLogin').click(function () {
             var nc = normalizeLoginDigits($.trim($('#txtNationalCode').val()));
             $('#txtNationalCode').val(nc);
@@ -64,6 +75,7 @@
             isAdminLogin = (lower === 'admin' || lower === 'adminb') || !isNationalCode;
 
             if (!nc) { showToast('کد ملی / نام کاربری را وارد کنید', 'error'); return; }
+            if (/^\d+$/.test(nc) && nc.length > 10) { showToast('کد ملی نمی‌تواند بیشتر از ۱۰ رقم باشد', 'error'); return; }
             if (!isAdminLogin && nc.length < 10) { showToast('کد ملی را صحیح وارد کنید', 'error'); return; }
             if (!pw) { showToast('رمز عبور را وارد کنید', 'error'); return; }
 

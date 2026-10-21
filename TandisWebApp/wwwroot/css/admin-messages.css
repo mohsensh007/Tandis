@@ -1,0 +1,824 @@
+/* ========================================================================
+   Admin presence and messaging pages
+   Page-scoped responsive layer. Shared admin shell styles stay untouched.
+   ======================================================================== */
+
+/* Presence list ---------------------------------------------------------- */
+#insideModal .inside-modal-dialog {
+    width: calc(100% - 1rem);
+    max-width: 900px;
+    margin-inline: auto;
+}
+
+#insideModal .inside-modal {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+#insideModal .inside-modal-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#insideModal .inside-modal-header .modal-title {
+    min-width: 0;
+    flex: 1 1 auto;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+#insideModal .inside-modal-body {
+    min-width: 0;
+    max-width: 100%;
+    padding: clamp(12px, 3vw, 20px);
+    overflow-x: hidden;
+    background: linear-gradient(160deg, rgba(47, 54, 77, .72), rgba(24, 30, 53, .92));
+}
+
+#insideModal .inside-card-list {
+    display: flex;
+    min-width: 0;
+    max-width: 100%;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#insideModal .inside-table-wrap {
+    display: none;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+#insideModal .inside-person-card {
+    min-width: 0;
+    max-width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, .13);
+    border-radius: 15px;
+    background: linear-gradient(145deg, rgba(102, 126, 234, .15), rgba(255, 255, 255, .055));
+    box-shadow: 0 7px 18px rgba(4, 8, 24, .2);
+}
+
+#insideModal .inside-person-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    min-width: 0;
+    gap: 10px;
+    line-height: 1.55;
+}
+
+#insideModal .inside-person-identity {
+    display: flex;
+    min-width: 0;
+    flex: 1 1 auto;
+    align-items: flex-start;
+    gap: 7px;
+    flex-wrap: wrap;
+}
+
+#insideModal .inside-person-identity strong {
+    min-width: 0;
+    color: #fff;
+    font-size: .9rem;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+#insideModal .inside-status {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    min-height: 26px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: .68rem;
+    font-weight: 800;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+#insideModal .inside-status-guest {
+    border: 1px solid rgba(255, 193, 7, .42);
+    background: rgba(255, 193, 7, .18) !important;
+    color: #ffd866 !important;
+}
+
+#insideModal .inside-status-member {
+    border: 1px solid rgba(56, 217, 169, .42);
+    background: rgba(56, 217, 169, .17) !important;
+    color: #38d9a9 !important;
+}
+
+#insideModal .inside-person-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    min-width: 0;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, .09);
+}
+
+#insideModal .inside-data {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 3px;
+}
+
+#insideModal .inside-data span {
+    color: #8fa1b9;
+    font-size: .67rem;
+    font-weight: 700;
+}
+
+#insideModal .inside-data b {
+    min-width: 0;
+    color: #eaf1ff;
+    font-size: .78rem;
+    font-weight: 750;
+    overflow-wrap: anywhere;
+}
+
+#insideModal .inside-data .inside-ltr {
+    direction: ltr;
+    text-align: right;
+    white-space: nowrap;
+}
+
+#insideModal .inside-data .inside-duration {
+    color: #66d3e8;
+    direction: ltr;
+    text-align: right;
+    white-space: nowrap;
+}
+
+#insideModal .inside-duration i {
+    font-size: .75rem;
+}
+
+#insideModal .inside-empty-state {
+    display: flex;
+    min-height: 110px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 18px;
+    border: 1px dashed rgba(102, 211, 232, .28);
+    border-radius: 15px;
+    color: #9fb3c8;
+    font-size: .82rem;
+    text-align: center;
+}
+
+#insideModal .inside-empty-state i {
+    color: #66d3e8;
+    font-size: 1.15rem;
+}
+
+@media (min-width: 577px) {
+    #insideModal .inside-card-list {
+        display: none;
+    }
+
+    #insideModal .inside-table-wrap {
+        display: block;
+    }
+
+    #insideModal .inside-table {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    #insideModal .inside-modal-dialog {
+        width: calc(100% - 1rem);
+        max-width: calc(100% - 1rem);
+        margin: .5rem;
+    }
+
+    #insideModal .inside-modal {
+        border-radius: 15px;
+    }
+
+    #insideModal .inside-modal-header {
+        padding: .8rem .9rem;
+    }
+
+    #insideModal .inside-modal-header .modal-title {
+        font-size: .88rem;
+    }
+
+    #insideModal .inside-modal-body {
+        padding: 10px;
+    }
+
+    #insideModal .inside-table-wrap {
+        display: none !important;
+    }
+
+    #insideModal .inside-table {
+        min-width: 0 !important;
+    }
+}
+
+@media (max-width: 360px) {
+    #insideModal .inside-person-meta {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Shared page boundaries ------------------------------------------------- */
+.admin-messages-page,
+.admin-message-view-page {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* Messages index --------------------------------------------------------- */
+.admin-messages-page .admin-messages-toolbar {
+    min-width: 0;
+    align-items: flex-start;
+}
+
+.admin-messages-page .admin-messages-title {
+    min-width: 0;
+    max-width: 100%;
+    color: #fff;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.admin-messages-page .admin-messages-actions {
+    min-width: 0;
+}
+
+.admin-messages-page .admin-messages-grid,
+.admin-messages-page .admin-messages-grid > [class*="col-"] {
+    min-width: 0;
+}
+
+.admin-messages-page .admin-message-card {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.admin-messages-page .admin-message-card .card-header {
+    min-width: 0;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.admin-messages-page .admin-message-card .card-header h5 {
+    min-width: 0;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.admin-messages-page .sent-messages-body {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.admin-messages-page .inbox-filters {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(150px, 210px);
+    align-items: stretch;
+    min-width: 0;
+}
+
+.admin-messages-page .inbox-filters .form-control,
+.admin-messages-page .inbox-filters .form-select {
+    width: 100%;
+    min-width: 0;
+}
+
+.admin-messages-page #selSentTarget {
+    max-width: 210px !important;
+}
+
+.admin-messages-page .sent-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.admin-messages-page .sent-table {
+    width: 100%;
+    min-width: 560px;
+    table-layout: fixed;
+}
+
+.admin-messages-page .sent-table th,
+.admin-messages-page .sent-table td {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.admin-messages-page .sent-table th:nth-child(1) {
+    width: 23%;
+}
+
+.admin-messages-page .sent-table th:nth-child(2) {
+    width: 42%;
+}
+
+.admin-messages-page .sent-table th:nth-child(3) {
+    width: 20%;
+}
+
+.admin-messages-page .sent-table th:nth-child(4) {
+    width: 15%;
+}
+
+.admin-messages-page .sent-table .sent-badge {
+    display: inline-flex;
+    max-width: 100%;
+    align-items: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+}
+
+.admin-messages-page .sent-table .sent-empty td {
+    overflow-wrap: normal;
+}
+
+/* Stable multi-line recipient summary instead of a single overflowing line. */
+.admin-messages-page .btn-recipients {
+    display: grid !important;
+    grid-template-columns: 34px minmax(0, 1fr) 18px;
+    align-items: center;
+    min-width: 0;
+    min-height: 58px;
+    gap: 9px;
+    padding: .6rem .75rem;
+    text-align: start;
+}
+
+.admin-messages-page .recipient-button-icon {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: rgba(102, 211, 232, .12);
+    color: #66d3e8;
+}
+
+.admin-messages-page .recipient-button-copy {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.admin-messages-page .recipient-button-label {
+    color: #8fa1b9;
+    font-size: .66rem;
+    font-weight: 700;
+    line-height: 1.3;
+}
+
+.admin-messages-page #recSummary {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+    color: #eaf1ff;
+    font-size: .82rem;
+    font-weight: 800;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.admin-messages-page .btn-recipients > .bi-caret-left-fill {
+    margin-inline-start: 0;
+    color: #66d3e8;
+}
+
+.admin-messages-page .recipient-help-text {
+    color: #8a93a6 !important;
+    line-height: 1.7;
+}
+
+.admin-messages-page .send-message-card .card-body {
+    min-width: 0;
+}
+
+.admin-messages-page .send-message-card textarea {
+    min-height: 132px;
+    resize: vertical;
+}
+
+.admin-messages-page #btnSendBroadcast {
+    min-height: 48px;
+}
+
+/* Recipient picker ------------------------------------------------------- */
+.admin-messages-page #recipientModal .recipient-modal-content {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.admin-messages-page #recipientModal .rec-head {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 10px;
+}
+
+.admin-messages-page #recipientModal .rec-head .modal-title {
+    min-width: 0;
+    flex: 1 1 auto;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.admin-messages-page #recipientModal .recipient-modal-body {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.admin-messages-page #recipientModal .rec-tabs {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    min-width: 0;
+}
+
+.admin-messages-page #recipientModal .rec-tab {
+    min-width: 0;
+    min-height: 48px;
+    padding: .55rem .4rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.admin-messages-page #recipientModal .rec-panel,
+.admin-messages-page #recipientModal .rec-toolbar,
+.admin-messages-page #recipientModal .rec-counter,
+.admin-messages-page #recipientModal .rec-list,
+.admin-messages-page #recipientModal .rec-chips,
+.admin-messages-page #recipientModal .rec-selbar {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.admin-messages-page #recipientModal .rec-toolbar .form-control,
+.admin-messages-page #recipientModal .rec-panel > .form-select {
+    width: 100%;
+    min-width: 0;
+}
+
+.admin-messages-page #recipientModal .rec-list {
+    overflow-x: hidden;
+}
+
+.admin-messages-page #recipientModal .rec-item {
+    min-width: 0;
+    min-height: 52px;
+    align-items: flex-start;
+}
+
+.admin-messages-page #recipientModal .rec-item input,
+.admin-messages-page #recipientModal .rec-chip input,
+.admin-messages-page #recipientModal .rec-radio input {
+    min-width: 17px;
+    min-height: 17px;
+    width: 17px;
+    height: 17px;
+}
+
+.admin-messages-page #recipientModal .rec-item-body {
+    min-width: 0;
+}
+
+.admin-messages-page #recipientModal .rec-name {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}
+
+.admin-messages-page #recipientModal .rec-sub {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}
+
+.admin-messages-page #recipientModal .rec-chip {
+    max-width: 100%;
+    min-width: 0;
+    line-height: 1.45;
+    text-align: start;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.admin-messages-page #recipientModal .rec-selbar {
+    align-items: flex-start;
+    overflow-wrap: anywhere;
+}
+
+.admin-messages-page #recipientModal .rsb-chip {
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.admin-messages-page #recipientModal .recipient-modal-footer {
+    min-width: 0;
+}
+
+.admin-messages-page #recipientModal .recipient-modal-footer > .d-flex {
+    min-width: 0;
+}
+
+.admin-messages-page #recipientModal .recipient-modal-footer .btn {
+    min-height: 46px;
+}
+
+@media (max-width: 767.98px) {
+    .admin-messages-page #recipientModal .recipient-modal-content {
+        min-height: 100dvh;
+        border-radius: 0;
+    }
+
+    .admin-messages-page #recipientModal .recipient-modal-body {
+        overflow-y: auto;
+    }
+}
+
+@media (max-width: 576px) {
+    .admin-messages-page .admin-messages-toolbar {
+        gap: 10px !important;
+    }
+
+    .admin-messages-page .admin-messages-title {
+        width: 100%;
+        font-size: 1.05rem;
+    }
+
+    .admin-messages-page .admin-messages-actions {
+        width: 100%;
+    }
+
+    .admin-messages-page .admin-messages-actions .btn {
+        flex: 1 1 auto;
+        min-height: 44px;
+    }
+
+    .admin-messages-page .inbox-filters {
+        grid-template-columns: minmax(0, 1fr);
+        padding: 10px;
+    }
+
+    .admin-messages-page #selSentTarget {
+        max-width: none !important;
+    }
+
+    .admin-messages-page .sent-table-wrap {
+        overflow: visible;
+        border: 0;
+        background: transparent;
+    }
+
+    .admin-messages-page .sent-table {
+        display: block;
+        min-width: 0 !important;
+    }
+
+    .admin-messages-page .sent-table thead {
+        display: none;
+    }
+
+    .admin-messages-page .sent-table tbody {
+        display: block;
+    }
+
+    .admin-messages-page .sent-table .sent-message-row {
+        display: block;
+        margin: 9px 10px;
+        border: 1px solid rgba(255, 255, 255, .11);
+        border-radius: 14px;
+        background: linear-gradient(145deg, rgba(102, 126, 234, .13), rgba(255, 255, 255, .045)) !important;
+        overflow: hidden;
+    }
+
+    .admin-messages-page .sent-table .sent-message-row td {
+        display: grid;
+        grid-template-columns: minmax(58px, auto) minmax(0, 1fr);
+        align-items: start;
+        gap: 10px;
+        width: 100%;
+        padding: 10px 12px;
+        border-bottom: 1px solid rgba(255, 255, 255, .07);
+        text-align: start;
+        white-space: normal !important;
+        line-height: 1.6;
+    }
+
+    .admin-messages-page .sent-table .sent-message-row td::before {
+        content: attr(data-label);
+        color: #8fa1b9;
+        font-size: .7rem;
+        font-weight: 800;
+    }
+
+    .admin-messages-page .sent-table .sent-message-row td:last-child {
+        border-bottom: 0;
+    }
+
+    .admin-messages-page .sent-table .sent-message-row td > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .admin-messages-page .sent-table .sent-empty {
+        display: block;
+        margin: 0;
+        background: transparent !important;
+    }
+
+    .admin-messages-page .sent-table .sent-empty td {
+        display: block;
+        padding: 22px 12px;
+        border: 0;
+        text-align: center;
+    }
+
+    .admin-messages-page .sent-table .sent-empty td::before {
+        content: none;
+    }
+
+    .admin-messages-page .sent-table .sent-badge {
+        justify-self: start;
+    }
+
+    .admin-messages-page .send-message-card .card-body {
+        padding: 14px;
+    }
+
+    .admin-messages-page #recipientModal .rec-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .admin-messages-page #recipientModal .rec-tab {
+        min-height: 50px;
+        padding-inline: .55rem;
+    }
+
+    .admin-messages-page #recipientModal .recipient-modal-footer > .d-flex {
+        flex-direction: column;
+    }
+
+    .admin-messages-page #recipientModal .recipient-modal-footer > .d-flex .btn {
+        width: 100%;
+        flex: 1 1 auto;
+    }
+}
+
+@media (max-width: 360px) {
+    .admin-messages-page .btn-recipients {
+        grid-template-columns: 30px minmax(0, 1fr) 16px;
+        gap: 7px;
+        padding-inline: .6rem;
+    }
+
+    .admin-messages-page .recipient-button-icon {
+        width: 30px;
+        height: 30px;
+    }
+
+    .admin-messages-page #recSummary {
+        font-size: .76rem;
+    }
+}
+
+/* Message details -------------------------------------------------------- */
+.admin-message-view-page .message-view-row,
+.admin-message-view-page .message-view-col,
+.admin-message-view-page .message-view-card,
+.admin-message-view-page .message-view-reply-card {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.admin-message-view-page .message-view-card,
+.admin-message-view-page .message-view-reply-card {
+    overflow: hidden;
+}
+
+.admin-message-view-page .message-view-header {
+    min-width: 0;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.admin-message-view-page .message-view-header h5 {
+    min-width: 0;
+    flex: 1 1 auto;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+}
+
+.admin-message-view-page .message-view-back {
+    flex: 0 1 auto;
+    min-height: 44px;
+}
+
+.admin-message-view-page .message-view-body,
+.admin-message-view-page .message-view-reply-body {
+    min-width: 0;
+}
+
+.admin-message-view-page .message-view-avatar img {
+    display: block;
+    width: min(96px, 28vw) !important;
+    height: auto !important;
+    aspect-ratio: 1;
+    margin-inline: auto;
+}
+
+.admin-message-view-page .message-view-meta,
+.admin-message-view-page .message-meta-item {
+    min-width: 0;
+}
+
+.admin-message-view-page .message-meta-item {
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.admin-message-view-page .message-meta-label {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.admin-message-view-page .message-meta-item strong {
+    display: block;
+    overflow-wrap: anywhere;
+}
+
+.admin-message-view-page .message-view-content {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.9;
+}
+
+.admin-message-view-page .message-view-body h4 {
+    max-width: 100%;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.admin-message-view-page #txtReplyBody {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.admin-message-view-page .message-view-reply-button {
+    min-height: 48px;
+}
+
+@media (max-width: 576px) {
+    .admin-message-view-page .message-view-header {
+        align-items: stretch !important;
+    }
+
+    .admin-message-view-page .message-view-header h5 {
+        flex-basis: 100%;
+    }
+
+    .admin-message-view-page .message-view-back {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .admin-message-view-page .message-view-body,
+    .admin-message-view-page .message-view-reply-body {
+        padding: 14px;
+    }
+
+    .admin-message-view-page .message-view-content {
+        padding: 12px !important;
+        max-height: 55vh;
+    }
+}

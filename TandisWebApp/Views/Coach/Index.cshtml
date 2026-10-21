@@ -17,7 +17,7 @@
 <!-- ========== کارت‌های آمار (بدون کلاس‌های من + دریافتی بزرگ) ========== -->
 <div class="row g-3 mb-3">
     <div class="col-6 col-md-4">
-        <div class="purple-style cstat-card h-100 cstat-clickable" id="btnAllStudents" title="مشاهده همه شاگردان">
+        <div class="purple-style cstat-card h-100 cstat-clickable" id="btnAllStudents" role="button" tabindex="0" aria-controls="stuOverlay" title="مشاهده همه شاگردان">
             <div class="cstat-icon grad-green"><i class="bi bi-people-fill"></i></div>
             <div class="cstat-label">شاگردان فعال</div>
             <div class="cstat-value">@Model.ActiveStudents.ToString(fa)</div>

@@ -1,0 +1,310 @@
+/* =====================================================
+   Admin charts — focused responsive/accessibility layer
+   Loaded only by Views/Admin/Charts.cshtml.
+   ===================================================== */
+
+body.admin-glass-body {
+    --charts-purple: #7667e8;
+    --charts-purple-deep: #4f3b91;
+    --charts-blue: #4d8df6;
+    --charts-turquoise: #66d3e8;
+    --charts-mint: #38d9a9;
+    --charts-muted: #a9b7ca;
+    --charts-border: rgba(255, 255, 255, .15);
+}
+
+body.admin-glass-body .ch-main-card,
+body.admin-glass-body .ch-share-card,
+body.admin-glass-body .ch-side-card {
+    min-width: 0;
+    max-width: 100%;
+    border-color: var(--charts-border) !important;
+    background: linear-gradient(145deg, rgba(118, 103, 232, .17), rgba(255, 255, 255, .055)) !important;
+    box-shadow: 0 10px 30px rgba(5, 10, 32, .22);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+}
+
+body.admin-glass-body .ch-main-card,
+body.admin-glass-body .ch-share-card,
+body.admin-glass-body .ch-side-card,
+body.admin-glass-body .ch-pill,
+body.admin-glass-body .ch-navbtn {
+    transition: transform .24s ease, border-color .24s ease, box-shadow .24s ease, background-color .24s ease;
+}
+
+body.admin-glass-body .ch-main-card,
+body.admin-glass-body .ch-share-card,
+body.admin-glass-body .ch-side-card {
+    overflow: hidden;
+}
+
+body.admin-glass-body .ch-main-card::after,
+body.admin-glass-body .ch-share-card::after,
+body.admin-glass-body .ch-side-card::after {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto auto;
+    width: 42%;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, var(--charts-purple), var(--charts-turquoise));
+    opacity: .82;
+    pointer-events: none;
+}
+
+body.admin-glass-body .ch-main-head,
+body.admin-glass-body .ch-toolbar,
+body.admin-glass-body .ch-rangebar,
+body.admin-glass-body .ch-share-body,
+body.admin-glass-body .ch-side-nums {
+    min-width: 0;
+}
+
+body.admin-glass-body .ch-pills {
+    min-width: 0;
+    max-width: 100%;
+}
+
+body.admin-glass-body .ch-pill,
+body.admin-glass-body .ch-navbtn {
+    min-width: 44px;
+    min-height: 44px;
+}
+
+body.admin-glass-body .ch-pill {
+    flex: 1 1 auto;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
+}
+
+body.admin-glass-body .ch-pill.active {
+    background: linear-gradient(135deg, var(--charts-blue), var(--charts-purple)) !important;
+}
+
+body.admin-glass-body .ch-pill:focus-visible,
+body.admin-glass-body .ch-navbtn:focus-visible {
+    outline: 2px solid var(--charts-turquoise);
+    outline-offset: 3px;
+}
+
+body.admin-glass-body .ch-delta {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+body.admin-glass-body .ch-range,
+body.admin-glass-body .ch-range > span:last-child {
+    min-width: 0;
+    max-width: 100%;
+}
+
+body.admin-glass-body .ch-range > span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.admin-glass-body .ch-chart-wrap {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    contain: layout paint;
+    border: 1px solid rgba(255, 255, 255, .07);
+    background: linear-gradient(180deg, rgba(7, 14, 38, .24), rgba(7, 14, 38, .06));
+}
+
+body.admin-glass-body .ch-chart {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: clamp(220px, 38vw, 320px);
+    overflow: hidden;
+    touch-action: pan-y;
+}
+
+body.admin-glass-body .ch-chart .ch-axlabel {
+    font-size: 12px;
+    letter-spacing: 0;
+    paint-order: stroke;
+    stroke: rgba(15, 23, 42, .32);
+    stroke-width: .8px;
+    stroke-linejoin: round;
+}
+
+body.admin-glass-body .ch-tooltip {
+    z-index: 5;
+    width: max-content;
+    max-width: min(250px, calc(100% - 8px));
+    overflow-wrap: anywhere;
+    white-space: normal;
+    line-height: 1.65;
+    text-align: start;
+}
+
+body.admin-glass-body .ch-legend {
+    min-width: 0;
+    flex-wrap: wrap;
+    line-height: 1.6;
+}
+
+body.admin-glass-body .ch-side-nums {
+    flex-wrap: wrap;
+}
+
+body.admin-glass-body .ch-side-nums b,
+body.admin-glass-body .ch-side-nums small,
+body.admin-glass-body .ch-side-foot,
+body.admin-glass-body .ch-share-title,
+body.admin-glass-body .ch-help p,
+body.admin-glass-body .ch-lg-row {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+body.admin-glass-body .ch-side-nums b {
+    max-width: 100%;
+}
+
+body.admin-glass-body .ch-lg-row {
+    min-width: 0;
+}
+
+body.admin-glass-body .ch-lg-row .ch-lg-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.admin-glass-body .ch-donut {
+    max-width: 118px;
+    max-height: 118px;
+}
+
+body.admin-glass-body .ch-donut-center {
+    font-size: 6.6px;
+    dominant-baseline: middle;
+}
+
+/* Chart and donut transitions are class-triggered by the existing renderer. */
+body.admin-glass-body #chLine,
+body.admin-glass-body #chLinePrev {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+    vector-effect: non-scaling-stroke;
+}
+
+body.admin-glass-body #chArea,
+body.admin-glass-body #chAreaPrev {
+    vector-effect: non-scaling-stroke;
+}
+
+body.admin-glass-body #chChart.ch-chart-animate #chLine,
+body.admin-glass-body #chChart.ch-chart-animate #chLinePrev {
+    animation: adminChartLineIn .62s cubic-bezier(.22, .9, .35, 1) both;
+}
+
+body.admin-glass-body #chChart.ch-chart-animate #chArea {
+    animation: adminChartAreaIn .52s ease both;
+}
+
+body.admin-glass-body .ch-donut-segs.is-rendered circle {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: adminDonutIn .45s cubic-bezier(.22, .9, .35, 1) both;
+}
+
+@keyframes adminChartLineIn {
+    from { stroke-dashoffset: 1; opacity: .35; }
+    to { stroke-dashoffset: 0; opacity: 1; }
+}
+
+@keyframes adminChartAreaIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes adminDonutIn {
+    from { opacity: 0; transform: scale(.72); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 575.98px) {
+    body.admin-glass-body .ch-main-card {
+        padding: 12px 10px !important;
+        border-radius: 18px;
+    }
+
+    body.admin-glass-body .ch-main-head,
+    body.admin-glass-body .ch-toolbar {
+        align-items: stretch;
+    }
+
+    body.admin-glass-body .ch-pills {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    body.admin-glass-body .ch-pill {
+        width: 100%;
+        min-width: 0;
+        padding-inline: 7px;
+        font-size: .7rem;
+    }
+
+    body.admin-glass-body .ch-period {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    body.admin-glass-body .ch-period .ch-pill {
+        font-size: .66rem;
+    }
+
+    body.admin-glass-body .ch-chart {
+        height: 236px;
+    }
+
+    body.admin-glass-body .ch-chart .ch-axlabel {
+        font-size: 13px;
+    }
+
+    body.admin-glass-body .ch-tooltip {
+        max-width: calc(100% - 8px);
+        font-size: .76rem;
+    }
+
+    body.admin-glass-body .ch-share-body {
+        gap: 10px;
+    }
+
+    body.admin-glass-body .ch-side-card,
+    body.admin-glass-body .ch-share-card {
+        padding: 13px !important;
+    }
+}
+
+@media (max-width: 360px) {
+    body.admin-glass-body .ch-period .ch-pill {
+        padding-inline: 4px;
+        font-size: .62rem;
+    }
+
+    body.admin-glass-body .ch-chart {
+        height: 220px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.admin-glass-body #chChart.ch-chart-animate #chLine,
+    body.admin-glass-body #chChart.ch-chart-animate #chLinePrev,
+    body.admin-glass-body #chChart.ch-chart-animate #chArea,
+    body.admin-glass-body .ch-donut-segs.is-rendered circle {
+        animation: none !important;
+        stroke-dashoffset: 0 !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}

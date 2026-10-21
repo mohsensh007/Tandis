@@ -3,10 +3,11 @@
     Layout = "_AdminLayout";  
 }
 
+<div class="admin-messages-page">
 <!-- ✅ نوار ابزار بالا -->
-<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
-    <h4 class="mb-0">📨 مدیریت پیام‌ها</h4>
-    <div class="d-flex gap-2 flex-wrap">
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2 admin-messages-toolbar">
+    <h4 class="mb-0 admin-messages-title">📨 مدیریت پیام‌ها</h4>
+    <div class="d-flex gap-2 flex-wrap admin-messages-actions">
         @* ✅ نظارت پیام‌های مربی-شاگرد فعلاً حذف شده — برای برگرداندن، این کامنت را باز کنید *@
         @*
 <a href="/Admin/CoachMessages" class="btn btn-outline-warning btn-sm">
@@ -17,18 +18,18 @@
     </div>
 </div>
 
-<div class="row g-3">
+<div class="row g-3 admin-messages-grid">
     <!-- ستون لیست پیام‌ها -->
     <!-- ✅ ستون لیست پیام‌های ارسال‌شده (جایگزین اینباکس — عضو فعلاً نمی‌تواند پیامی به ادمین بفرستد) -->
-    <div class="col-12 col-lg-7">
-        <div class="card">
+    <div class="col-12 col-lg-7 admin-messages-list-col">
+        <div class="card admin-message-card sent-messages-card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">📤 پیام‌های ارسال‌شده</h5>
                 <button class="btn btn-sm btn-outline-light" id="btnRefreshSent">
                     <i class="bi bi-arrow-repeat"></i>
                 </button>
             </div>
-            <div class="card-body p-0">
+            <div class="card-body p-0 sent-messages-body">
                 <div class="inbox-filters">
                     <input type="search" class="form-control" id="txtSentSearch"
                            placeholder="🔍 جستجو: گیرنده / عنوان / متن / تاریخ" />
@@ -40,8 +41,8 @@
                         <option value="4">عضو مشخص</option>
                     </select>
                 </div>
-                <div class="table-responsive">
-                    <table class="table table-hover mb-0">
+                <div class="table-responsive sent-table-wrap">
+                    <table class="table table-hover mb-0 sent-table" id="sentTable">
                         <thead>
                             <tr>
                                 <th>گیرنده</th>
@@ -51,27 +52,30 @@
                             </tr>
                         </thead>
                         <tbody id="tbodySent">
-                            <tr><td colspan="4" class="text-center py-3">در حال بارگذاری...</td></tr>
+                            <tr class="sent-empty"><td colspan="4" class="text-center py-3">در حال بارگذاری...</td></tr>
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-12 col-lg-5">
-        <div class="card">
+    <div class="col-12 col-lg-5 admin-messages-send-col">
+        <div class="card admin-message-card send-message-card">
             <div class="card-header">
                 <h5 class="mb-0">📢 ارسال پیام</h5>
             </div>
             <div class="card-body">
                 <div class="mb-3">
                     <label class="form-label">گیرندگان</label>
-                    <button type="button" class="btn btn-recipients w-100" id="btnOpenRecipients">
-                        <i class="bi bi-people-fill"></i>
-                        <span id="recSummary">همه اعضا</span>
+                    <button type="button" class="btn btn-recipients w-100" id="btnOpenRecipients" aria-controls="recipientModal">
+                        <span class="recipient-button-icon"><i class="bi bi-people-fill"></i></span>
+                        <span class="recipient-button-copy">
+                            <span class="recipient-button-label">گیرندگان پیام</span>
+                            <span id="recSummary">همه اعضا</span>
+                        </span>
                         <i class="bi bi-caret-left-fill"></i>
                     </button>
-                    <div class="small mt-1" style="color:#8a93a6">
+                    <div class="small mt-1 recipient-help-text">
                         برای انتخاب نقش، رشته یا افراد مشخص، روی دکمه بالا بزنید.
                     </div>
                 </div>
@@ -95,15 +99,15 @@
 </div>
 
 <!-- ================= مودال انتخاب گیرندگان (روی همین صفحه باز می‌شود) ================= -->
-<div class="modal fade" id="recipientModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg modal-fullscreen-md-down">
-        <div class="modal-content rec-modal">
+<div class="modal fade" id="recipientModal" tabindex="-1" aria-labelledby="recipientModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg modal-fullscreen-md-down recipient-modal-dialog">
+        <div class="modal-content rec-modal recipient-modal-content">
             <div class="modal-header rec-head">
-                <h5 class="modal-title"><i class="bi bi-people-fill"></i> انتخاب گیرندگان پیام</h5>
+                <h5 class="modal-title" id="recipientModalLabel"><i class="bi bi-people-fill"></i> انتخاب گیرندگان پیام</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
 
-            <div class="modal-body">
+            <div class="modal-body recipient-modal-body">
                 <!-- تب‌های نوع گیرنده -->
                 <div class="rec-tabs" role="tablist">
                     <button type="button" class="rec-tab active" data-mode="all">همه اعضا</button>
@@ -184,7 +188,7 @@
             </div>
 
             <!-- فوتر مودال: دامنه ارسال + تأیید -->
-            <div class="rec-footer">
+            <div class="rec-footer recipient-modal-footer">
                 <div class="rec-scope" id="recScopeBox">
                     <label class="rec-radio">
                         <input type="radio" name="recScope" value="all" checked />
@@ -205,9 +209,11 @@
         </div>
     </div>
 </div>
+</div>
 
 @section Scripts {
-    <script src="~/js/admin-messages.js?v=7"></script>
+    <link rel="stylesheet" href="~/css/admin-messages.css?v=1" />
+    <script src="~/js/admin-messages.js?v=8"></script>
 }
 <style>
     /* ===== دکمه‌های تم‌رنگ: گرادیان بنفش-آبی، کوچیک و جمع‌وجور ===== */

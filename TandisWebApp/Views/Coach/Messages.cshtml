@@ -35,7 +35,7 @@ else
         {
             <div class="col-12">
                 <div class="purple-style ms-card @(msg.IsRead ? "" : "ms-card-unread")"
-                     data-id="@msg.MessageID" onclick="toggleMsg(this)">
+                     data-id="@msg.MessageID" onclick="toggleMsg(this)" role="button" tabindex="0" aria-expanded="false">
                     <div class="d-flex align-items-start gap-3">
                         <div class="ms-avatar"><i class="bi bi-envelope-fill"></i></div>
                         <div class="flex-grow-1" style="min-width:0">
@@ -223,6 +223,7 @@ else
         // ✅ باز/بسته کردن پیام + علامت‌گذاری خوانده‌شده (فقط خواندنی — امکان پاسخ وجود ندارد)
         function toggleMsg(el) {
             var open = el.classList.toggle('open');
+            el.setAttribute('aria-expanded', open ? 'true' : 'false');
             var full = el.querySelector('.ms-full');
             if (full) full.style.display = open ? 'block' : 'none';
 
