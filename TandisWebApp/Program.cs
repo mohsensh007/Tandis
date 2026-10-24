@@ -297,7 +297,16 @@ app.UseStaticFiles(new StaticFileOptions
 {
     OnPrepareResponse = ctx =>
     {
-        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000,immutable");
+        if (ctx.Context.Request.Path.Equals("/sw.js", StringComparison.OrdinalIgnoreCase))
+        {
+            // Service-worker updates must be revalidated; an immutable cache
+            // header can keep Chrome on an old installability/offline version.
+            ctx.Context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        }
+        else
+        {
+            ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=31536000,immutable");
+        }
         ctx.Context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
     }
 });

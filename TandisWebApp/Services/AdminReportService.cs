@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Microsoft.EntityFrameworkCore;
 using TandisWebApp.Data;
 using TandisWebApp.DTOs;
@@ -15,6 +16,25 @@ namespace TandisWebApp.Services
         private readonly CommonHelperService _helper;
         private readonly ILogger<AdminReportService> _logger;
 
+        private const int TrafficReportDefaultPageSize = 50;
+        private const int TrafficReportMaxPageSize = 100;
+
+        private sealed class TrafficReportQueryRow
+        {
+            public long TrafficID { get; set; }
+            public string? PersonName { get; set; }
+            public string? MemberFullName { get; set; }
+            public string? DisplayName { get; set; }
+            public string? EntryDate { get; set; }
+            public string? EntryTime { get; set; }
+            public string? ExitDate { get; set; }
+            public string? ExitTime { get; set; }
+            public string? EntryDesc { get; set; }
+            public bool? IsGuest { get; set; }
+            public int? BoxID { get; set; }
+            public int MemberID { get; set; }
+        }
+
         public AdminReportService(FullSportDbContext db, CommonHelperService helper, ILogger<AdminReportService> logger)
         {
             _db = db;
@@ -25,7 +45,7 @@ namespace TandisWebApp.Services
         // ============================================================
         //  گزارش ترددها (خواندنی)
         // ============================================================
-        public async Task<AdminReportResponse<AdminTrafficRowDto, TrafficReportSummaryDto>> GetTrafficReportAsync(short shiftID, string? from, string? to)
+        private IQueryable<ACC_Traffic> BuildTrafficBaseQuery(short shiftID, string? from, string? to)
         {
             var query = _db.ACC_Traffics
                 .AsNoTracking()
@@ -36,13 +56,23 @@ namespace TandisWebApp.Services
             if (!string.IsNullOrWhiteSpace(to))
                 query = query.Where(t => t.EntryDate != null && t.EntryDate.CompareTo(to) <= 0);
 
-            var rawRows = await (
+            return query;
+        }
+
+        private IQueryable<TrafficReportQueryRow> BuildTrafficReportQuery(
+            short shiftID,
+            string? from,
+            string? to,
+            string? search)
+        {
+            var query = BuildTrafficBaseQuery(shiftID, from, to);
+
+            var rowsQuery = (
                  from t in query
                  join m in _db.Gen_Members on t.MemberID equals m.MemberID into memJoin
                  from m in memJoin.DefaultIfEmpty()
                  join p in _db.Gen_Persons on m.PersonID equals p.PersonID into personJoin
                  from p in personJoin.DefaultIfEmpty()
-                 orderby t.TrafficID descending
                  select new
                  {
                      t.TrafficID,
@@ -55,35 +85,164 @@ namespace TandisWebApp.Services
                      t.IsGuest,
                      t.BoxID,
                      MemberFullName = p != null ? p.FullName : string.Empty,
+                     DisplayName = t.IsGuest == true
+                         ? t.PersonName
+                         : (p != null ? p.FullName : t.PersonName),
                      MemberID = m != null ? m.MemberID : 0
-                 }).ToListAsync();
+                 }).Select(x => new TrafficReportQueryRow
+                 {
+                     TrafficID = x.TrafficID,
+                     PersonName = x.PersonName,
+                     MemberFullName = x.MemberFullName,
+                     DisplayName = x.DisplayName,
+                     EntryDate = x.EntryDate,
+                     EntryTime = x.EntryTime,
+                     ExitDate = x.ExitDate,
+                     ExitTime = x.ExitTime,
+                     EntryDesc = x.EntryDesc,
+                     IsGuest = x.IsGuest,
+                     BoxID = x.BoxID,
+                     MemberID = x.MemberID
+                 });
 
-            var rows = rawRows.Select(x => new AdminTrafficRowDto
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                if (term.Length > 100) term = term[..100];
+                var like = $"%{term}%";
+
+                rowsQuery = rowsQuery.Where(x =>
+                    EF.Functions.Like(x.DisplayName ?? "", like) ||
+                    EF.Functions.Like(x.PersonName ?? "", like) ||
+                    EF.Functions.Like(x.MemberFullName ?? "", like) ||
+                    EF.Functions.Like(x.EntryDate ?? "", like) ||
+                    EF.Functions.Like(x.EntryTime ?? "", like) ||
+                    EF.Functions.Like(x.ExitDate ?? "", like) ||
+                    EF.Functions.Like(x.ExitTime ?? "", like) ||
+                    EF.Functions.Like(x.EntryDesc ?? "", like) ||
+                    EF.Functions.Like(x.MemberID.ToString(), like));
+            }
+
+            return rowsQuery;
+        }
+
+        private static IQueryable<TrafficReportQueryRow> ApplyTrafficOrdering(
+            IQueryable<TrafficReportQueryRow> query,
+            string? sort,
+            string? direction)
+        {
+            var sortKey = (sort ?? "").Trim().ToLowerInvariant();
+            var ascending = string.Equals(direction, "asc", StringComparison.OrdinalIgnoreCase);
+
+            if (sortKey == "name")
+            {
+                return ascending
+                    ? query.OrderBy(x => x.DisplayName).ThenBy(x => x.TrafficID)
+                    : query.OrderByDescending(x => x.DisplayName).ThenByDescending(x => x.TrafficID);
+            }
+
+            if (sortKey == "date")
+            {
+                return ascending
+                    ? query.OrderBy(x => x.EntryDate).ThenBy(x => x.EntryTime).ThenBy(x => x.TrafficID)
+                    : query.OrderByDescending(x => x.EntryDate).ThenByDescending(x => x.EntryTime).ThenByDescending(x => x.TrafficID);
+            }
+
+            return ascending
+                ? query.OrderBy(x => x.TrafficID)
+                : query.OrderByDescending(x => x.TrafficID);
+        }
+
+        private AdminTrafficRowDto MapTrafficRow(TrafficReportQueryRow x)
+        {
+            return new AdminTrafficRowDto
             {
                 TrafficID = x.TrafficID,
-                PersonName = x.IsGuest == true ? x.PersonName : (x.MemberFullName ?? x.PersonName ?? "-"),
-                MemberCode = (x.MemberID > 0) ? _helper.SetSeprator(x.MemberID) : null,
+                PersonName = x.IsGuest == true
+                    ? x.PersonName
+                    : (x.MemberFullName ?? x.PersonName ?? "-"),
+                MemberCode = x.MemberID > 0 ? _helper.SetSeprator(x.MemberID) : null,
                 EntryDate = x.EntryDate,
                 EntryTime = x.EntryTime,
                 ExitDate = x.ExitDate,
                 ExitTime = x.ExitTime,
                 EntryDesc = x.EntryDesc,
                 IsGuest = x.IsGuest,
-                BoxID = x.BoxID,
-            }).ToList();
-
-            var summary = new TrafficReportSummaryDto
-            {
-                TotalCount = rows.Count,
-                MemberCount = rows.Count(r => r.IsGuest != true),
-                GuestCount = rows.Count(r => r.IsGuest == true)
+                BoxID = x.BoxID
             };
+        }
 
-            return new AdminReportResponse<AdminTrafficRowDto, TrafficReportSummaryDto>
+        public async Task<PagedAdminReportResponse<AdminTrafficRowDto, TrafficReportSummaryDto>> GetTrafficReportAsync(
+            short shiftID,
+            string? from,
+            string? to,
+            int page = 1,
+            int pageSize = TrafficReportDefaultPageSize,
+            string? search = null,
+            string? sort = null,
+            string? direction = "desc",
+            CancellationToken cancellationToken = default)
+        {
+            page = Math.Max(1, page);
+            pageSize = Math.Clamp(pageSize, 1, TrafficReportMaxPageSize);
+
+            var filteredQuery = BuildTrafficReportQuery(shiftID, from, to, search);
+            var summaryQuery = string.IsNullOrWhiteSpace(search)
+                ? BuildTrafficBaseQuery(shiftID, from, to)
+                    .Select(t => new { t.IsGuest })
+                : filteredQuery.Select(t => new { t.IsGuest });
+
+            var summary = await summaryQuery
+                .GroupBy(_ => 1)
+                .Select(g => new TrafficReportSummaryDto
+                {
+                    TotalCount = g.Count(),
+                    MemberCount = g.Count(x => x.IsGuest != true),
+                    GuestCount = g.Count(x => x.IsGuest == true)
+                })
+                .FirstOrDefaultAsync(cancellationToken)
+                ?? new TrafficReportSummaryDto();
+
+            var totalPages = summary.TotalCount == 0
+                ? 0
+                : (int)Math.Ceiling(summary.TotalCount / (double)pageSize);
+            if (totalPages > 0)
+                page = Math.Min(page, totalPages);
+            else
+                page = 1;
+
+            var rawRows = await ApplyTrafficOrdering(filteredQuery, sort, direction)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync(cancellationToken);
+
+            return new PagedAdminReportResponse<AdminTrafficRowDto, TrafficReportSummaryDto>
             {
-                Data = rows,
-                Summary = summary
+                Data = rawRows.Select(MapTrafficRow).ToList(),
+                Summary = summary,
+                Page = page,
+                PageSize = pageSize,
+                TotalPages = totalPages
             };
+        }
+
+        /// <summary>خروجی کامل گزارش تردد برای export؛ ردیف‌ها به‌صورت stream خوانده می‌شوند.</summary>
+        public async IAsyncEnumerable<AdminTrafficRowDto> StreamTrafficReportAsync(
+            short shiftID,
+            string? from,
+            string? to,
+            string? search,
+            string? sort,
+            string? direction,
+            [EnumeratorCancellation] CancellationToken cancellationToken = default)
+        {
+            var query = ApplyTrafficOrdering(
+                BuildTrafficReportQuery(shiftID, from, to, search),
+                sort,
+                direction);
+
+            await foreach (var row in query.AsAsyncEnumerable().WithCancellation(cancellationToken))
+                yield return MapTrafficRow(row);
         }
 
         // ============================================================
@@ -589,14 +748,38 @@ namespace TandisWebApp.Services
 
             if (period == "week")
             {
-                curFrom = today.AddDays(-6); curTo = today;
-                prevFrom = today.AddDays(-13); prevTo = today.AddDays(-7);
+                // هفتهٔ کاری باشگاه از شنبه شروع می‌شود. در هفتهٔ جاری فقط
+                // از شنبه تا امروز را نشان بده و برای مقایسه، همان تعداد روز
+                // از هفتهٔ قبل را بردار؛ نه یک بازهٔ ثابتِ هفت‌روزه.
+                var daysFromSaturday = ((int)today.DayOfWeek + 1) % 7;
+                var currentSaturday = today.AddDays(-daysFromSaturday);
+                curFrom = currentSaturday; curTo = today;
+                prevFrom = currentSaturday.AddDays(-7);
+                prevTo = prevFrom.AddDays(daysFromSaturday);
                 curTitle = "هفته جاری"; prevTitle = "هفته قبل";
             }
             else if (period == "month")
             {
-                curFrom = today.AddDays(-29); curTo = today;
-                prevFrom = today.AddDays(-59); prevTo = today.AddDays(-30);
+                // ماه هم شمسی و از روز اول تا امروز است. بازهٔ قبل، از روز
+                // اول ماه شمسی قبل تا همان شماره‌روز (با رعایت کوتاه‌تر بودن
+                // اسفند/ماه‌های دیگر) محاسبه می‌شود.
+                var currentYear = pc.GetYear(today);
+                var currentMonth = pc.GetMonth(today);
+                var currentDay = pc.GetDayOfMonth(today);
+                curFrom = pc.ToDateTime(currentYear, currentMonth, 1, 0, 0, 0, 0);
+                curTo = today;
+
+                var previousYear = currentYear;
+                var previousMonth = currentMonth - 1;
+                if (previousMonth < 1)
+                {
+                    previousMonth = 12;
+                    previousYear--;
+                }
+
+                var previousDay = Math.Min(currentDay, pc.GetDaysInMonth(previousYear, previousMonth));
+                prevFrom = pc.ToDateTime(previousYear, previousMonth, 1, 0, 0, 0, 0);
+                prevTo = pc.ToDateTime(previousYear, previousMonth, previousDay, 0, 0, 0, 0);
                 curTitle = "ماه جاری"; prevTitle = "ماه قبل";
             }
             else

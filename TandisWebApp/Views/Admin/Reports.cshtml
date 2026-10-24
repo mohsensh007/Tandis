@@ -9,7 +9,19 @@
     <a href="/Admin" class="purple-style btn-back-glass"><i class="bi bi-arrow-right"></i> داشبورد</a>
 </div>
 
-<div class="row g-3 admin-reports-grid">
+<!-- نمای سریع موبایل: یک کارت در هر لحظه + ورق‌زدن و نمایش همه -->
+<div id="adminReportCarousel" class="admin-report-carousel" role="region" aria-label="گزارش‌های مدیریتی سریع">
+    <div class="admin-report-stage" id="adminReportStage"></div>
+    <div id="adminReportLabel" class="admin-report-label" aria-live="polite"></div>
+    <div id="adminReportDots" class="admin-report-dots" aria-label="انتخاب گزارش"></div>
+</div>
+<div class="admin-report-all-trigger">
+    <button type="button" class="btn btn-sm btn-all-reports" id="btnShowAllAdminReports" aria-controls="adminReportAllOverlay" aria-expanded="false" aria-haspopup="dialog">
+        <i class="bi bi-grid-3x3-gap-fill me-1" aria-hidden="true"></i> نمایش همه گزارش‌ها
+    </button>
+</div>
+
+<div class="row g-3 admin-reports-grid" id="adminReportGrid">
     <div class="col-md-6 col-lg-3 admin-report-col">
         <a href="/Admin/TrafficReport" class="text-decoration-none admin-report-link">
             <div class="purple-style report-card h-100">
@@ -102,6 +114,21 @@
     </div>
 </div>
 </div>
+
+<div class="admin-report-all-overlay" id="adminReportAllOverlay" role="dialog" aria-modal="true" aria-labelledby="adminReportAllTitle" aria-hidden="true" hidden>
+    <div class="admin-report-all-backdrop" data-admin-report-close></div>
+    <div class="admin-report-all-panel">
+        <div class="admin-report-all-header">
+            <span class="fw-bold" id="adminReportAllTitle">همه گزارش‌ها</span>
+            <button type="button" class="admin-report-all-close" id="btnCloseAllAdminReports" title="بستن" aria-label="بستن گزارش‌ها">
+                <i class="bi bi-x-lg" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="admin-report-all-grid" id="adminReportAllGrid"></div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/admin-report-carousel.css" asp-append-version="true" />
 
 <style>
     .hd-icon {
@@ -252,7 +279,7 @@
 
     @@media (min-width: 1200px) {
         .admin-reports-grid {
-            grid-template-columns: repeat(4, minmax(0, 1fr));
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
     }
 
@@ -276,3 +303,7 @@
         }
     }
 </style>
+
+@section Scripts {
+    <script src="~/js/admin-report-carousel.js" asp-append-version="true"></script>
+}

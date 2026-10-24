@@ -57,31 +57,102 @@
     <div class="text-center text-muted py-4">فیلتر را تنظیم کرده و «نمایش گزارش» را بزنید.</div>
 </div>
 
+<div id="trafficPager" class="traffic-report-pager" style="display:none;" aria-label="صفحه‌بندی گزارش تردد">
+    <button type="button" class="purple-style rep-btn-icon" id="btnTrafficPrev" title="صفحه قبل" aria-label="صفحه قبل">
+        <i class="bi bi-chevron-right"></i>
+    </button>
+    <span id="trafficPagerLabel" class="traffic-pager-label"></span>
+    <button type="button" class="purple-style rep-btn-icon" id="btnTrafficNext" title="صفحه بعد" aria-label="صفحه بعد">
+        <i class="bi bi-chevron-left"></i>
+    </button>
+</div>
+
+<style>
+    .traffic-report-pager {
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        margin: 16px 0 8px;
+    }
+
+    .traffic-pager-label {
+        min-width: 150px;
+        color: #c9d8ec;
+        text-align: center;
+        font-size: .82rem;
+    }
+
+    .traffic-report-pager button:disabled {
+        opacity: .38;
+        cursor: not-allowed;
+    }
+</style>
+
 @section Scripts {
     <script>
         var lastRows = [];
-        var csvColumns = [
-            { t: 'نام', g: function (r) { return r.personName || ''; } },
-            { t: 'کد عضویت', g: function (r) { return r.memberCode || ''; } },
-            { t: 'تاریخ ورود', g: function (r) { return r.entryDate || ''; } },
-            { t: 'ساعت ورود', g: function (r) { return r.entryTime || ''; } },
-            { t: 'تاریخ خروج', g: function (r) { return r.exitDate || ''; } },
-            { t: 'ساعت خروج', g: function (r) { return r.exitTime || ''; } },
-            { t: 'کمد', g: function (r) { return r.BoxID || ''; } },
-            { t: 'نوع', g: function (r) { return r.isGuest ? 'مهمان' : 'ورزشکار'; } },
-            { t: 'توضیحات', g: function (r) { return r.entryDesc || ''; } }
-        ];
+        var lastSummary = null;
+        var reportPage = 1;
+        var reportPageSize = 50;
+        var searchTimer = null;
 
-        $('#btnSearch').click(function () {
+        function reportQuery(includePaging) {
+            var parts = [];
             var from = $.trim($('#fromDate').val());
             var to = $.trim($('#toDate').val());
-            if (from && to && from > to) { showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error'); return; }
-            var qs = '?';
-            if (from) qs += 'from=' + encodeURIComponent(from) + '&';
-            if (to) qs += 'to=' + encodeURIComponent(to) + '&';
-            apiCall('/api/Admin/TrafficReport' + qs, 'GET', null, function (res) {
-                if (res.success) renderList(res.data || [], res.summary);
+            var search = $.trim($('#searchInput').val());
+            var sort = $('#sortKey').val() || '';
+            var direction = $('#sortDir').attr('data-dir') || 'desc';
+
+            if (from) parts.push('from=' + encodeURIComponent(from));
+            if (to) parts.push('to=' + encodeURIComponent(to));
+            if (search) parts.push('search=' + encodeURIComponent(search));
+            if (sort) parts.push('sort=' + encodeURIComponent(sort));
+            if (direction) parts.push('direction=' + encodeURIComponent(direction));
+            if (includePaging) {
+                parts.push('page=' + reportPage);
+                parts.push('pageSize=' + reportPageSize);
+            }
+            return parts.length ? '?' + parts.join('&') : '';
+        }
+
+        function renderPager(meta) {
+            var totalPages = Number(meta && meta.totalPages || 0);
+            if (totalPages <= 1) {
+                $('#trafficPager').hide();
+                return;
+            }
+
+            reportPage = Number(meta.page || 1);
+            $('#trafficPagerLabel').text('صفحه ' + faNum(reportPage) + ' از ' + faNum(totalPages));
+            $('#btnTrafficPrev').prop('disabled', !meta.hasPrevious);
+            $('#btnTrafficNext').prop('disabled', !meta.hasNext);
+            $('#trafficPager').css('display', 'flex');
+        }
+
+        function loadReport(resetPage) {
+            if (resetPage) reportPage = 1;
+
+            var from = $.trim($('#fromDate').val());
+            var to = $.trim($('#toDate').val());
+            if (from && to && from > to) {
+                showToast('«از تاریخ» باید قبل از «تا تاریخ» باشد', 'error');
+                return;
+            }
+
+            var $list = $('#repList');
+            $list.show().html('<div class="text-center text-muted py-4"><span class="spinner-border spinner-border-sm"></span> در حال دریافت صفحه...</div>');
+            apiCall('/api/Admin/TrafficReport' + reportQuery(true), 'GET', null, function (res) {
+                if (!res || !res.success) return;
+                lastRows = res.data || [];
+                lastSummary = res.summary || null;
+                renderList(lastRows, lastSummary);
+                renderPager(res);
             });
+        }
+
+        $('#btnSearch').click(function () {
+            loadReport(true);
         });
 
         function renderList(rows, summary) {
@@ -95,8 +166,8 @@
                 $('#summaryCards').show();
             } else { $('#summaryCards').hide(); }
 
-            $('#rowCount').text(faNum(rows.length) + ' رکورد');
-            $('#searchInput').val('');
+            var totalCount = summary && summary.totalCount != null ? Number(summary.totalCount) : rows.length;
+            $('#rowCount').text(faNum(totalCount) + ' رکورد در نتیجهٔ فیلتر');
             var $box = $('#repList');
             if (!rows.length) { $box.html('<div class="text-center text-muted py-4">ترددی در این بازه یافت نشد.</div>'); return; }
 
@@ -129,27 +200,42 @@
             $c.find('.rep-details').slideToggle(200);
         });
 
-        $('#searchInput').on('keyup', function () {
-            var v = $(this).val().toLowerCase(); var n = 0;
-            $('.rep-card').each(function () {
-                var m = $(this).text().toLowerCase().indexOf(v) > -1;
-                $(this).toggle(m); if (m) n++;
-            });
-            $('#rowCount').text(faNum(n) + ' رکورد');
+        $('#searchInput').on('input', function () {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(function () { loadReport(true); }, 350);
+        });
+
+        $('#sortKey').on('change', function () {
+            loadReport(true);
+        });
+
+        $('#sortDir').on('click', function () {
+            var next = ($(this).attr('data-dir') || 'desc') === 'desc' ? 'asc' : 'desc';
+            $(this).attr('data-dir', next)
+                .find('i')
+                .attr('class', next === 'desc' ? 'bi bi-sort-down' : 'bi bi-sort-up');
+            loadReport(true);
+        });
+
+        $('#btnTrafficPrev').on('click', function () {
+            if (reportPage > 1) {
+                reportPage--;
+                loadReport(false);
+            }
+        });
+
+        $('#btnTrafficNext').on('click', function () {
+            reportPage++;
+            loadReport(false);
         });
 
         $('#btnExport').click(function () {
-            if (!lastRows.length) { showToast('ابتدا گزارش را نمایش دهید', 'warning'); return; }
-            var lines = [csvColumns.map(function (c) { return '"' + c.t + '"'; }).join(',')];
-            lastRows.forEach(function (r) {
-                lines.push(csvColumns.map(function (c) { return '"' + String(c.g(r)).replace(/"/g, '""') + '"'; }).join(','));
-            });
-            var blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
-            var link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = 'گزارش-ترددها.csv';
-            link.click();
-            URL.revokeObjectURL(link.href);
+            if (!lastSummary || Number(lastSummary.totalCount || 0) === 0) {
+                showToast('ابتدا گزارش را نمایش دهید', 'warning');
+                return;
+            }
+            showToast('خروجی کامل گزارش در حال آماده‌سازی است…', 'info');
+            window.location.href = '/api/Admin/TrafficReport/Export' + reportQuery(false);
         });
     </script>
 }

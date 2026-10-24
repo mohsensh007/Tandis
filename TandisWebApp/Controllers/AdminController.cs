@@ -175,11 +175,87 @@ namespace TandisWebApp.Controllers
         [AdminAuthorize]
         [HttpGet]
         [Route("api/Admin/TrafficReport")]
-        public async Task<IActionResult> TrafficReportApi(string? from, string? to)
+        public async Task<IActionResult> TrafficReportApi(
+            string? from,
+            string? to,
+            int page = 1,
+            int pageSize = 50,
+            string? search = null,
+            string? sort = null,
+            string? direction = "desc")
         {
-            var response = await _reports.GetTrafficReportAsync(AdminShiftID, from, to);
-            return Ok(new { success = true, data = response.Data, summary = response.Summary });
+            var response = await _reports.GetTrafficReportAsync(
+                AdminShiftID,
+                from,
+                to,
+                page,
+                pageSize,
+                search,
+                sort,
+                direction,
+                HttpContext.RequestAborted);
+
+            return Ok(new
+            {
+                success = true,
+                data = response.Data,
+                summary = response.Summary,
+                page = response.Page,
+                pageSize = response.PageSize,
+                totalPages = response.TotalPages,
+                hasPrevious = response.HasPrevious,
+                hasNext = response.HasNext
+            });
         }
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/TrafficReport/Export")]
+        public async Task<IActionResult> TrafficReportExportApi(
+            string? from,
+            string? to,
+            string? search = null,
+            string? sort = null,
+            string? direction = "desc")
+        {
+            Response.ContentType = "text/csv; charset=utf-8";
+            Response.Headers["Content-Disposition"] = "attachment; filename*=UTF-8''traffic-report.csv";
+
+            await Response.WriteAsync("\uFEFF");
+            await Response.WriteAsync(string.Join(",", new[]
+            {
+                Csv("نام"), Csv("کد عضویت"), Csv("تاریخ ورود"), Csv("ساعت ورود"),
+                Csv("تاریخ خروج"), Csv("ساعت خروج"), Csv("کمد"), Csv("نوع"), Csv("توضیحات")
+            }) + "\r\n");
+
+            await foreach (var row in _reports.StreamTrafficReportAsync(
+                AdminShiftID,
+                from,
+                to,
+                search,
+                sort,
+                direction,
+                HttpContext.RequestAborted))
+            {
+                await Response.WriteAsync(string.Join(",", new[]
+                {
+                    Csv(row.PersonName),
+                    Csv(row.MemberCode),
+                    Csv(row.EntryDate),
+                    Csv(row.EntryTime),
+                    Csv(row.ExitDate),
+                    Csv(row.ExitTime),
+                    Csv(row.BoxID?.ToString()),
+                    Csv(row.IsGuest == true ? "مهمان" : "ورزشکار"),
+                    Csv(row.EntryDesc)
+                }) + "\r\n");
+            }
+
+            return new EmptyResult();
+        }
+
+        private static string Csv(string? value)
+            => "\"" + (value ?? string.Empty).Replace("\"", "\"\"") + "\"";
 
         [AdminAuthorize]
         [HttpGet]

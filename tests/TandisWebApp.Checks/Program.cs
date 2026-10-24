@@ -78,6 +78,11 @@ var coachProgramService = File.ReadAllText(Path.Combine(root.FullName, "TandisWe
 var messageService = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Services/MessageService.cs"));
 var registerService = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Services/RegisterService.cs"));
 var accountController = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Controllers/AccountController.cs"));
+var adminReportService = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Services/AdminReportService.cs"));
+var adminController = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Controllers/AdminController.cs"));
+var trafficReportView = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Views/Admin/TrafficReport.cshtml"));
+var imageRoot = Path.Combine(root.FullName, "TandisWebApp/wwwroot/images");
+var appProgram = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Program.cs"));
 Check(athleteController.Contains("var traffic = await _athlete.GetVisitsAsync(memberID, 120);") &&
       athleteController.Contains("GetTodayVisitAsync(memberID, traffic)") &&
       athleteController.Contains("GetStatsAsync(") && athleteController.Contains("traffic);"),
@@ -95,6 +100,23 @@ Check(registerService.Contains("GroupBy(t => t.SportMemberID") &&
       "active session counts use one grouped traffic query");
 Check(accountController.Contains("GetAllMemberMessagesAsync(memberID, roleID)"),
       "member messages API does not inherit the bounded layout preview");
+Check(adminReportService.Contains("var daysFromSaturday = ((int)today.DayOfWeek + 1) % 7;") &&
+      adminReportService.Contains("prevTo = prevFrom.AddDays(daysFromSaturday);") &&
+      adminReportService.Contains("var currentMonth = pc.GetMonth(today);") &&
+      adminReportService.Contains("var previousDay = Math.Min(currentDay, pc.GetDaysInMonth(previousYear, previousMonth));"),
+      "admin week and month comparisons use Saturday-to-today and first-to-current-day ranges");
+Check(adminReportService.Contains("TrafficReportDefaultPageSize") &&
+      adminReportService.Contains("Skip((page - 1) * pageSize)") &&
+      adminReportService.Contains("StreamTrafficReportAsync") &&
+      adminController.Contains("api/Admin/TrafficReport/Export"),
+      "admin traffic report pages results and streams full export separately");
+Check(File.Exists(Path.Combine(imageRoot, "app-icon-180.png")) &&
+      File.Exists(Path.Combine(imageRoot, "app-icon-192.png")) &&
+      File.Exists(Path.Combine(imageRoot, "app-icon-512.png")),
+      "responsive transparent PWA icon assets are present");
+Check(appProgram.Contains("Request.Path.Equals(\"/sw.js\", StringComparison.OrdinalIgnoreCase)") &&
+      appProgram.Contains("no-cache, no-store, must-revalidate"),
+      "service-worker updates bypass the long-lived static asset cache");
 
 // Cross-platform UI behavior runner: Node on Linux, built-in JScript on Windows.
 var jsRunner = OperatingSystem.IsWindows() ? "cscript.exe" : "node";

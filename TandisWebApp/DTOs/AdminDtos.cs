@@ -208,6 +208,18 @@ namespace TandisWebApp.DTOs
         public TSummary Summary { get; set; } = default!;
     }
 
+    /// <summary>پاسخ مشترک گزارش‌های صفحه‌بندی‌شده</summary>
+    public class PagedAdminReportResponse<TRow, TSummary>
+    {
+        public List<TRow> Data { get; set; } = new();
+        public TSummary Summary { get; set; } = default!;
+        public int Page { get; set; }
+        public int PageSize { get; set; }
+        public int TotalPages { get; set; }
+        public bool HasPrevious => Page > 1;
+        public bool HasNext => Page < TotalPages;
+    }
+
 
     // ============================================================
     //  داشبورد مدیریت

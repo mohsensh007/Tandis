@@ -6,6 +6,13 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     window.__SITE_FUNCTIONS_LOADED__ = true; // ✅ اگه فایل قدیمی site-functions هم لود شد، غیرفعال بشه
     window.__SITE_JS_VERSION__ = "5.0.0-unified";
 
+    // ثبت Service Worker برای فعال‌شدن نصب PWA در Chrome/Android.
+    // درخواست‌های API و صفحات احراز هویت در خود Service Worker cache نمی‌شوند.
+    function registerTandisPwa() {
+        if (!('serviceWorker' in navigator)) return;
+        navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () { });
+    }
+
     // ===== ✅ تزریق پوسته توست (یک‌بار در هر صفحه) =====
     if (typeof window.__TOAST_SKIN__ === 'undefined') {
         window.__TOAST_SKIN__ = true;
@@ -341,6 +348,7 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     document.addEventListener('DOMContentLoaded', function () {
         hideLoading();
         startFaDisplay();
+        registerTandisPwa();
 
         if (!window.location.pathname.includes('login') &&
             !window.location.pathname.includes('register')) {

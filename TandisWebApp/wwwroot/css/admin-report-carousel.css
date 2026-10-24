@@ -1,0 +1,236 @@
+/* Same mobile-first 3D navigator used by the member home panel. */
+.admin-report-carousel,
+.admin-report-all-trigger,
+.admin-report-all-overlay {
+    display: none;
+}
+
+@media (max-width: 767.98px) {
+    .admin-report-carousel {
+        display: block;
+        position: relative;
+        min-width: 0;
+        margin: 0 0 10px;
+        touch-action: pan-y;
+    }
+
+    .admin-report-stage {
+        position: relative;
+        height: 200px;
+        perspective: 900px;
+        overflow: hidden;
+        touch-action: pan-y;
+    }
+
+    .admin-report-slide {
+        --report-card-size: min(150px, 44vw);
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: var(--report-card-size);
+        height: var(--report-card-size);
+        margin: calc(var(--report-card-size) / -2) 0 0 calc(var(--report-card-size) / -2);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        border: 1px solid rgba(255,255,255,.18);
+        border-radius: 18px;
+        background: linear-gradient(145deg, rgba(50,57,82,.7), rgba(36,42,67,.7));
+        color: #fff;
+        text-decoration: none;
+        text-shadow: 0 1px 3px rgba(0,0,0,.55);
+        transition: transform .55s cubic-bezier(.22,.9,.35,1.1), opacity .45s;
+        transform-style: preserve-3d;
+        box-shadow: 0 10px 30px rgba(0,0,0,.35);
+        overflow: hidden;
+    }
+
+    .admin-report-slide.is-active {
+        background: linear-gradient(145deg, rgba(13,110,253,.72), rgba(111,66,193,.68));
+        border-color: rgba(255,255,255,.35);
+        box-shadow: 0 16px 40px rgba(13,110,253,.35);
+    }
+
+    .admin-report-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 1em;
+        font-size: clamp(2rem, 9vw, 2.6rem);
+        line-height: 1;
+    }
+
+    .admin-report-title {
+        max-width: calc(100% - 16px);
+        font-size: clamp(.78rem, 3.2vw, .95rem);
+        font-weight: 700;
+        text-align: center;
+        line-height: 1.45;
+    }
+
+    .admin-report-label {
+        min-height: 1.6em;
+        margin-top: 8px;
+        color: #dce9ff;
+        font-size: .88rem;
+        font-weight: 800;
+        text-align: center;
+    }
+
+    .admin-report-dots {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        min-height: 24px;
+        margin-top: 4px;
+    }
+
+    .admin-report-dot {
+        width: 8px;
+        height: 8px;
+        padding: 0;
+        border: 0;
+        border-radius: 999px;
+        background: rgba(255,255,255,.25);
+        transition: width .22s ease, background-color .22s ease, transform .22s ease;
+    }
+
+    .admin-report-dot.is-active {
+        width: 24px;
+        background: linear-gradient(90deg, #66d3e8, #667eea);
+        transform: scaleY(1.08);
+    }
+
+    .admin-report-all-trigger {
+        display: block;
+        margin: 0 0 14px;
+        text-align: center;
+    }
+
+    .admin-reports-grid {
+        display: none !important;
+    }
+
+    .btn-all-reports {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: 1px solid rgba(102,211,232,.34);
+        border-radius: 999px;
+        background: rgba(102,211,232,.10);
+        color: #dce9ff;
+        font-weight: 800;
+        box-shadow: 0 8px 22px rgba(0,0,0,.14);
+    }
+
+    .admin-report-all-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 2050;
+        align-items: flex-end;
+        justify-content: center;
+        background: rgba(5,10,24,.66);
+        opacity: 0;
+        transition: opacity .22s ease;
+    }
+
+    .admin-report-all-overlay:not([hidden]) {
+        display: flex;
+    }
+
+    .admin-report-all-overlay.is-open {
+        opacity: 1;
+    }
+
+    .admin-report-all-backdrop {
+        position: absolute;
+        inset: 0;
+    }
+
+    .admin-report-all-panel {
+        position: relative;
+        width: min(100%, 680px);
+        max-height: min(86vh, 760px);
+        overflow: auto;
+        padding: 16px;
+        border: 1px solid rgba(255,255,255,.14);
+        border-radius: 24px 24px 0 0;
+        background: linear-gradient(160deg, #18233f, #10172b);
+        box-shadow: 0 -18px 46px rgba(0,0,0,.38);
+        transform: translateY(22px);
+        transition: transform .25s ease;
+    }
+
+    .admin-report-all-overlay.is-open .admin-report-all-panel {
+        transform: translateY(0);
+    }
+
+    .admin-report-all-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
+        color: #fff;
+    }
+
+    .admin-report-all-close {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border: 1px solid rgba(255,255,255,.16);
+        border-radius: 12px;
+        background: rgba(255,255,255,.08);
+        color: #fff;
+    }
+
+    .admin-report-all-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .admin-report-all-grid .admin-report-link {
+        min-width: 0;
+    }
+
+    .admin-report-all-grid .report-card {
+        min-height: 154px;
+        padding: 15px 13px;
+        border-radius: 16px;
+    }
+
+    .admin-report-all-grid .rc-icon {
+        width: 42px;
+        height: 42px;
+        margin-bottom: 10px;
+        font-size: 1.2rem;
+    }
+
+    .admin-report-all-grid .rc-title {
+        font-size: .88rem;
+    }
+
+    .admin-report-all-grid .rc-desc {
+        font-size: .70rem;
+    }
+
+    body.admin-report-modal-open {
+        overflow: hidden;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .admin-report-slide,
+    .admin-report-dot,
+    .admin-report-all-overlay,
+    .admin-report-all-panel {
+        animation: none !important;
+        transition: none !important;
+    }
+}

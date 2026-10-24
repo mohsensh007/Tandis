@@ -149,7 +149,7 @@
     while ((matches = iconPattern.exec(view))) if (icons.indexOf('.' + matches[1] + '::before') < 0) missing.push(matches[1]);
     check(missing.length === 0, 'all body-analysis icons exist in the bundled font: ' + missing.join(','));
     // Parse modified shared scripts too. Quoted catch is equivalent syntax for the ES3 Windows parser.
-    ['payment.js', 'member-messages.js', 'home.js'].forEach(function (name) {
+    ['payment.js', 'member-messages.js', 'home.js', 'admin-report-carousel.js'].forEach(function (name) {
         var script = read('TandisWebApp/wwwroot/js/' + name);
         if (windows) script = script.replace(/\.catch\s*\(/g, '["catch"](');
         new Function(script);
@@ -171,6 +171,42 @@
     var adminLayout = read('TandisWebApp/Views/Shared/_AdminLayout.cshtml');
     var adminResponsive = read('TandisWebApp/wwwroot/css/admin-responsive.css');
     var adminMotion = read('TandisWebApp/wwwroot/js/admin-motion.js');
+    var manifest = read('TandisWebApp/wwwroot/manifest.json');
+    var adminReports = read('TandisWebApp/Views/Admin/Reports.cshtml');
+    var adminReportCarouselCss = read('TandisWebApp/wwwroot/css/admin-report-carousel.css');
+    var adminReportCarouselJs = read('TandisWebApp/wwwroot/js/admin-report-carousel.js');
+    var trafficReport = read('TandisWebApp/Views/Admin/TrafficReport.cshtml');
+    check(manifest.indexOf('app-icon-192.png') >= 0 && manifest.indexOf('app-icon-512.png') >= 0 &&
+          manifest.indexOf('"purpose": "any"') >= 0 && manifest.indexOf('maskable') < 0 &&
+          adminLayout.indexOf('apple-touch-icon" sizes="180x180"') >= 0 &&
+          adminLayout.indexOf('rel="icon" type="image/png" sizes="192x192"') >= 0,
+          'PWA uses transparent any-purpose icons with responsive home-screen metadata');
+    check(adminReports.indexOf('id="adminReportCarousel"') >= 0 &&
+          adminReports.indexOf('id="adminReportAllOverlay"') >= 0 &&
+          adminReports.indexOf('admin-report-carousel.css') >= 0 &&
+          adminReports.indexOf('admin-report-carousel.js') >= 0 &&
+          adminReports.indexOf('grid-template-columns: repeat(2, minmax(0, 1fr))') >= 0 &&
+          adminReportCarouselCss.indexOf('@media (max-width: 767.98px)') >= 0 &&
+          adminReportCarouselCss.indexOf('admin-report-all-grid') >= 0 &&
+          adminReportCarouselCss.indexOf('prefers-reduced-motion: reduce') >= 0 &&
+          adminReportCarouselCss.indexOf('perspective: 900px') >= 0 &&
+          adminReportCarouselJs.indexOf('touchstart') >= 0 && adminReportCarouselJs.indexOf('openAllReports') >= 0 &&
+          adminReportCarouselJs.indexOf('translateZ(-140px)') >= 0 &&
+           adminReportCarouselJs.indexOf('if (dx < 0) previous();') >= 0,
+           'admin reports match the member 3D navigator and keep a show-all action below');
+    check(trafficReport.indexOf('id="trafficPager"') >= 0 &&
+          trafficReport.indexOf("pageSize=' + reportPageSize") >= 0 &&
+          trafficReport.indexOf("/api/Admin/TrafficReport/Export") >= 0 &&
+          trafficReport.indexOf("search=' + encodeURIComponent(search)") >= 0,
+          'traffic report uses server pagination, server search and a separate full export');
+    var siteJs = read('TandisWebApp/wwwroot/js/site.js');
+    var sw = read('TandisWebApp/wwwroot/sw.js');
+    check(siteJs.indexOf("navigator.serviceWorker.register('/sw.js'") >= 0 &&
+          sw.indexOf('self.addEventListener(\'install\'') >= 0 &&
+          sw.indexOf("request.mode === 'navigate'") >= 0 &&
+          sw.indexOf("caches.match('/offline.html')") >= 0 &&
+          read('TandisWebApp/wwwroot/offline.html').indexOf('app-icon-192.png') >= 0,
+          'PWA registers a same-origin service worker with offline navigation fallback');
     check(adminLayout.indexOf('admin-responsive.css') >= 0 && adminLayout.indexOf('data-admin-shell') >= 0 && adminLayout.indexOf('admin-motion.js') >= 0, 'admin layout loads the shared mobile and motion layer');
     check(adminResponsive.indexOf('table-responsive') >= 0 && adminResponsive.indexOf('rep-card') >= 0 && adminResponsive.indexOf('prefers-reduced-motion: reduce') >= 0, 'admin responsive layer covers reports, tables and reduced motion');
     check(adminMotion.indexOf('IntersectionObserver') >= 0 && adminMotion.indexOf('prefers-reduced-motion') >= 0 && adminMotion.indexOf('MutationObserver') >= 0, 'admin motion layer reveals static and dynamic cards accessibly');
@@ -226,6 +262,9 @@
     check(coachLayout.indexOf('js-logout') >= 0 && coachLayout.indexOf('id="coachLogoutModal"') >= 0 && coachLayout.indexOf('data-bs-dismiss="modal"') >= 0 && coachLayout.indexOf('btnConfirmCoachLogout') >= 0 && coachLayout.indexOf('getOrCreateInstance') >= 0, 'coach logout uses the same cancel/confirm modal flow as admin');
     check(memberLayout.indexOf('js-logout') >= 0 && memberLayout.indexOf('id="logoutConfirmModal"') >= 0 && memberLayout.indexOf('data-bs-dismiss="modal"') >= 0 && memberLayout.indexOf('btnConfirmMemberLogout') >= 0 && memberLayout.indexOf('getOrCreateInstance') >= 0, 'member logout uses the same cancel/confirm modal flow as admin');
     var login = read('TandisWebApp/Views/Account/Login.cshtml');
-    check(login.indexOf('limitNationalCodeInput') >= 0 && login.indexOf('slice(0, 10)') >= 0 && login.indexOf('inputmode="numeric"') >= 0, 'login limits numeric national-code input to ten digits');
+    check(login.indexOf('limitNationalCodeInput') >= 0 && login.indexOf('slice(0, 10)') >= 0 &&
+          login.indexOf('inputmode="text"') >= 0 && login.indexOf('autocomplete="username"') >= 0 &&
+          login.indexOf('autocapitalize="none"') >= 0,
+          'login accepts alphabetic admin usernames while still limiting numeric national codes');
     log('Completed ' + count + ' JavaScript/UI checks (mock DOM, not visual or database integration).');
 })();
