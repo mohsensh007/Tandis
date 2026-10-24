@@ -1,38 +1,36 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Timers;
 using TandisWebApp.Data;
 using TandisWebApp.DTOs;
 using TandisWebApp.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace TandisWebApp.Services
 {
     public class MessageService
     {
         private readonly FullSportDbContext _db;
+        private const int MemberMessagePreviewLimit = 3;
+
         public MessageService(FullSportDbContext db) { _db = db; }
 
         // ========== سمت عضو ==========
         // ========== لیست رشته‌های ورزشی فعال عضو ==========
-        private async Task<List<int>> GetMemberSportCatsAsync(int memberID)
+        private IQueryable<int> GetMemberSportCatsQuery(int memberID)
         {
-            return await _db.Acc_MemberSports
+            return _db.Acc_MemberSports
+                .AsNoTracking()
                 .Where(a => a.MemberID == memberID
                          && a.IsActive == true
                          && a.Gen_SportSanse != null
                          && a.Gen_SportSanse.SportCatID != null)
                 .Select(a => a.Gen_SportSanse!.SportCatID!.Value)
-                .Distinct()
-                .ToListAsync();
+                .Distinct();
         }
 
-        public async Task<List<MemberMessageRowDto>> GetMemberMessagesAsync(int memberID, int roleID)
+        private IQueryable<Msg_Message> GetMemberVisibleMessagesQuery(int memberID, int roleID)
         {
-            var mySports = await GetMemberSportCatsAsync(memberID);
-            var readIds = await _db.MsgReads.Where(r => r.MemberID == memberID)
-                .Select(r => r.MessageID).ToListAsync();
-
-            var msgs = await _db.MsgMessages
+            var mySports = GetMemberSportCatsQuery(memberID);
+            return _db.MsgMessages
+                .AsNoTracking()
                 .Where(m => m.IsActive && (
                     (m.TargetType == 0 && m.SenderMemberID == memberID) ||        // ارسالی به مدیریت
                     m.TargetType == 1 ||
@@ -40,58 +38,117 @@ namespace TandisWebApp.Services
                     (m.TargetType == 3 && m.TargetSportCatID != null && mySports.Contains(m.TargetSportCatID.Value)) ||
                     (m.TargetType == 4 && m.TargetMemberID == memberID) ||        // دریافتی (از مدیر یا مربی)
                     (m.TargetType == 4 && m.SenderMemberID == memberID)))         // ✅ جدید: ارسالی به مربی
+                ;
+        }
+
+        private IQueryable<Msg_Message> GetMemberUnreadCandidatesQuery(int memberID, int roleID)
+        {
+            return GetMemberVisibleMessagesQuery(memberID, roleID)
+                .Where(m => m.TargetType != 0 && (
+                    m.TargetType == 1 ||
+                    (m.TargetType == 2 && m.TargetRoleID == roleID) ||
+                    (m.TargetType == 3 && m.TargetSportCatID != null) ||
+                    (m.TargetType == 4 && m.TargetMemberID == memberID)));
+        }
+
+        private IQueryable<Msg_Message> GetMemberUnreadPreviewQuery(int memberID, int roleID)
+        {
+            return GetMemberUnreadCandidatesQuery(memberID, roleID)
+                .Where(m => (m.SenderMemberID == null || m.SenderMemberID != memberID)
+                            && !_db.MsgReads.Any(r => r.MemberID == memberID && r.MessageID == m.MessageID));
+        }
+
+        private sealed class MemberMessageProjection
+        {
+            public long MessageID { get; set; }
+            public bool IsOut { get; set; }
+            public string? Title { get; set; }
+            public string Body { get; set; } = string.Empty;
+            public string? CreationDate { get; set; }
+            public string? CreationTime { get; set; }
+            public bool IsRead { get; set; }
+            public int? PeerMemberID { get; set; }
+        }
+
+        private async Task<List<MemberMessageRowDto>> MaterializeMemberMessagesAsync(
+            IQueryable<Msg_Message> query,
+            int memberID,
+            int? take)
+        {
+            var rowsQuery = query
                 .OrderByDescending(m => m.CreationDateTime)
-                .ToListAsync();
+                .Select(m => new MemberMessageProjection
+                {
+                    MessageID = m.MessageID,
+                    IsOut = m.TargetType == 0 || m.SenderMemberID == memberID,
+                    Title = m.Title,
+                    Body = m.Body,
+                    CreationDate = m.CreationDate,
+                    CreationTime = m.CreationTime,
+                    IsRead = m.TargetType == 0
+                              || m.SenderMemberID == memberID
+                              || _db.MsgReads.Any(r => r.MemberID == memberID && r.MessageID == m.MessageID),
+                    PeerMemberID = m.TargetType == 4
+                        ? (m.SenderMemberID == memberID ? m.TargetMemberID : m.SenderMemberID)
+                        : null
+                });
+
+            if (take.HasValue)
+                rowsQuery = rowsQuery.Take(Math.Max(0, take.Value));
+
+            var msgs = await rowsQuery.ToListAsync();
 
             // ✅ نام طرف مقابل (مربی) برای پیام‌های گفتگوی خصوصی
             var peerIds = msgs
-                .Where(m => m.TargetType == 4)
-                .Select(m => m.SenderMemberID == memberID ? m.TargetMemberID : m.SenderMemberID)
-                .Where(x => x != null)
-                .Select(x => x!.Value)
-                .Distinct().ToList();
+                .Where(m => m.PeerMemberID != null)
+                .Select(m => m.PeerMemberID!.Value)
+                .Distinct()
+                .ToList();
 
             var peerNames = peerIds.Count == 0
                 ? new Dictionary<int, string>()
-                : await (from gm in _db.Gen_Members
-                         join gp in _db.Gen_Persons on gm.PersonID equals gp.PersonID
+                : await (from gm in _db.Gen_Members.AsNoTracking()
+                         join gp in _db.Gen_Persons.AsNoTracking() on gm.PersonID equals gp.PersonID
                          where peerIds.Contains(gm.MemberID)
                          select new { gm.MemberID, gp.FullName })
                     .ToDictionaryAsync(x => x.MemberID, x => x.FullName ?? "");
 
             return msgs.Select(m =>
             {
-                var isOut = m.TargetType == 0 || m.SenderMemberID == memberID;
-                int? peerId = m.TargetType == 4
-                    ? (m.SenderMemberID == memberID ? m.TargetMemberID : m.SenderMemberID)
-                    : null;
-
                 return new MemberMessageRowDto
                 {
                     MessageID = m.MessageID,
-                    Direction = isOut ? "out" : "in",
+                    Direction = m.IsOut ? "out" : "in",
                     Title = m.Title,
                     Body = m.Body,
                     CreationDate = m.CreationDate,
                     CreationTime = m.CreationTime,
-                    IsRead = isOut ? true : readIds.Contains(m.MessageID),
-                    PeerMemberID = peerId,
-                    PeerName = peerId != null && peerNames.TryGetValue(peerId.Value, out var pn) ? pn : null
+                    IsRead = m.IsRead,
+                    PeerMemberID = m.PeerMemberID,
+                    PeerName = m.PeerMemberID != null && peerNames.TryGetValue(m.PeerMemberID.Value, out var pn) ? pn : null
                 };
             }).ToList();
         }
 
+        /// <summary>پیش‌نمایش پیام‌های عضو برای layout مشترک: فقط سه پیام ورودیِ خوانده‌نشده.</summary>
+        public Task<List<MemberMessageRowDto>> GetMemberMessagesAsync(int memberID, int roleID)
+            => MaterializeMemberMessagesAsync(
+                GetMemberUnreadPreviewQuery(memberID, roleID),
+                memberID,
+                MemberMessagePreviewLimit);
+
+        /// <summary>تمام پیام‌های قابل مشاهده عضو برای صفحه پیام‌ها/API.</summary>
+        public Task<List<MemberMessageRowDto>> GetAllMemberMessagesAsync(int memberID, int roleID)
+            => MaterializeMemberMessagesAsync(
+                GetMemberVisibleMessagesQuery(memberID, roleID),
+                memberID,
+                take: null);
+
         public async Task<int> GetMemberUnreadCountAsync(int memberID, int roleID)
         {
-            var mySports = await GetMemberSportCatsAsync(memberID);
-            var readIds = await _db.MsgReads.Where(r => r.MemberID == memberID)
-                                            .Select(r => r.MessageID).ToListAsync();
-            return await _db.MsgMessages.CountAsync(m => m.IsActive && m.TargetType != 0 && (
-                m.TargetType == 1 ||
-                (m.TargetType == 2 && m.TargetRoleID == roleID) ||
-                (m.TargetType == 3 && m.TargetSportCatID != null && mySports.Contains(m.TargetSportCatID.Value)) ||
-                (m.TargetType == 4 && m.TargetMemberID == memberID)) &&
-                !readIds.Contains(m.MessageID));
+            return await GetMemberUnreadCandidatesQuery(memberID, roleID)
+                .Where(m => !_db.MsgReads.Any(r => r.MemberID == memberID && r.MessageID == m.MessageID))
+                .CountAsync();
         }
 
         public async Task MarkReadAsync(long messageID, int memberID)

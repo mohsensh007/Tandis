@@ -149,13 +149,25 @@
     while ((matches = iconPattern.exec(view))) if (icons.indexOf('.' + matches[1] + '::before') < 0) missing.push(matches[1]);
     check(missing.length === 0, 'all body-analysis icons exist in the bundled font: ' + missing.join(','));
     // Parse modified shared scripts too. Quoted catch is equivalent syntax for the ES3 Windows parser.
-    ['payment.js', 'member-messages.js'].forEach(function (name) {
+    ['payment.js', 'member-messages.js', 'home.js'].forEach(function (name) {
         var script = read('TandisWebApp/wwwroot/js/' + name);
         if (windows) script = script.replace(/\.catch\s*\(/g, '["catch"](');
         new Function(script);
     });
     var report = read('TandisWebApp/Views/Home/Reports.cshtml');
     check(report.indexOf('member-reports.css') >= 0 && read('TandisWebApp/wwwroot/css/member-reports.css').indexOf('tr.finance-record') >= 0, 'mobile financial rows share desktop data/pager hooks');
+    var homeView = read('TandisWebApp/Views/Home/Index.cshtml');
+    var homeJs = read('TandisWebApp/wwwroot/js/home.js');
+    var activeSansesMarker = "apiCall('/api/Register/ActiveSanses'", activeSansesCalls = 0, activeSansesAt = 0;
+    while ((activeSansesAt = homeJs.indexOf(activeSansesMarker, activeSansesAt)) >= 0) {
+        activeSansesCalls++;
+        activeSansesAt += activeSansesMarker.length;
+    }
+    check(homeView.indexOf('<script src="~/js/home.js" asp-append-version="true"></script>') >= 0 &&
+          homeView.indexOf('var faDigits') < 0 && homeJs.indexOf('function loadDashboardData') >= 0,
+          'home dashboard behavior is extracted to the versioned external script');
+    check(homeView.indexOf(activeSansesMarker) < 0 && activeSansesCalls === 1,
+          'home dashboard keeps one active-sanses request in home.js');
     var adminLayout = read('TandisWebApp/Views/Shared/_AdminLayout.cshtml');
     var adminResponsive = read('TandisWebApp/wwwroot/css/admin-responsive.css');
     var adminMotion = read('TandisWebApp/wwwroot/js/admin-motion.js');
@@ -190,6 +202,27 @@
     check(coachLayout.indexOf('coach-panel.css') >= 0 && coachLayout.indexOf('coach-panel.js') >= 0 && coachCss.indexOf('coach-glass-body') >= 0, 'coach panel loads the shared mobile-first theme layer');
     check(coachCss.indexOf('prefers-reduced-motion: reduce') >= 0 && coachJs.indexOf('coach-motion-item') >= 0, 'coach panel has reduced-motion-safe entry motion');
     var memberLayout = read('TandisWebApp/Views/Shared/_Layout.cshtml');
+    var loginLayout = read('TandisWebApp/Views/Shared/_LoginLayout.cshtml');
+    var mobilePerformanceCss = read('TandisWebApp/wwwroot/css/mobile-performance.css');
+    check(memberLayout.indexOf('currentPath == "/home/reports"') >= 0 && memberLayout.indexOf('currentPath == "/register/renew"') >= 0 &&
+          memberLayout.indexOf('if (loadReportPager)') >= 0 && memberLayout.indexOf('if (loadPayment)') >= 0 &&
+          adminLayout.indexOf('currentPath == "/admin/messages"') >= 0 && adminLayout.indexOf('if (loadReportPager)') >= 0 &&
+          coachLayout.indexOf('currentPath.StartsWith("/coach/programedit")') >= 0 && coachLayout.indexOf('if (loadJalaliCalendar)') >= 0,
+          'member, coach and admin page-specific scripts are route-gated');
+    check(memberLayout.indexOf('~/css/mobile-performance.css') >= 0 &&
+          coachLayout.indexOf('~/css/mobile-performance.css') >= 0 &&
+          adminLayout.indexOf('~/css/mobile-performance.css') >= 0 &&
+          loginLayout.indexOf('~/css/mobile-performance.css') >= 0 &&
+          mobilePerformanceCss.indexOf('@media (max-width: 767.98px)') >= 0 &&
+          mobilePerformanceCss.indexOf('backdrop-filter: none') >= 0 &&
+          mobilePerformanceCss.indexOf('animation-duration') >= 0,
+          'shared mobile performance layer is loaded by all layouts and scopes expensive effects');
+    check(memberLayout.indexOf('width="38" height="38" decoding="async"') >= 0 &&
+          coachLayout.indexOf('width="34" height="34" decoding="async"') >= 0 &&
+          adminLayout.indexOf('width="34" height="34" decoding="async"') >= 0 &&
+          loginLayout.indexOf('width="120" height="120" decoding="async"') >= 0 &&
+          loginLayout.indexOf('width="40" height="40" decoding="async"') >= 0,
+          'shared square logo images declare intrinsic dimensions and async decoding');
     check(coachLayout.indexOf('js-logout') >= 0 && coachLayout.indexOf('id="coachLogoutModal"') >= 0 && coachLayout.indexOf('data-bs-dismiss="modal"') >= 0 && coachLayout.indexOf('btnConfirmCoachLogout') >= 0 && coachLayout.indexOf('getOrCreateInstance') >= 0, 'coach logout uses the same cancel/confirm modal flow as admin');
     check(memberLayout.indexOf('js-logout') >= 0 && memberLayout.indexOf('id="logoutConfirmModal"') >= 0 && memberLayout.indexOf('data-bs-dismiss="modal"') >= 0 && memberLayout.indexOf('btnConfirmMemberLogout') >= 0 && memberLayout.indexOf('getOrCreateInstance') >= 0, 'member logout uses the same cancel/confirm modal flow as admin');
     var login = read('TandisWebApp/Views/Account/Login.cshtml');

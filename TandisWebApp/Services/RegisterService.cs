@@ -85,7 +85,7 @@ namespace TandisWebApp.Services
 
             // ثبت‌نام‌های قبلی این عضو
             var lastRegs = await (
-                from ms in _db.Acc_MemberSports
+                from ms in _db.Acc_MemberSports.AsNoTracking()
                 where ms.MemberID == memberID
                 orderby ms.SportMemberID descending
                 select ms
@@ -469,7 +469,7 @@ VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.Contrac
         public async Task<List<RegisterHistoryDto>> GetRegisterHistoryAsync(int memberID)
         {
             var list = await (
-                from ms in _db.Acc_MemberSports
+                from ms in _db.Acc_MemberSports.AsNoTracking()
                 where ms.MemberID == memberID
                 orderby ms.SportMemberID descending
                 select new RegisterHistoryDto
@@ -501,7 +501,7 @@ VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.Contrac
         public async Task<List<ActiveSanseDto>> GetActiveSansesAsync(int memberID)
         {
             var raw = await (
-                from ms in _db.Acc_MemberSports
+                from ms in _db.Acc_MemberSports.AsNoTracking()
                 where ms.MemberID == memberID && ms.IsActive == true
                 orderby ms.SportMemberID descending
                 select new
@@ -520,12 +520,29 @@ VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.Contrac
                 }
             ).ToListAsync();
 
+            var sportMemberIds = raw
+                .Select(s => s.SportMemberID)
+                .Distinct()
+                .ToList();
+
+            var trafficCounts = sportMemberIds.Count == 0
+                ? new Dictionary<long, int>()
+                : await _db.ACC_Traffics
+                    .AsNoTracking()
+                    .Where(t => t.MemberID == memberID
+                                && t.SportMemberID != null
+                                && sportMemberIds.Contains(t.SportMemberID.Value))
+                    .GroupBy(t => t.SportMemberID!.Value)
+                    .Select(g => new { SportMemberID = g.Key, Count = g.Count() })
+                    .ToDictionaryAsync(x => x.SportMemberID, x => x.Count);
+
             var result = new List<ActiveSanseDto>();
             foreach (var s in raw)
             {
                 // محاسبه جلسات مصرف شده از روی رکوردهای تردد (معادل فرمول VI_MemberSportsList)
-                int usedSessions = await _db.ACC_Traffics
-                    .CountAsync(t => t.MemberID == memberID && t.SportMemberID == s.SportMemberID);
+                int usedSessions = trafficCounts.TryGetValue(s.SportMemberID, out var count)
+                    ? count
+                    : 0;
 
                 int total = s.SessionCount;
                 int remaining = total - usedSessions;

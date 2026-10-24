@@ -119,15 +119,41 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
         if (!document.body) return;
         faify(document.body);
         if (typeof MutationObserver === 'undefined') return;
+
+        function compactRoots(roots) {
+            // وقتی چند تغییر در یک فریم رخ می‌دهد، ریشه‌های تکراری/تو‌در‌تو را یکی کن.
+            var compact = [];
+            for (var i = 0; i < roots.length; i++) {
+                var root = roots[i];
+                if (!root) continue;
+
+                var covered = false;
+                for (var j = 0; j < roots.length; j++) {
+                    if (i === j) continue;
+                    var possibleParent = roots[j];
+                    if (possibleParent && possibleParent.nodeType === 1 &&
+                        possibleParent.contains && possibleParent.contains(root)) {
+                        covered = true;
+                        break;
+                    }
+                }
+                if (!covered) compact.push(root);
+            }
+            return compact;
+        }
+
         new MutationObserver(function (mutations) {
+            var roots = [];
             for (var i = 0; i < mutations.length; i++) {
                 var m = mutations[i];
                 if (m.type === 'characterData') {
-                    faifyTextNode(m.target);
+                    roots.push(m.target);
                 } else if (m.type === 'childList') {
-                    for (var j = 0; j < m.addedNodes.length; j++) faify(m.addedNodes[j]);
+                    for (var j = 0; j < m.addedNodes.length; j++) roots.push(m.addedNodes[j]);
                 }
             }
+            var compact = compactRoots(roots);
+            for (var k = 0; k < compact.length; k++) faify(compact[k]);
         }).observe(document.body, { subtree: true, childList: true, characterData: true });
     }
 

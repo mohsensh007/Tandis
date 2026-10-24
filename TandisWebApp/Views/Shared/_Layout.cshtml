@@ -6,6 +6,15 @@
     try { clubName = await ProfileService.GetClubNameAsync(); } catch { }
     var isAuthenticated = HttpContextAccessor.HttpContext?.User?.Identity?.IsAuthenticated == true;
     var isCoach = HttpContextAccessor.HttpContext?.User?.FindFirst("RoleID")?.Value == "2";
+    var currentPath = (Context.Request.Path.Value ?? "").TrimEnd('/').ToLowerInvariant();
+    var loadJalaliCalendar = currentPath == "/register/renew" || Equals(ViewData["LoadJalaliCalendar"], true);
+    var loadReportPager = currentPath == "/home/reports" || Equals(ViewData["LoadReportPager"], true);
+    var loadPayment = currentPath == "/home" || currentPath == "/home/index"
+        || currentPath == "/ticket" || currentPath == "/ticket/index"
+        || currentPath == "/shop" || currentPath == "/shop/index"
+        || currentPath == "/shop/buffet" || currentPath == "/service"
+        || currentPath == "/service/index" || currentPath == "/register/renew"
+        || Equals(ViewData["LoadPaymentScript"], true);
     var unreadCount = 0;
     var msgPreview = new List<TandisWebApp.DTOs.MemberMessageRowDto>();
 
@@ -372,6 +381,7 @@
         }
     </style>
     <link rel="stylesheet" href="~/css/member-ui.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" />
 </head>
 <body class="admin-glass-body member-ui">
     @if (!isAuthenticated)
@@ -387,7 +397,7 @@
             <div class="container-fluid px-3">
                 <!-- ✅ لوگو + اسم باشگاه (شیشه‌ای + گرادیانت) -->
                 <a class="navbar-brand navbar-brand-club" href="@(isCoach ? "/Coach" : "/Home")">
-                    <img src="~/images/logo2.png" alt="" height="38" class="club-logo" asp-append-version="true" />
+                    <img src="~/images/logo2.png" alt="" width="38" height="38" decoding="async" class="club-logo" asp-append-version="true" />
                     <!-- ✅ ساعت دیجیتال + تاریخ (بین لوگو و اسم باشگاه) -->
                     <div class="header-clock">
                         <span class="hc-time" id="hdrTime">--:--:--</span>
@@ -613,10 +623,19 @@
 
         <script src="~/lib/jquery/dist/jquery.min.js" asp-append-version="true"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
-        <script src="~/js/jalali-calendar.js" asp-append-version="true"></script>
+        @if (loadJalaliCalendar)
+        {
+            <script src="~/js/jalali-calendar.js" asp-append-version="true"></script>
+        }
         <script src="~/js/site.js" asp-append-version="true"></script>
-        <script src="~/js/report-pager.js" asp-append-version="true"></script>
-        <script src="~/js/payment.js" asp-append-version="true"></script>
+        @if (loadReportPager)
+        {
+            <script src="~/js/report-pager.js" asp-append-version="true"></script>
+        }
+        @if (loadPayment)
+        {
+            <script src="~/js/payment.js" asp-append-version="true"></script>
+        }
         <script src="~/js/member-messages.js" asp-append-version="true"></script>
 
         <!-- ✅ نشانگر سُر‌خور نوار پایین -->

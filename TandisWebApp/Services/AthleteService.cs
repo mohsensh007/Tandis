@@ -26,10 +26,12 @@ namespace TandisWebApp.Services
         // ============================================================
 
         /// <summary>بازدیدِ امروز عضو از داده‌ی واقعی دستگاه تردد</summary>
-        public async Task<AthleteVisitDto?> GetTodayVisitAsync(int memberID)
+        public async Task<AthleteVisitDto?> GetTodayVisitAsync(
+            int memberID,
+            IReadOnlyList<AthleteVisitDto>? visits = null)
         {
             var today = _helper.GetToday(); // فرمت شمسی: 1405/07/18
-            var list = await GetVisitsAsync(memberID, 30);
+            var list = visits ?? await GetVisitsAsync(memberID, 30);
             return list.FirstOrDefault(v => NormDate(v.VisitDate) == today);
         }
 
@@ -109,9 +111,12 @@ namespace TandisWebApp.Services
         }
 
         /// <summary>آمار کارت وضعیت (هفته / ماه / روزهای پیاپی)</summary>
-        public async Task<AthleteStatsDto> GetStatsAsync(int memberID, int setsDoneToday)
+        public async Task<AthleteStatsDto> GetStatsAsync(
+            int memberID,
+            int setsDoneToday,
+            IReadOnlyList<AthleteVisitDto>? visits = null)
         {
-            var list = await QueryTrafficAsync(memberID, 120);
+            var list = visits ?? await QueryTrafficAsync(memberID, 120);
             var st = new AthleteStatsDto { SetsDoneToday = setsDoneToday };
 
             // برای محاسبه هفته/ماه، تاریخ شمسی رکورد را به میلادی تبدیل می‌کنیم

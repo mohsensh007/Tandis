@@ -475,37 +475,71 @@ namespace TandisWebApp.Services
                 select new { p.PrgID, p.StartDate, p.EndDate, Coach = (cp.FirstName + " " + cp.LastName) })
                 .ToListAsync();
 
+            if (heads.Count == 0)
+                return new List<MemberProgramDto>();
+
+            var programIds = heads.Select(h => h.PrgID).ToList();
+            var detailRows = await (
+                from d in _db.SportPrgDtls.AsNoTracking()
+                where d.PrgID != null && programIds.Contains(d.PrgID.Value)
+                join i in _db.Gen_PrgmItems on d.ItemID equals i.ItemID into ij
+                from i in ij.DefaultIfEmpty()
+                orderby d.PrgID, d.SortOrder, d.SportPrgDtlID
+                select new
+                {
+                    PrgID = d.PrgID ?? 0,
+                    ItemID = d.ItemID ?? 0,
+                    ItemDesc = i != null ? i.ItemDesc ?? "" : "",
+                    d.SetCount,
+                    d.WCount,
+                    d.RepCount,
+                    d.RestSeconds,
+                    d.ExerciseType,
+                    d.DayTitle,
+                    d.Note,
+                    d.ComboGroup,
+                    d.SeqInCombo,
+                    d.DropCount,
+                    d.DropWeightPct,
+                    d.PyramidDir,
+                    d.WeightStep,
+                    d.PauseCount,
+                    d.PauseRest,
+                    d.Tempo
+                }).ToListAsync();
+
+            var itemsByProgram = detailRows
+                .GroupBy(x => x.PrgID)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.Select(x => new ProgramItemEditDto
+                    {
+                        ItemID = x.ItemID,
+                        ItemDesc = x.ItemDesc,
+                        SetCount = x.SetCount,
+                        WCount = x.WCount,
+                        RepCount = x.RepCount,
+                        RestSeconds = x.RestSeconds,
+                        ExerciseType = x.ExerciseType,
+                        DayTitle = x.DayTitle,
+                        Note = x.Note,
+                        ComboGroup = x.ComboGroup,
+                        SeqInCombo = x.SeqInCombo,
+                        DropCount = x.DropCount,
+                        DropWeightPct = x.DropWeightPct,
+                        PyramidDir = x.PyramidDir,
+                        WeightStep = x.WeightStep,
+                        PauseCount = x.PauseCount,
+                        PauseRest = x.PauseRest,
+                        Tempo = x.Tempo
+                    }).ToList());
+
             var result = new List<MemberProgramDto>();
             foreach (var h in heads)
             {
-                var rawItems = await (
-                    from d in _db.SportPrgDtls.AsNoTracking()
-                    where d.PrgID == h.PrgID
-                    join i in _db.Gen_PrgmItems on d.ItemID equals i.ItemID into ij
-                    from i in ij.DefaultIfEmpty()
-                    orderby d.SortOrder, d.SportPrgDtlID
-                    select new ProgramItemEditDto
-                    {
-                        ItemID = d.ItemID ?? 0,
-                        ItemDesc = i != null ? i.ItemDesc ?? "" : "",
-                        SetCount = d.SetCount,
-                        WCount = d.WCount,
-                        RepCount = d.RepCount,
-                        RestSeconds = d.RestSeconds,
-                        ExerciseType = d.ExerciseType,
-                        DayTitle = d.DayTitle,
-                        Note = d.Note,
-                        ComboGroup = d.ComboGroup,
-                        SeqInCombo = d.SeqInCombo,
-                        DropCount = d.DropCount,
-                        DropWeightPct = d.DropWeightPct,
-                        PyramidDir = d.PyramidDir,
-                        WeightStep = d.WeightStep,
-                        PauseCount = d.PauseCount,
-                        PauseRest = d.PauseRest,
-                        Tempo = d.Tempo
-                    })
-                    .ToListAsync();
+                var rawItems = itemsByProgram.TryGetValue(h.PrgID, out var items)
+                    ? items
+                    : new List<ProgramItemEditDto>();
 
                 result.Add(new MemberProgramDto
                 {

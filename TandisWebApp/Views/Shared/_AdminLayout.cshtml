@@ -3,7 +3,19 @@
     var shiftID = HttpContextAccessor.HttpContext?.User?.FindFirst("AdminShiftID")?.Value ?? "1";
     var shiftName = shiftID == "2" ? "بانوان" : "آقایان";
     var shiftClass = shiftID == "2" ? "shift-ladies" : "shift-gents";
-    var currentPath = Context.Request.Path.Value?.ToLower() ?? "";
+    var currentPath = (Context.Request.Path.Value ?? "").TrimEnd('/').ToLowerInvariant();
+    var loadJalaliCalendar = currentPath == "/admin/trafficreport"
+        || currentPath == "/admin/registerreport"
+        || currentPath == "/admin/onesessionreport"
+        || currentPath == "/admin/financereport"
+        || currentPath == "/admin/ticketsalesreport"
+        || currentPath == "/admin/servicesreport"
+        || currentPath == "/admin/guestsessionreport"
+        || currentPath == "/admin/expensereport"
+        || Equals(ViewData["LoadJalaliCalendar"], true);
+    var loadReportPager = loadJalaliCalendar
+        || currentPath == "/admin/messages"
+        || Equals(ViewData["LoadReportPager"], true);
 }
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -29,6 +41,7 @@
     <link rel="stylesheet" href="~/css/site.css?v=7" />
     <link rel="stylesheet" href="~/css/panels.css?v=4" />
     <link rel="stylesheet" href="~/css/admin-responsive.css?v=3" />
+    <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" />
 
     <style>
         /* ===== نوار پایین شناور پنل ادمین ===== */
@@ -459,7 +472,7 @@
     <nav class="navbar navbar-expand-lg admin-top-nav">
         <div class="container-fluid px-3">
             <a class="navbar-brand d-flex align-items-center gap-2" href="/Admin">
-                <img src="~/images/logo2.png" alt="تندیس" height="34" />
+                <img src="~/images/logo2.png" alt="تندیس" width="34" height="34" decoding="async" />
                 <span>پنل مدیر</span>
             </a>
 
@@ -627,10 +640,16 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/jalali-calendar.js"></script>
-    <script src="~/js/site.js?v=6"></script>
-    <script src="~/js/report-pager.js?v=3"></script>
-    <script src="~/js/admin-motion.js?v=2"></script>
+    @if (loadJalaliCalendar)
+    {
+        <script src="~/js/jalali-calendar.js" asp-append-version="true"></script>
+    }
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @if (loadReportPager)
+    {
+        <script src="~/js/report-pager.js" asp-append-version="true"></script>
+    }
+    <script src="~/js/admin-motion.js" asp-append-version="true"></script>
 
     <script>
         // === تقویم جلالی مشترک ===

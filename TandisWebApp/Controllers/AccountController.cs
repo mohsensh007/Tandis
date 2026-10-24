@@ -154,7 +154,7 @@ namespace TandisWebApp.Controllers
         {
             var (memberID, roleID) = await GetCurrentMemberAsync();
             if (memberID == 0) return Ok(new { success = false, message = "عضو پیدا نشد" });
-            return Ok(new { success = true, data = await _messages.GetMemberMessagesAsync(memberID, roleID) });
+            return Ok(new { success = true, data = await _messages.GetAllMemberMessagesAsync(memberID, roleID) });
         }
 
         [Authorize]

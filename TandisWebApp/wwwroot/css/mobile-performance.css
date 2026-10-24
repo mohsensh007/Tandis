@@ -1,0 +1,45 @@
+/* Small-screen performance layer. Desktop styles remain unchanged. */
+@media (max-width: 767.98px) {
+    .member-ui .bottom-nav,
+    .member-ui .header-clock,
+    .member-ui .club-name-wrap,
+    .member-ui .allmenu-item,
+    .member-ui .btn-all-menu,
+    .coach-glass-body .coach-top-nav,
+    .coach-glass-body .coach-bottom-nav,
+    .admin-glass-body .admin-top-nav,
+    .admin-glass-body .admin-bottom-nav,
+    .admin-glass-body .shift-banner,
+    .member-ui .logout-modal,
+    .coach-glass-body #coachLogoutModal .modal-content,
+    .admin-glass-body #changePassModal .modal-content,
+    .admin-glass-body #logoutModal .modal-content,
+    .login-glass-card {
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, .24) !important;
+    }
+
+    .member-ui .allmenu-item,
+    .member-ui .mp-entry,
+    .member-ui .cf-card,
+    .coach-glass-body .coach-motion-item,
+    .admin-glass-body .admin-motion-ready [data-admin-motion].admin-motion-pending,
+    .login-glass-card,
+    .login-glass-card .btn-primary,
+    .login-glass-card .btn-warning {
+        transition-duration: .2s !important;
+    }
+
+    .admin-glass-body .admin-motion-ready [data-admin-motion].admin-motion-pending {
+        will-change: auto;
+    }
+
+    .admin-glass-body .sb-dot {
+        animation-duration: 3s;
+    }
+
+    .login-glass-card {
+        animation-duration: .35s !important;
+    }
+}

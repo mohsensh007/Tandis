@@ -71,6 +71,31 @@ var view = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Views/Body
 Check(view.Contains("JsonSerializerDefaults.Web"), "initial Razor payload uses the same JSON policy as API updates");
 Check(Regex.Matches(view, "data-help-key=\"").Count == 12, "all twelve calculation cards have individual help keys");
 
+// Static regression guards for the performance pass. These checks stay offline and
+// protect the query-shape changes without requiring a live database.
+var athleteController = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Controllers/AthleteController.cs"));
+var coachProgramService = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Services/CoachProgramService.cs"));
+var messageService = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Services/MessageService.cs"));
+var registerService = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Services/RegisterService.cs"));
+var accountController = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Controllers/AccountController.cs"));
+Check(athleteController.Contains("var traffic = await _athlete.GetVisitsAsync(memberID, 120);") &&
+      athleteController.Contains("GetTodayVisitAsync(memberID, traffic)") &&
+      athleteController.Contains("GetStatsAsync(") && athleteController.Contains("traffic);"),
+      "athlete dashboard reuses one traffic snapshot for presence and stats");
+Check(coachProgramService.Contains("programIds.Contains(d.PrgID.Value)") &&
+      coachProgramService.Contains("itemsByProgram") &&
+      !coachProgramService.Contains("foreach (var h in heads)\n            {\n                var rawItems = await ("),
+      "member programs batch-load details instead of issuing one query per program");
+Check(messageService.Contains("MemberMessagePreviewLimit = 3") &&
+      messageService.Contains("rowsQuery = rowsQuery.Take") &&
+      messageService.Contains("GetAllMemberMessagesAsync"),
+      "member message preview is bounded while the full message API remains available");
+Check(registerService.Contains("GroupBy(t => t.SportMemberID") &&
+      !registerService.Contains("CountAsync(t => t.MemberID == memberID && t.SportMemberID == s.SportMemberID)"),
+      "active session counts use one grouped traffic query");
+Check(accountController.Contains("GetAllMemberMessagesAsync(memberID, roleID)"),
+      "member messages API does not inherit the bounded layout preview");
+
 // Cross-platform UI behavior runner: Node on Linux, built-in JScript on Windows.
 var jsRunner = OperatingSystem.IsWindows() ? "cscript.exe" : "node";
 var start = new ProcessStartInfo(jsRunner) { UseShellExecute = false, WorkingDirectory = root.FullName };

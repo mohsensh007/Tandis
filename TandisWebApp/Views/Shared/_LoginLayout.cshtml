@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="~/css/site.css?v=6" />
     <link rel="stylesheet" href="~/css/panels.css?v=4" />
     <link rel="stylesheet" href="~/css/login-style.css?v=2" />
+    <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" />
 
     <style>
         /* ===== ✅ فلیپ ۳بعدی کارت بین ورود / ثبت‌نام ===== */
@@ -120,7 +121,7 @@
                 else
                 {
                     <!-- اگه باشگاه لوگو نداشت → لوگوی ما بزرگ بالا -->
-                    <img src="~/images/logo2.png" alt="@clubName" class="main-logo" />
+                    <img src="~/images/logo2.png" alt="@clubName" width="120" height="120" decoding="async" class="main-logo" />
                 }
                 <h2 class="brand-text mt-3">@clubName</h2>
             </div>
@@ -132,7 +133,7 @@
             <!-- ✅ لوگوی ما کوچک: لاگین → پایین-چپ | ثبت‌نام → بالا-چپ (بدون تداخل) -->
             @if (clubLogoSrc != null)
             {
-                <img src="~/images/logo2.png" alt="ایمن تردد" class="mini-logo"
+                <img src="~/images/logo2.png" alt="ایمن تردد" width="40" height="40" decoding="async" class="mini-logo"
                      style="@(ViewData["Title"]?.ToString() == "ثبت‌نام" ? "top:12px; left:12px; bottom:auto;" : "")" />
             }
         </div>
@@ -140,7 +141,7 @@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js?v=7"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
     <!-- ✅ منطق فلیپ کارت (مشترک بین ورود و ثبت‌نام) -->
     <script>

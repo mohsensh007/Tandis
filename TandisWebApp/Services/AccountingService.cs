@@ -56,8 +56,16 @@ namespace TandisWebApp.Services
 
             // بستانکارها
             var credits = await _db.Cash_CreditStatments
+                .AsNoTracking()
                 .Where(x => x.MemberID == memberID)
                 .OrderByDescending(x => x.CreditID)
+                .Select(c => new
+                {
+                    c.CreationDate,
+                    c.CreationTime,
+                    Amount = c.Amount ?? 0,
+                    CreditDesc = c.CreditDesc ?? ""
+                })
                 .ToListAsync();
             foreach (var c in credits)
             {
@@ -68,10 +76,10 @@ namespace TandisWebApp.Services
                 {
                     CreationTime = ParseShamsiDateTime(dateStr, timeStr),
                     CreationDateDisplay = dateStr,
-                    Amount = c.Amount ?? 0,
-                    AmountDisplay = _helper.SetSeprator(c.Amount ?? 0) + " ریال",
+                    Amount = c.Amount,
+                    AmountDisplay = _helper.SetSeprator(c.Amount) + " ریال",
                     DocType = "بستانکار",
-                    DocDesc = c.CreditDesc ?? "",
+                    DocDesc = c.CreditDesc,
                     // ✅ کلید مرتب‌سازی: تاریخ شمسی + ساعت (رشته صفرپر → مرتب‌سازی درست)
                     SortKey = (dateStr + " " + timeStr).Trim()
                 });
@@ -79,8 +87,15 @@ namespace TandisWebApp.Services
 
             // بدهکارها
             var debits = await _db.Cash_DebitStatements
+                .AsNoTracking()
                 .Where(x => x.MemberID == memberID)
                 .OrderByDescending(x => x.DebitID)
+                .Select(d => new
+                {
+                    d.CreationTime,
+                    Amount = d.Amount ?? 0,
+                    DebitDesc = d.DebitDesc ?? ""
+                })
                 .ToListAsync();
             foreach (var d in debits)
             {
@@ -94,10 +109,10 @@ namespace TandisWebApp.Services
                 {
                     CreationTime = d.CreationTime ?? DateTime.MinValue,
                     CreationDateDisplay = dateDisplay,
-                    Amount = d.Amount ?? 0,
-                    AmountDisplay = _helper.SetSeprator(d.Amount ?? 0) + " ریال",
+                    Amount = d.Amount,
+                    AmountDisplay = _helper.SetSeprator(d.Amount) + " ریال",
                     DocType = "بدهکار",
-                    DocDesc = d.DebitDesc ?? "",
+                    DocDesc = d.DebitDesc,
                     SortKey = (dateDisplay + " " + debitTimeStr).Trim()
                 });
             }
@@ -130,7 +145,7 @@ namespace TandisWebApp.Services
         public async Task<List<TrafficReportDto>> GetTrafficReportAsync(int memberID)
         {
             return await (
-                from t in _db.ACC_Traffics
+                from t in _db.ACC_Traffics.AsNoTracking()
                 where t.MemberID == memberID
                 orderby t.TrafficID descending
                 select new TrafficReportDto

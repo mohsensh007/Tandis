@@ -159,28 +159,55 @@
     observeCards(cards);
 
     if ('MutationObserver' in window) {
-        var mutationObserver = new MutationObserver(function (records) {
+        function compactAddedNodes(nodes) {
+            var compact = [];
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                if (!isElement(node)) continue;
+
+                var covered = false;
+                for (var j = 0; j < nodes.length; j++) {
+                    if (i === j) continue;
+                    var possibleParent = nodes[j];
+                    if (isElement(possibleParent) && possibleParent.contains(node)) {
+                        covered = true;
+                        break;
+                    }
+                }
+                if (!covered && compact.indexOf(node) === -1) compact.push(node);
+            }
+            return compact;
+        }
+
+        function scanAddedNodes(nodes) {
             var addedCards = [];
 
-            records.forEach(function (record) {
-                for (var i = 0; i < record.addedNodes.length; i++) {
-                    var node = record.addedNodes[i];
-                    if (!isElement(node)) continue;
+            compactAddedNodes(nodes).forEach(function (node) {
+                if (!scope.contains(node)) return;
 
-                    if (addMotionMetadata(node) && addedCards.indexOf(node) === -1) {
-                        addedCards.push(node);
-                    }
+                if (addMotionMetadata(node) && addedCards.indexOf(node) === -1) {
+                    addedCards.push(node);
+                }
 
-                    var nestedCards = node.querySelectorAll(cardSelector);
-                    for (var j = 0; j < nestedCards.length; j++) {
-                        if (addMotionMetadata(nestedCards[j]) && addedCards.indexOf(nestedCards[j]) === -1) {
-                            addedCards.push(nestedCards[j]);
-                        }
+                var nestedCards = node.querySelectorAll(cardSelector);
+                for (var i = 0; i < nestedCards.length; i++) {
+                    if (addMotionMetadata(nestedCards[i]) && addedCards.indexOf(nestedCards[i]) === -1) {
+                        addedCards.push(nestedCards[i]);
                     }
                 }
             });
 
             observeCards(addedCards);
+        }
+
+        var mutationObserver = new MutationObserver(function (records) {
+            var addedNodes = [];
+            records.forEach(function (record) {
+                for (var i = 0; i < record.addedNodes.length; i++) {
+                    addedNodes.push(record.addedNodes[i]);
+                }
+            });
+            if (addedNodes.length) scanAddedNodes(addedNodes);
         });
 
         mutationObserver.observe(scope, {

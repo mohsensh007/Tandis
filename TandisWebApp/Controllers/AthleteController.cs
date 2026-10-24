@@ -49,8 +49,11 @@ namespace TandisWebApp.Controllers
         {
             var memberID = MemberID;
 
+            // یک snapshot مشترک برای وضعیت امروز و آمار کارت؛ از خواندن دوباره‌ی تردد جلوگیری می‌کند.
+            var traffic = await _athlete.GetVisitsAsync(memberID, 120);
+
             // ✅ وضعیت حضور: ورودِ بازِ امروز از دستگاه تردد (ExitTime خالی = داخل باشگاه)
-            var todayVisit = await _athlete.GetTodayVisitAsync(memberID);
+            var todayVisit = await _athlete.GetTodayVisitAsync(memberID, traffic);
             var isInside = todayVisit != null && todayVisit.IsOpen;
 
             var model = new AthleteIndexDto
@@ -71,7 +74,10 @@ namespace TandisWebApp.Controllers
                     : await _athlete.GetTodaySummaryAsync(memberID)
             };
 
-            model.Stats = await _athlete.GetStatsAsync(memberID, await _athlete.CountDoneTodayAsync(memberID));
+            model.Stats = await _athlete.GetStatsAsync(
+                memberID,
+                await _athlete.CountDoneTodayAsync(memberID),
+                traffic);
             return View(model);
         }
 
