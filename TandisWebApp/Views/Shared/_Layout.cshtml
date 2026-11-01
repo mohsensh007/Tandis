@@ -15,6 +15,10 @@
         || currentPath == "/shop/buffet" || currentPath == "/service"
         || currentPath == "/service/index" || currentPath == "/register/renew"
         || Equals(ViewData["LoadPaymentScript"], true);
+    var loadCommerce = currentPath == "/service" || currentPath == "/service/index"
+        || currentPath == "/ticket" || currentPath == "/ticket/index"
+        || currentPath == "/shop" || currentPath == "/shop/index"
+        || currentPath == "/shop/buffet";
     var unreadCount = 0;
     var msgPreview = new List<TandisWebApp.DTOs.MemberMessageRowDto>();
 
@@ -383,6 +387,10 @@
     </style>
     <link rel="stylesheet" href="~/css/member-ui.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" />
+    @if (loadCommerce)
+    {
+        <link rel="stylesheet" href="~/css/member-commerce.css" asp-append-version="true" />
+    }
 </head>
 <body class="admin-glass-body member-ui">
     @if (!isAuthenticated)
@@ -636,6 +644,10 @@
         @if (loadPayment)
         {
             <script src="~/js/payment.js" asp-append-version="true"></script>
+        }
+        @if (loadCommerce)
+        {
+            <script src="~/js/member-commerce.js" asp-append-version="true"></script>
         }
         <script src="~/js/member-messages.js" asp-append-version="true"></script>
 

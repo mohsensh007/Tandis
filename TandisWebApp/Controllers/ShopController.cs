@@ -29,7 +29,7 @@ namespace TandisWebApp.Controllers
         [Route("api/Shop/Categories")]
         public async Task<IActionResult> Categories(bool isBuffet = false)
         {
-            var list = await _shop.GetCategoriesAsync(isBuffet);
+            var list = await _shop.GetCategoriesAsync(isBuffet, User.GetShiftID());
             return Ok(new { success = true, data = list });
         }
 
@@ -46,6 +46,9 @@ namespace TandisWebApp.Controllers
         [Route("api/Shop/Buy")]
         public async Task<IActionResult> Buy([FromBody] ShopBuyRequest req)
         {
+            if (req == null)
+                return BadRequest(new SimpleResponse { Success = false, Message = "درخواست خرید نامعتبر است" });
+
             var memberID = User.GetMemberID();
             var shiftID = User.GetShiftID();
             var result = await _shop.BuyAsync(memberID, req, shiftID);

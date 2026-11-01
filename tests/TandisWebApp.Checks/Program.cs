@@ -81,6 +81,10 @@ var accountController = File.ReadAllText(Path.Combine(root.FullName, "TandisWebA
 var adminReportService = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Services/AdminReportService.cs"));
 var adminController = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Controllers/AdminController.cs"));
 var trafficReportView = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Views/Admin/TrafficReport.cshtml"));
+var shopService = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Services/ShopService.cs"));
+var ticketService = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Services/TicketService.cs"));
+var servicePurchaseService = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Services/ServicePurchaseService.cs"));
+var shopController = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Controllers/ShopController.cs"));
 var imageRoot = Path.Combine(root.FullName, "TandisWebApp/wwwroot/images");
 var appProgram = File.ReadAllText(Path.Combine(root.FullName, "TandisWebApp/Program.cs"));
 Check(athleteController.Contains("var traffic = await _athlete.GetVisitsAsync(memberID, 120);") &&
@@ -110,6 +114,13 @@ Check(adminReportService.Contains("TrafficReportDefaultPageSize") &&
       adminReportService.Contains("StreamTrafficReportAsync") &&
       adminController.Contains("api/Admin/TrafficReport/Export"),
       "admin traffic report pages results and streams full export separately");
+Check(shopController.Contains("GetCategoriesAsync(isBuffet, User.GetShiftID())") &&
+      shopService.Contains("s.ShiftID == shiftID") &&
+      ticketService.Contains("t.IsActive == true") &&
+      ticketService.Contains("t.ShiftID == shiftID") &&
+      servicePurchaseService.Contains("RefID = ms.MemberServiceID") &&
+      servicePurchaseService.Contains("await _db.SaveChangesAsync();"),
+      "member commerce purchases are restricted to the member shift and service debit references the saved purchase");
 Check(File.Exists(Path.Combine(imageRoot, "app-icon-180.png")) &&
       File.Exists(Path.Combine(imageRoot, "app-icon-192.png")) &&
       File.Exists(Path.Combine(imageRoot, "app-icon-512.png")),

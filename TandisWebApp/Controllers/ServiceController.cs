@@ -35,6 +35,9 @@ namespace TandisWebApp.Controllers
         [Route("api/Service/Buy")]
         public async Task<IActionResult> Buy([FromBody] ServiceBuyRequest req)
         {
+            if (req == null)
+                return BadRequest(new SimpleResponse { Success = false, Message = "درخواست خرید نامعتبر است" });
+
             var memberID = User.GetMemberID();
             var shiftID = User.GetShiftID();
             var result = await _service.BuyServiceAsync(memberID, req, shiftID);

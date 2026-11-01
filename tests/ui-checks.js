@@ -149,7 +149,7 @@
     while ((matches = iconPattern.exec(view))) if (icons.indexOf('.' + matches[1] + '::before') < 0) missing.push(matches[1]);
     check(missing.length === 0, 'all body-analysis icons exist in the bundled font: ' + missing.join(','));
     // Parse modified shared scripts too. Quoted catch is equivalent syntax for the ES3 Windows parser.
-    ['payment.js', 'member-messages.js', 'home.js', 'admin-report-carousel.js'].forEach(function (name) {
+    ['payment.js', 'member-messages.js', 'home.js', 'admin-report-carousel.js', 'member-commerce.js'].forEach(function (name) {
         var script = read('TandisWebApp/wwwroot/js/' + name);
         if (windows) script = script.replace(/\.catch\s*\(/g, '["catch"](');
         new Function(script);
@@ -240,6 +240,12 @@
     var memberLayout = read('TandisWebApp/Views/Shared/_Layout.cshtml');
     var loginLayout = read('TandisWebApp/Views/Shared/_LoginLayout.cshtml');
     var mobilePerformanceCss = read('TandisWebApp/wwwroot/css/mobile-performance.css');
+    var commerceCss = read('TandisWebApp/wwwroot/css/member-commerce.css');
+    var commerceJs = read('TandisWebApp/wwwroot/js/member-commerce.js');
+    var servicePage = read('TandisWebApp/Views/Service/Index.cshtml');
+    var ticketPage = read('TandisWebApp/Views/Ticket/Index.cshtml');
+    var shopPage = read('TandisWebApp/Views/Shop/Index.cshtml');
+    var buffetPage = read('TandisWebApp/Views/Shop/Buffet.cshtml');
     check(memberLayout.indexOf('currentPath == "/home/reports"') >= 0 && memberLayout.indexOf('currentPath == "/register/renew"') >= 0 &&
           memberLayout.indexOf('if (loadReportPager)') >= 0 && memberLayout.indexOf('if (loadPayment)') >= 0 &&
           adminLayout.indexOf('currentPath == "/admin/messages"') >= 0 && adminLayout.indexOf('if (loadReportPager)') >= 0 &&
@@ -252,7 +258,23 @@
           mobilePerformanceCss.indexOf('@media (max-width: 767.98px)') >= 0 &&
           mobilePerformanceCss.indexOf('backdrop-filter: none') >= 0 &&
           mobilePerformanceCss.indexOf('animation-duration') >= 0,
-          'shared mobile performance layer is loaded by all layouts and scopes expensive effects');
+           'shared mobile performance layer is loaded by all layouts and scopes expensive effects');
+    check(memberLayout.indexOf('loadCommerce') >= 0 &&
+          memberLayout.indexOf('~/css/member-commerce.css') >= 0 &&
+          memberLayout.indexOf('~/js/member-commerce.js') >= 0 &&
+          servicePage.indexOf('data-commerce-page="service"') >= 0 &&
+          ticketPage.indexOf('data-commerce-page="ticket"') >= 0 &&
+          shopPage.indexOf('data-commerce-page="shop"') >= 0 &&
+          buffetPage.indexOf('data-commerce-page="buffet"') >= 0 &&
+          servicePage.indexOf('onclick=') < 0 && ticketPage.indexOf('onclick=') < 0 &&
+          shopPage.indexOf('onclick=') < 0 && buffetPage.indexOf('onclick=') < 0 &&
+          commerceCss.indexOf('commerce-store-layout') >= 0 &&
+          commerceCss.indexOf('grid-template-columns: repeat(3, minmax(0, 1fr))') >= 0 &&
+          commerceCss.indexOf('prefers-reduced-motion: reduce') >= 0 &&
+          commerceJs.indexOf('data-commerce-action') >= 0 &&
+          commerceJs.indexOf('escapeHtml') >= 0 &&
+          commerceJs.indexOf("/api/Shop/Categories?isBuffet=") >= 0,
+          'service, ticket, shop and buffet pages share a mobile-first themed and escaped commerce flow');
     check(memberLayout.indexOf('width="38" height="38" decoding="async"') >= 0 &&
           coachLayout.indexOf('width="34" height="34" decoding="async"') >= 0 &&
           adminLayout.indexOf('width="34" height="34" decoding="async"') >= 0 &&

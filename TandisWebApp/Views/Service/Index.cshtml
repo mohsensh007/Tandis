@@ -2,47 +2,28 @@
     ViewData["Title"] = "سرویس";
 }
 
-<div class="card">
-    <div class="card-header">💁 خرید سرویس <small class="text-light">(از اعتبار خدمات یا دستگاه POS)</small></div>
-    <div class="card-body">
-        <div id="serviceList"><div class="text-center text-muted p-3">در حال بارگذاری...</div></div>
+<div class="commerce-page" data-commerce-page="service">
+    <section class="commerce-hero" aria-labelledby="servicePageTitle">
+        <div class="commerce-hero-content">
+            <span class="commerce-kicker"><i class="bi bi-stars" aria-hidden="true"></i> خدمات اختصاصی باشگاه</span>
+            <h1 id="servicePageTitle">خدمات تندیس</h1>
+            <p>سرویس موردنیاز خود را انتخاب کنید و از اعتبار خدمات یا دستگاه POS پرداخت کنید.</p>
+        </div>
+        <div class="commerce-hero-icon" aria-hidden="true"><i class="bi bi-spa"></i></div>
+    </section>
+
+    <div class="commerce-notice" role="note">
+        <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
+        <span>قبل از پرداخت، مبلغ و نام سرویس را بررسی کنید. اطلاعات خرید از سمت سرور اعتبارسنجی می‌شود.</span>
     </div>
+
+    <section class="commerce-panel" aria-labelledby="serviceListTitle">
+        <div class="commerce-panel-head">
+            <h2 class="commerce-panel-title" id="serviceListTitle"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i> سرویس‌های قابل خرید</h2>
+            <span class="commerce-count" id="serviceCount" aria-label="تعداد سرویس‌ها">۰</span>
+        </div>
+        <div id="serviceList" class="commerce-grid" aria-live="polite">
+            <div class="commerce-status"><i class="bi bi-arrow-repeat" aria-hidden="true"></i><span>در حال بارگذاری سرویس‌ها…</span></div>
+        </div>
+    </section>
 </div>
-
-@section Scripts {
-<script>
-    $(function () {
-        apiCall('/api/Service/List', 'GET', null, function (res) {
-            var html = '';
-            if (!res.data || res.data.length === 0) {
-                html = '<div class="text-center text-muted p-3">سرویسی یافت نشد</div>';
-            } else {
-                html = '<div class="row g-3">';
-                $.each(res.data, function (i, s) {
-                    html += '<div class="col-md-4 col-6"><div class="card text-center h-100"><div class="card-body">' +
-                        '<p class="mb-1">' + s.serviceDesc + '</p>' +
-                        '<strong class="text-primary">' + s.amountDisplay + '</strong>' +
-                        '<button class="btn btn-success btn-sm mt-2 w-100" onclick="buyService(' + s.serviceID + ',' + s.amount + ')">خرید</button>' +
-                        '</div></div></div>';
-                });
-                html += '</div>';
-            }
-            $('#serviceList').html(html);
-        });
-    });
-
-    function buyService(id, amount) {
-        openPaymentModal({
-            amount: amount || 0,
-            creditType: 'service',
-            buyUrl: '/api/Service/Buy',
-            payload: { serviceID: id },
-            title: 'پرداخت سرویس',
-            onDone: function (res) {
-                showToast(res.message, 'success');
-                if (typeof refreshDashboardCredits === 'function') refreshDashboardCredits();
-            }
-        });
-    }
-</script>
-}

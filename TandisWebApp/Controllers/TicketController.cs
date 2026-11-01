@@ -35,6 +35,9 @@ namespace TandisWebApp.Controllers
         [Route("api/Ticket/Buy")]
         public async Task<IActionResult> Buy([FromBody] TicketBuyRequest req)
         {
+            if (req == null)
+                return BadRequest(new SimpleResponse { Success = false, Message = "درخواست خرید نامعتبر است" });
+
             var memberID = User.GetMemberID();
             var shiftID = User.GetShiftID();
             var result = await _ticket.BuyTicketAsync(memberID, req, shiftID);

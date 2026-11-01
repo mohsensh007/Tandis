@@ -2,50 +2,28 @@
     ViewData["Title"] = "خرید بلیت";
 }
 
-<div class="card">
-    <div class="card-header">خرید بلیت جلسه آزاد</div>
-    <div class="card-body">
-        <div class="alert alert-info">مبلغ بلیت از اعتبار ورزشی شما کسر می‌شود یا می‌توانید با دستگاه POS پرداخت کنید.</div>
-        <div id="tarefeList"><div class="text-center text-muted p-3">در حال بارگذاری...</div></div>
+<div class="commerce-page" data-commerce-page="ticket">
+    <section class="commerce-hero" aria-labelledby="ticketPageTitle">
+        <div class="commerce-hero-content">
+            <span class="commerce-kicker"><i class="bi bi-ticket-perforated" aria-hidden="true"></i> ورود مهمان و جلسه آزاد</span>
+            <h1 id="ticketPageTitle">خرید بلیت جلسه آزاد</h1>
+            <p>تعرفه مناسب را انتخاب کنید؛ مبلغ از اعتبار ورزشی شما کسر می‌شود یا با POS پرداخت می‌کنید.</p>
+        </div>
+        <div class="commerce-hero-icon" aria-hidden="true"><i class="bi bi-ticket-detailed"></i></div>
+    </section>
+
+    <div class="commerce-notice" role="note">
+        <i class="bi bi-wallet2" aria-hidden="true"></i>
+        <span>صدور بلیت به‌صورت آنی انجام می‌شود. پس از ثبت موفق، پیام نتیجه را مشاهده خواهید کرد.</span>
     </div>
+
+    <section class="commerce-panel" aria-labelledby="ticketListTitle">
+        <div class="commerce-panel-head">
+            <h2 class="commerce-panel-title" id="ticketListTitle"><i class="bi bi-grid-1x2-fill" aria-hidden="true"></i> تعرفه‌های فعال</h2>
+            <span class="commerce-count" id="ticketCount" aria-label="تعداد تعرفه‌ها">۰</span>
+        </div>
+        <div id="ticketList" class="commerce-grid" aria-live="polite">
+            <div class="commerce-status"><i class="bi bi-arrow-repeat" aria-hidden="true"></i><span>در حال بارگذاری تعرفه‌ها…</span></div>
+        </div>
+    </section>
 </div>
-
-@section Scripts {
-<script>
-    $(function () {
-        apiCall('/api/Ticket/TarefeList', 'GET', null, function (res) {
-            var html = '';
-            if (!res.data || res.data.length === 0) {
-                html = '<div class="text-center text-muted p-3">تعرفه‌ای یافت نشد</div>';
-            } else {
-                html = '<div class="row g-3">';
-                $.each(res.data, function (i, t) {
-                    html += '<div class="col-md-4 col-6">' +
-                        '<div class="card text-center h-100"><div class="card-body">' +
-                        '<h6>' + (t.sans || '-') + '</h6>' +
-                        '<p class="mb-1">' + t.tarefe + '</p>' +
-                        '<strong class="text-primary">' + t.amountDisplay + '</strong>' +
-                        '<button class="btn btn-success btn-sm mt-2 w-100" onclick="buyTicket(' + t.tarefeID + ',' + t.amount + ')">خرید</button>' +
-                        '</div></div></div>';
-                });
-                html += '</div>';
-            }
-            $('#tarefeList').html(html);
-        });
-    });
-
-    function buyTicket(id, amount) {
-        openPaymentModal({
-            amount: amount || 0,
-            creditType: 'sport',
-            buyUrl: '/api/Ticket/Buy',
-            payload: { tarefeID: id },
-            title: 'پرداخت بلیت',
-            onDone: function (res) {
-                showToast(res.message, 'success');
-                if (typeof refreshDashboardCredits === 'function') refreshDashboardCredits();
-            }
-        });
-    }
-</script>
-}

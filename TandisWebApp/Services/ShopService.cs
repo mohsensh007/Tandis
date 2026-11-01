@@ -29,10 +29,12 @@ namespace TandisWebApp.Services
         }
 
         /// <summary>دریافت دسته‌بندی اجناس (بوفه یا فروشگاه)</summary>
-        public async Task<List<StuffCategoryDto>> GetCategoriesAsync(bool isBuffet)
+        public async Task<List<StuffCategoryDto>> GetCategoriesAsync(bool isBuffet, short shiftID)
         {
             var q = from c in _db.Gen_Stuff_Categories
-                    where _db.Gen_Stuffs.Any(s => s.StuffCategoryID == c.StuffCategoryID && s.IsBuffet == isBuffet)
+                    where _db.Gen_Stuffs.Any(s => s.StuffCategoryID == c.StuffCategoryID
+                                               && s.IsBuffet == isBuffet
+                                               && s.ShiftID == shiftID)
                     orderby c.CategoryDesc
                     select new StuffCategoryDto
                     {
@@ -40,7 +42,7 @@ namespace TandisWebApp.Services
                         CategoryDesc = c.CategoryDesc,
                         PicAddress = c.PicAddress
                     };
-            return await q.ToListAsync();
+            return await q.AsNoTracking().ToListAsync();
         }
 
         /// <summary>دریافت لیست اجناس یک دسته (یا همه)</summary>
@@ -59,7 +61,7 @@ namespace TandisWebApp.Services
                         PicAddress = s.PicAddress,
                         StuffCategoryID = s.StuffCategoryID
                     };
-            var list = await q.ToListAsync();
+            var list = await q.AsNoTracking().ToListAsync();
             foreach (var s in list)
                 s.AmountDisplay = _helper.SetSeprator(s.StuffAmount) + " ریال";
             return list;
@@ -75,6 +77,9 @@ namespace TandisWebApp.Services
             // credit = پرداخت از اعتبار | pos + بدون PosTxnId = ساخت تراکنش (Prepare)
             // pos + با PosTxnId = نهایی کردن خرید بعد از پرداخت موفق (Confirm)
             string mode = (req.Method ?? "credit").ToLowerInvariant();
+            if (mode != "credit" && mode != "pos")
+                return new SimpleResponse { Success = false, Message = "روش پرداخت نامعتبر است" };
+
             bool posPrepare = mode == "pos" && req.PosTxnId == null;
             bool posConfirm = mode == "pos" && req.PosTxnId != null;
             long posTxnId = req.PosTxnId ?? 0;
@@ -94,7 +99,7 @@ namespace TandisWebApp.Services
                 var requestedStuffIds = req.Items.Select(i => i.StuffID).Distinct().ToList();
                 var stuffs = await _db.Gen_Stuffs
                     .AsNoTracking()
-                    .Where(s => requestedStuffIds.Contains(s.StuffID))
+                    .Where(s => requestedStuffIds.Contains(s.StuffID) && s.ShiftID == shiftID)
                     .ToListAsync();
 
                 var stuffMap = stuffs.ToDictionary(s => s.StuffID);
@@ -185,7 +190,7 @@ namespace TandisWebApp.Services
                     DiscountAmount = 0,
                     PersonName = "",
                     IsReceipt = false,
-                    IsPosReceipt = false,
+                    IsPosReceipt = mode == "pos",
                     IsClose = true,
                     ShiftID = shiftID,
                     UserID = WEB_USER_ID,

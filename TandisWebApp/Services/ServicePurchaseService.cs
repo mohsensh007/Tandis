@@ -58,6 +58,9 @@ namespace TandisWebApp.Services
         {
             // credit = پرداخت از اعتبار | pos بدون PosTxnId = Prepare | pos با PosTxnId = Confirm
             string mode = (req.Method ?? "credit").ToLowerInvariant();
+            if (mode != "credit" && mode != "pos")
+                return new SimpleResponse { Success = false, Message = "روش پرداخت نامعتبر است" };
+
             bool posPrepare = mode == "pos" && req.PosTxnId == null;
             bool posConfirm = mode == "pos" && req.PosTxnId != null;
             long posTxnId = req.PosTxnId ?? 0;
@@ -66,7 +69,8 @@ namespace TandisWebApp.Services
             using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
-                var service = await _db.Gen_Services.FirstOrDefaultAsync(s => s.ServiceID == req.ServiceID);
+                var service = await _db.Gen_Services.AsNoTracking()
+                    .FirstOrDefaultAsync(s => s.ServiceID == req.ServiceID && s.ShiftID == shiftID);
                 if (service == null)
                     return new SimpleResponse { Success = false, Message = "سرویس یافت نشد" };
 
@@ -143,7 +147,7 @@ namespace TandisWebApp.Services
                     ShiftID = shiftID,
                     ServiceAmount = amount,
                     IsReceipt = false,
-                    IsPosReceipt = false,
+                    IsPosReceipt = mode == "pos",
                     ServiceDesc = "خرید از وب‌اپ",
                     CreationDate = _helper.GetToday(),
                     CreationTime = _helper.GetThisTime(),
@@ -153,6 +157,9 @@ namespace TandisWebApp.Services
                     CommissionAmount = amount * (service.Refpercent ?? 0) / 100
                 };
                 _db.ACC_MemberServices.Add(ms);
+
+                // ابتدا شناسه خرید را بگیر تا RefID سند بدهی به خرید واقعی اشاره کند.
+                await _db.SaveChangesAsync();
 
                 // ثبت بدهی
                 _db.Cash_DebitStatements.Add(new Cash_DebitStatement

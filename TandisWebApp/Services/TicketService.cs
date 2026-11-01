@@ -33,13 +33,13 @@ namespace TandisWebApp.Services
         public async Task<List<TicketTarefeDto>> GetTarefeListAsync(short shiftID)
         {
             var list = await (
-                from t in _db.Gen_Tarefes
+                from t in _db.Gen_Tarefes.AsNoTracking()
                 where t.IsActive == true && t.ShiftID == shiftID
-                orderby t.Gen_San.SansID, t.TarefeID
+                orderby t.SansID, t.TarefeID
                 select new TicketTarefeDto
                 {
                     TarefeID = t.TarefeID,
-                    Sans = t.Gen_San.Sans,
+                    Sans = t.Gen_San != null ? t.Gen_San.Sans : "",
                     Tarefe = t.Tarefe ?? "",
                     Amount = (long)(t.Amount ?? 0)
                 }
@@ -60,6 +60,9 @@ namespace TandisWebApp.Services
         {
             // credit = پرداخت از اعتبار | pos بدون PosTxnId = Prepare | pos با PosTxnId = Confirm
             string mode = (req.Method ?? "credit").ToLowerInvariant();
+            if (mode != "credit" && mode != "pos")
+                return new SimpleResponse { Success = false, Message = "روش پرداخت نامعتبر است" };
+
             bool posPrepare = mode == "pos" && req.PosTxnId == null;
             bool posConfirm = mode == "pos" && req.PosTxnId != null;
             long posTxnId = req.PosTxnId ?? 0;
@@ -68,7 +71,10 @@ namespace TandisWebApp.Services
             using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
-                var tarefe = await _db.Gen_Tarefes.FirstOrDefaultAsync(t => t.TarefeID == req.TarefeID);
+                var tarefe = await _db.Gen_Tarefes.AsNoTracking()
+                    .FirstOrDefaultAsync(t => t.TarefeID == req.TarefeID
+                                           && t.IsActive == true
+                                           && t.ShiftID == shiftID);
                 if (tarefe == null)
                     return new SimpleResponse { Success = false, Message = "تعرفه یافت نشد" };
 
@@ -148,8 +154,8 @@ namespace TandisWebApp.Services
                     CardCount = 0,
                     UserID = WEB_USER_ID,
                     FullName = member.p.FullName,
-                    IsPos = false,
-                    PosID = 0,
+                    IsPos = mode == "pos",
+                    PosID = mode == "pos" ? _pos.ConfiguredPosId : (byte)0,
                     TicketDesc = "خرید از طریق وب‌اپ",
                     ShiftID = shiftID,
                     CreationDate = _helper.GetToday(),
@@ -260,8 +266,8 @@ namespace TandisWebApp.Services
                     SanseName = s.SanseName ?? "",
                     CoachName = coachP != null ? coachP.FullName : "",
                     SessionAmount = s.SessionAmount ?? 0,
-                    StartTime = d.StartTime.HasValue ? d.StartTime.Value.ToString(@"hh\:mm") : "",
-                    EndTime = d.EndTime.HasValue ? d.EndTime.Value.ToString(@"hh\:mm") : "",
+                     StartTime = d.StartTime.HasValue ? d.StartTime.GetValueOrDefault().ToString(@"hh\:mm") : "",
+                     EndTime = d.EndTime.HasValue ? d.EndTime.GetValueOrDefault().ToString(@"hh\:mm") : "",
                     DayName = w.DayName ?? "",
                     LatinName = w.LatinName ?? ""
                 }
