@@ -271,6 +271,9 @@ namespace TandisWebApp.DTOs
         /// <summary>true = Agent این تراکنش را هم‌روی دستگاه فرستاده → کارت بکشید</summary>
         public bool Processing { get; set; }
 
+        /// <summary>true = دستگاه POS همین حالا مشغول پرداخت برای مراجع دیگری است</summary>
+        public bool DeviceBusy { get; set; }
+
         /// <summary>تعداد تراکنش‌های در انتظار جلوتر از این تراکنش در صف</summary>
         public int QueuePosition { get; set; }
     }

@@ -4,27 +4,27 @@
    ===================================================== */
 
 body.coach-glass-body {
-    --coach-bg: #0b1023;
-    --coach-surface: rgba(255, 255, 255, .075);
-    --coach-surface-strong: rgba(255, 255, 255, .12);
-    --coach-border: rgba(255, 255, 255, .15);
-    --coach-border-soft: rgba(255, 255, 255, .09);
-    --coach-purple: #7667e8;
-    --coach-purple-deep: #4f3b91;
-    --coach-blue: #4d8df6;
-    --coach-turquoise: #66d3e8;
-    --coach-mint: #38d9a9;
+    --coach-bg: #011C40;
+    --coach-surface: rgba(2, 56, 89,.8);
+    --coach-surface-strong: rgba(84, 172, 191,.8);
+    --coach-border: rgba(84, 172, 191,.2);
+    --coach-border-soft: rgba(255,255,255,.09);
+    --coach-purple: #023859;
+    --coach-purple-deep: #011C40;
+    --coach-blue: #54ACBF;
+    --coach-turquoise: #54ACBF;
+    --coach-mint: #54ACBF;
     --coach-danger: #ff6b81;
-    --coach-text: #f4f7ff;
-    --coach-muted: #a9b7ca;
+    --coach-text: #EAF7FA;
+    --coach-muted: #9FC6D2;
     --coach-control-height: 44px;
     --coach-radius: 18px;
     max-width: 100%;
     overflow-x: hidden;
     background:
-        radial-gradient(circle at 12% 8%, rgba(118, 103, 232, .18), transparent 30rem),
-        radial-gradient(circle at 88% 20%, rgba(102, 211, 232, .12), transparent 26rem),
-        var(--coach-bg) !important;
+        radial-gradient(circle at 12% 6%, rgba(84, 172, 191,.4), transparent 32rem),
+        radial-gradient(circle at 88% 18%, rgba(84, 172, 191,.14), transparent 26rem),
+        linear-gradient(160deg, #011C40 0%, #011C40 55%, #011C40 100%) !important;
     color: var(--coach-text);
 }
 
@@ -88,9 +88,9 @@ body.coach-glass-body textarea {
 body.coach-glass-body .coach-top-nav {
     max-width: 100%;
     overflow: hidden;
-    background: rgba(11, 16, 35, .78) !important;
-    border-bottom-color: rgba(102, 211, 232, .14);
-    box-shadow: 0 8px 26px rgba(4, 8, 24, .2);
+    background: rgba(1, 28, 64,.82) !important;
+    border-bottom-color: rgba(84, 172, 191,.14);
+    box-shadow: 0 8px 26px rgba(1, 28, 64,.2);
 }
 
 body.coach-glass-body .coach-top-nav .container-fluid {
@@ -146,9 +146,9 @@ body.coach-glass-body .coach-bottom-nav {
     min-width: 0;
     min-height: 64px;
     padding: 6px;
-    border-color: rgba(102, 211, 232, .16);
-    background: rgba(11, 16, 35, .92) !important;
-    box-shadow: 0 14px 34px rgba(4, 8, 24, .42), inset 0 1px 0 rgba(255, 255, 255, .06);
+    border-color: rgba(84, 172, 191,.16);
+    background: rgba(1, 28, 64,.82) !important;
+    box-shadow: 0 14px 34px rgba(1, 28, 64,.42), inset 0 1px 0 rgba(255,255,255,.06);
 }
 
 body.coach-glass-body .coach-bottom-nav .cbn-item {
@@ -195,9 +195,9 @@ body.coach-glass-body .pg-empty {
     min-width: 0;
     max-width: 100%;
     border-color: var(--coach-border) !important;
-    background: linear-gradient(145deg, rgba(118, 103, 232, .16), rgba(255, 255, 255, .055)) !important;
+    background: linear-gradient(145deg, rgba(2, 56, 89,.84), rgba(1, 28, 64,.8)) !important;
     color: var(--coach-text);
-    box-shadow: 0 8px 26px rgba(5, 10, 32, .18);
+    box-shadow: 0 8px 26px rgba(1, 28, 64,.18);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
 }
@@ -235,8 +235,8 @@ body.coach-glass-body .cc-card:hover,
 body.coach-glass-body .cs-card:hover,
 body.coach-glass-body .pg-card:hover,
 body.coach-glass-body .ms-card:hover {
-    border-color: rgba(102, 211, 232, .48) !important;
-    box-shadow: 0 14px 36px rgba(5, 10, 32, .3);
+    border-color: rgba(84, 172, 191,.48) !important;
+    box-shadow: 0 14px 36px rgba(1, 28, 64,.3);
     transform: translateY(-2px);
 }
 
@@ -331,8 +331,8 @@ body.coach-glass-body .stu-search {
     width: 100%;
     min-width: 0;
     min-height: var(--coach-control-height);
-    border-color: rgba(255, 255, 255, .18) !important;
-    background: rgba(255, 255, 255, .075) !important;
+    border-color: rgba(255,255,255,.18) !important;
+    background: rgba(255,255,255,.075) !important;
     color: #fff !important;
 }
 
@@ -340,7 +340,7 @@ body.coach-glass-body .glass-search::placeholder,
 body.coach-glass-body .ch-input::placeholder,
 body.coach-glass-body .pe-input::placeholder,
 body.coach-glass-body .stu-search::placeholder {
-    color: rgba(207, 220, 239, .62);
+    color: rgba(207,220,239,.62);
 }
 
 body.coach-glass-body .glass-search:focus,
@@ -349,15 +349,15 @@ body.coach-glass-body .pe-input:focus,
 body.coach-glass-body .ch-input:focus,
 body.coach-glass-body .stu-search:focus {
     border-color: var(--coach-turquoise) !important;
-    background: rgba(255, 255, 255, .12) !important;
-    box-shadow: 0 0 0 .22rem rgba(102, 211, 232, .14);
+    background: rgba(255,255,255,.12) !important;
+    box-shadow: 0 0 0 .22rem rgba(84, 172, 191,.14);
     outline: none;
 }
 
 body.coach-glass-body select.pe-input option,
 body.coach-glass-body select.form-select option,
 body.coach-glass-body select option {
-    background: #10172b;
+    background: #011C40;
     color: #fff;
 }
 

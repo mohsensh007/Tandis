@@ -4,13 +4,13 @@
    ===================================================== */
 
 body.admin-glass-body {
-    --charts-purple: #7667e8;
-    --charts-purple-deep: #4f3b91;
-    --charts-blue: #4d8df6;
-    --charts-turquoise: #66d3e8;
-    --charts-mint: #38d9a9;
-    --charts-muted: #a9b7ca;
-    --charts-border: rgba(255, 255, 255, .15);
+    --charts-purple: #26658C;
+    --charts-purple-deep: #023859;
+    --charts-blue: #54ACBF;
+    --charts-turquoise: #54ACBF;
+    --charts-mint: #54ACBF;
+    --charts-muted: #9FC6D2;
+    --charts-border: rgba(255,255,255,.15);
 }
 
 body.admin-glass-body .ch-main-card,
@@ -19,8 +19,8 @@ body.admin-glass-body .ch-side-card {
     min-width: 0;
     max-width: 100%;
     border-color: var(--charts-border) !important;
-    background: linear-gradient(145deg, rgba(118, 103, 232, .17), rgba(255, 255, 255, .055)) !important;
-    box-shadow: 0 10px 30px rgba(5, 10, 32, .22);
+    background: linear-gradient(145deg, rgba(84, 172, 191,.17), rgba(255,255,255,.055)) !important;
+    box-shadow: 0 10px 30px rgba(1, 28, 64,.22);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
 }
@@ -112,8 +112,8 @@ body.admin-glass-body .ch-chart-wrap {
     max-width: 100%;
     overflow: hidden;
     contain: layout paint;
-    border: 1px solid rgba(255, 255, 255, .07);
-    background: linear-gradient(180deg, rgba(7, 14, 38, .24), rgba(7, 14, 38, .06));
+    border: 1px solid rgba(255,255,255,.07);
+    background: linear-gradient(180deg, rgba(7,14,38,.24), rgba(7,14,38,.06));
 }
 
 body.admin-glass-body .ch-chart {
@@ -129,7 +129,7 @@ body.admin-glass-body .ch-chart .ch-axlabel {
     font-size: 12px;
     letter-spacing: 0;
     paint-order: stroke;
-    stroke: rgba(15, 23, 42, .32);
+    stroke: rgba(1, 28, 64,.32);
     stroke-width: .8px;
     stroke-linejoin: round;
 }

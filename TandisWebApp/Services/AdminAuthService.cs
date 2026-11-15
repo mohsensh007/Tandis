@@ -116,24 +116,58 @@ namespace TandisWebApp.Services
                     };
                 }
 
-                // ✅ کاربران Sec_Users غیرفعال یا غیرادمین (کاربر سیستم — به‌جز admin/adminB)
-                //    → هدایت به صفحه QR کیوسک (ورود فقط از مسیر QR)
+                // ✅ کاربران Sec_Users:
+                //    - IsAdmin = false و فعال  → ورود به «میز خدمت» (/Desk) با ۵ کارت
+                //    - غیرفعال                → صفحه QR کیوسک
+                //    - IsAdmin = true          → پنل مدیر (از همین‌جا ادامه می‌دهیم)
                 var uname = req.Username.Trim();
                 if (!uname.Equals("admin", StringComparison.OrdinalIgnoreCase) &&
                     !uname.Equals("adminb", StringComparison.OrdinalIgnoreCase))
                 {
-                    var qrUser = await _db.Sec_Users.AsNoTracking()
-                        .FirstOrDefaultAsync(u => u.UserName == uname &&
-                                                   (u.IsActive != true || u.IsAdmin != true));
+                    var secUser = await _db.Sec_Users.AsNoTracking()
+                        .FirstOrDefaultAsync(u => u.UserName == uname);
 
-                    if (qrUser != null)
+                    if (secUser != null)
                     {
-                        return new ApiResponse<AdminLoginResponse>
+                        if (!SecurityHelper.VerifyPassword(req.Password, secUser.UPassword))
                         {
-                            Success = false,
-                            Message = "حساب کاربری شما در پنل وب فعال نیست. QR صفحه زیر را اسکن کنید.",
-                            RedirectTo = "/Kiosk/QrDisplay"
-                        };
+                            SecurityHelper.RecordFail(req.Username, ip);
+                            return new ApiResponse<AdminLoginResponse>
+                            {
+                                Success = false,
+                                Message = "نام کاربری یا رمز عبور اشتباه است."
+                            };
+                        }
+
+                        if (secUser.IsActive != true)
+                        {
+                            return new ApiResponse<AdminLoginResponse>
+                            {
+                                Success = false,
+                                Message = "حساب کاربری شما در پنل وب فعال نیست. QR صفحه زیر را اسکن کنید.",
+                                RedirectTo = "/Kiosk/QrDisplay"
+                            };
+                        }
+
+                        if (secUser.IsAdmin != true)
+                        {
+                            SecurityHelper.ClearFails(req.Username, ip);
+                            var deskShift = secUser.ShiftID ?? 1;
+                            return new ApiResponse<AdminLoginResponse>
+                            {
+                                Success = true,
+                                Message = "ورود موفقیت‌آمیز بود",
+                                RedirectTo = "/Desk",
+                                Data = new AdminLoginResponse
+                                {
+                                    Token = _jwt.GenerateDeskToken(secUser.UserID, uname, deskShift),
+                                    Username = uname,
+                                    DisplayName = uname,
+                                    ShiftID = deskShift,
+                                    MustChangePassword = false
+                                }
+                            };
+                        }
                     }
                 }
 

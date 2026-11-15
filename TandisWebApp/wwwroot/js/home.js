@@ -83,6 +83,7 @@ function loadSingleSessionList() {
         });
         return;
     }
+    /* ✅ کد روزهای آینده (خرید تک‌جلسه) کامنت شد — فقط امروز فعال است
     $list.html(loadingHtml);
     $days.hide().empty();
     apiCall('/api/Ticket/SingleSessionList?days=7', 'GET', null, function (res) {
@@ -91,6 +92,7 @@ function loadSingleSessionList() {
         if (ssWeekData.length === 0) { renderSsList([], true); return; }
         selectSsDay(ssWeekData[0].sessionDateShamsi);
     });
+    */
 }
 
 function buildSsDayChips(data) {
@@ -482,7 +484,7 @@ function buildCircle(pct, used, total, remaining) {
     var r = 30, cx = 36, cy = 36;
     var c = 2 * Math.PI * r;
     var offset = c - (pct / 100) * c;
-    var color = pct >= 90 ? '#ff6b81' : pct >= 70 ? '#ffa94d' : '#38d9a9';
+    var color = pct >= 90 ? '#ff6b81' : pct >= 70 ? '#3781fc' : '#3781fc';
     return '<div class="d-flex flex-column align-items-center" style="min-width:86px">' +
         '<svg viewBox="0 0 72 72" width="84" height="84">' +
         '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="rgba(255,255,255,.12)" stroke-width="7"/>' +
@@ -608,14 +610,12 @@ loadDashboardData();
     var half = Math.floor(n / 2);
     var active = 0;
     var $stage = $('#cfStage');
-    var $dots = $('#cfDots');
     items.forEach(function (it, i) {
         var $c = $('<a class="cf-card" data-index="' + i + '" href="' + it.href + '"></a>');
         if (it.action) $c.attr('data-action', it.action);
         $c.append('<div class="cf-icon">' + it.icon + '</div>');
         $c.append('<div class="cf-title">' + it.title + '</div>');
         $stage.append($c);
-        $dots.append('<button type="button" class="cf-dot" data-index="' + i + '" aria-label="' + esc(it.title) + '" aria-pressed="false"></button>');
     });
     function layout() {
         $stage.find('.cf-card').each(function () {
@@ -634,9 +634,6 @@ loadDashboardData();
             $(this).attr('tabindex', d === 0 ? '0' : '-1');
             $(this).attr('aria-hidden', d > 3 ? 'true' : 'false');
         });
-        $('#cfLabel').text(items[active].title);
-        $dots.find('.cf-dot').removeClass('on').attr('aria-pressed', 'false')
-            .filter('[data-index="' + active + '"]').addClass('on').attr('aria-pressed', 'true');
     }
     function go(delta) { active = ((active + delta) % n + n) % n; layout(); }
     $stage.on('click', '.cf-card', function (e) {
@@ -650,11 +647,6 @@ loadDashboardData();
             if (action === 'singleSession') { e.preventDefault(); openSingleSessionModal(); }
             else if (action === 'tarefe') { e.preventDefault(); openTarefeModal(); }
         }
-    });
-    $dots.on('click', '.cf-dot', function () {
-        var i = +$(this).attr('data-index');
-        var rel = ((i - active) % n + n) % n;
-        go(rel <= half ? rel : rel - n);
     });
     $stage.on('keydown', '.cf-card', function (e) {
         if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {

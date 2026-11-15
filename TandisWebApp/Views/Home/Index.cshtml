@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "داشبورد";
 }
 
@@ -108,8 +108,6 @@
 <!-- ========== کاروسل سه‌بعدی (فقط موبایل) ========== -->
 <div id="navCarousel" class="d-md-none mb-3" role="region" aria-label="بخش‌های باشگاه">
     <div class="cf-stage" id="cfStage"></div>
-    <div id="cfLabel" class="fw-bold text-center mt-2" aria-live="polite"></div>
-    <div id="cfDots" class="d-flex justify-content-center gap-1 mt-2"></div>
 </div>
 <div class="text-center mt-2 mb-3 d-md-none">
     <button type="button" class="btn btn-sm btn-all-menu" id="btnAllMenu" aria-controls="allMenuOverlay" aria-expanded="false" aria-haspopup="dialog">
@@ -134,10 +132,10 @@
 <!-- ========== ✅ مودال تک جلسه ========== -->
 <div class="modal fade" id="singleSessionModal" tabindex="-1" aria-hidden="true" aria-labelledby="singleSessionTitle">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-        <div class="modal-content purple-style" style="border-radius:20px; overflow:hidden; border:1px solid rgba(102,211,232,.35);">
+        <div class="modal-content purple-style" style="border-radius:20px; overflow:hidden; border:1px solid rgba(84, 172, 191,.35);">
             <div class="modal-header border-0" style="padding:18px 20px;">
                 <h5 class="modal-title fw-bold text-white" id="singleSessionTitle">
-                    <i class="bi bi-lightning-charge-fill" style="color:#66d3e8"></i>
+                    <i class="bi bi-lightning-charge-fill" style="color:#54ACBF"></i>
                     خرید تک جلسه
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="بستن"></button>
@@ -145,11 +143,13 @@
             <div class="modal-body" style="padding:16px 20px 20px;">
                 <div class="ss-tabs">
                     <button type="button" class="ss-tab active" data-mode="today"><i class="bi bi-lightning-charge-fill" aria-hidden="true"></i> امروز</button>
+                    @* ✅ تک‌جلسه فقط امروز — کد و تب روزهای آینده کامنت شد
                     <button type="button" class="ss-tab" data-mode="week"><i class="bi bi-calendar-week" aria-hidden="true"></i> تا ۷ روز آینده</button>
+                    *@
                 </div>
                 <div class="ss-days" id="ssDays" style="display:none;"></div>
                 <div id="singleSessionList">
-                    <div class="text-center py-4" style="color:#9fb3c8;">
+                    <div class="text-center py-4" style="color:#A7EBF2;">
                         <div class="spinner-border spinner-border-sm" role="status"></div>
                         در حال بارگذاری...
                     </div>
@@ -175,10 +175,10 @@
 <!-- ========== ✅ مودال تعرفه‌ها (۴ تب) ========== -->
 <div class="modal fade" id="tarefeModal" tabindex="-1" aria-hidden="true" aria-labelledby="tarefeTitle">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
-        <div class="modal-content purple-style" style="border-radius:20px; overflow:hidden; border:1px solid rgba(102,211,232,.35);">
+        <div class="modal-content purple-style" style="border-radius:20px; overflow:hidden; border:1px solid rgba(84, 172, 191,.35);">
             <div class="modal-header border-0" style="padding:18px 20px;">
                 <h5 class="modal-title fw-bold text-white" id="tarefeTitle">
-                    <i class="bi bi-credit-card-2-front-fill" style="color:#66d3e8"></i>
+                    <i class="bi bi-credit-card-2-front-fill" style="color:#54ACBF"></i>
                     تعرفه‌ها
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="بستن"></button>
@@ -212,7 +212,7 @@
                     </button>
                 </div>
                 <div id="tarefeList">
-                    <div class="text-center py-4" style="color:#9fb3c8;">
+                    <div class="text-center py-4" style="color:#A7EBF2;">
                         <div class="spinner-border spinner-border-sm" role="status"></div>
                         در حال بارگذاری...
                     </div>
@@ -258,7 +258,7 @@
 <!-- ========== ✅ کارت «تحلیل بدن» ========== -->
 <a href="/BodyAnalysis" class="mp-entry mb-3">
     <div class="mp-entry-inner">
-        <div class="mp-entry-icon" style="background:linear-gradient(135deg,#0ea5b7 0%,#6d28d9 100%);">
+        <div class="mp-entry-icon" style="background:linear-gradient(135deg,#0ea5b7 0%,#26658C 100%);">
             <i class="bi bi-clipboard2-data-fill"></i>
         </div>
         <div class="mp-entry-info">
@@ -277,14 +277,14 @@
         width: 88px;
         height: 88px;
         border-radius: 50%;
-        background: linear-gradient(135deg,#6f42c1,#0d6efd);
+        background: linear-gradient(135deg,#54ACBF,#0d6efd);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 2.4rem;
         overflow: hidden;
         flex: 0 0 auto;
-        box-shadow: 0 8px 24px rgba(118,75,162,.35);
+        box-shadow: 0 8px 24px rgba(84, 172, 191,.35);
     }
 
         .avatar-circle img {
@@ -302,14 +302,14 @@
         padding: 5px 14px;
         font-size: .78rem;
         font-weight: 700;
-        background: rgba(13,110,253,.14);
-        border: 1px solid rgba(13,110,253,.35);
-        color: #dce9ff;
+        background: rgba(84, 172, 191,.14);
+        border: 1px solid rgba(84, 172, 191,.35);
+        color: #A7EBF2;
         white-space: nowrap;
     }
 
         .membership-chip i {
-            color: #66d3e8;
+            color: #54ACBF;
             font-size: .95rem;
         }
 
@@ -331,13 +331,13 @@
         }
 
     .status-date {
-        background: rgba(13,110,253,.14);
-        border-color: rgba(13,110,253,.35);
-        color: #dce9ff;
+        background: rgba(84, 172, 191,.14);
+        border-color: rgba(84, 172, 191,.35);
+        color: #A7EBF2;
     }
 
         .status-date i {
-            color: #66d3e8;
+            color: #54ACBF;
         }
 
     .status-active {
@@ -347,17 +347,17 @@
     }
 
         .status-active i {
-            color: #6aeaa2;
+            color: #A7EBF2;
         }
 
     .status-remain {
-        background: rgba(118,75,162,.14);
-        border-color: rgba(118,75,162,.40);
-        color: #e6d9ff;
+        background: rgba(84, 172, 191,.14);
+        border-color: rgba(84, 172, 191,.40);
+        color: #A7EBF2;
     }
 
         .status-remain i {
-            color: #c9a6ff;
+            color: #9FC6D2;
         }
 
     /* ===== ✅ ساعت آنالوگ شیشه‌ای (تم بنفش-فیروزه‌ای) ===== */
@@ -375,8 +375,8 @@
         height: 118px;
         border-radius: 50%;
         background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.10), rgba(255,255,255,.02) 62%), rgba(16,21,38,.7);
-        border: 1px solid rgba(102,211,232,.35);
-        box-shadow: 0 8px 24px rgba(0,0,0,.35), inset 0 0 18px rgba(13,110,253,.10);
+        border: 1px solid rgba(84, 172, 191,.35);
+        box-shadow: 0 8px 24px rgba(0,0,0,.35), inset 0 0 18px rgba(84, 172, 191,.10);
     }
     /* علامت‌های ۱۲/۳/۶/۹ */
     .dc-tick {
@@ -429,7 +429,7 @@
         width: 4px;
         height: 26%;
         margin-left: -2px;
-        background: #dce9ff;
+        background: #A7EBF2;
         box-shadow: 0 0 6px rgba(220,233,255,.45);
         z-index: 2;
     }
@@ -459,20 +459,20 @@
         height: 12px;
         margin: -6px 0 0 -6px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        box-shadow: 0 0 10px rgba(118,75,162,.8);
+        background: linear-gradient(135deg, #26658C, #023859);
+        box-shadow: 0 0 10px rgba(84, 172, 191,.8);
         z-index: 5;
     }
     /* ===== ✅ باکس زیر ساعت: دیجیتال + تاریخ ===== */
     .dc-infobox {
-        background: rgba(13,110,253,.10);
-        border: 1px solid rgba(13,110,253,.30);
+        background: rgba(84, 172, 191,.10);
+        border: 1px solid rgba(84, 172, 191,.30);
         border-radius: 12px;
         padding: 6px 14px;
         text-align: center;
         min-width: 118px; 
         width: auto; 
-        box-shadow: 0 4px 14px rgba(13,110,253,.12);
+        box-shadow: 0 4px 14px rgba(84, 172, 191,.12);
     }
 
     .dc-digitaltime {
@@ -487,7 +487,7 @@
 
     .dc-date {
         font-size: .66rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         font-weight: 700;
         white-space: nowrap;
         margin-top: 2px;
@@ -521,15 +521,15 @@
         position: relative;
         border-radius: 20px;
         overflow: hidden;
-        background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18));
-        border: 1px solid rgba(102,211,232,.35);
+        background: linear-gradient(135deg, rgba(2, 56, 89,.22), rgba(84, 172, 191,.18));
+        border: 1px solid rgba(84, 172, 191,.35);
         transition: transform .25s, border-color .25s, box-shadow .25s;
     }
 
         .mp-entry:hover {
             transform: translateY(-3px);
-            border-color: rgba(102,211,232,.65);
-            box-shadow: 0 10px 28px rgba(118,75,162,.30);
+            border-color: rgba(84, 172, 191,.65);
+            box-shadow: 0 10px 28px rgba(84, 172, 191,.30);
         }
 
         .mp-entry::before {
@@ -539,7 +539,7 @@
             right: -50px;
             width: 160px;
             height: 160px;
-            background: radial-gradient(circle, rgba(102,211,232,.25), transparent 70%);
+            background: radial-gradient(circle, rgba(84, 172, 191,.25), transparent 70%);
             pointer-events: none;
         }
 
@@ -550,7 +550,7 @@
             left: -30px;
             width: 140px;
             height: 140px;
-            background: radial-gradient(circle, rgba(118,75,162,.25), transparent 70%);
+            background: radial-gradient(circle, rgba(84, 172, 191,.25), transparent 70%);
             pointer-events: none;
         }
 
@@ -567,13 +567,13 @@
         width: 54px;
         height: 54px;
         border-radius: 16px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #26658C 0%, #023859 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 1.5rem;
         color: #fff;
-        box-shadow: 0 8px 20px rgba(118,75,162,.45);
+        box-shadow: 0 8px 20px rgba(84, 172, 191,.45);
     }
 
     .mp-entry-info {
@@ -590,21 +590,21 @@
 
     .mp-entry-sub {
         font-size: .76rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
     }
 
     .mp-entry-right {
         display: flex;
         align-items: center;
         gap: 10px;
-        color: #66d3e8;
+        color: #54ACBF;
         font-size: 1.1rem;
     }
 
     .mp-entry-count {
-        background: rgba(102,211,232,.16);
-        border: 1px solid rgba(102,211,232,.40);
-        color: #66d3e8;
+        background: rgba(84, 172, 191,.16);
+        border: 1px solid rgba(84, 172, 191,.40);
+        color: #54ACBF;
         border-radius: 999px;
         padding: 4px 12px;
         font-size: .74rem;
@@ -615,7 +615,7 @@
     /* ===== کاروسل ===== */
     .cf-stage {
         position: relative;
-        height: 200px;
+        height: 300px;
         perspective: 900px;
         overflow: hidden;
         touch-action: pan-y;
@@ -625,11 +625,11 @@
         position: absolute;
         left: 50%;
         top: 50%;
-        width: 150px;
-        height: 150px;
-        margin: -75px 0 0 -75px;
-        border-radius: 18px;
-        background: linear-gradient(145deg, rgba(50,57,82,.7), rgba(36,42,67,.7));
+        width: 236px;
+        height: 236px;
+        margin: -118px 0 0 -118px;
+        border-radius: 26px;
+        background: linear-gradient(145deg, rgba(2, 56, 89,.7), rgba(36,42,67,.7));
         border: 1px solid rgba(255,255,255,.18);
         -webkit-backdrop-filter: blur(8px);
         backdrop-filter: blur(8px);
@@ -640,21 +640,21 @@
         gap: 10px;
         color: #fff;
         text-decoration: none;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, .55);
+        text-shadow: 0 1px 3px rgba(0,0,0,.55);
         transition: transform .55s cubic-bezier(.22,.9,.35,1.1), opacity .45s;
         transform-style: preserve-3d;
         box-shadow: 0 10px 30px rgba(0,0,0,.35);
-        text-shadow: 0 1px 3px rgba(0, 0, 0, .55);
+        text-shadow: 0 1px 3px rgba(0,0,0,.55);
     }
 
         .cf-card.cf-active {
-            background: linear-gradient(145deg, rgba(13,110,253,.72), rgba(111,66,193,.68));
+            background: linear-gradient(145deg, rgba(84, 172, 191,.72), rgba(84, 172, 191,.68));
             border-color: rgba(255,255,255,.35);
-            box-shadow: 0 16px 40px rgba(13,110,253,.35);
+            box-shadow: 0 16px 40px rgba(84, 172, 191,.35);
         }
 
     .cf-icon {
-        font-size: 2.6rem;
+        font-size: 3.4rem;
         line-height: 1;
     }
 
@@ -683,7 +683,7 @@
         border: 1px solid rgba(255,255,255,.12);
         border-radius: 18px;
         /* ✅ سایهٔ متن برای خوانایی بهتر روی پس‌زمینهٔ نیمه‌شفاف */
-        text-shadow: 0 1px 3px rgba(0, 0, 0, .55);
+        text-shadow: 0 1px 3px rgba(0,0,0,.55);
     }
 
         .credit-card .card-body {
@@ -705,7 +705,7 @@
         flex: 0 0 auto;
         border-radius: 12px;
         overflow: hidden;
-        background: #DCE9F2;
+        background: #A7EBF2;
         box-shadow: 0 4px 12px rgba(0,0,0,.3);
     }
 
@@ -727,8 +727,8 @@
         display: flex;
         align-items: baseline;
         gap: 6px;
-        background: rgba(13,110,253,.12);
-        border: 1px solid rgba(13,110,253,.25);
+        background: rgba(84, 172, 191,.12);
+        border: 1px solid rgba(84, 172, 191,.25);
         border-radius: 12px;
         padding: 8px 12px;
         margin-top: auto;
@@ -780,7 +780,7 @@
     .btn-all-menu {
         background: rgba(255,255,255,.10);
         border: 1px solid rgba(255,255,255,.18);
-        color: #dce9ff;
+        color: #A7EBF2;
         border-radius: 999px;
         padding: 6px 18px;
         font-weight: 700;
@@ -815,7 +815,7 @@
     .allmenu-backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(8,12,24,.45);
+        background: rgba(1, 28, 64,.45);
         opacity: 0;
         transition: opacity .3s;
     }
@@ -870,7 +870,7 @@
         border-radius: 16px;
         background: rgba(38,45,70,.7);
         border: 1px solid rgba(255,255,255,.14);
-        color: #e9ecef;
+        color: rgba(167, 235, 242, .18);
         text-decoration: none;
         font-size: .78rem;
         font-weight: 600;
@@ -896,7 +896,7 @@
     }
 
     .am-icon, .cf-icon, .nav-icon {
-        color: #66d3e8;
+        color: #54ACBF;
     }
 
     .sans-card {
@@ -927,7 +927,7 @@
 
     .sans-coach {
         font-size: .8rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         display: flex;
         align-items: center;
         gap: 6px;
@@ -935,16 +935,16 @@
     }
 
         .sans-coach i {
-            color: #66d3e8;
+            color: #54ACBF;
         }
 
     .sans-pill {
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: rgba(13,110,253,.14);
-        border: 1px solid rgba(13,110,253,.30);
-        color: #dce9ff;
+        background: rgba(84, 172, 191,.14);
+        border: 1px solid rgba(84, 172, 191,.30);
+        color: #A7EBF2;
         border-radius: 999px;
         padding: 5px 12px;
         font-size: .75rem;
@@ -952,7 +952,7 @@
     }
 
         .sans-pill i {
-            color: #66d3e8;
+            color: #54ACBF;
             font-size: .85rem;
         }
 
@@ -961,11 +961,11 @@
         gap: 14px;
         flex-wrap: wrap;
         font-size: .78rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
     }
 
         .sans-meta i {
-            color: #66d3e8;
+            color: #54ACBF;
             margin-left: 4px;
         }
 
@@ -975,15 +975,15 @@
     }
 
     .hd-icon {
-        color: #66d3e8;
+        color: #54ACBF;
         margin-left: 6px;
         font-size: 1rem;
     }
 
     .hd-badge {
-        background: rgba(13,110,253,.25);
-        border: 1px solid rgba(102,211,232,.45);
-        color: #dce9ff;
+        background: rgba(84, 172, 191,.25);
+        border: 1px solid rgba(84, 172, 191,.45);
+        color: #A7EBF2;
         font-weight: 700;
     }
 
@@ -1014,7 +1014,7 @@
         border-radius: 12px;
         background: rgba(255,255,255,.07);
         border: 1px solid rgba(255,255,255,.14);
-        color: #9fb3c8;
+        color: #A7EBF2;
         font-weight: 700;
         font-size: .78rem;
         transition: all .2s;
@@ -1022,10 +1022,10 @@
     }
 
         .ss-tab.active, .tf-tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #26658C 0%, #023859 100%);
             border-color: transparent;
             color: #fff;
-            box-shadow: 0 6px 16px rgba(118,75,162,.35);
+            box-shadow: 0 6px 16px rgba(84, 172, 191,.35);
         }
 
     .ss-card, .tf-card {
@@ -1043,8 +1043,8 @@
 
         .ss-card:hover, .tf-card:hover {
             transform: translateY(-2px);
-            border-color: rgba(102,211,232,.45);
-            box-shadow: 0 6px 16px rgba(13,110,253,.15);
+            border-color: rgba(84, 172, 191,.45);
+            box-shadow: 0 6px 16px rgba(84, 172, 191,.15);
         }
 
         .ss-card .ss-title, .tf-card .tf-title {
@@ -1055,7 +1055,7 @@
 
         .ss-card .ss-sub, .tf-card .tf-sub {
             font-size: .78rem;
-            color: #9fb3c8;
+            color: #A7EBF2;
             margin-top: 3px;
             display: flex;
             align-items: center;
@@ -1063,7 +1063,7 @@
         }
 
             .ss-card .ss-sub i, .tf-card .tf-sub i {
-                color: #66d3e8;
+                color: #54ACBF;
             }
 
         .ss-card .ss-row, .tf-card .tf-row {
@@ -1076,14 +1076,14 @@
         }
 
         .ss-card .ss-price, .tf-card .tf-price {
-            color: #66d3e8;
+            color: #54ACBF;
             font-weight: 800;
             font-size: .9rem;
             white-space: nowrap;
         }
 
     .ss-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #26658C 0%, #023859 100%);
         color: #fff;
         border: none;
         border-radius: 12px;
@@ -1093,13 +1093,13 @@
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        box-shadow: 0 6px 16px rgba(118,75,162,.35);
+        box-shadow: 0 6px 16px rgba(84, 172, 191,.35);
         transition: transform .15s, box-shadow .15s;
     }
 
         .ss-btn:hover {
             transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(118,75,162,.45);
+            box-shadow: 0 8px 20px rgba(84, 172, 191,.45);
         }
 
         .ss-btn:active {
@@ -1116,9 +1116,9 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        background: rgba(13,110,253,.14);
-        border: 1px solid rgba(13,110,253,.30);
-        color: #dce9ff;
+        background: rgba(84, 172, 191,.14);
+        border: 1px solid rgba(84, 172, 191,.30);
+        color: #A7EBF2;
         border-radius: 999px;
         padding: 3px 10px;
         font-size: .74rem;
@@ -1126,7 +1126,7 @@
     }
 
         .ss-card .ss-time-pill i, .tf-card .tf-pill i {
-            color: #66d3e8;
+            color: #54ACBF;
             font-size: .8rem;
         }
 
@@ -1134,9 +1134,9 @@
         display: inline-flex;
         align-items: center;
         gap: 4px;
-        background: rgba(118,75,162,.20);
-        border: 1px solid rgba(118,75,162,.45);
-        color: #e6d9ff;
+        background: rgba(84, 172, 191,.20);
+        border: 1px solid rgba(84, 172, 191,.45);
+        color: #A7EBF2;
         border-radius: 999px;
         padding: 3px 10px;
         font-size: .74rem;
@@ -1144,14 +1144,14 @@
     }
 
         .ss-card .ss-date-pill i {
-            color: #c9a6ff;
+            color: #9FC6D2;
             font-size: .8rem;
         }
 
     .ss-empty, .tf-empty {
         text-align: center;
         padding: 30px 10px;
-        color: #9fb3c8;
+        color: #A7EBF2;
     }
 
     .ss-empty-icon, .tf-empty-icon {
@@ -1174,7 +1174,7 @@
     .ss-confirm-backdrop {
         position: absolute;
         inset: 0;
-        background: rgba(8,12,24,.55);
+        background: rgba(1, 28, 64,.55);
         -webkit-backdrop-filter: blur(4px);
         backdrop-filter: blur(4px);
     }
@@ -1186,7 +1186,7 @@
         transform: translate(-50%,-50%);
         width: min(92%, 380px);
         background: linear-gradient(160deg, rgba(30,36,60,.98), rgba(22,26,44,.98));
-        border: 1px solid rgba(102,211,232,.35);
+        border: 1px solid rgba(84, 172, 191,.35);
         border-radius: 20px;
         padding: 26px 22px;
         text-align: center;
@@ -1215,12 +1215,12 @@
     .ss-confirm-text {
         font-size: .9rem;
         font-weight: 600;
-        color: #dce9ff;
+        color: #A7EBF2;
         line-height: 1.9;
     }
 
     .ss-confirm-amount {
-        color: #66d3e8;
+        color: #54ACBF;
         font-weight: 800;
     }
 
@@ -1234,7 +1234,7 @@
     .ss-btn-cancel {
         background: rgba(255,255,255,.08);
         border: 1px solid rgba(255,255,255,.18);
-        color: #dce9ff;
+        color: #A7EBF2;
         border-radius: 12px;
         padding: 9px 18px;
         font-weight: 700;
@@ -1266,7 +1266,7 @@
         padding: 8px 14px;
         background: rgba(255,255,255,.07);
         border: 1px solid rgba(255,255,255,.14);
-        color: #9fb3c8;
+        color: #A7EBF2;
         cursor: pointer;
         transition: all .2s;
     }
@@ -1275,7 +1275,7 @@
             display: block;
             font-size: .78rem;
             font-weight: 800;
-            color: #dce9ff;
+            color: #A7EBF2;
         }
 
         .ss-day .ss-day-date {
@@ -1287,9 +1287,9 @@
         .ss-day .ss-day-count {
             display: inline-block;
             margin-top: 5px;
-            background: rgba(102,211,232,.16);
-            border: 1px solid rgba(102,211,232,.40);
-            color: #66d3e8;
+            background: rgba(84, 172, 191,.16);
+            border: 1px solid rgba(84, 172, 191,.40);
+            color: #54ACBF;
             border-radius: 999px;
             padding: 1px 8px;
             font-size: .66rem;
@@ -1297,9 +1297,9 @@
         }
 
         .ss-day.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #26658C 0%, #023859 100%);
             border-color: transparent;
-            box-shadow: 0 6px 16px rgba(118,75,162,.35);
+            box-shadow: 0 6px 16px rgba(84, 172, 191,.35);
         }
 
             .ss-day.active .ss-day-name {
@@ -1307,7 +1307,7 @@
             }
 
             .ss-day.active .ss-day-date {
-                color: #e6d9ff;
+                color: #A7EBF2;
             }
 
             .ss-day.active .ss-day-count {
@@ -1331,7 +1331,7 @@
         gap: 7px;
         background: rgba(255,255,255,.08);
         border: 1px solid rgba(255,255,255,.16);
-        color: #dce9ff;
+        color: #A7EBF2;
         border-radius: 12px;
         padding: 8px 14px;
         font-weight: 700;
@@ -1340,9 +1340,9 @@
     }
 
         .tf-filterbtn.has-filter {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #26658C 0%, #023859 100%);
             border-color: transparent;
-            box-shadow: 0 6px 16px rgba(118,75,162,.35);
+            box-shadow: 0 6px 16px rgba(84, 172, 191,.35);
         }
 
     .tf-filtercount {
@@ -1355,7 +1355,7 @@
 
     .tf-filterlabel {
         font-size: .76rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         font-weight: 600;
     }
 
@@ -1377,7 +1377,7 @@
     .tf-fp-link {
         background: none;
         border: none;
-        color: #66d3e8;
+        color: #54ACBF;
         font-size: .76rem;
         font-weight: 700;
         padding: 2px 6px;
@@ -1430,7 +1430,7 @@
     }
 
     .tf-check input:checked + .tf-check-box {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #26658C 0%, #023859 100%);
         border-color: transparent;
         color: #fff;
     }
@@ -1438,17 +1438,17 @@
     .tf-check-name {
         font-size: .82rem;
         font-weight: 700;
-        color: #dce9ff;
+        color: #A7EBF2;
     }
 
     .tf-check:has(input:checked) {
-        border-color: rgba(102,211,232,.45);
-        background: rgba(102,211,232,.10);
+        border-color: rgba(84, 172, 191,.45);
+        background: rgba(84, 172, 191,.10);
     }
 
     .tf-card .tf-detail {
         font-size: .76rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         display: flex;
         align-items: center;
         gap: 5px;
@@ -1456,7 +1456,7 @@
     }
 
         .tf-card .tf-detail i {
-            color: #66d3e8;
+            color: #54ACBF;
             font-size: .82rem;
         }
 </style>

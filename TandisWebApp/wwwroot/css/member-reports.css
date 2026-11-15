@@ -1,7 +1,7 @@
 /* Member reports: scoped to this view and its body-level calendar. */
 .member-reports {
     min-width: 0;
-    color: #edf2ff;
+    color: #EAF7FA;
 }
 
 .member-reports-heading {
@@ -37,7 +37,7 @@ body.admin-glass-body .member-reports .member-reports-card:hover {
 .member-reports .coach-list-header {
     gap: .75rem;
     padding: .75rem 1rem;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #26658C, #023859);
 }
 
 .member-reports .att-cal-btn {
@@ -50,9 +50,9 @@ body.admin-glass-body .member-reports .member-reports-card:hover {
     gap: .375rem;
     width: 100%;
     padding: .25rem;
-    border: 1px solid rgba(102, 211, 232, .2);
+    border: 1px solid rgba(84, 172, 191,.2);
     border-radius: 14px;
-    background: rgba(15, 23, 42, .35);
+    background: rgba(1, 28, 64,.35);
 }
 
 .member-reports .nav-tabs-custom .nav-item {
@@ -78,7 +78,7 @@ body.admin-glass-body .member-reports .member-reports-card:hover {
 }
 
 .member-reports .nav-tabs-custom .nav-link i {
-    color: #66d3e8;
+    color: #54ACBF;
     font-size: 1.1rem;
 }
 
@@ -87,20 +87,20 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 .member-reports .nav-tabs-custom .nav-link:not(.active):hover {
-    background: rgba(102, 126, 234, .22);
+    background: rgba(2, 56, 89,.22);
 }
 
 .member-reports .nav-tabs-custom .nav-link.active {
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    box-shadow: inset 0 -3px 0 #66d3e8;
+    background: linear-gradient(135deg, #26658C, #023859);
+    box-shadow: inset 0 -3px 0 #54ACBF;
     color: #fff;
 }
 
 .member-reports :is(button, a, [tabindex]):focus-visible,
 #attCalOverlay.member-reports-calendar :is(button, [tabindex]):focus-visible {
-    outline: 3px solid #66d3e8;
+    outline: 3px solid #54ACBF;
     outline-offset: 3px;
-    box-shadow: 0 0 0 5px rgba(15, 23, 42, .8);
+    box-shadow: 0 0 0 5px rgba(1, 28, 64,.8);
 }
 
 .member-reports .tab-pane:focus-visible {
@@ -159,10 +159,10 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 .member-reports .rgh-green { color: #8fe3b0; }
 .member-reports .finance-debit,
 .member-reports .rgh-red { color: #ffadb7; }
-.member-reports .rgh-blue { color: #66d3e8; }
+.member-reports .rgh-blue { color: #54ACBF; }
 
 .member-reports .finance-currency {
-    color: #d3ddef;
+    color: #9FC6D2;
     font-size: .8rem;
     font-weight: 500;
 }
@@ -177,20 +177,20 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 .member-reports .badge-credit {
-    background: rgba(20, 83, 65, .85);
-    border: 1px solid rgba(143, 227, 176, .4);
+    background: rgba(20,83,65,.85);
+    border: 1px solid rgba(143,227,176,.4);
     color: #b9f5ce;
 }
 
 .member-reports .badge-debit {
-    background: rgba(113, 37, 64, .7);
-    border: 1px solid rgba(255, 173, 183, .4);
+    background: rgba(113,37,64,.7);
+    border: 1px solid rgba(255,173,183,.4);
     color: #ffcad1;
 }
 
 .member-reports .member-report-state {
     padding: 1.5rem .75rem;
-    color: #d3ddef;
+    color: #9FC6D2;
     text-align: center;
     overflow-wrap: anywhere;
 }
@@ -198,7 +198,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 .member-reports .member-report-state > i {
     display: block;
     margin-bottom: .5rem;
-    color: #66d3e8;
+    color: #54ACBF;
     font-size: 2rem;
 }
 
@@ -209,9 +209,9 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 
 .member-reports .member-report-retry {
     margin-top: .75rem;
-    color: #edf2ff;
-    background: rgba(102, 126, 234, .2);
-    border: 1px solid rgba(102, 211, 232, .5);
+    color: #EAF7FA;
+    background: rgba(2, 56, 89,.2);
+    border: 1px solid rgba(84, 172, 191,.5);
     border-radius: 10px;
     padding: .4rem 1rem;
 }
@@ -231,8 +231,8 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
     min-width: 0;
     padding: .85rem .5rem;
     text-align: center;
-    background: rgba(15, 23, 42, .35);
-    border: 1px solid rgba(255, 255, 255, .16);
+    background: rgba(1, 28, 64,.35);
+    border: 1px solid rgba(255,255,255,.16);
     border-radius: 14px;
 }
 
@@ -244,14 +244,14 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 .member-reports .rgh-lbl {
-    color: #c5d1e5;
+    color: #9FC6D2;
     font-size: .8rem;
     line-height: 1.7;
 }
 
 .member-reports .trf-card {
-    background: rgba(15, 23, 42, .38);
-    border-color: rgba(255, 255, 255, .18);
+    background: rgba(1, 28, 64,.38);
+    border-color: rgba(255,255,255,.18);
 }
 
 .member-reports .trf-head {
@@ -270,7 +270,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 .member-reports .trf-head:hover {
-    background: rgba(102, 126, 234, .12);
+    background: rgba(2, 56, 89,.12);
 }
 
 .member-reports .trf-line {
@@ -290,7 +290,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 .member-reports .trf-line > i {
-    color: #66d3e8;
+    color: #54ACBF;
 }
 
 .member-reports .trf-toggle {
@@ -312,7 +312,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
     overflow-wrap: anywhere;
 }
 
-.member-reports .trf-drow > span { color: #c5d1e5; }
+.member-reports .trf-drow > span { color: #9FC6D2; }
 .member-reports .trf-drow > b { min-width: 0; text-align: end; }
 .member-reports .trf-drow .hd-icon { font-size: .9rem; }
 
@@ -320,9 +320,9 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
     display: inline-block;
     margin-inline-start: .25rem;
     padding: .05rem .5rem;
-    color: #66d3e8;
-    background: rgba(102, 211, 232, .12);
-    border: 1px solid rgba(102, 211, 232, .3);
+    color: #54ACBF;
+    background: rgba(84, 172, 191,.12);
+    border: 1px solid rgba(84, 172, 191,.3);
     border-radius: 999px;
     font-size: .75rem;
     text-shadow: none;
@@ -363,8 +363,8 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
         gap: .7rem 1rem;
         padding: 1rem;
         margin-bottom: .75rem;
-        background: rgba(15, 23, 42, .5) !important;
-        border: 1px solid rgba(102, 211, 232, .25);
+        background: rgba(1, 28, 64,.5) !important;
+        border: 1px solid rgba(84, 172, 191,.25);
         border-radius: 14px;
     }
 
@@ -379,7 +379,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
     .member-reports .finance-label {
         display: block;
         margin-bottom: .25rem;
-        color: #c5d1e5;
+        color: #9FC6D2;
         font-size: .78rem;
         font-weight: 500;
     }
@@ -389,7 +389,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 
     body.admin-glass-body .member-reports .member-finance-table .finance-amount {
         padding-top: .7rem;
-        border-top: 1px solid rgba(255, 255, 255, .15);
+        border-top: 1px solid rgba(255,255,255,.15);
     }
 
     .member-reports .finance-amount-value { font-size: 1.05rem; }
@@ -448,7 +448,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 #attCalOverlay.member-reports-calendar .att-day { min-width: 0; font-variant-numeric: tabular-nums; }
-#attCalOverlay.member-reports-calendar .att-future { color: #c5d1e5; }
+#attCalOverlay.member-reports-calendar .att-future { color: #9FC6D2; }
 #attCalOverlay.member-reports-calendar :is(.att-legend, .att-stats) { flex-wrap: wrap; gap: .5rem; }
 
 @media (prefers-reduced-motion: reduce) {

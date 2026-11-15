@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using QRCoder;
@@ -122,7 +122,8 @@ namespace TandisWebApp.Controllers
         {
             try
             {
-                var token = await _qrService.GenerateQrTokenAsync(shiftID);
+                // ✅ QR دائمی: همیشه یک مقدار ثابت بر اساس SystemCode — بدون انقضا
+                var token = await _qrService.GeneratePermanentQrTokenAsync();
 
                 // ✅ محتوای QR = فقط URL صفحه ورود (توکن ورود به باشگاه هم به‌صورت پارامتر کنار آن می‌ماند)
                 //    آدرس با BuildPublicBaseUrl ساخته می‌شود تا روی موبایلِ اسکن‌کننده هم باز شود.
@@ -130,6 +131,7 @@ namespace TandisWebApp.Controllers
 
                 // برای دیاگنوستیک: آدرس دقیق داخل QR در هدر پاسخ هم می‌آید (توکن همان است که در تصویر است)
                 Response.Headers["X-Qr-Url"] = loginUrl;
+                Response.Headers["Cache-Control"] = "public, max-age=86400";
 
                 using var qrGenerator = new QRCodeGenerator();
                 using var qrCodeData = qrGenerator.CreateQrCode(loginUrl, QRCodeGenerator.ECCLevel.M);

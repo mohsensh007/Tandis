@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
@@ -61,6 +61,10 @@ namespace TandisWebApp.Services
             if (string.IsNullOrWhiteSpace(rawToken))
                 return (false, "فرمت QR نامعتبر است");
 
+            // ✅ توکن دائمی باشگاه — بدون انقضا
+            var currentSystem = await _db.Sec_Systems.AsNoTracking().FirstOrDefaultAsync();
+            if (rawToken.Equals(BuildPermanentToken(currentSystem?.SystemCode ?? "UNKNOWN"), StringComparison.OrdinalIgnoreCase))
+                return (true, "QR باشگاه معتبر است");
             var key = CACHE_PREFIX + rawToken.ToUpper();
 
             if (!_cache.TryGetValue<QrPayload>(key, out var payload) || payload == null)
@@ -94,6 +98,22 @@ namespace TandisWebApp.Services
         /// محتوای QR حالا URL صفحه ورود است (…/Account/Login?qr=TOKEN)؛
         /// این متد توکن را از داخل URL یا از ورودی خام (توکن قبلی) بیرون می‌کشد.
         /// </summary>
+        /// <summary>
+        /// ✅ توکن دائمی QR باشگاه: فقط از SystemCode ساخته می‌شود، هیچ انقضایی ندارد
+        ///    و هر بار دقیقاً همان مقدار قبلی را برمی‌گرداند.
+        /// </summary>
+        public async Task<string> GeneratePermanentQrTokenAsync()
+        {
+            var system = await _db.Sec_Systems.AsNoTracking().FirstOrDefaultAsync();
+            return BuildPermanentToken(system?.SystemCode ?? "UNKNOWN");
+        }
+
+        private string BuildPermanentToken(string systemCode)
+        {
+            using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(_secretKey));
+            var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes("TANDIS-CLUB-QR|" + systemCode));
+            return Convert.ToHexString(hash).Substring(0, 16);
+        }
         private static string ExtractToken(string raw)
         {
             if (string.IsNullOrWhiteSpace(raw)) return "";

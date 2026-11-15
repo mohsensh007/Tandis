@@ -402,11 +402,11 @@
         // پس‌زمینه گرادیان مسیر
         svg.push('<defs>' +
             '<linearGradient id="baLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">' +
-            '<stop offset="0%" stop-color="#66d3e8"/><stop offset="100%" stop-color="#a78bfa"/>' +
+            '<stop offset="0%" stop-color="#3781fc"/><stop offset="100%" stop-color="#b9d3ff"/>' +
             '</linearGradient>' +
             '<linearGradient id="baAreaGrad" x1="0%" y1="0%" x2="0%" y2="100%">' +
-            '<stop offset="0%" stop-color="#66d3e8" stop-opacity="0.34"/>' +
-            '<stop offset="100%" stop-color="#66d3e8" stop-opacity="0"/>' +
+            '<stop offset="0%" stop-color="#3781fc" stop-opacity="0.34"/>' +
+            '<stop offset="100%" stop-color="#3781fc" stop-opacity="0"/>' +
             '</linearGradient>' +
             '</defs>');
 
@@ -424,7 +424,7 @@
         // خط میانگین (بنفش‌کم‌رنگ)
         var avgY = yAt(avg);
         svg.push('<line class="ba-average-line" x1="' + padL + '" y1="' + avgY + '" x2="' + (W - padR) + '" y2="' + avgY +
-            '" stroke="#a78bfa" stroke-width="1.4" stroke-dasharray="5 6" opacity="0.75"/>');
+            '" stroke="#b9d3ff" stroke-width="1.4" stroke-dasharray="5 6" opacity="0.75"/>');
 
         // مسیر خط + ناحیه
         var pts = records.map(function (r, i) { return { x: xAt(i), y: yAt(Number(r[chartKey])), d: r.recordDate, v: Number(r[chartKey]) }; });
@@ -442,7 +442,7 @@
         pts.forEach(function (p, i) {
             var last = i === pts.length - 1;
             var delayIndex = pts.length > 1 ? Math.round(i * 8 / (pts.length - 1)) : 0;
-            svg.push('<circle class="ba-chart-point' + (last ? ' ba-chart-point-last' : '') + '" style="--ba-point-index:' + delayIndex + ';animation-delay:' + (0.42 + delayIndex * .07).toFixed(2) + 's" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + (last ? 6 : 4) + '" fill="' + (last ? '#66d3e8' : '#18233b') + '" stroke="' + (last ? '#d9fbff' : '#66d3e8') + '" stroke-width="2"><title>' + esc(fa(p.d) + ' — ' + fa(num(p.v, 1)) + ' ' + chartUnit) + '</title></circle>');
+            svg.push('<circle class="ba-chart-point' + (last ? ' ba-chart-point-last' : '') + '" style="--ba-point-index:' + delayIndex + ';animation-delay:' + (0.42 + delayIndex * .07).toFixed(2) + 's" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + (last ? 6 : 4) + '" fill="' + (last ? '#3781fc' : '#03195b') + '" stroke="' + (last ? '#d9fbff' : '#3781fc') + '" stroke-width="2"><title>' + esc(fa(p.d) + ' — ' + fa(num(p.v, 1)) + ' ' + chartUnit) + '</title></circle>');
             var labelLimit = W < 480 ? 3 : 6;
             var showLbl = pts.length <= labelLimit || i === 0 || last || (i % Math.ceil((pts.length - 1) / (labelLimit - 1)) === 0 && i < pts.length - 2);
             if (showLbl) {
@@ -471,7 +471,7 @@
             if (stat) {
                 var diff = vals[vals.length - 1] - vals[0];
                 stat.innerHTML = 'تعداد: ' + fa(vals.length) + ' • میانگین: ' + fa(num(avg, 1)) + ' ' + esc(chartUnit) +
-                    (vals.length > 1 ? ' • تغییر: <b style="color:' + (diff < 0 ? '#86efac' : (diff > 0 ? '#fcd34d' : '#b9c2d4')) + ';">' +
+                    (vals.length > 1 ? ' • تغییر: <b style="color:' + (diff < 0 ? '#b9d3ff' : (diff > 0 ? '#3781fc' : '#b9c2d4')) + ';">' +
                         (diff > 0 ? '+' : '') + fa(num(diff, 1)) + '</b>' : '');
             }
         }

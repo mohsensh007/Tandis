@@ -44,6 +44,15 @@ namespace TandisWebApp.Controllers
         [HttpGet]
         public IActionResult Index() => View();
 
+        // ✅ بخش «QR باشگاه شما» — QR دائمی، فقط برای مدیر
+        [AdminAuthorize]
+        [HttpGet]
+        public IActionResult ClubQr()
+        {
+            ViewData["Title"] = "QR باشگاه شما";
+            return View("~/Views/QRCode/QrDisplay.cshtml");
+        }
+
         [AdminAuthorize]
         [HttpGet]
         public IActionResult TrafficReport() => View();

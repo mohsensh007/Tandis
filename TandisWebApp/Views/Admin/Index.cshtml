@@ -50,8 +50,8 @@
                     <div class="donut-wrap">
                         <svg viewBox="0 0 42 42" class="donut" id="donutCur">
                             <circle cx="21" cy="21" r="15.9155" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="5"></circle>
-                            <circle class="seg-reg" cx="21" cy="21" r="15.9155" fill="none" stroke="#66d3e8" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-                            <circle class="seg-ren" cx="21" cy="21" r="15.9155" fill="none" stroke="#667eea" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                            <circle class="seg-reg" cx="21" cy="21" r="15.9155" fill="none" stroke="#54ACBF" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                            <circle class="seg-ren" cx="21" cy="21" r="15.9155" fill="none" stroke="#26658C" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
                             <text class="donut-center" x="21" y="23.5" text-anchor="middle" fill="#ffffff" font-size="7.5" font-weight="700">0</text>
                         </svg>
                     </div>
@@ -61,8 +61,8 @@
                     <div class="donut-wrap">
                         <svg viewBox="0 0 42 42" class="donut" id="donutPrev">
                             <circle cx="21" cy="21" r="15.9155" fill="none" stroke="rgba(255,255,255,.10)" stroke-width="5"></circle>
-                            <circle class="seg-reg" cx="21" cy="21" r="15.9155" fill="none" stroke="#66d3e8" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
-                            <circle class="seg-ren" cx="21" cy="21" r="15.9155" fill="none" stroke="#667eea" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                            <circle class="seg-reg" cx="21" cy="21" r="15.9155" fill="none" stroke="#54ACBF" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
+                            <circle class="seg-ren" cx="21" cy="21" r="15.9155" fill="none" stroke="#26658C" stroke-width="5" stroke-dasharray="0 100" stroke-dashoffset="25"></circle>
                             <text class="donut-center" x="21" y="23.5" text-anchor="middle" fill="#ffffff" font-size="7.5" font-weight="700">0</text>
                         </svg>
                     </div>
@@ -71,8 +71,8 @@
             </div>
 
             <div class="donut-legend">
-                <span><i style="background:#66d3e8"></i> ثبت‌نام: <b id="curReg">0</b></span>
-                <span><i style="background:#667eea"></i> تمدید: <b id="curRen">0</b></span>
+                <span><i style="background:#54ACBF"></i> ثبت‌نام: <b id="curReg">0</b></span>
+                <span><i style="background:#26658C"></i> تمدید: <b id="curRen">0</b></span>
             </div>
         </div>
     </div>
@@ -121,6 +121,21 @@
             </a>
         </div>
 
+        <!-- ✅ کارت QR باشگاه شما -->
+        <div class="col-12 col-md-6 col-lg-4">
+            <a href="/Admin/ClubQr" target="_blank" rel="noopener" class="admin-setting-card">
+                <div class="asc-icon">
+                    <i class="bi bi-qr-code"></i>
+                </div>
+                <div class="asc-body">
+                    <div class="asc-title">QR باشگاه شما</div>
+                    <div class="asc-desc">QR ثابت و بدون انقضا برای ورود اعضا — نمایش و چاپ</div>
+                </div>
+                <div class="asc-arrow">
+                    <i class="bi bi-chevron-left"></i>
+                </div>
+            </a>
+        </div>
         <!-- (بعداً می‌تونی کارت‌های تنظیمات دیگه رو اینجا اضافه کنیم) -->
         <!--
        
@@ -160,7 +175,7 @@
         border-radius: 20px;
         padding: 16px;
         overflow: hidden;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, .55);
+        text-shadow: 0 1px 3px rgba(0,0,0,.55);
     }
 
         .dash-card::before {
@@ -186,7 +201,7 @@
     }
 
     .hd-icon {
-        color: #66d3e8;
+        color: #54ACBF;
         margin-left: 6px;
     }
 
@@ -195,7 +210,7 @@
         font-size: 2.8rem;
         font-weight: 800;
         line-height: 1.1;
-        background: linear-gradient(135deg, #66d3e8, #667eea);
+        background: linear-gradient(135deg, #54ACBF, #26658C);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
@@ -209,7 +224,7 @@
         padding: 6px 10px;
         margin-bottom: 6px;
         font-size: .8rem;
-        color: #cbd3da;
+        color: #9FC6D2;
     }
 
     /* ===== دکمه‌های شیشه‌ای ===== */
@@ -218,9 +233,9 @@
         align-items: center;
         justify-content: center;
         gap: 8px;
-        background: rgba(13,110,253,.14);
-        border: 1px solid rgba(102,211,232,.35);
-        color: #dce9ff;
+        background: rgba(84, 172, 191,.14);
+        border: 1px solid rgba(84, 172, 191,.35);
+        color: #A7EBF2;
         border-radius: 14px;
         padding: 10px 14px;
         font-weight: 700;
@@ -229,11 +244,11 @@
     }
 
         .btn-glass i {
-            color: #66d3e8;
+            color: #54ACBF;
         }
 
         .btn-glass:hover {
-            background: rgba(13,110,253,.28);
+            background: rgba(84, 172, 191,.28);
             color: #fff;
         }
 
@@ -244,7 +259,7 @@
         border-radius: 14px;
         background: rgba(255,255,255,.08);
         border: 1px solid rgba(255,255,255,.16);
-        color: #66d3e8;
+        color: #54ACBF;
         font-size: 1.1rem;
         display: flex;
         align-items: center;
@@ -254,7 +269,7 @@
 
         .btn-glass-icon:hover {
             transform: rotate(120deg);
-            background: rgba(102,211,232,.15);
+            background: rgba(84, 172, 191,.15);
             color: #fff;
         }
 
@@ -268,7 +283,7 @@
         flex: 1;
         background: rgba(255,255,255,.06);
         border: 1px solid rgba(255,255,255,.14);
-        color: #9fb3c8;
+        color: #A7EBF2;
         border-radius: 12px;
         padding: 9px 0;
         font-size: .85rem;
@@ -285,10 +300,10 @@
         }
 
     .btn-check:checked + .period-btn {
-        background: linear-gradient(135deg, #1E6FD9, #667eea);
+        background: linear-gradient(135deg, #26658C, #26658C);
         border-color: transparent;
         color: #fff;
-        box-shadow: 0 6px 16px rgba(30,111,217,.35);
+        box-shadow: 0 6px 16px rgba(84, 172, 191,.35);
     }
 
     /* ===== بج تغییر درصد: شیشه‌ای ===== */
@@ -303,9 +318,9 @@
     }
 
         .delta-badge.up {
-            background: rgba(56,217,169,.14);
-            border: 1px solid rgba(56,217,169,.40);
-            color: #38d9a9;
+            background: rgba(84, 172, 191,.14);
+            border: 1px solid rgba(84, 172, 191,.40);
+            color: #54ACBF;
         }
 
         .delta-badge.down {
@@ -327,7 +342,7 @@
 
     .donut-label {
         font-size: .78rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         margin-top: 6px;
     }
 
@@ -337,7 +352,7 @@
         gap: 22px;
         margin-top: 12px;
         font-size: .8rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
     }
 
         .donut-legend i {
@@ -372,7 +387,7 @@
         border: 1px solid rgba(255,255,255,.12);
         border-radius: 16px;
         padding: 16px;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, .55);
+        text-shadow: 0 1px 3px rgba(0,0,0,.55);
     }
 
         .money-cell::before {
@@ -382,7 +397,7 @@
             left: -30px;
             width: 100px;
             height: 100px;
-            background: radial-gradient(circle, rgba(102,211,232,.16), transparent 70%);
+            background: radial-gradient(circle, rgba(84, 172, 191,.16), transparent 70%);
             pointer-events: none;
         }
 
@@ -391,13 +406,13 @@
         align-items: center;
         gap: 7px;
         font-size: .78rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         font-weight: 700;
         margin-bottom: 10px;
     }
 
         .mc-head i {
-            color: #66d3e8;
+            color: #54ACBF;
             font-size: 1rem;
         }
 
@@ -409,7 +424,7 @@
     }
 
     .money-cell.cur .mc-amount {
-        background: linear-gradient(90deg, #66d3e8, #8ab6ff);
+        background: linear-gradient(90deg, #54ACBF, #A7EBF2);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
@@ -417,13 +432,13 @@
 
     .mc-amount small {
         font-size: .68rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         font-weight: 600;
     }
 
     .money-cell.cur .mc-amount small {
-        color: #9fb3c8;
-        -webkit-text-fill-color: #9fb3c8;
+        color: #A7EBF2;
+        -webkit-text-fill-color: #A7EBF2;
     }
 
     .mc-sub {
@@ -431,17 +446,17 @@
         align-items: center;
         gap: 6px;
         font-size: .72rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         margin-top: 8px;
     }
 
         .mc-sub i {
-            color: #667eea;
+            color: #26658C;
         }
 
     /* ===== مودال شیشه‌ای ===== */
     .glass-modal {
-        background: rgba(16,20,36,.97);
+        background: rgba(1, 28, 64,.97);
         border: 1px solid rgba(255,255,255,.15);
         border-radius: 18px;
         color: #fff;
@@ -450,7 +465,7 @@
     }
 
     .grad-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #26658C 0%, #023859 100%);
         color: #fff;
         font-weight: 800;
     }
@@ -459,7 +474,7 @@
     .admin-settings-section {
         margin-top: 40px;
         padding-top: 24px;
-        border-top: 1px solid rgba(102,211,232,.15);
+        border-top: 1px solid rgba(84, 172, 191,.15);
     }
 
     .admin-settings-title {
@@ -468,13 +483,13 @@
         gap: 8px;
         font-size: .9rem;
         font-weight: 800;
-        color: #9fb3c8;
+        color: #A7EBF2;
         margin-bottom: 16px;
         letter-spacing: .5px;
     }
 
         .admin-settings-title i {
-            color: #66d3e8;
+            color: #54ACBF;
             font-size: 1rem;
         }
 
@@ -484,8 +499,8 @@
         gap: 14px;
         padding: 16px 18px;
         border-radius: 16px;
-        background: linear-gradient(135deg, rgba(102,126,234,.10), rgba(118,75,162,.08));
-        border: 1px solid rgba(102,211,232,.25);
+        background: linear-gradient(135deg, rgba(2, 56, 89,.10), rgba(84, 172, 191,.08));
+        border: 1px solid rgba(84, 172, 191,.25);
         text-decoration: none;
         color: inherit;
         transition: all .25s ease;
@@ -494,9 +509,9 @@
 
         .admin-setting-card:hover {
             transform: translateY(-2px);
-            border-color: rgba(102,211,232,.55);
-            box-shadow: 0 8px 24px rgba(118,75,162,.22);
-            background: linear-gradient(135deg, rgba(102,126,234,.18), rgba(118,75,162,.14));
+            border-color: rgba(84, 172, 191,.55);
+            box-shadow: 0 8px 24px rgba(84, 172, 191,.22);
+            background: linear-gradient(135deg, rgba(2, 56, 89,.18), rgba(84, 172, 191,.14));
         }
 
     .asc-icon {
@@ -504,13 +519,13 @@
         width: 48px;
         height: 48px;
         border-radius: 12px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #26658C 0%, #023859 100%);
         display: flex;
         align-items: center;
         justify-content: center;
         color: #fff;
         font-size: 1.4rem;
-        box-shadow: 0 6px 14px rgba(118,75,162,.35);
+        box-shadow: 0 6px 14px rgba(84, 172, 191,.35);
     }
 
     .asc-body {
@@ -527,13 +542,13 @@
 
     .asc-desc {
         font-size: .74rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         line-height: 1.4;
     }
 
     .asc-arrow {
         flex: 0 0 auto;
-        color: #66d3e8;
+        color: #54ACBF;
         font-size: 1.1rem;
         transition: transform .2s;
     }
@@ -565,7 +580,7 @@
 </style>
 
 @section Scripts {
-    <link rel="stylesheet" href="~/css/admin-messages.css?v=1" />
+    <link rel="stylesheet" href="~/css/admin-messages.css" asp-append-version="true" asp-append-version="true" />
     <script>
         function faNum(n) {
             return String(n).replace(/[0-9]/g, function(d) { return '۰۱۲۳۴۵۶۷۸۹'[d]; });
@@ -611,7 +626,7 @@
                         '<td>' + memberCode + '</td>' +
                         '<td class="hide-sm">' + sport + '</td>' +
                         '<td style="direction:ltr;text-align:right;">' + entryTime + '</td>' +
-                        '<td style="color:#66d3e8;direction:ltr;text-align:right;">⏰ ' + duration + '</td>' +
+                        '<td style="color:#54ACBF;direction:ltr;text-align:right;">⏰ ' + duration + '</td>' +
                         '<td>' + status + '</td>' +
                     '</tr>';
 
@@ -642,7 +657,7 @@
                 var box = $('#insidePreview');
                 box.empty();
                 if (!rows.length) {
-                    box.html('<div class="text-center small py-2" style="color:#9fb3c8">در حال حاضر کسی داخل باشگاه نیست</div>');
+                    box.html('<div class="text-center small py-2" style="color:#A7EBF2">در حال حاضر کسی داخل باشگاه نیست</div>');
                     return;
                 }
                 var max = 3;
@@ -652,13 +667,13 @@
                             '<span class="text-truncate">' + esc(r.personName) +
                                 (r.isGuest ? ' <span class="badge bg-warning" style="font-size:10px;">مهمان</span>' : '') +
                             '</span>' +
-                            '<span style="direction:ltr;color:#66d3e8;font-size:.72rem;">' + esc(r.entryTime || '') + '</span>' +
+                            '<span style="direction:ltr;color:#54ACBF;font-size:.72rem;">' + esc(r.entryTime || '') + '</span>' +
                         '</div>'
                     );
                 });
                 if (rows.length > max) {
                     box.append('<div class="text-center small mt-1">' +
-                        '<a href="#" id="lnkMoreInside" style="color:#66d3e8;text-decoration:none">+ ' +
+                        '<a href="#" id="lnkMoreInside" style="color:#54ACBF;text-decoration:none">+ ' +
                         faNum(rows.length - max) + ' نفر دیگر…</a></div>');
                 }
             });

@@ -137,6 +137,8 @@ builder.Services.AddScoped<MessageService>();
 builder.Services.AddScoped<CoachService>();
 builder.Services.AddScoped<ClubRuleService>();
 builder.Services.AddScoped<MemberRegistrationService>();
+// ✅ میز خدمت: کاربران Sec_Users با IsAdmin=false (۵ کارت خدمات)
+builder.Services.AddScoped<DeskService>();
 builder.Services.AddScoped<FaceDeviceService>();
 // ✅ گوشه «ورزشکاران»: ثبت ورود/خروج، دفترچه تمرین و باز کردن کمد (ارتباط با کنترلر)
 builder.Services.AddScoped<AthleteService>();

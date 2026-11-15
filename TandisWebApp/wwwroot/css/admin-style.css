@@ -4,10 +4,10 @@
 
 /* ۱. پس‌زمینه کل صفحه ادمین */
 body.admin-glass-body {
-    background-color: #0f172a;
+    background-color: #011C40;
     min-height: 100vh;
     min-height: 100dvh; /* ارتفاع واقعی در مرورگرهای موبایل */
-    color: #e2e8f0;
+    color: rgba(167, 235, 242, .18);
 }
 
     body.admin-glass-body::before {
@@ -15,18 +15,18 @@ body.admin-glass-body {
         position: fixed;
         inset: 0;
         z-index: -1;
-        background: linear-gradient(135deg, rgba(15,23,42,.85), rgba(30,60,114,.85)), url('../images/gym-login-bg.webp') no-repeat center center / cover;
+        background: linear-gradient(135deg, rgba(1, 28, 64,.85), rgba(1, 28, 64,.85));
         transform: translateZ(0);
         pointer-events: none;
     }
 
     /* ۲. نوبار (Navbar) شیشه‌ای - با !important برای غلبه بر استایل inline قدیمی */
     body.admin-glass-body .navbar {
-        background: rgba(15, 23, 42, 0.6) !important;
+        background: rgba(1, 28, 64,0.8) !important;
         -webkit-backdrop-filter: blur(12px);
         backdrop-filter: blur(12px);
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.2);
     }
 
     body.admin-glass-body .navbar-brand,
@@ -35,17 +35,17 @@ body.admin-glass-body {
     }
 
         body.admin-glass-body .nav-link:hover {
-            color: #4a90e2 !important;
+            color: #54ACBF !important;
         }
 
     /* ۳. کارت‌های شیشه‌ای (داشبورد و گزارش‌ها) */
     body.admin-glass-body .card {
-        background: rgba(255, 255, 255, 0.08) !important;
+        background: rgba(2, 56, 89,0.8) !important;
         -webkit-backdrop-filter: blur(16px);
         backdrop-filter: blur(16px);
-        border: 1px solid rgba(255, 255, 255, 0.15) !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
         border-radius: 16px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
         color: #ffffff;
         transition: transform 0.2s ease, box-shadow 0.2s ease;
         /* ✅ گوشه‌های محتوای کدر (مثل purple-style) باید به گوشه‌های گِرد کارت بریده شود
@@ -55,8 +55,8 @@ body.admin-glass-body {
 
         body.admin-glass-body .card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
-            border-color: rgba(255, 255, 255, 0.3) !important;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+            border-color: rgba(255,255,255,0.3) !important;
         }
 
     body.admin-glass-body .card-title {
@@ -65,7 +65,7 @@ body.admin-glass-body {
 
     /* اصلاح رنگ متن‌های muted داخل کارت‌ها تا خوانا باشند */
     body.admin-glass-body .text-muted {
-        color: rgba(255, 255, 255, 0.7) !important;
+        color: rgba(255,255,255,0.7) !important;
     }
 
     /* ۴. جداول شیشه‌ای (برای صفحات گزارش مثل TrafficReport) */
@@ -75,40 +75,40 @@ body.admin-glass-body {
     }
 
         body.admin-glass-body .table thead th {
-            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            border-bottom: 2px solid rgba(255,255,255,0.2);
             color: #ffffff;
-            background: rgba(0, 0, 0, 0.2) !important;
+            background: rgba(0,0,0,0.2) !important;
         }
 
         body.admin-glass-body .table tbody td {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: #e2e8f0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: rgba(167, 235, 242, .18);
         }
 
     body.admin-glass-body .table-hover tbody tr:hover {
-        background: rgba(255, 255, 255, 0.1) !important;
+        background: rgba(2, 56, 89,0.8) !important;
         color: #ffffff;
     }
 
     /* ۵. فرم‌ها و اینپوت‌ها (برای فیلتر تاریخ و ...) */
     body.admin-glass-body .form-control,
     body.admin-glass-body .form-select {
-        background: rgba(255, 255, 255, 0.1) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(2, 56, 89,0.8) !important;
+        border: 1px solid rgba(255,255,255,0.2);
         color: #ffffff;
         border-radius: 10px;
     }
 
         body.admin-glass-body .form-control:focus,
         body.admin-glass-body .form-select:focus {
-            background: rgba(255, 255, 255, 0.2) !important;
-            border-color: #4a90e2;
+            background: rgba(255,255,255,0.2) !important;
+            border-color: #54ACBF;
             color: #ffffff;
-            box-shadow: 0 0 0 0.25rem rgba(74, 144, 226, 0.25);
+            box-shadow: 0 0 0 0.25rem rgba(84, 172, 191,0.25);
         }
 
         body.admin-glass-body .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255,255,255,0.6);
         }
 
     body.admin-glass-body label {
@@ -117,15 +117,15 @@ body.admin-glass-body {
 
     /* ۶. مودال‌ها (مثل تقویم جلالی که در کد دیدم) */
     body.admin-glass-body .modal-content {
-        background: rgba(30, 41, 59, 0.95);
+        background: rgba(1, 28, 64,0.8);
         -webkit-backdrop-filter: blur(20px);
         backdrop-filter: blur(20px);
-        border: 1px solid rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255,255,255,0.15);
         color: #ffffff;
     }
 
     body.admin-glass-body .modal-header {
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     body.admin-glass-body .btn-close {
@@ -134,11 +134,11 @@ body.admin-glass-body {
 
     /* ۷. فوتر */
     body.admin-glass-body footer {
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(0,0,0,0.3);
         -webkit-backdrop-filter: blur(10px);
         backdrop-filter: blur(10px);
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        color: rgba(255, 255, 255, 0.7);
+        border-top: 1px solid rgba(255,255,255,0.1);
+        color: rgba(255,255,255,0.7);
     }
     /* =========================================
    اصلاح هدر جدول و کارت‌های گزارش - رفع مشکل خوانایی
@@ -146,21 +146,21 @@ body.admin-glass-body {
 
     /* ۱. هدر جدول - کاملاً خوانا با رنگ تیره */
     body.admin-glass-body .table thead th {
-        background: rgba(15, 23, 42, 0.9) !important; /* سرمه‌ای تیره */
+        background: rgba(1, 28, 64,0.9) !important; /* سرمه‌ای تیره */
         color: #ffffff !important;
-        border-bottom: 2px solid rgba(74, 144, 226, 0.5) !important;
+        border-bottom: 2px solid rgba(84, 172, 191,0.5) !important;
         font-weight: 700;
         padding: 12px 8px;
     }
 
     /* حذف استایل پیش‌فرض table-light بوت‌استرپ */
     body.admin-glass-body .table-light {
-        background: rgba(15, 23, 42, 0.9) !important;
+        background: rgba(1, 28, 64,0.9) !important;
         color: #ffffff !important;
     }
 
         body.admin-glass-body .table-light th {
-            background: rgba(15, 23, 42, 0.9) !important;
+            background: rgba(1, 28, 64,0.9) !important;
             color: #ffffff !important;
         }
 
@@ -168,19 +168,19 @@ body.admin-glass-body {
     body.admin-glass-body .card.bg-primary,
     body.admin-glass-body .card.bg-success,
     body.admin-glass-body .card.bg-warning {
-        background: rgba(255, 255, 255, 0.15) !important;
+        background: rgba(2, 56, 89,0.8) !important;
         -webkit-backdrop-filter: blur(12px);
         backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255,255,255,0.2);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
     }
 
     body.admin-glass-body .card.bg-primary {
-        border-left: 4px solid #4a90e2 !important;
+        border-left: 4px solid #54ACBF !important;
     }
 
     body.admin-glass-body .card.bg-success {
-        border-left: 4px solid #28a745 !important;
+        border-left: 4px solid #54ACBF !important;
     }
 
     body.admin-glass-body .card.bg-warning {
@@ -200,30 +200,30 @@ body.admin-glass-body {
         body.admin-glass-body .card.bg-primary small,
         body.admin-glass-body .card.bg-success small,
         body.admin-glass-body .card.bg-warning small {
-            color: rgba(255, 255, 255, 0.9) !important;
+            color: rgba(255,255,255,0.9) !important;
             font-size: 0.9rem;
         }
 
     /* ۳. بهبود دکمه‌ها در فرم فیلتر */
     body.admin-glass-body .btn-outline-secondary {
-        border-color: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255,255,255,0.3);
         color: #ffffff;
     }
 
         body.admin-glass-body .btn-outline-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
             color: #ffffff;
         }
 
     body.admin-glass-body .btn-outline-danger {
-        border-color: rgba(220, 53, 69, 0.6);
+        border-color: rgba(220,53,69,0.6);
         color: #ff6b6b;
     }
 
         body.admin-glass-body .btn-outline-danger:hover {
-            background: rgba(220, 53, 69, 0.3);
-            border-color: rgba(220, 53, 69, 0.8);
+            background: rgba(220,53,69,0.3);
+            border-color: rgba(220,53,69,0.8);
             color: #ffffff;
         }
     /* =========================================
@@ -234,76 +234,76 @@ body.admin-glass-body {
     body.admin-glass-body .table tbody tr {
         background: transparent !important;
         color: #ffffff !important;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
     /* سلول‌های جدول */
     body.admin-glass-body .table tbody td {
         background: transparent !important;
         color: #ffffff !important;
-        border-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255,255,255,0.1);
         padding: 12px 8px;
         font-size: 14px;
     }
 
     /* ردیف‌های زوج (table-striped) */
     body.admin-glass-body .table tbody tr:nth-of-type(2n) {
-        background: rgba(255, 255, 255, 0.03) !important;
+        background: rgba(255,255,255,0.03) !important;
     }
 
     /* ردیف‌های فرد */
     body.admin-glass-body .table tbody tr:nth-of-type(2n+1) {
-        background: rgba(0, 0, 0, 0.1) !important;
+        background: rgba(0,0,0,0.1) !important;
     }
 
     /* هاور روی ردیف‌ها (table-hover) */
     body.admin-glass-body .table-hover tbody tr:hover {
-        background: rgba(74, 144, 226, 0.15) !important;
+        background: rgba(84, 172, 191,0.15) !important;
         color: #ffffff !important;
-        border-color: rgba(74, 144, 226, 0.3);
+        border-color: rgba(84, 172, 191,0.3);
     }
 
     /* استایل خاص برای برچسب‌ها (badge) داخل جدول */
     body.admin-glass-body .badge {
-        background: rgba(255, 255, 255, 0.2) !important;
+        background: rgba(255,255,255,0.2) !important;
         color: #ffffff !important;
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255,255,255,0.3);
         padding: 6px 10px;
         font-weight: 600;
     }
 
         body.admin-glass-body .badge.bg-primary {
-            background: rgba(13, 110, 253, 0.6) !important;
+            background: rgba(84, 172, 191,0.6) !important;
         }
 
         body.admin-glass-body .badge.bg-success {
-            background: rgba(25, 135, 84, 0.6) !important;
+            background: rgba(25,135,84,0.6) !important;
         }
 
         body.admin-glass-body .badge.bg-warning {
-            background: rgba(255, 193, 7, 0.6) !important;
+            background: rgba(84, 172, 191,0.6) !important;
             color: #000000 !important;
         }
 
         body.admin-glass-body .badge.bg-danger {
-            background: rgba(220, 53, 69, 0.6) !important;
+            background: rgba(220,53,69,0.6) !important;
         }
 
     /* متن‌های خاکستری داخل جدول */
     body.admin-glass-body .text-muted {
-        color: rgba(255, 255, 255, 0.7) !important;
+        color: rgba(255,255,255,0.7) !important;
     }
 
     /* پیام "در حال بارگذاری" یا "بدون داده" */
     body.admin-glass-body .table tbody td.text-center {
-        color: rgba(255, 255, 255, 0.8) !important;
+        color: rgba(255,255,255,0.8) !important;
         font-size: 15px;
     }
 
     body.admin-glass-body code.text-primary {
         color: #ffffff !important;
-        background: rgba(13, 110, 253, 0.3) !important;
-        border: 1px solid rgba(13, 110, 253, 0.5);
+        background: rgba(84, 172, 191,0.3) !important;
+        border: 1px solid rgba(84, 172, 191,0.5);
         padding: 3px 8px;
         border-radius: 6px;
         font-weight: 600;
@@ -326,7 +326,7 @@ body.admin-glass-body {
     body.admin-glass-body .text-body,
     body.admin-glass-body .text-black {
         color: #ffffff !important;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        text-shadow: 0 1px 3px rgba(0,0,0,0.5);
     }
 
     /* ۲) شیشه‌ای کردن دکمه‌های دسترسی سریع (سفیدها) */
@@ -338,13 +338,13 @@ body.admin-glass-body {
     body.admin-glass-body .quick-link,
     body.admin-glass-body .menu-box,
     body.admin-glass-body .menu-card {
-        background: rgba(255, 255, 255, 0.1) !important;
+        background: rgba(2, 56, 89,0.8) !important;
         -webkit-backdrop-filter: blur(12px);
         backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
         color: #ffffff !important;
         border-radius: 14px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         transition: transform 0.2s ease, background 0.2s ease;
     }
 
@@ -357,7 +357,7 @@ body.admin-glass-body {
         body.admin-glass-body .quick-link:hover,
         body.admin-glass-body .menu-box:hover,
         body.admin-glass-body .menu-card:hover {
-            background: rgba(255, 255, 255, 0.22) !important;
+            background: rgba(84, 172, 191,0.85) !important;
             transform: translateY(-3px);
             color: #ffffff !important;
         }
@@ -381,16 +381,16 @@ body.admin-glass-body {
     body.admin-glass-body .stat-title,
     body.admin-glass-body .stat-desc {
         color: #ffffff !important;
-        text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+        text-shadow: 0 1px 3px rgba(0,0,0,0.5);
     }
 
     /* اگر خود کارت آمار هم پس‌زمینه سفید داشت، شیشه‌ای بشه */
     body.admin-glass-body .stat-card,
     body.admin-glass-body .stat-box {
-        background: rgba(255, 255, 255, 0.1) !important;
+        background: rgba(2, 56, 89,0.8) !important;
         -webkit-backdrop-filter: blur(12px);
         backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border: 1px solid rgba(255,255,255,0.2) !important;
     }
 /* دونات داشبورد */
 .donut-wrap {
@@ -412,8 +412,8 @@ body.admin-glass-body {
 }
 
 .inside-row {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
     border-radius: 10px;
     padding: 6px 10px;
     font-size: 13px;
@@ -429,64 +429,64 @@ body.admin-glass-body .navbar {
 
 /* ۱) منوی dropdown (زنگوله و بقیه) شیشه‌ای تیره */
 body.admin-glass-body .dropdown-menu {
-    background: rgba(15, 23, 42, 0.94) !important;
+    background: rgba(1, 28, 64,0.82) !important;
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255,255,255,0.15);
     border-radius: 14px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.45);
     padding: 6px;
 }
 
 body.admin-glass-body .dropdown-item {
-    color: #e2e8f0;
+    color: rgba(167, 235, 242, .18);
     border-radius: 8px;
 }
 
     body.admin-glass-body .dropdown-item:hover,
     body.admin-glass-body .dropdown-item:focus {
-        background: rgba(255, 255, 255, 0.12);
+        background: rgba(255,255,255,0.12);
         color: #ffffff;
     }
 
 body.admin-glass-body .dropdown-header {
-    color: #94a3b8;
+    color: #9FC6D2;
 }
 
 body.admin-glass-body .dropdown-divider {
-    border-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255,255,255,0.12);
 }
 
 /* ۲) لیست بازشونده select ها (مخاطب، نقش، رشته، عضو) */
 body.admin-glass-body select.form-select option,
 body.admin-glass-body select.form-control option {
-    background-color: #0f172a; /* پس‌زمینه تیره برای لیست */
+    background-color: #011C40; /* پس‌زمینه تیره برای لیست */
     color: #ffffff; /* متن سفید خوانا */
 }
 
     body.admin-glass-body select.form-select option:checked,
     body.admin-glass-body select.form-select option:hover {
-        background-color: #1e293b;
+        background-color: #023859;
         color: #ffffff;
     }
 /* کارت‌های پیام مودال عضو */
 .msg-card {
     border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255,255,255,0.15);
     color: #ffffff;
 }
 
 .msg-in {
-    background: rgba(74, 144, 226, 0.15);
+    background: rgba(84, 172, 191,0.15);
 }
 
 .msg-out {
-    background: rgba(46, 204, 113, 0.12);
+    background: rgba(84, 172, 191,0.12);
 }
 /* باکس متن پیام در صفحه جزئیات: شکستن کلمات + اسکرول فقط عمودی */
 .msg-body-box {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
     border-radius: 14px;
     white-space: pre-wrap;
     word-break: break-word;
@@ -513,7 +513,7 @@ body.admin-glass-body select.form-control option {
 }
 
 .msg-toggle {
-    color: #7ab8ff;
+    color: #A7EBF2;
     font-size: 12px;
     text-decoration: none;
 }
@@ -521,23 +521,23 @@ body.admin-glass-body select.form-control option {
    ✅ کارت خلاصه bg-info (مجموع دریافتی) — هم‌استایل با بقیه کارت‌ها
    ========================================= */
 body.admin-glass-body .card.bg-info {
-    background: rgba(255, 255, 255, 0.15) !important;
+    background: rgba(2, 56, 89,0.8) !important;
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-left: 4px solid #17a2b8 !important; /* خط فیروزه‌ای */
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-left: 4px solid #54ACBF !important; /* خط فیروزه‌ای */
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
 }
 
     body.admin-glass-body .card.bg-info h5 {
         color: #ffffff !important;
         font-size: 2rem;
         font-weight: 700;
-        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     body.admin-glass-body .card.bg-info small {
-        color: rgba(255, 255, 255, 0.9) !important;
+        color: rgba(255,255,255,0.9) !important;
         font-size: 0.9rem;
     }
 /* =========================================
@@ -549,28 +549,28 @@ body.admin-glass-body .card.bg-info {
     align-items: center;
     justify-content: center;
     padding: 14px 8px;
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(2, 56, 89,.8);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255,255,255,0.15);
     border-radius: 14px;
-    color: #e2e8f0;
+    color: rgba(167, 235, 242, .18);
     text-decoration: none;
     transition: all 0.25s ease;
     min-height: 80px;
 }
 
     .nav-card:hover {
-        background: rgba(74, 144, 226, 0.25);
-        border-color: rgba(74, 144, 226, 0.5);
+        background: rgba(84, 172, 191,0.25);
+        border-color: rgba(84, 172, 191,0.5);
         transform: translateY(-3px);
         color: #ffffff;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 8px 24px rgba(0,0,0,0.25);
     }
 
     .nav-card.active {
-        background: rgba(74, 144, 226, 0.35);
-        border-color: #4a90e2;
+        background: rgba(84, 172, 191,0.35);
+        border-color: #54ACBF;
         color: #ffffff;
     }
 
@@ -595,7 +595,7 @@ body.admin-glass-body .card.bg-info {
 
 .rep-label {
     font-size: .75rem;
-    color: #9fb3c8;
+    color: #A7EBF2;
     font-weight: 700;
     margin-bottom: 4px;
 }
@@ -618,7 +618,7 @@ body.admin-glass-body .card.bg-info {
 
     .rep-input:focus {
         outline: none;
-        border-color: rgba(102,211,232,.5);
+        border-color: rgba(84, 172, 191,.5);
         background: rgba(255,255,255,.12);
     }
 
@@ -664,7 +664,7 @@ body.admin-glass-body .card.bg-info {
     border-radius: 12px;
     background: rgba(255,255,255,.08);
     border: 1px solid rgba(255,255,255,.16);
-    color: #66d3e8;
+    color: #54ACBF;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -676,14 +676,14 @@ body.admin-glass-body .card.bg-info {
 
 .rep-btn-main {
     width: 100%;
-    background: linear-gradient(135deg, #1E6FD9, #667eea);
+    background: linear-gradient(135deg, #26658C, #26658C);
     border: none;
     color: #fff;
     font-weight: 800;
     font-size: .88rem;
     border-radius: 14px;
     padding: 10px;
-    box-shadow: 0 6px 16px rgba(30,111,217,.35);
+    box-shadow: 0 6px 16px rgba(84, 172, 191,.35);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -692,9 +692,9 @@ body.admin-glass-body .card.bg-info {
 
 .rep-btn-excel {
     width: 100%;
-    background: rgba(56,217,169,.14);
-    border: 1px solid rgba(56,217,169,.4);
-    color: #38d9a9;
+    background: rgba(84, 172, 191,.14);
+    border: 1px solid rgba(84, 172, 191,.4);
+    color: #54ACBF;
     font-weight: 700;
     font-size: .82rem;
     border-radius: 14px;
@@ -739,11 +739,11 @@ body.admin-glass-body .card.bg-info {
 
     .rep-chip span {
         font-size: .68rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
     }
 
     .rep-chip.hl b {
-        color: #66d3e8;
+        color: #54ACBF;
     }
 
 .rep-list-head {
@@ -756,9 +756,9 @@ body.admin-glass-body .card.bg-info {
 }
 
 .rep-count {
-    background: rgba(102,211,232,.14);
-    border: 1px solid rgba(102,211,232,.35);
-    color: #66d3e8;
+    background: rgba(84, 172, 191,.14);
+    border: 1px solid rgba(84, 172, 191,.35);
+    color: #54ACBF;
     border-radius: 999px;
     padding: 4px 12px;
     font-size: .72rem;
@@ -796,14 +796,14 @@ body.admin-glass-body .card.bg-info {
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    background: linear-gradient(135deg, #26658C, #023859);
     color: #fff;
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: .78rem;
-    box-shadow: 0 4px 10px rgba(118,75,162,.35);
+    box-shadow: 0 4px 10px rgba(84, 172, 191,.35);
 }
 
 .rep-mid {
@@ -813,7 +813,7 @@ body.admin-glass-body .card.bg-info {
 
 .rep-line {
     font-size: .8rem;
-    color: #cbd3da;
+    color: #9FC6D2;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -827,7 +827,7 @@ body.admin-glass-body .card.bg-info {
     }
 
     .rep-line .amt {
-        color: #38d9a9;
+        color: #54ACBF;
         font-weight: 800;
     }
 
@@ -838,7 +838,7 @@ body.admin-glass-body .card.bg-info {
     border-radius: 10px;
     background: rgba(255,255,255,.08);
     border: none;
-    color: #9bd7f7;
+    color: #A7EBF2;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -847,7 +847,7 @@ body.admin-glass-body .card.bg-info {
 
 .rep-card.open .rep-toggle {
     transform: rotate(-90deg);
-    background: rgba(102,211,232,.25);
+    background: rgba(84, 172, 191,.25);
     color: #fff;
 }
 
@@ -873,12 +873,12 @@ body.admin-glass-body .card.bg-info {
     }
 
     .rep-drow span {
-        color: #8a93a6;
+        color: #9FC6D2;
         flex: 0 0 auto;
     }
 
     .rep-drow b {
-        color: #e9ecef;
+        color: rgba(167, 235, 242, .18);
         font-weight: 700;
         text-align: left;
         word-break: break-word;
@@ -892,15 +892,15 @@ body.admin-glass-body .card.bg-info {
 }
 
     .rep-badge.guest, .rep-badge.ren {
-        background: rgba(255,193,7,.18);
-        color: #ffd200;
-        border: 1px solid rgba(255,193,7,.4);
+        background: rgba(84, 172, 191,.18);
+        color: #54ACBF;
+        border: 1px solid rgba(84, 172, 191,.4);
     }
 
     .rep-badge.member, .rep-badge.reg {
-        background: rgba(56,217,169,.18);
-        color: #38d9a9;
-        border: 1px solid rgba(56,217,169,.4);
+        background: rgba(84, 172, 191,.18);
+        color: #54ACBF;
+        border: 1px solid rgba(84, 172, 191,.4);
     }
 
 .rep-mode-group {
@@ -913,7 +913,7 @@ body.admin-glass-body .card.bg-info {
     text-align: center;
     background: rgba(255,255,255,.06);
     border: 1px solid rgba(255,255,255,.14);
-    color: #9fb3c8;
+    color: #A7EBF2;
     border-radius: 12px;
     padding: 8px 0;
     font-size: .82rem;
@@ -923,7 +923,7 @@ body.admin-glass-body .card.bg-info {
 }
 
 .btn-check:checked + .rep-mode {
-    background: linear-gradient(135deg, #1E6FD9, #667eea);
+    background: linear-gradient(135deg, #26658C, #26658C);
     border-color: transparent;
     color: #fff;
 }
@@ -933,7 +933,7 @@ select.rep-search {
 }
 
 .rep-search option {
-    background: #101424;
+    background: #011C40;
     color: #fff;
 }
 
@@ -971,9 +971,9 @@ select.rep-search {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    color: #dce9ff;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.16);
+    color: #A7EBF2;
     border-radius: 10px;
     padding: 6px 12px;
     font-size: 0.8rem;
@@ -983,8 +983,8 @@ select.rep-search {
 }
 
 .rp-btn:hover:not(:disabled) {
-    background: rgba(13, 110, 253, 0.28);
-    border-color: rgba(102, 211, 232, 0.45);
+    background: rgba(84, 172, 191,0.28);
+    border-color: rgba(84, 172, 191,0.45);
     color: #fff;
 }
 
@@ -994,13 +994,13 @@ select.rep-search {
 }
 
 .rp-btn.rp-active {
-    background: linear-gradient(135deg, #0d6efd, #6f42c1);
-    border-color: rgba(255, 255, 255, 0.35);
+    background: linear-gradient(135deg, #54ACBF, #54ACBF);
+    border-color: rgba(255,255,255,0.35);
     color: #fff;
 }
 
 .rp-gap {
-    color: #9fb3c8;
+    color: #A7EBF2;
     padding: 0 2px;
 }
 
@@ -1008,6 +1008,6 @@ select.rep-search {
     width: 100%;
     text-align: center;
     font-size: 0.72rem;
-    color: #9fb3c8;
+    color: #A7EBF2;
     margin-top: 2px;
 }

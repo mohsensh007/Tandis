@@ -30,14 +30,14 @@
     <meta charset="utf-8" />
     <!-- viewport-fit=cover → فعال‌شدن env(safe-area-inset-*) برای نچ (iPhone) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" content="#011C40" />
     <title>@ViewData["Title"] - تندیس</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css?v=6" />
-    <link rel="stylesheet" href="~/css/panels.css?v=4" />
-    <link rel="stylesheet" href="~/css/login-style.css?v=2" />
-    <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/panels.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/login-style.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" asp-append-version="true" />
 
     <style>
         /* ===== ✅ فلیپ ۳بعدی کارت بین ورود / ثبت‌نام ===== */
@@ -83,16 +83,18 @@
 
         /* ===== ✅ فلش بازگشت به ورود (فقط صفحه ثبت‌نام) ===== */
         .reg-back-arrow:hover {
-            color: #66d3e8 !important;
+            color: #54ACBF !important;
             transform: scale(1.1);
         }
     </style>
+    <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" asp-append-version="true" />
 </head>
 <body>
     <div class="login-fullscreen">
         <!-- عکس پس‌زمینه -->
         <div class="login-background">
-            <img src="~/images/gym-login-bg.webp" alt="ورزش" class="bg-image" />
+            <!-- پس‌زمینهٔ گرادیانی سرمه‌ای — بدون عکس -->
+            <canvas id="loginDots" class="login-dots" aria-hidden="true"></canvas>
             <div class="bg-overlay"></div>
         </div>
 
@@ -105,7 +107,7 @@
                 <a href="javascript:void(0)" onclick="flipNavigate('/Account/Login')" title="بازگشت به ورود" id="regBackArrow"
                    style="position:absolute; top:12px; right:12px; z-index:6;
                               color:#fff; font-size:1.45rem; text-decoration:none;
-                              text-shadow:0 0 10px rgba(102,211,232,.5);
+                              text-shadow:0 0 10px rgba(84, 172, 191,.5);
                               transition:all .2s;">
                     <i class="bi bi-arrow-right"></i>
                 </a>
@@ -179,6 +181,113 @@
         });
     </script>
 
+    <script>
+        (function () {
+            var canvas = document.getElementById('loginDots');
+            if (!canvas || !canvas.getContext) return;
+            var ctx = canvas.getContext('2d');
+            var dpr = Math.min(window.devicePixelRatio || 1, 2);
+            var LINK = 168, PUSH_R = 185, PUSH = 3.6;
+            var W = 0, H = 0, raf = null, t = 0, pressed = false;
+            var dots = [];
+
+            function build() {
+                W = window.innerWidth;
+                H = window.innerHeight;
+                canvas.width = Math.floor(W * dpr);
+                canvas.height = Math.floor(H * dpr);
+                canvas.style.width = W + 'px';
+                canvas.style.height = H + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+                var count = Math.max(90, Math.min(210, Math.round(W * H / 7800)));
+                dots = [];
+                for (var i = 0; i < count; i++) {
+                    var hx = 24 + Math.random() * Math.max(1, W - 48);
+                    var hy = 24 + Math.random() * Math.max(1, H - 48);
+                    dots.push({
+                        hx: hx, hy: hy, x: hx, y: hy, vx: 0, vy: 0,
+                        ph: Math.random() * 6.283,
+                        sp: 0.0005 + Math.random() * 0.0011
+                    });
+                }
+                start();
+            }
+
+            function pushFrom(px, py) {
+                for (var i = 0; i < dots.length; i++) {
+                    var d = dots[i];
+                    var dx = d.x - px, dy = d.y - py;
+                    var dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < PUSH_R && dist > 0.001) {
+                        var f = 1 - dist / PUSH_R;
+                        d.vx += (dx / dist) * f * PUSH;
+                        d.vy += (dy / dist) * f * PUSH;
+                    }
+                }
+                start();
+            }
+
+            function step() {
+                raf = null;
+                if (document.hidden) { raf = requestAnimationFrame(step); return; }
+                t += 16;
+                ctx.clearRect(0, 0, W, H);
+
+                var i, j, d, e, dx, dy, dist;
+                for (i = 0; i < dots.length; i++) {
+                    d = dots[i];
+                    // حرکت آرام و تصادفی هر نقطه + برگشت نرم به جای خودش
+                    d.vx += (d.hx - d.x) * 0.006 + Math.cos(t * d.sp + d.ph) * 0.05;
+                    d.vy += (d.hy - d.y) * 0.006 + Math.sin(t * d.sp * 1.27 + d.ph) * 0.05;
+                    d.vx *= 0.972;
+                    d.vy *= 0.972;
+                    d.x += d.vx;
+                    d.y += d.vy;
+                }
+
+                ctx.lineWidth = 1.15;
+                for (i = 0; i < dots.length; i++) {
+                    d = dots[i];
+                    for (j = i + 1; j < dots.length; j++) {
+                        e = dots[j];
+                        dx = d.x - e.x;
+                        dy = d.y - e.y;
+                        dist = Math.sqrt(dx * dx + dy * dy);
+                        if (dist < LINK) {
+                            ctx.strokeStyle = 'rgba(1, 28, 64,' + (0.34 * (1 - dist / LINK)).toFixed(3) + ')';
+                            ctx.beginPath();
+                            ctx.moveTo(d.x, d.y);
+                            ctx.lineTo(e.x, e.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+
+                for (i = 0; i < dots.length; i++) {
+                    d = dots[i];
+                    ctx.beginPath();
+                    ctx.arc(d.x, d.y, 2.2, 0, 6.2832);
+                    ctx.fillStyle = 'rgba(2, 56, 89, .85)';
+                    ctx.fill();
+                }
+
+                raf = requestAnimationFrame(step);
+            }
+
+            function start() { if (!raf) raf = requestAnimationFrame(step); }
+
+            document.addEventListener('pointerdown', function (e) { pressed = true; pushFrom(e.clientX, e.clientY); }, { passive: true });
+            document.addEventListener('pointermove', function (e) { if (pressed) pushFrom(e.clientX, e.clientY); }, { passive: true });
+            document.addEventListener('pointerup', function () { pressed = false; }, { passive: true });
+            document.addEventListener('pointercancel', function () { pressed = false; }, { passive: true });
+
+            var rt = null;
+            window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(build, 150); });
+
+            build();
+        })();
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

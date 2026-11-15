@@ -233,8 +233,9 @@ namespace TandisWebApp.Services
         {
             // ✅ ساخت نگاشت روزها: (LatinName میلادی ↔ تاریخ شمسی)
             var dayMap = new List<(string Latin, string Shamsi)>();
-            int from = daysAhead > 0 ? 1 : 0;
-            int to = daysAhead > 0 ? daysAhead : 0;
+            // ✅ فقط امروز — کد روزهای آینده کامنت شد
+            int from = 0;
+            int to = 0;
             for (int i = from; i <= to; i++)
             {
                 var dt = DateTime.Now.AddDays(i);
@@ -313,24 +314,10 @@ namespace TandisWebApp.Services
                 string targetDate = _helper.GetToday();
                 string targetLatin = DateTime.Now.DayOfWeek.ToString();
 
-                if (!string.IsNullOrWhiteSpace(req.SessionDateShamsi))
-                {
-                    var reqDate = req.SessionDateShamsi.Trim();
-                    bool found = false;
-                    for (int i = 1; i <= 7; i++)
-                    {
-                        if (_helper.AddDaysToPersian(_helper.GetToday(), i) == reqDate)
-                        {
-                            targetDate = reqDate;
-                            targetLatin = DateTime.Now.AddDays(i).DayOfWeek.ToString();
-                            found = true;
-                            break;
-                        }
-                    }
-                    if (!found)
-                        return new SimpleResponse { Success = false, Message = "تاریخ انتخاب‌شده معتبر نیست (فقط تا ۷ روز آینده)" };
-                }
-
+                // ✅ فقط امروز — کد تاریخ‌های آینده کامنت شد
+                if (!string.IsNullOrWhiteSpace(req.SessionDateShamsi) &&
+                    req.SessionDateShamsi.Trim() != _helper.GetToday())
+                    return new SimpleResponse { Success = false, Message = "خرید تک جلسه فقط برای امروز امکان‌پذیر است" };
                 // ✅ چک اینکه سانس در روز مقصد جلسه داشته باشه
                 var hasSession = await (
                     from d in _db.Gen_SportSanseDetails

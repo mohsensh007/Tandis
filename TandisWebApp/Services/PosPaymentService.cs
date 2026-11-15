@@ -26,6 +26,9 @@ namespace TandisWebApp.Services
         public const string REF_SERVICE = "WEB_SERVICE";
         public const string REF_REGISTER = "WEB_REGISTER";
 
+        // ✅ افزایش اعتبار از «میز خدمت» (کاربران Sec_Users غیرادمین)
+        public const string REF_CHARGE = "WEB_CHARGE";
+
         private readonly FullSportDbContext _db;
         private readonly CommonHelperService _helper;
         private readonly IConfiguration _config;
@@ -99,6 +102,10 @@ namespace TandisWebApp.Services
         // ============================================================
         //  وضعیت تراکنش (برای poll کردن کلاینت)
         // ============================================================
+        /// <summary>آیا همین حالا تراکنشی روی دستگاه POS در حال پردازش است؟</summary>
+        public Task<bool> IsBusyAsync() =>
+            _db.ACC_PosTransactions.AsNoTracking().AnyAsync(x =>
+                x.ResponseCode == null && x.Message == "PROCESSING");
         public async Task<PosPaymentStatusDto> GetStatusAsync(long txnId, int memberID)
         {
             var txn = await _db.ACC_PosTransactions.AsNoTracking()
@@ -128,12 +135,20 @@ namespace TandisWebApp.Services
                 // ---- صف همزمان: آیا الان روی دستگاه است یا در نوبت؟ ----
                 bool processing = txn.Message == "PROCESSING";
                 int ahead = 0;
+                bool deviceBusy = false;
                 if (!processing)
                 {
                     ahead = await _db.ACC_PosTransactions.CountAsync(x =>
                         x.RefType != null && x.RefType.StartsWith("WEB_")
                         && x.ResponseCode == null
                         && x.PcPosTransactionID < txnId);
+
+                    // ✅ دستگاه مشغول پرداخت برای مراجع دیگر است
+                    deviceBusy = await _db.ACC_PosTransactions.AnyAsync(x =>
+                        x.RefType != null && x.RefType.StartsWith("WEB_")
+                        && x.ResponseCode == null
+                        && x.Message == "PROCESSING"
+                        && x.PcPosTransactionID != txnId);
                 }
 
                 return new PosPaymentStatusDto
@@ -141,6 +156,7 @@ namespace TandisWebApp.Services
                     Status = "pending",
                     Amount = amount,
                     Processing = processing,
+                    DeviceBusy = deviceBusy,
                     QueuePosition = ahead
                 };
             }
@@ -164,6 +180,32 @@ namespace TandisWebApp.Services
                 Code = txn.ResponseCode,
                 Message = MapErrorCode(txn.ResponseCode, txn.Message)
             };
+        }
+
+        // ============================================================
+        //  وضعیت تراکنش برای میز خدمت (بدون قید مالکیت عضو)
+        //  فقط برای کاربران احراز‌هویت‌شدهٔ Desk استفاده می‌شود.
+        // ============================================================
+        public async Task<PosPaymentStatusDto> GetStatusAnyAsync(long txnId)
+        {
+            var txn = await _db.ACC_PosTransactions.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.PcPosTransactionID == txnId);
+
+            if (txn == null || txn.RefType == null || !txn.RefType.StartsWith("WEB_"))
+                return new PosPaymentStatusDto { Status = "notfound", Message = "تراکنش یافت نشد" };
+
+            return await GetStatusAsync(txnId, txn.MemberID ?? 0);
+        }
+
+        // انصراف تراکنش در انتظار بدون قید مالکیت (برای میز خدمت)
+        public async Task CancelAnyAsync(long txnId)
+        {
+            await _db.Database.ExecuteSqlInterpolatedAsync($@"
+                UPDATE dbo.ACC_PosTransaction
+                SET ResponseCode = 'CANCELED', Message = 'انصراف میز خدمت از پرداخت'
+                WHERE PcPosTransactionID = {txnId}
+                  AND RefType LIKE 'WEB[_]%'
+                  AND ResponseCode IS NULL");
         }
 
         // ============================================================

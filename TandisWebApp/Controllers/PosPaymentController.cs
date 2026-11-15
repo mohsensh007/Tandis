@@ -29,6 +29,13 @@ namespace TandisWebApp.Controllers
             return Ok(new { success = dto.Status != "notfound", data = dto });
         }
 
+        /// <summary>✅ آیا دستگاه POS مشغول پرداخت برای کس دیگری است؟</summary>
+        [HttpGet]
+        [Route("api/PosPayment/Busy")]
+        public async Task<IActionResult> Busy()
+        {
+            return Ok(new { success = true, busy = await _pos.IsBusyAsync() });
+        }
         /// <summary>انصراف از پرداخت در انتظار (جلوگیری از ارسال به دستگاه)</summary>
         [HttpPost]
         [Route("api/PosPayment/Cancel")]

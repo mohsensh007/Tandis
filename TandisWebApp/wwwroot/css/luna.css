@@ -1,0 +1,1147 @@
+/* ============================================================
+   LUNA GLASS THEME  —  #011C40 #023859 #26658C #54ACBF #A7EBF2
+   بک‌گراند: روشن‌ترین رنگ پالت
+   همهٔ باکس‌ها/کارت‌ها: تیره‌ترین رنگ پالت با حالت شیشه‌ای براق
+   ============================================================ */
+
+:root {
+    --lu-darkest: #011C40;
+    --lu-dark: #023859;
+    --lu-primary: #26658C;
+    --lu-sky: #54ACBF;
+    --lu-light: #A7EBF2;
+    --lu-glass-text: #EAF7FA;
+    --lu-glass-border: rgba(167, 235, 242, .22);
+    --lu-glass-shadow: 0 18px 42px rgba(84, 172, 191, .32);
+}
+
+/* ---------- ۱) بک‌گراند روشن‌ترین رنگ عکس ---------- */
+body,
+body.admin-glass-body,
+body.coach-glass-body,
+body.login-body,
+body.login-glass-body,
+body.member-body {
+    background:
+        radial-gradient(1100px 620px at 8% -12%, #ffffff 0%, rgba(255, 255, 255, 0) 58%),
+        radial-gradient(900px 560px at 96% 4%, rgba(84, 172, 191, .34) 0%, rgba(84, 172, 191, 0) 62%),
+        radial-gradient(1000px 700px at 50% 116%, rgba(84, 172, 191, .28) 0%, rgba(84, 172, 191, 0) 64%),
+        linear-gradient(168deg, #EAF7FA 0%, #A7EBF2 34%, #26658C 68%, #023859 100%) !important;
+    background-attachment: fixed !important;
+    color: var(--lu-darkest) !important;
+}
+
+/* ---------- ۲) متن‌های روی بک‌گراند (بیرون باکس‌ها) ---------- */
+body > .container h1, body > .container h2, body > .container h3,
+body > .container h4, body > .container h5, body > .container h6,
+.container > h1, .container > h2, .container > h3,
+.container > h4, .container > h5, .container > h6,
+.d-flex > h5, .d-flex > h6,
+.page-head, .page-head h1, .page-head h2, .page-head h3,
+.page-head h4, .page-head h5, .page-head h6,
+.page-head p, .page-head span {
+    color: var(--lu-darkest) !important;
+    text-shadow: none !important;
+}
+
+/* ---------- ۳) همهٔ باکس‌ها: شیشهٔ تیرهٔ یکدست ---------- */
+.glass-card,
+.card,
+.card-body,
+.modal-content,
+.login-card,
+.purple-style,
+.dash-card,
+.sanse-card,
+.session-card,
+.stat-card,
+.ath-card,
+.ath-stat,
+.ba-card,
+.ba-chart-box,
+.msg-card,
+.msg-body-box,
+.note-box,
+.pe-card,
+.pe-item-card,
+.rep-card,
+.trf-card,
+.stu-panel,
+.nav-card,
+.day-select-box,
+.empty-state,
+.att-cal-panel,
+.att-stats,
+.session-stats,
+.ath-stats,
+.admin-report-all-panel,
+.report-card,
+.cf-card,
+.card-head-purple,
+.panel,
+.tile {
+    background:
+        radial-gradient(130% 96% at 16% -26%, rgba(167, 235, 242, .34), rgba(167, 235, 242, 0) 48%),
+        radial-gradient(90% 70% at 88% 108%, rgba(84, 172, 191, .38), rgba(84, 172, 191, 0) 60%),
+        linear-gradient(158deg, #54ACBF 0%, #3D8CA8 45%, #26658C 100%) !important;
+    border: 1px solid var(--lu-glass-border) !important;
+    color: var(--lu-glass-text) !important;
+    box-shadow: var(--lu-glass-shadow),
+        inset 0 1px 0 rgba(255, 255, 255, .38),
+        inset 0 -26px 48px rgba(84, 172, 191, .40) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+}
+
+.glass-card,
+.card,
+.modal-content,
+.login-card,
+.purple-style,
+.dash-card,
+.sanse-card,
+.session-card,
+.stat-card,
+.ath-card,
+.ba-card,
+.msg-card,
+.pe-card,
+.rep-card,
+.stu-panel,
+.cf-card,
+.card-head-purple {
+    border-radius: 22px !important;
+}
+
+/* لبهٔ نور بالای شیشه */
+.card-header,
+.grad-header,
+.card-head-purple,
+.modal-header {
+    background: linear-gradient(135deg, #54ACBF 0%, #3D8CA8 55%, #26658C 100%) !important;
+    border-bottom: 1px solid var(--lu-glass-border) !important;
+    color: #EAF7FA !important;
+    border-radius: 20px 20px 0 0 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .42);
+}
+
+/* باکس‌های خاص صفحات برنامه تمرینی / تحلیل بدن / گزارش‌ها */
+.rgh-stat,
+.mpl-card,
+.mpl-stat,
+.pg-card,
+.member-reports-card,
+.member-report-state,
+.sum-ring-wrap,
+.ba-table-wrap,
+.report-card,
+.pe-item-card {
+    background:
+        radial-gradient(130% 96% at 16% -26%, rgba(167, 235, 242, .32), rgba(167, 235, 242, 0) 48%),
+        radial-gradient(90% 70% at 88% 108%, rgba(84, 172, 191, .36), rgba(84, 172, 191, 0) 60%),
+        linear-gradient(158deg, #54ACBF 0%, #3D8CA8 45%, #26658C 100%) !important;
+    border: 1px solid var(--lu-glass-border) !important;
+    color: var(--lu-glass-text) !important;
+    border-radius: 18px !important;
+    box-shadow: var(--lu-glass-shadow), inset 0 1px 0 rgba(255, 255, 255, .34) !important;
+}
+
+/* ---------- ۳.۵) لاگین: بک‌گراند روشن پالت + شبکهٔ نقطه‌های تیره ---------- */
+.login-background {
+    background:
+        radial-gradient(circle at 16% 6%, #ffffff 0%, rgba(255, 255, 255, 0) 46rem),
+        radial-gradient(circle at 84% 14%, rgba(84, 172, 191, .28), transparent 32rem),
+        radial-gradient(circle at 50% 108%, rgba(84, 172, 191, .22), transparent 30rem),
+        linear-gradient(155deg, #EAF7FA 0%, #A7EBF2 46%, #26658C 100%) !important;
+}
+
+.bg-overlay {
+    background: transparent !important;
+}
+
+/* ---------- ۴) متن/جدول/فرم داخل باکس‌ها ---------- */
+.glass-card,
+.card,
+.modal-content,
+.purple-style,
+.login-card,
+.sanse-card,
+.session-card,
+.stat-card,
+.dash-card,
+.rep-card,
+.stu-panel {
+    --bs-body-color: var(--lu-glass-text);
+}
+
+    .card .table,
+    .glass-card .table,
+    .modal-content .table,
+    .purple-style .table,
+    .dark-table,
+    .table-dark,
+    .report-table {
+        --bs-table-color: var(--lu-glass-text);
+        --bs-table-bg: transparent;
+        color: var(--lu-glass-text) !important;
+    }
+
+        .card .table > :not(caption) > * > *,
+        .glass-card .table > :not(caption) > * > *,
+        .modal-content .table > :not(caption) > * > * {
+            color: var(--lu-glass-text) !important;
+            border-color: rgba(167, 235, 242, .14) !important;
+            background-color: transparent !important;
+        }
+
+    .card .text-muted,
+    .glass-card .text-muted,
+    .modal-content .text-muted,
+    .card .text-white-50,
+    .glass-card .text-white-50 {
+        color: rgba(234, 247, 250, .70) !important;
+    }
+
+    .card .form-control,
+    .card .form-select,
+    .glass-card .form-control,
+    .glass-card .form-select,
+    .modal-content .form-control,
+    .modal-content .form-select,
+    .purple-style .form-control,
+    .purple-style .form-select {
+        background: rgba(167, 235, 242, .12) !important;
+        border: 1px solid rgba(167, 235, 242, .30) !important;
+        color: #EAF7FA !important;
+        border-radius: 14px !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
+    }
+
+        .card .form-control::placeholder,
+        .glass-card .form-control::placeholder,
+        .modal-content .form-control::placeholder {
+            color: rgba(234, 247, 250, .55) !important;
+        }
+
+    .card .form-control:focus,
+    .glass-card .form-control:focus,
+    .modal-content .form-control:focus {
+        border-color: rgba(167, 235, 242, .70) !important;
+        box-shadow: 0 0 0 .2rem rgba(84, 172, 191, .35) !important;
+    }
+
+/* لیست‌های داخل کارت */
+.glass-card li, .card li, .purple-style li {
+    color: var(--lu-glass-text);
+}
+
+/* ---------- ۵) دکمه‌ها و لهجه‌ها ---------- */
+.btn-primary,
+.btn-success,
+.btn-warning,
+.btn-info {
+    background: linear-gradient(135deg, #54ACBF 0%, #3D8CA8 55%, #26658C 100%) !important;
+    border: 1px solid rgba(167, 235, 242, .30) !important;
+    color: #fff !important;
+    border-radius: 14px !important;
+    box-shadow: 0 10px 24px rgba(84, 172, 191, .32), inset 0 1px 0 rgba(255, 255, 255, .35) !important;
+}
+
+    .btn-primary:hover,
+    .btn-success:hover,
+    .btn-warning:hover,
+    .btn-info:hover {
+        filter: brightness(1.07);
+    }
+
+.btn-outline-light,
+.btn-back-glass {
+    background: rgba(84, 172, 191, .12) !important;
+    border: 1px solid rgba(1, 28, 64, .25) !important;
+    color: var(--lu-darkest) !important;
+    border-radius: 14px !important;
+}
+
+.card .btn-outline-light,
+.glass-card .btn-outline-light,
+.modal-content .btn-outline-light {
+    background: rgba(167, 235, 242, .12) !important;
+    border-color: rgba(167, 235, 242, .35) !important;
+    color: var(--lu-glass-text) !important;
+}
+
+.badge-glass,
+.badge.bg-primary,
+.badge.bg-info {
+    background: linear-gradient(135deg, #54ACBF, #26658C) !important;
+    color: #fff !important;
+}
+
+/* ---------- ۶) نوارهای پایین (شیشهٔ تیره روی بک‌گراند روشن) ---------- */
+.bottom-nav,
+.admin-bottom-nav {
+    background: rgba(84, 172, 191, .94) !important;
+    border: 1px solid rgba(167, 235, 242, .22) !important;
+    box-shadow: 0 16px 38px rgba(84, 172, 191, .42), inset 0 1px 0 rgba(255, 255, 255, .22) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    backdrop-filter: blur(18px) saturate(140%);
+}
+
+/* ---------- ۷) هدر پنل عضو ---------- */
+.mh2 {
+    background:
+        radial-gradient(120% 150% at 12% -40%, rgba(167, 235, 242, .30), rgba(167, 235, 242, 0) 55%),
+        linear-gradient(140deg, #54ACBF 0%, #2b6efb 48%, #26658C 100%) !important;
+    border-bottom: 1px solid rgba(167, 235, 242, .22) !important;
+    box-shadow: 0 12px 30px rgba(84, 172, 191, .30), inset 0 1px 0 rgba(255, 255, 255, .30) !important;
+}
+
+    .mh2 .mh2-title,
+    .mh2 .mh2-sub,
+    .mh2 .mh2-club,
+    .mh2 .mh2-time,
+    .mh2 .mh2-date,
+    .mh2 .mh2-lbl {
+        color: #EAF7FA !important;
+    }
+
+/* ---------- ۸) لاگین ---------- */
+.login-card,
+#authCard {
+    background:
+        radial-gradient(130% 96% at 16% -26%, rgba(167, 235, 242, .34), rgba(167, 235, 242, 0) 48%),
+        linear-gradient(158deg, #54ACBF 0%, #3D8CA8 45%, #26658C 100%) !important;
+    border: 1px solid var(--lu-glass-border) !important;
+    color: var(--lu-glass-text) !important;
+    box-shadow: 0 26px 60px rgba(84, 172, 191, .42), inset 0 1px 0 rgba(255, 255, 255, .38) !important;
+}
+
+    .login-card .form-label,
+    .login-card h1, .login-card h2, .login-card h3,
+    .login-card h4, .login-card h5, .login-card h6,
+    .login-card p, .login-card small,
+    #authCard .form-label {
+        color: #EAF7FA !important;
+    }
+
+/* ---------- ۹) اسکرول‌بار ---------- */
+::-webkit-scrollbar-track {
+    background: rgba(167, 235, 242, .55);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #54ACBF, #26658C);
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #54ACBF, #26658C);
+    }
+
+/* ============================================================
+   ۱۰) پنل میز خدمت (۵ کارت)
+   ============================================================ */
+.desk-wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 22px 16px 60px;
+}
+
+.desk-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.desk-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+    .desk-brand img {
+        width: 44px;
+        height: 44px;
+        object-fit: contain;
+        filter: drop-shadow(0 6px 14px rgba(84, 172, 191, .32));
+    }
+
+    .desk-brand b {
+        display: block;
+        font-size: 1.05rem;
+        color: var(--lu-darkest);
+        font-weight: 800;
+    }
+
+    .desk-brand span {
+        font-size: .74rem;
+        color: #3d5b90;
+    }
+
+.desk-user {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #54ACBF, #26658C);
+    color: #EAF7FA;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: .8rem;
+    font-weight: 700;
+    box-shadow: 0 10px 24px rgba(84, 172, 191, .30), inset 0 1px 0 rgba(255, 255, 255, .28);
+}
+
+.desk-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.desk-card {
+    position: relative;
+    overflow: hidden;
+    border-radius: 26px;
+    padding: 22px 18px 18px;
+    min-height: 208px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 12px;
+    cursor: pointer;
+    text-align: right;
+    border: 1px solid rgba(167, 235, 242, .26);
+    color: #EAF7FA;
+    background:
+        radial-gradient(130% 96% at 18% -28%, rgba(167, 235, 242, .40), rgba(167, 235, 242, 0) 50%),
+        radial-gradient(90% 70% at 90% 112%, rgba(84, 172, 191, .40), rgba(84, 172, 191, 0) 62%),
+        linear-gradient(158deg, #54ACBF 0%, #3D8CA8 45%, #26658C 100%);
+    box-shadow: 0 20px 44px rgba(84, 172, 191, .42), inset 0 1px 0 rgba(255, 255, 255, .42),
+        inset 0 -30px 52px rgba(84, 172, 191, .40);
+    transition: transform .22s ease, box-shadow .22s ease;
+}
+
+    .desk-card::after {
+        content: "";
+        position: absolute;
+        inset: 0 0 auto 0;
+        height: 46%;
+        background: linear-gradient(180deg, rgba(255, 255, 255, .26), rgba(255, 255, 255, 0));
+        pointer-events: none;
+        border-radius: 26px 26px 60% 60% / 26px 26px 30px 30px;
+    }
+
+    .desk-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 26px 56px rgba(84, 172, 191, .40), inset 0 1px 0 rgba(255, 255, 255, .48),
+            inset 0 -30px 52px rgba(84, 172, 191, .40);
+    }
+
+    .desk-card:active {
+        transform: translateY(-1px) scale(.995);
+    }
+
+    .desk-card .dc-icon {
+        width: 50px;
+        height: 50px;
+        display: grid;
+        place-items: center;
+        border-radius: 16px;
+        font-size: 1.45rem;
+        color: #fff;
+        background: linear-gradient(140deg, rgba(167, 235, 242, .34), rgba(167, 235, 242, .10));
+        border: 1px solid rgba(167, 235, 242, .40);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55);
+    }
+
+    .desk-card .dc-title {
+        font-size: 1rem;
+        font-weight: 800;
+        letter-spacing: -.01em;
+    }
+
+    .desk-card .dc-sub {
+        font-size: .74rem;
+        line-height: 1.75;
+        color: rgba(234, 247, 250, .78);
+    }
+
+    .desk-card .dc-go {
+        align-self: flex-start;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .74rem;
+        font-weight: 800;
+        color: #fff;
+        background: rgba(84, 172, 191, .42);
+        border: 1px solid rgba(167, 235, 242, .30);
+        border-radius: 999px;
+        padding: 6px 14px;
+    }
+
+@media (max-width: 1100px) {
+    .desk-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 760px) {
+    .desk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .desk-card { min-height: 182px; padding: 18px 14px 14px; border-radius: 22px; }
+    .desk-card .dc-icon { width: 44px; height: 44px; font-size: 1.25rem; }
+    .desk-wrap { padding: 16px 12px 40px; }
+    .desk-user { font-size: .72rem; padding: 7px 12px; }
+}
+
+@media (max-width: 420px) {
+    .desk-grid { grid-template-columns: 1fr; }
+}
+
+/* مودال‌های میز خدمت */
+.desk-step {
+    display: none;
+}
+
+    .desk-step.on {
+        display: block;
+    }
+
+.desk-list {
+    display: grid;
+    gap: 10px;
+    max-height: 52vh;
+    overflow-y: auto;
+    padding: 2px;
+}
+
+.desk-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    text-align: right;
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid rgba(167, 235, 242, .26);
+    background: rgba(167, 235, 242, .10);
+    color: #EAF7FA;
+    font-size: .84rem;
+    transition: background .18s ease, transform .18s ease;
+}
+
+    .desk-item:hover {
+        background: rgba(167, 235, 242, .20);
+        transform: translateY(-1px);
+    }
+
+    .desk-item b {
+        font-size: .92rem;
+    }
+
+    .desk-item small {
+        display: block;
+        color: rgba(234, 247, 250, .70);
+        font-size: .72rem;
+    }
+
+.desk-chip {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.desk-chip button {
+    flex: 1;
+    min-width: 92px;
+    padding: 10px 8px;
+    border-radius: 14px;
+    border: 1px solid rgba(167, 235, 242, .30);
+    background: rgba(167, 235, 242, .10);
+    color: #EAF7FA;
+    font-size: .8rem;
+    font-weight: 700;
+}
+
+    .desk-chip button.on {
+        background: linear-gradient(135deg, #54ACBF, #26658C);
+        border-color: rgba(255, 255, 255, .55);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45);
+    }
+
+.desk-amount {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+    .desk-amount button {
+        padding: 8px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(167, 235, 242, .28);
+        background: rgba(167, 235, 242, .08);
+        color: #EAF7FA;
+        font-size: .75rem;
+        font-weight: 700;
+    }
+
+.desk-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    background: rgba(84, 172, 191, .42);
+    border: 1px solid rgba(167, 235, 242, .24);
+    margin-bottom: 12px;
+    font-size: .84rem;
+}
+
+    .desk-summary b {
+        font-size: 1rem;
+    }
+
+/* ============================================================
+   ۱۱) LUNA — لایهٔ نهایی تم (جایگزین لایه‌های قبلی)
+   پالت: #A7EBF2  #54ACBF  #26658C  #023859  #011C40
+   قانون نور: هایلایت از گوشهٔ بالا-راست، سایه به پایین-چپ
+   کارت داخل باکس: همیشه یک پله تیره‌تر از باکس والد
+   ============================================================ */
+
+:root {
+    --lu-cyan: #A7EBF2;
+    --lu-teal: #54ACBF;
+    --lu-steel: #26658C;
+    --lu-deep: #023859;
+    --lu-navy: #011C40;
+    --lu-text: #EAF7FA;
+    --lu-muted: rgba(167, 235, 242, .74);
+    --lu-line: rgba(167, 235, 242, .22);
+    --lu-radius: 20px;
+    --lu-shadow-out: -10px 14px 32px rgba(1, 28, 64, .55), 12px -6px 22px rgba(84, 172, 191, .10);
+    --lu-shadow-in: inset -1px 1px 0 rgba(167, 235, 242, .50), inset 1px -1px 0 rgba(1, 28, 64, .45);
+    --lu-bg-box: radial-gradient(120% 100% at 100% 0%, rgba(167, 235, 242, .16), rgba(167, 235, 242, 0) 60%), linear-gradient(225deg, rgba(38, 101, 140, .58) 0%, rgba(2, 56, 89, .84) 100%);
+    --lu-bg-card: radial-gradient(120% 100% at 100% 0%, rgba(167, 235, 242, .26), rgba(167, 235, 242, 0) 58%), linear-gradient(225deg, rgba(84, 172, 191, .40) 0%, rgba(38, 101, 140, .66) 46%, rgba(2, 56, 89, .92) 100%);
+    --lu-bg-card-dark: radial-gradient(120% 100% at 100% 0%, rgba(167, 235, 242, .18), rgba(167, 235, 242, 0) 56%), linear-gradient(225deg, rgba(38, 101, 140, .72) 0%, rgba(2, 56, 89, .92) 55%, rgba(1, 28, 64, .96) 100%);
+}
+
+/* ---------- بک‌گراند کل برنامه ---------- */
+html body:not(#lu) {
+    background:
+        radial-gradient(1100px 620px at 88% -6%, rgba(84, 172, 191, .38), transparent 62%),
+        radial-gradient(900px 520px at 6% 8%, rgba(38, 101, 140, .34), transparent 60%),
+        radial-gradient(1000px 700px at 45% 118%, rgba(2, 56, 89, .55), transparent 65%),
+        linear-gradient(200deg, #011C40 0%, #023859 46%, #011C40 100%) !important;
+    background-attachment: fixed !important;
+    color: var(--lu-text) !important;
+    --bs-body-color: #EAF7FA;
+    --bs-body-bg: transparent;
+    --bs-secondary-color: rgba(167, 235, 242, .74);
+    --bs-emphasis-color: #ffffff;
+    --bs-heading-color: #ffffff;
+    --bs-border-color: rgba(167, 235, 242, .22);
+}
+
+/* ---------- همهٔ کارت‌ها: شیشهٔ LUNA ---------- */
+html body:not(#lu) :is(
+    .card, .glass-card, .purple-style, .panel, .tile, .modal-content,
+    .dash-card, .sanse-card, .session-card, .stat-card,
+    .ath-card, .ath-stat, .ba-card, .ba-chart-box,
+    .msg-card, .msg-body-box, .note-box,
+    .pe-card, .pe-item-card, .rep-card, .trf-card, .stu-panel,
+    .nav-card, .day-select-box, .empty-state, .att-cal-panel,
+    .att-stats, .session-stats, .ath-stats,
+    .cf-card, .card-head-purple,
+    .report-card, .admin-report-slide, .admin-report-all-panel,
+    .rgh-stat, .mpl-card, .mpl-stat, .pg-card,
+    .member-reports-card, .member-report-state, .sum-ring-wrap,
+    .mp-info, .mp-day, .mp-empty, .mp-entry,
+    .admin-setting-card, .ch-main-card, .ch-share-card, .ch-side-card,
+    .coach-banner, .coach-card, .cstat-card, .cc-card, .cs-card,
+    .sd-card, .sd-box, .ms-card, .ch-box, .ch-form-card,
+    .cm-filter, .cm-card, .cm-box, .pd-info, .pd-day,
+    .login-card, .desk-card
+) {
+    background: var(--lu-bg-card) !important;
+    border: 1px solid var(--lu-line) !important;
+    border-radius: var(--lu-radius) !important;
+    color: var(--lu-text) !important;
+    box-shadow: var(--lu-shadow-out), var(--lu-shadow-in) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(135%);
+    backdrop-filter: blur(18px) saturate(135%);
+}
+
+/* باکس‌های دربرگیرنده: روشن‌تر از کارت‌های داخلشان */
+html body:not(#lu) :is(
+    .admin-settings-section, .admin-report-grid, .report-grid,
+    .settings-grid, .mp-list, .mpf-bar, .mp-day-head,
+    .ch-chart-wrap, .desk-grid, .desk-list, .stu-grid, .pg-list,
+    .cm-grid, .cs-grid, .ms-grid, .ba-grid, .ath-grid, .pe-grid
+) {
+    background: var(--lu-bg-box) !important;
+    border: 1px solid var(--lu-line) !important;
+    border-radius: 22px !important;
+    box-shadow: var(--lu-shadow-in) !important;
+}
+
+/* کارت داخل باکس: تیره‌تر از باکس والد */
+html body:not(#lu) :is(
+    .card, .glass-card, .purple-style, .panel, .tile, .dash-card,
+    .sanse-card, .session-card, .stat-card, .ath-card, .ath-stat,
+    .ba-card, .ba-chart-box, .msg-card, .msg-body-box, .note-box,
+    .pe-card, .pe-item-card, .rep-card, .trf-card, .stu-panel,
+    .nav-card, .day-select-box, .empty-state, .att-cal-panel,
+    .att-stats, .session-stats, .ath-stats, .cf-card,
+    .report-card, .admin-report-slide, .rgh-stat, .mpl-card,
+    .mpl-stat, .pg-card, .member-reports-card, .member-report-state,
+    .sum-ring-wrap, .mp-info, .mp-day, .mp-empty, .mp-entry,
+    .admin-setting-card, .ch-main-card, .ch-share-card, .ch-side-card,
+    .coach-card, .cstat-card, .cc-card, .cs-card, .sd-card, .sd-box,
+    .ms-card, .ch-box, .ch-form-card, .cm-card, .cm-box, .pd-info, .pd-day
+) :is(
+    .card, .glass-card, .purple-style, .panel, .tile, .dash-card,
+    .sanse-card, .session-card, .stat-card, .ath-card, .ath-stat,
+    .ba-card, .msg-card, .pe-card, .pe-item-card, .rep-card,
+    .trf-card, .stu-panel, .nav-card, .day-select-box, .empty-state,
+    .att-cal-panel, .att-stats, .session-stats, .ath-stats, .cf-card,
+    .report-card, .admin-report-slide, .rgh-stat, .mpl-card, .mpl-stat,
+    .pg-card, .member-reports-card, .member-report-state, .sum-ring-wrap,
+    .mp-info, .mp-day, .mp-empty, .mp-entry, .admin-setting-card,
+    .ch-main-card, .ch-share-card, .ch-side-card, .coach-card,
+    .cstat-card, .cc-card, .cs-card, .sd-card, .sd-box, .ms-card,
+    .ch-box, .ch-form-card, .cm-card, .cm-box, .pd-info, .pd-day
+) {
+    background: var(--lu-bg-card-dark) !important;
+}
+
+/* بدنهٔ کارت، کادر تودرتو نسازد */
+html body:not(#lu) .card-body,
+html body:not(#lu) .card > .card-body {
+    background: transparent !important;
+    border: 0 !important;
+    border-radius: inherit !important;
+    box-shadow: none !important;
+}
+
+/* سرکارت‌ها: یک پله روشن‌تر، نور از بالا-راست */
+html body:not(#lu) :is(
+    .card-header, .grad-header, .card-head-purple, .modal-header,
+    .coach-card-head, .sd-box-head, .cm-box-head, .stu-head,
+    .ch-main-head, .rc-head, .admin-report-all-header, .panel-head
+) {
+    background: linear-gradient(225deg, rgba(84, 172, 191, .52) 0%, rgba(2, 56, 89, .78) 100%) !important;
+    border-bottom: 1px solid var(--lu-line) !important;
+    border-radius: 19px 19px 0 0 !important;
+    color: #ffffff !important;
+}
+
+/* حرکت ملایم و نور بیشتر هنگام هاور */
+html body:not(#lu) :is(
+    .stat-card, .dash-card, .sanse-card, .session-card, .ath-card,
+    .pe-card, .rep-card, .pg-card, .report-card, .admin-report-slide,
+    .mp-entry, .admin-setting-card, .ch-main-card, .ch-share-card,
+    .ch-side-card, .cc-card, .cs-card, .ms-card, .cstat-card,
+    .sd-card, .cm-card, .pd-info
+) {
+    transition: transform .24s ease, box-shadow .24s ease, border-color .24s ease;
+}
+
+    html body:not(#lu) :is(
+        .stat-card, .dash-card, .sanse-card, .session-card, .ath-card,
+        .pe-card, .rep-card, .pg-card, .report-card, .admin-report-slide,
+        .mp-entry, .admin-setting-card, .ch-main-card, .ch-share-card,
+        .ch-side-card, .cc-card, .cs-card, .ms-card, .cstat-card,
+        .sd-card, .cm-card, .pd-info
+    ):hover {
+        border-color: rgba(167, 235, 242, .55) !important;
+        box-shadow: -14px 18px 40px rgba(1, 28, 64, .60), inset -1px 1px 0 rgba(167, 235, 242, .72) !important;
+        transform: translateY(-2px);
+    }
+
+/* ---------- متن‌ها ---------- */
+html body:not(#lu) :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6) {
+    color: #ffffff !important;
+}
+
+html body:not(#lu) :is(.text-muted, .text-secondary, small, .text-white-50, .subtitle, .rc-desc, .asc-desc, .mp-entry-sub, .ch-main-sub, .ch-help p, .ch-side-nums small, .ch-side-foot, .ch-legend, .ch-range.prev, .ch-delta small) {
+    color: var(--lu-muted) !important;
+}
+
+html body:not(#lu) :is(.text-dark, .text-black, .text-body, .text-body-secondary, .admin-settings-title, .rc-title, .admin-report-title, .ch-main-title, .ch-share-title, .ch-side-title, .admin-report-label, .mp-day-title, .mp-coach, .mp-period, .mp-ex-name, .mp-combo-title, .mp-combo-name, .mp-tech, .mp-note, .mp-pill, .mp-pill-sm, .mp-type, .mp-tempo-desc, .mp-entry-title, .asc-title, .rc-arrow) {
+    color: var(--lu-text) !important;
+}
+
+html body:not(#lu) .mp-entry-icon i,
+html body:not(#lu) .mp-pill i,
+html body:not(#lu) .mp-pill-sm i,
+html body:not(#lu) .mp-tech > i,
+html body:not(#lu) .asc-icon i {
+    color: var(--lu-cyan) !important;
+}
+
+html body:not(#lu) a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link):not(.desk-item) {
+    color: var(--lu-cyan);
+}
+
+::placeholder {
+    color: rgba(167, 235, 242, .55) !important;
+}
+
+/* ---------- پیل‌ها، چیپ‌ها، بج‌ها ---------- */
+html body:not(#lu) :is(
+    .ch-pill, .ch-navbtn, .mpf-chip, .mp-badge, .mp-pill, .mp-pill-sm,
+    .mp-type, .mp-day-count, .cb-chip, .cs-count, .pg-badge, .pd-badge,
+    .pd-pill, .pd-pill-sm, .class-pill, .cc-pill, .cs-pill, .pg-pill,
+    .status-badge, .stt, .cm-rev, .cm-new, .badge, .ff-chip, .filter-pill,
+    .desk-chip button, .desk-amount button, .btn-all-reports
+) {
+    background: rgba(167, 235, 242, .14) !important;
+    border: 1px solid rgba(167, 235, 242, .34) !important;
+    color: var(--lu-text) !important;
+    box-shadow: inset -1px 1px 0 rgba(167, 235, 242, .22) !important;
+}
+
+html body:not(#lu) :is(
+    .ch-pill.active, .mpf-chip.mpf-on, .mp-badge.mp-on, .desk-chip button.on,
+    .pill-active, .active-pill, .nav-pill.active, .mp-pill.on
+) {
+    background: linear-gradient(225deg, #DCF7FB 0%, var(--lu-cyan) 55%, #7EC6D8 100%) !important;
+    border-color: rgba(167, 235, 242, .85) !important;
+    color: var(--lu-navy) !important;
+    box-shadow: -4px 6px 16px rgba(1, 28, 64, .40), inset -1px 1px 0 rgba(255, 255, 255, .80) !important;
+}
+
+html body:not(#lu) :is(.rc-icon, .asc-icon) {
+    background: rgba(167, 235, 242, .18) !important;
+    border: 1px solid rgba(167, 235, 242, .40) !important;
+    border-radius: 14px !important;
+    color: var(--lu-cyan) !important;
+    box-shadow: inset -1px 1px 0 rgba(167, 235, 242, .45) !important;
+}
+
+html body:not(#lu) :is(.admin-report-dot) {
+    background: rgba(167, 235, 242, .38) !important;
+}
+
+    html body:not(#lu) :is(.admin-report-dot.is-active) {
+        background: var(--lu-cyan) !important;
+    }
+
+html body:not(#lu) .admin-report-slide.is-active {
+    border-color: rgba(167, 235, 242, .80) !important;
+    box-shadow: -12px 16px 36px rgba(1, 28, 64, .60), inset 0 0 0 2px rgba(167, 235, 242, .55) !important;
+}
+
+html body:not(#lu) .admin-report-all-close {
+    background: rgba(167, 235, 242, .16) !important;
+    border-color: rgba(167, 235, 242, .40) !important;
+    color: #ffffff !important;
+}
+
+/* دکمه‌های پیل‌شکل روشن */
+html body:not(#lu) .btn-back-glass {
+    background: linear-gradient(225deg, #DCF7FB 0%, var(--lu-cyan) 100%) !important;
+    border: 1px solid rgba(167, 235, 242, .70) !important;
+    border-radius: 999px !important;
+    color: var(--lu-navy) !important;
+    box-shadow: -6px 8px 20px rgba(1, 28, 64, .45) !important;
+}
+
+    html body:not(#lu) .btn-back-glass i {
+        color: var(--lu-deep) !important;
+    }
+
+/* ---------- نمودارها ---------- */
+html body:not(#lu) .ch-chart-wrap {
+    background: rgba(1, 28, 64, .55) !important;
+    border: 1px solid var(--lu-line) !important;
+    border-radius: 18px !important;
+}
+
+html body:not(#lu) .ch-axlabel {
+    fill: var(--lu-cyan) !important;
+}
+
+html body:not(#lu) .ch-gridline {
+    stroke: rgba(167, 235, 242, .20) !important;
+}
+
+html body:not(#lu) .ch-gridline-main {
+    stroke: rgba(167, 235, 242, .38) !important;
+}
+
+html body:not(#lu) #chLine {
+    stroke: var(--lu-cyan) !important;
+}
+
+html body:not(#lu) #chLinePrev {
+    stroke: rgba(167, 235, 242, .55) !important;
+}
+
+html body:not(#lu) #chArea {
+    fill: rgba(167, 235, 242, .22) !important;
+}
+
+html body:not(#lu) #chAreaPrev {
+    fill: rgba(167, 235, 242, .06) !important;
+}
+
+html body:not(#lu) #chDot,
+html body:not(#lu) #chDotPrev {
+    fill: var(--lu-cyan) !important;
+    stroke: var(--lu-navy) !important;
+}
+
+html body:not(#lu) #chCursor {
+    stroke: rgba(167, 235, 242, .70) !important;
+}
+
+html body:not(#lu) .ch-donut-center {
+    fill: #ffffff !important;
+}
+
+html body:not(#lu) .ch-tooltip {
+    background: rgba(1, 28, 64, .96) !important;
+    border: 1px solid rgba(167, 235, 242, .40) !important;
+    color: var(--lu-text) !important;
+    box-shadow: -8px 10px 26px rgba(1, 28, 64, .55) !important;
+}
+
+html body:not(#lu) .ch-legend span:first-child i {
+    background: var(--lu-cyan) !important;
+}
+
+html body:not(#lu) .ch-legend span:last-child i {
+    background: rgba(167, 235, 242, .50) !important;
+}
+
+/* ---------- جزئیات برنامهٔ تمرینی (عضو) ---------- */
+html body:not(#lu) :is(.mp-day-head) {
+    border-bottom: 1px solid var(--lu-line) !important;
+}
+
+html body:not(#lu) :is(.mp-ex, .desk-item, .ath-stat-row, .msg-item, .mpf-bar) {
+    background: rgba(1, 28, 64, .38) !important;
+    border: 1px solid rgba(167, 235, 242, .20) !important;
+    border-radius: 14px !important;
+}
+
+html body:not(#lu) :is(.mp-combo) {
+    background: rgba(1, 28, 64, .30) !important;
+    border: 1px dashed rgba(167, 235, 242, .40) !important;
+    border-radius: 14px !important;
+}
+
+html body:not(#lu) :is(.mp-tech, .mp-note, .mp-tech-drop) {
+    background: rgba(1, 28, 64, .42) !important;
+    border: 1px solid rgba(167, 235, 242, .22) !important;
+    border-radius: 14px !important;
+}
+
+html body:not(#lu) :is(.mp-entry-count) {
+    background: var(--lu-cyan) !important;
+    color: var(--lu-navy) !important;
+    border: 1px solid rgba(167, 235, 242, .70) !important;
+}
+
+/* ---------- فرم‌ها ---------- */
+html body:not(#lu) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), select, textarea, .form-control, .form-select) {
+    background: rgba(1, 28, 64, .55) !important;
+    border: 1px solid rgba(167, 235, 242, .26) !important;
+    color: var(--lu-text) !important;
+    border-radius: 14px !important;
+    box-shadow: inset -1px 1px 0 rgba(167, 235, 242, .16) !important;
+}
+
+    html body:not(#lu) :is(input, select, textarea, .form-control, .form-select):focus {
+        border-color: var(--lu-teal) !important;
+        box-shadow: 0 0 0 3px rgba(84, 172, 191, .28), inset -1px 1px 0 rgba(167, 235, 242, .22) !important;
+        outline: none !important;
+    }
+
+html body:not(#lu) select option {
+    background: #011C40 !important;
+    color: #EAF7FA !important;
+}
+
+html body:not(#lu) .form-check-input {
+    background-color: rgba(1, 28, 64, .55) !important;
+    border-color: rgba(167, 235, 242, .35) !important;
+}
+
+    html body:not(#lu) .form-check-input:checked {
+        background-color: var(--lu-teal) !important;
+        border-color: var(--lu-cyan) !important;
+    }
+
+/* ---------- دکمه‌ها ---------- */
+html body:not(#lu) :is(.btn-primary, .btn-purple, .btn-gradient, .pe-save-btn, .pg-edit-btn, .pg-new-btn, .cm-apply, .combo-add-btn, .pe-add-btn) {
+    background: linear-gradient(225deg, #E8FAFC 0%, var(--lu-cyan) 55%, var(--lu-teal) 100%) !important;
+    border: 1px solid rgba(167, 235, 242, .55) !important;
+    color: var(--lu-navy) !important;
+    border-radius: 14px !important;
+    box-shadow: -6px 8px 20px rgba(1, 28, 64, .45), inset -1px 1px 0 rgba(255, 255, 255, .60) !important;
+    font-weight: 800;
+}
+
+    html body:not(#lu) :is(.btn-primary, .btn-purple, .btn-gradient, .pe-save-btn, .pg-edit-btn, .pg-new-btn, .cm-apply, .combo-add-btn, .pe-add-btn):hover {
+        background: linear-gradient(225deg, #D9F6FA 0%, var(--lu-cyan) 70%, var(--lu-teal) 100%) !important;
+        color: var(--lu-navy) !important;
+    }
+
+html body:not(#lu) :is(.btn-secondary, .btn-outline-light, .btn-glass, .btn-logout-glass, .cm-back-pill, .coach-back-pill, .pg-view-btn, .pg-del-btn, .class-btn, .cm-month) {
+    background: rgba(167, 235, 242, .16) !important;
+    border: 1px solid rgba(167, 235, 242, .38) !important;
+    color: var(--lu-text) !important;
+    border-radius: 14px !important;
+    box-shadow: inset -1px 1px 0 rgba(167, 235, 242, .28) !important;
+}
+
+html body:not(#lu) :is(.btn-danger, .pg-del-btn.danger) {
+    background: linear-gradient(225deg, #ff9bad 0%, #e5484d 100%) !important;
+    border-color: rgba(255, 155, 173, .55) !important;
+    color: #2b0710 !important;
+}
+
+/* ---------- جدول‌ها ---------- */
+html body:not(#lu) .table {
+    --bs-table-color: #EAF7FA;
+    --bs-table-bg: transparent;
+    --bs-table-border-color: rgba(167, 235, 242, .16);
+    --bs-table-striped-bg: rgba(167, 235, 242, .05);
+    --bs-table-striped-color: #EAF7FA;
+    --bs-table-hover-bg: rgba(167, 235, 242, .10);
+    --bs-table-hover-color: #ffffff;
+    color: #EAF7FA !important;
+}
+
+    html body:not(#lu) .table > thead th {
+        background: rgba(2, 56, 89, .78) !important;
+        color: #ffffff !important;
+        border-color: rgba(167, 235, 242, .22) !important;
+    }
+
+    html body:not(#lu) .table > tbody > tr > td,
+    html body:not(#lu) .table > tbody > tr > th {
+        border-color: rgba(167, 235, 242, .14) !important;
+    }
+
+/* ---------- مودال، دراپ‌دان، الرت، پیجینیشن ---------- */
+html body:not(#lu) .modal-backdrop.show {
+    opacity: .72;
+    background: #011C40;
+}
+
+html body:not(#lu) :is(.dropdown-menu, .select2-container .select2-dropdown) {
+    background: rgba(2, 56, 89, .98) !important;
+    border: 1px solid var(--lu-line) !important;
+    border-radius: 16px !important;
+    color: var(--lu-text) !important;
+    box-shadow: -10px 14px 32px rgba(1, 28, 64, .55) !important;
+}
+
+html body:not(#lu) .dropdown-item {
+    color: var(--lu-text) !important;
+}
+
+    html body:not(#lu) .dropdown-item:hover,
+    html body:not(#lu) .dropdown-item:focus {
+        background: rgba(84, 172, 191, .22) !important;
+        color: #ffffff !important;
+    }
+
+html body:not(#lu) .alert {
+    background: rgba(38, 101, 140, .38) !important;
+    border: 1px solid var(--lu-line) !important;
+    color: var(--lu-text) !important;
+    border-radius: 16px !important;
+}
+
+html body:not(#lu) .page-link {
+    background: rgba(167, 235, 242, .12) !important;
+    border: 1px solid rgba(167, 235, 242, .28) !important;
+    color: var(--lu-text) !important;
+}
+
+html body:not(#lu) .page-item.active .page-link {
+    background: var(--lu-cyan) !important;
+    border-color: var(--lu-cyan) !important;
+    color: var(--lu-navy) !important;
+}
+
+html body:not(#lu) .progress {
+    background: rgba(1, 28, 64, .60) !important;
+    border-radius: 999px !important;
+}
+
+html body:not(#lu) .progress-bar {
+    background: linear-gradient(90deg, var(--lu-steel) 0%, var(--lu-teal) 55%, var(--lu-cyan) 100%) !important;
+}
+
+/* ---------- هدرها و ناوبری ---------- */
+html body:not(#lu) :is(.mh2, .coach-top-nav, .admin-topbar, .topbar, .app-header) {
+    background: linear-gradient(200deg, rgba(2, 56, 89, .94) 0%, rgba(1, 28, 64, .96) 100%) !important;
+    border-color: var(--lu-line) !important;
+    box-shadow: 0 12px 30px rgba(1, 28, 64, .50) !important;
+    color: #ffffff !important;
+}
+
+html body:not(#lu) :is(.mh2, .coach-top-nav) :is(.nav-link, a, span, strong, i) {
+    color: var(--lu-text);
+}
+
+html body:not(#lu) :is(.bottom-nav, .admin-bottom-nav, .coach-bottom-nav) {
+    background: linear-gradient(225deg, rgba(84, 172, 191, .52) 0%, rgba(2, 56, 89, .94) 100%) !important;
+    border: 1px solid var(--lu-line) !important;
+    box-shadow: -8px 12px 30px rgba(1, 28, 64, .55) !important;
+}
+
+html body:not(#lu) :is(.bottom-nav, .admin-bottom-nav, .coach-bottom-nav) .active {
+    color: #ffffff !important;
+    background: rgba(167, 235, 242, .18) !important;
+}
+
+/* ---------- میز خدمت / ورود ---------- */
+html body:not(#lu) :is(.desk-chip button, .desk-amount button, .desk-summary) {
+    background: rgba(167, 235, 242, .12) !important;
+    border: 1px solid rgba(167, 235, 242, .30) !important;
+    color: var(--lu-text) !important;
+}
+
+html body:not(#lu) .desk-head .desk-user {
+    background: rgba(167, 235, 242, .16) !important;
+    border: 1px solid rgba(167, 235, 242, .34) !important;
+    color: var(--lu-text) !important;
+}
+
+/* ---------- باکس‌های داخلی: همیشه تیره‌تر از کارت والد ---------- */
+html body:not(#lu) :is(
+    .card, .glass-card, .purple-style, .panel, .modal-content,
+    .admin-setting-card, .member-reports-card, .report-card, .mp-info
+) :is(
+    .commerce-panel, .commerce-category-panel, .commerce-cart-panel,
+    .rec-panel, .ss-confirm-panel, .bd-panel, .dk-box, .rules-box,
+    .done-info-box, .face-status-box, .renew-info-box,
+    .sent-table-wrap, .inside-table-wrap
+) {
+    background: rgba(1, 28, 64, .45) !important;
+    border: 1px solid rgba(167, 235, 242, .20) !important;
+    border-radius: 16px !important;
+    box-shadow: inset -1px 1px 0 rgba(167, 235, 242, .18) !important;
+}
+
+/* ---------- چاپ (کارت QR و رسیدها) ---------- */
+@media print {
+    html body:not(#lu),
+    html body:not(#lu) * {
+        background: #ffffff !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        -webkit-backdrop-filter: none !important;
+        backdrop-filter: none !important;
+    }
+}

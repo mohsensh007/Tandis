@@ -1,145 +1,136 @@
-﻿@{
+@{
     Layout = null;
+    var isAdminView = Context.Request.Path.StartsWithSegments("/Admin");
 }
-
 <!DOCTYPE html>
 <html dir="rtl" lang="fa">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0f172a" />
-    <title>QR Code ورود - باشگاه</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <meta name="theme-color" content="#011C40" />
+    <title>QR باشگاه شما</title>
     <style>
+        * { box-sizing: border-box; }
+
         body {
-            background: linear-gradient(135deg, #0f172a, #1e3a8a);
-            color: white;
+            margin: 0;
             min-height: 100vh;
-            min-height: 100dvh; /* ارتفاع واقعی در مرورگرهای موبایل */
+            min-height: 100dvh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom);
-            box-sizing: border-box;
+            padding: calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));
+            background: radial-gradient(circle at 50% 0%, #023859 0%, #011C40 62%);
+            color: #EAF7FA;
             font-family: 'Sahel', Tahoma, Arial, sans-serif;
         }
 
-        .qr-container {
-            background: rgba(255,255,255,0.1);
+        .qr-card {
+            width: 100%;
+            max-width: 460px;
+            text-align: center;
+            padding: 26px 20px 22px;
+            border-radius: 26px;
+            background: rgba(2, 56, 89,.8);
+            border: 1px solid rgba(84, 172, 191,.35);
+            box-shadow: 0 22px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.07);
             -webkit-backdrop-filter: blur(16px);
             backdrop-filter: blur(16px);
-            border: 2px solid rgba(255,255,255,0.2);
-            border-radius: 24px;
-            padding: 32px 16px; /* در موبایل باریک‌تر تا اسکرول افقی ایجاد نشود */
-            text-align: center;
-            max-width: 500px;
-            width: 100%;
-            box-sizing: border-box;
         }
 
-        #qrImage {
-            background: white;
-            padding: 16px;
-            border-radius: 16px;
+        .qr-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            margin: 0 0 4px;
+        }
+
+        .qr-sub {
+            font-size: .78rem;
+            color: #9FCBD8;
+            margin: 0 0 18px;
+        }
+
+        .qr-box {
             display: inline-block;
-            max-width: 100%;
-            box-sizing: border-box;
-            min-height: 240px; /* فضای رزروشده هنگام بارگذاری */
+            padding: 14px;
+            border-radius: 20px;
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(0,0,0,.35);
         }
 
-            #qrImage img {
-                max-width: min(350px, 100%);
-                width: 100%;
+            .qr-box img {
+                display: block;
+                width: min(320px, 62vw);
                 height: auto;
             }
 
-        .countdown {
-            font-size: 3rem;
-            font-weight: bold;
-            margin: 20px 0;
-            color: #4a90e2;
+        .qr-note {
+            font-size: .8rem;
+            color: #CDE9EF;
+            line-height: 1.9;
+            margin: 18px 0 0;
         }
 
-        h2 {
-            margin-bottom: 30px;
+            .qr-note b { color: #54ACBF; }
+
+        .qr-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 18px;
+            flex-wrap: wrap;
         }
 
-        .loading {
-            color: #666;
-            margin-top: 20px;
+        .qr-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 20px;
+            border-radius: 14px;
+            font-size: .85rem;
+            font-weight: 700;
+            text-decoration: none;
+            border: 1px solid rgba(84, 172, 191,.55);
+            color: #EAF7FA;
+            background: rgba(84, 172, 191,.55);
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+            .qr-btn.primary {
+                background: #54ACBF;
+                border-color: #54ACBF;
+                color: #011C40;
+            }
+
+        @@media print {
+            body { background: #fff; color: #000; }
+            .qr-card { box-shadow: none; border-color: #ccc; background: #fff; }
+            .qr-sub, .qr-note { color: #333; }
+            .qr-actions { display: none; }
         }
     </style>
 </head>
 <body>
-    <div class="qr-container">
-        <h2> QR Code صفحه ورود</h2>
-        <div id="qrImage">
-            <div class="loading">در حال بارگذاری QR Code...</div>
+    <main class="qr-card">
+        <h1 class="qr-title">QR باشگاه شما</h1>
+        <p class="qr-sub">@(isAdminView ? "این QR را چاپ کنید یا روی مانیتور باشگاه نمایش دهید" : "برای ورود، QR را با دوربین موبایل اسکن کنید")</p>
+
+        <div class="qr-box">
+            <img src="/api/Security/QrCode" alt="QR ثابت باشگاه" width="320" height="320" />
         </div>
-        <div class="countdown" id="countdown">05:00</div>
-        <p class="text-muted">
-            این QR Code فقط به صفحه ورود می‌رود؛ آن را اسکن کنید.
-            <br /><small>هر ۵ دقیقه به‌روزرسانی می‌شود</small>
+
+        <p class="qr-note">
+            این QR <b>ثابت</b> است و منقضی نمی‌شود؛ اعضا همیشه با اسکن آن به صفحه ورود باشگاه می‌رسند.
         </p>
-    </div>
 
-    <script>
-        var countdownSeconds = 300; // 5 دقیقه = 300 ثانیه
-        var countdownInterval;
-        var qrRefreshInterval;
-
-        function startCountdown() {
-            countdownSeconds = 300;
-            updateCountdownDisplay();
-
-            clearInterval(countdownInterval);
-            countdownInterval = setInterval(function() {
-                countdownSeconds--;
-                updateCountdownDisplay();
-
-                if (countdownSeconds <= 0) {
-                    refreshQr();
-                }
-            }, 1000);
-        }
-
-        function updateCountdownDisplay() {
-            var minutes = Math.floor(countdownSeconds / 60);
-            var seconds = countdownSeconds % 60;
-            document.getElementById('countdown').textContent =
-                String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
-        }
-
-        function refreshQr() {
-            var timestamp = new Date().getTime();
-            var imgElement = document.querySelector('#qrImage img');
-
-            if (!imgElement) {
-                // اگه img وجود نداره، بساز
-                var container = document.getElementById('qrImage');
-                container.innerHTML = '<img src="/api/Security/QrCode?shiftID=1&t=' + timestamp + '" alt="QR Code" />';
-            } else {
-                // اگه هست، src رو عوض کن
-                imgElement.src = '/api/Security/QrCode?shiftID=1&t=' + timestamp;
+        <div class="qr-actions">
+            <button type="button" class="qr-btn primary" onclick="window.print()">چاپ QR</button>
+            @if (isAdminView)
+            {
+                <a class="qr-btn" href="/Admin">بازگشت به پنل</a>
             }
-
-            startCountdown();
-        }
-
-        // وقتی صفحه لود شد
-        window.onload = function() {
-            // اولین بار QR رو لود کن
-            refreshQr();
-
-            // هر 5 دقیقه خودکار رفرش بشه
-            qrRefreshInterval = setInterval(refreshQr, 300000);
-        };
-
-        // پاکسازی هنگام بستن صفحه
-        window.onbeforeunload = function() {
-            clearInterval(countdownInterval);
-            clearInterval(qrRefreshInterval);
-        };
-    </script>
+        </div>
+    </main>
 </body>
 </html>

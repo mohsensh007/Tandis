@@ -42,7 +42,7 @@ html {
 
 body {
     direction: rtl;
-    background: #f5f6fa;
+    background: #011C40;
     min-height: 100vh;
     min-height: 100dvh; /* مرورگرهای مدرن موبایل (Safari/Chrome/Firefox) — ارتفاع واقعی بدون نوار آدرس */
 }
@@ -61,7 +61,7 @@ body {
 }
 
 .card-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #26658C 0%, #023859 100%);
     color: white;
     border-radius: 12px 12px 0 0 !important;
     font-weight: bold;
@@ -93,32 +93,32 @@ body {
 
 /* === دکمه‌ها === */
 .btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #26658C 0%, #023859 100%);
     border: none;
 }
 
     .btn-primary:hover {
-        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        background: linear-gradient(135deg, #023859 0%, #26658C 100%);
     }
 
 .btn-success {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    background: linear-gradient(225deg, #CFF4F9 0%, #54ACBF 100%);
     border: none;
 }
 
 .btn-outline-primary {
-    color: #667eea;
-    border-color: #667eea;
+    color: #54ACBF;
+    border-color: rgba(84, 172, 191,.55);
 }
 
     .btn-outline-primary:hover {
-        background: #667eea;
+        background: #54ACBF;
         color: white;
     }
 
 /* === جدول === */
 .table th {
-    background: #f8f9fa;
+    background: #023859;
     font-weight: bold;
 }
 
@@ -149,21 +149,21 @@ body {
 }
 
     .alert-msg.success {
-        background: #d4edda;
-        color: #155724;
-        border: 1px solid #c3e6cb;
+        background: rgba(84, 172, 191,.16);
+        color: #A7EBF2;
+        border: 1px solid rgba(84, 172, 191,.42);
     }
 
     .alert-msg.error {
-        background: #f8d7da;
-        color: #721c24;
-        border: 1px solid #f5c6cb;
+        background: rgba(255,107,129,.14);
+        color: #FFB3C0;
+        border: 1px solid rgba(255,107,129,.38);
     }
 
     .alert-msg.warning {
-        background: #fff3cd;
-        color: #856404;
-        border: 1px solid #ffeeba;
+        background: rgba(84, 172, 191,.16);
+        color: #F0B268;
+        border: 1px solid rgba(84, 172, 191,.4);
     }
 
 @keyframes slideDown {
@@ -194,7 +194,7 @@ body {
 
 /* === Badge === */
 .badge-active {
-    background: #28a745;
+    background: #54ACBF;
 }
 
 .badge-inactive {
@@ -226,9 +226,9 @@ body {
     overflow: hidden;
     border: none;
     border-radius: 16px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #26658C 0%, #023859 100%);
     color: #fff;
-    box-shadow: 0 10px 30px rgba(118, 75, 162, .25);
+    box-shadow: 0 10px 30px rgba(84, 172, 191,.25);
     transition: transform .25s;
 }
 
@@ -268,13 +268,13 @@ body {
 
     .session-progress .bar {
         height: 100%;
-        background: linear-gradient(90deg, #38ef7d, #11998e);
+        background: linear-gradient(90deg, #54ACBF, #26658C);
         border-radius: 999px;
         transition: width .8s ease;
     }
 
     .session-progress.low .bar {
-        background: linear-gradient(90deg, #fc5c7d, #f7971e);
+        background: linear-gradient(90deg, #fc5c7d, #54ACBF);
     }
 
 .session-stats {
@@ -331,19 +331,19 @@ body {
     .stat-card .stat-value {
         font-size: 1.25rem;
         font-weight: 700;
-        color: #2c3e50;
+        color: rgba(167, 235, 242, .16);
     }
 
 .bg-gradient-success {
-    background: linear-gradient(135deg, #11998e, #38ef7d);
+    background: linear-gradient(135deg, #26658C, #54ACBF);
 }
 
 .bg-gradient-info {
-    background: linear-gradient(135deg, #2193b0, #6dd5ed);
+    background: linear-gradient(135deg, #26658C, #54ACBF);
 }
 
 .bg-gradient-warning {
-    background: linear-gradient(135deg, #f7971e, #ffd200);
+    background: linear-gradient(135deg, #54ACBF, #54ACBF);
 }
 
 .bg-gradient-danger {
@@ -357,7 +357,7 @@ body {
 }
 
     .report-table thead th {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #26658C, #023859);
         color: #fff;
         font-weight: 600;
         font-size: .9rem;
@@ -371,11 +371,11 @@ body {
     }
 
     .report-table tbody tr:hover {
-        background: #f8f5ff;
+        background: rgba(167, 235, 242, .10);
     }
 
 .badge-credit {
-    background: #11998e;
+    background: #26658C;
     color: #fff;
     padding: 4px 10px;
     border-radius: 999px;
@@ -406,14 +406,14 @@ body {
     }
 
         .nav-tabs-custom .nav-link.active {
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #26658C, #023859);
             color: #fff;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, .3);
+            box-shadow: 0 4px 12px rgba(2, 56, 89,.3);
         }
 
         .nav-tabs-custom .nav-link:not(.active):hover {
-            background: #f0eeff;
-            color: #667eea;
+            background: #023859;
+            color: #54ACBF;
         }
 
 /* --- آیتم خالی --- */
@@ -435,8 +435,8 @@ body {
     padding: 18px 10px;
     text-align: center;
     text-decoration: none;
-    color: #2c3e50;
-    background: #fff;
+    color: rgba(167, 235, 242, .16);
+    background: rgba(2, 56, 89,.8);
     box-shadow: 0 2px 10px rgba(0,0,0,.05);
     transition: all .2s;
     display: block;
@@ -445,7 +445,7 @@ body {
     .quick-link:hover {
         transform: translateY(-4px);
         box-shadow: 0 8px 24px rgba(0,0,0,.1);
-        color: #667eea;
+        color: #54ACBF;
     }
 
     .quick-link .ql-icon {
@@ -467,7 +467,7 @@ body {
 }
 
     .cal-table th {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #26658C, #023859);
         color: #fff;
         padding: 10px 0;
         font-size: .85rem;
@@ -480,38 +480,38 @@ body {
         text-align: center;
         font-size: .95rem;
         font-weight: 600;
-        border: 1px solid #e9ecef;
+        border: 1px solid rgba(167, 235, 242, .18);
         transition: all .15s;
     }
 
 .cal-empty {
-    background: #f8f9fa;
+    background: #023859;
 }
 
 .cal-disabled {
     color: #ccc;
-    background: #f8f9fa;
+    background: #023859;
     cursor: not-allowed;
     text-decoration: line-through;
 }
 
 .cal-active {
     cursor: pointer;
-    color: #2c3e50;
-    background: #fff;
+    color: rgba(167, 235, 242, .16);
+    background: rgba(2, 56, 89,.8);
     border-radius: 0;
 }
 
     .cal-active:hover {
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background: linear-gradient(135deg, #26658C, #023859);
         color: #fff;
         transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, .4);
+        box-shadow: 0 4px 12px rgba(2, 56, 89,.4);
     }
 
 .cal-today {
-    background: #e8f0fe !important;
-    color: #667eea !important;
+    background: #023859 !important;
+    color: #26658C !important;
     font-weight: 800;
 }
 
@@ -522,7 +522,7 @@ body {
     border: none;
     border-radius: 16px;
     overflow: hidden;
-    background: #fff;
+    background: rgba(2, 56, 89,.8);
     box-shadow: 0 4px 20px rgba(0,0,0,.07);
     transition: all .25s;
     margin-bottom: 16px;
@@ -530,11 +530,11 @@ body {
 
     .sanse-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 10px 30px rgba(102, 126, 234, .15);
+        box-shadow: 0 10px 30px rgba(2, 56, 89,.15);
     }
 
     .sanse-card .sanse-top {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #26658C 0%, #023859 100%);
         color: #fff;
         padding: 16px 18px;
         position: relative;
@@ -578,17 +578,17 @@ body {
         align-items: center;
         gap: 5px;
         padding: 5px 12px;
-        background: #f0eeff;
+        background: #023859;
         border-radius: 999px;
         font-size: .8rem;
-        color: #4a3f6b;
+        color: #9FC6D2;
         font-weight: 600;
     }
 
     .sanse-card .sanse-price {
         font-size: 1.15rem;
         font-weight: 800;
-        color: #667eea;
+        color: #54ACBF;
         margin-bottom: 14px;
     }
 
@@ -624,9 +624,9 @@ body {
 .purple-style {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(52,58,112,.7), rgba(74,52,108,.7)) !important;
+    background: linear-gradient(135deg, rgba(2, 56, 89,.7), rgba(1, 28, 64,.7)) !important;
     /* ✅ سایهٔ متن برای خوانایی بهتر روی پس‌زمینهٔ نیمه‌شفاف */
-    text-shadow: 0 1px 3px rgba(0, 0, 0, .5);
+    text-shadow: 0 1px 3px rgba(0,0,0,.5);
 }
 
     .purple-style::before {
@@ -636,7 +636,7 @@ body {
         right: -50px;
         width: 160px;
         height: 160px;
-        background: radial-gradient(circle, rgba(102,211,232,.25), transparent 70%);
+        background: radial-gradient(circle, rgba(84, 172, 191,.25), transparent 70%);
         pointer-events: none;
     }
 
@@ -651,7 +651,7 @@ body {
         left: -30px;
         width: 140px;
         height: 140px;
-        background: radial-gradient(circle, rgba(118,75,162,.25), transparent 70%);
+        background: radial-gradient(circle, rgba(84, 172, 191,.25), transparent 70%);
         pointer-events: none;
     }
 
@@ -667,7 +667,7 @@ body {
     gap: 8px;
     background: rgba(255,255,255,.08);
     border: 1px solid rgba(255,255,255,.18);
-    color: #dce9ff;
+    color: #A7EBF2;
     border-radius: 999px;
     padding: 7px 18px;
     font-size: .82rem;
@@ -680,7 +680,7 @@ body {
 
     .coach-back-pill i,
     .btn-back-glass i {
-        color: #66d3e8;
+        color: #54ACBF;
         transition: transform .25s;
     }
 
@@ -708,7 +708,7 @@ body {
 
     .glass-search:focus {
         outline: none;
-        border-color: rgba(102,211,232,.5);
+        border-color: rgba(84, 172, 191,.5);
         background: rgba(255,255,255,.12);
     }
 
@@ -725,7 +725,7 @@ body {
 }
 
 #datePickerModal .modal-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    background: linear-gradient(135deg, #26658C 0%, #023859 100%) !important;
     border: none !important;
     color: #fff;
 }
@@ -763,7 +763,7 @@ body {
 
     #datePickerModal #prevMonth:hover,
     #datePickerModal #nextMonth:hover {
-        background: rgba(102,211,232,.25) !important;
+        background: rgba(84, 172, 191,.25) !important;
     }
 
 #datePickerModal .cal-table {
@@ -773,7 +773,7 @@ body {
 }
 
     #datePickerModal .cal-table th {
-        background: linear-gradient(135deg, #667eea, #764ba2) !important;
+        background: linear-gradient(135deg, #26658C, #023859) !important;
         color: #fff !important;
         border: none !important;
         border-radius: 8px;
@@ -785,7 +785,7 @@ body {
 
     #datePickerModal .cal-table td {
         background: rgba(255,255,255,.07) !important;
-        color: #e9ecef !important;
+        color: rgba(167, 235, 242, .18) !important;
         border: 1px solid rgba(255,255,255,.10) !important;
         border-radius: 10px;
         padding: 10px 2px;
@@ -796,7 +796,7 @@ body {
     }
 
         #datePickerModal .cal-table td:hover {
-            background: rgba(102,211,232,.30) !important;
+            background: rgba(84, 172, 191,.30) !important;
             color: #fff !important;
         }
 
@@ -838,4 +838,326 @@ body {
         padding-top: max(.5rem, 6px);
         padding-bottom: max(.5rem, 6px);
     }
+}
+
+/* ============================================================
+   TANDIS — NAVY GLASS THEME (2026)
+   پالت: #011C40 · #023859 · #26658C · #54ACBF
+   لهجهٔ نارنجی: #54ACBF (خیلی کم — فقط متن‌های بولد و المان‌های کلیدی)
+   قاعدهٔ شیشه: ۸۰٪ تیره / ۲۰٪ شفاف + بلور
+   این لایه در هر سه پنل (مدیر، مربی، عضو) و صفحهٔ ورود مشترک است.
+   ============================================================ */
+:root {
+    --tn-deep: #011C40;
+    --tn-navy: #023859;
+    --tn-slate: #26658C;
+    --tn-sky: #54ACBF;
+    --tn-amber: #54ACBF;
+    --tn-glass: rgba(2, 56, 89, .8);
+    --tn-glass-deep: rgba(1, 28, 64, .8);
+    --tn-border: rgba(84, 172, 191, .2);
+    --tn-text: #EAF7FA;
+    --tn-muted: #A7EBF2;
+}
+
+/* ---------- ۱) پوستهٔ صفحه: بدون عکس، هالهٔ نور سرمه‌ای ---------- */
+body,
+body.admin-glass-body,
+body.member-ui,
+body.coach-glass-body {
+    background-color: var(--tn-deep) !important;
+    background-image:
+        radial-gradient(circle at 14% 4%, rgba(84, 172, 191, .5), transparent 34rem),
+        radial-gradient(circle at 86% 14%, rgba(84, 172, 191, .12), transparent 30rem),
+        radial-gradient(circle at 50% 106%, rgba(84, 172, 191, .05), transparent 28rem),
+        linear-gradient(160deg, #011C40 0%, #011C40 55%, #011C40 100%) !important;
+    background-attachment: fixed;
+    color: var(--tn-text);
+}
+
+body.admin-glass-body::before,
+body.coach-glass-body::before {
+    background: transparent !important;
+}
+
+/* ---------- ۲) سطوح شیشه‌ای ۸۰/۲۰ در همهٔ پنل‌ها ---------- */
+body.admin-glass-body .card,
+body.admin-glass-body .card.bg-primary,
+body.admin-glass-body .card.bg-success,
+body.admin-glass-body .card.bg-warning,
+body.admin-glass-body .card.bg-info,
+body.admin-glass-body .stat-card,
+body.admin-glass-body .stat-box,
+body.admin-glass-body .bg-white,
+body.admin-glass-body .bg-light,
+body.admin-glass-body .quick-box,
+body.admin-glass-body .quick-card,
+body.admin-glass-body .quick-link,
+body.admin-glass-body .menu-box,
+body.admin-glass-body .menu-card,
+.nav-card,
+.glass-card,
+.pe-card,
+.sanse-card,
+.purple-style,
+.mp-empty,
+.cc-empty,
+.cs-empty,
+.ms-empty,
+.pg-empty,
+.coach-banner,
+.coach-card,
+.cstat-card,
+.cc-card,
+.cs-card,
+.sd-card,
+.sd-box,
+.ms-card,
+.ch-box,
+.ch-form-card,
+.cm-filter,
+.cm-card,
+.cm-box,
+.pg-card,
+.rep-filter,
+.stu-panel,
+.mp-info,
+.pd-info {
+    background: linear-gradient(150deg, rgba(2, 56, 89, .84), rgba(1, 28, 64, .8)) !important;
+    border: 1px solid var(--tn-border) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    backdrop-filter: blur(16px) saturate(120%);
+    color: var(--tn-text) !important;
+}
+
+/* ---------- ۳) هدرها و نوارهای شیشه‌ای ---------- */
+.card-header,
+.card-head-purple,
+.coach-list-header,
+.coach-card-head,
+.sd-box-head,
+.cm-box-head,
+.stu-head,
+.sanse-card .sanse-top {
+    background: linear-gradient(135deg, #023859 0%, #26658C 100%) !important;
+    color: #ffffff !important;
+    border-bottom: 1px solid rgba(84, 172, 191, .28) !important;
+}
+
+.navbar,
+body.admin-glass-body .navbar,
+.admin-top-nav,
+.coach-top-nav,
+.member-header,
+.bottom-nav,
+body.member-ui #bottomNav,
+.admin-bottom-nav,
+.coach-bottom-nav {
+    background: rgba(1, 28, 64, .8) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    backdrop-filter: blur(16px) saturate(120%);
+    border-color: rgba(255, 255, 255, .08) !important;
+}
+
+/* ---------- ۴) مودال‌ها، منوها و پنل‌های کشویی ---------- */
+.modal-content,
+.dropdown-menu,
+.allmenu-panel,
+.allmenu-header,
+.stu-panel,
+.pe-modal {
+    background: rgba(1, 28, 64, .8) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(120%);
+    backdrop-filter: blur(18px) saturate(120%);
+    border: 1px solid rgba(84, 172, 191, .18) !important;
+    color: var(--tn-text) !important;
+}
+
+/* ---------- ۵) فرم‌ها ---------- */
+body .form-control,
+body .form-select,
+.glass-search,
+.pe-input,
+.cm-input,
+.ch-input,
+.rep-input,
+.stu-search {
+    background: rgba(1, 28, 64, .55) !important;
+    border: 1px solid rgba(84, 172, 191, .22) !important;
+    color: var(--tn-text) !important;
+}
+
+body .form-control:focus,
+body .form-select:focus,
+.glass-search:focus,
+.pe-input:focus,
+.cm-input:focus,
+.ch-input:focus,
+.rep-input:focus,
+.stu-search:focus {
+    border-color: var(--tn-sky) !important;
+    box-shadow: 0 0 0 .22rem rgba(84, 172, 191, .16) !important;
+    background: rgba(1, 28, 64, .72) !important;
+    color: #ffffff !important;
+}
+
+body .form-control::placeholder,
+.glass-search::placeholder,
+.pe-input::placeholder,
+.cm-input::placeholder,
+.ch-input::placeholder,
+.rep-input::placeholder,
+.stu-search::placeholder {
+    color: rgba(214, 231, 245, .45) !important;
+}
+
+/* ---------- ۶) دکمه‌های اصلی: اسلیت ← آبی روشن ---------- */
+.btn-primary,
+.btn-success,
+.btn-purple-main,
+.btn-blue-action,
+.pe-save-btn,
+.pe-add-btn,
+.rep-btn-main,
+.btn-grad-purple,
+.pg-new-btn,
+.cm-apply,
+.pd-edit-btn,
+.sanse-btn {
+    background: linear-gradient(225deg, #CFF4F9 0%, #54ACBF 100%) !important;
+    background-color: #26658C !important;
+    border: none !important;
+    color: #011C40 !important;
+    font-weight: 800;
+    box-shadow: 0 10px 24px rgba(84, 172, 191, .18) !important;
+}
+
+    .btn-primary:hover,
+    .btn-success:hover,
+    .btn-purple-main:hover,
+    .btn-blue-action:hover,
+    .pe-save-btn:hover,
+    .pe-add-btn:hover,
+    .rep-btn-main:hover,
+    .btn-grad-purple:hover,
+    .pg-new-btn:hover,
+    .cm-apply:hover,
+    .pd-edit-btn:hover,
+    .sanse-btn:hover {
+        background: linear-gradient(225deg, #A7EBF2 0%, #7EC6D8 100%) !important;
+        color: #011C40 !important;
+        transform: translateY(-1px);
+    }
+
+/* ---------- ۷) متن‌های کم‌رنگ، آیکون‌ها و نشانگرها ---------- */
+.text-muted,
+.stat-card .stat-label,
+.rep-label,
+.empty-state,
+.lbl-small,
+.pe-lbl,
+.mp-period,
+.att-week span {
+    color: var(--tn-muted) !important;
+}
+
+.hd-icon,
+.mp-hd-icon,
+.member-logout-icon,
+.rep-btn-icon,
+.card-head-purple i {
+    color: var(--tn-sky) !important;
+}
+
+/* ---------- ۸) جدول‌ها ---------- */
+.table thead th,
+.dark-table thead th,
+.report-table thead th {
+    background: rgba(1, 28, 64, .9) !important;
+    color: var(--tn-text) !important;
+    border-bottom: 1px solid rgba(84, 172, 191, .26) !important;
+}
+
+.table tbody td,
+.dark-table tbody td {
+    color: var(--tn-text);
+}
+
+.table-hover tbody tr:hover,
+.dark-table tbody tr:hover,
+.report-table tbody tr:hover {
+    background: rgba(84, 172, 191, .08) !important;
+}
+
+/* ---------- ۹) لهجهٔ نارنجی — خیلی کم ---------- */
+.cal-today {
+    background: rgba(84, 172, 191, .18) !important;
+    color: #A7EBF2 !important;
+    box-shadow: inset 0 0 0 1px rgba(84, 172, 191, .4);
+    font-weight: 800;
+}
+
+.bn-glow,
+.abn-glow,
+.cbn-glow {
+    background: linear-gradient(90deg, #54ACBF, #54ACBF) !important;
+    box-shadow: 0 0 14px rgba(84, 172, 191, .55) !important;
+}
+
+.session-progress .bar {
+    background: linear-gradient(90deg, #54ACBF, #54ACBF) !important;
+}
+
+/* ---------- ۱۰) اسکرول‌بار همرنگ پالت ---------- */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(1, 28, 64, .6);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(84, 172, 191, .95);
+    border-radius: 999px;
+}
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(84, 172, 191, .7);
+    }
+
+/* ---------- ۱۱) بک‌گراند روشن‌تر پالت (برای دیده‌شدن شیشه) ---------- */
+body,
+body.admin-glass-body,
+body.coach-glass-body {
+    background:
+        radial-gradient(circle at 14% 0%, rgba(84, 172, 191, .16), transparent 42rem),
+        radial-gradient(circle at 86% 12%, rgba(167, 235, 242, .09), transparent 34rem),
+        linear-gradient(160deg, #023859 0%, #26658C 52%, #023859 100%) !important;
+    background-attachment: fixed !important;
+    overflow-x: clip;
+}
+/* ---------- ۱۲) بک‌گراند نهایی پالت LUNA (#A7EBF2 #54ACBF #26658C #023859 #011C40) ---------- */
+body,
+body.admin-glass-body,
+body.coach-glass-body {
+    background:
+        radial-gradient(circle at 50% -12%, rgba(167, 235, 242, .16), transparent 46rem),
+        radial-gradient(circle at 86% 6%, rgba(84, 172, 191, .20), transparent 34rem),
+        radial-gradient(rgba(167, 235, 242, .075) 1px, transparent 1px) 0 0 / 26px 26px,
+        linear-gradient(160deg, #023859 0%, #26658C 55%, #011C40 100%) !important;
+    background-attachment: fixed !important;
+    color: #EAF7FA;
+}
+
+/* ---------- ۱۳) بک‌گراند با کنتراست نسبت به کارت‌ها ---------- */
+body,
+body.admin-glass-body,
+body.coach-glass-body {
+    background:
+        radial-gradient(circle at 50% -16%, rgba(167, 235, 242, .22), transparent 44rem),
+        radial-gradient(rgba(167, 235, 242, .10) 1px, transparent 1px) 0 0 / 26px 26px,
+        linear-gradient(160deg, #54ACBF 0%, #26658C 48%, #011C40 100%) !important;
+    background-attachment: fixed !important;
 }

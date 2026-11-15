@@ -89,9 +89,16 @@ namespace TandisWebApp.Controllers
                 : returnUrl;
             return Ok(result);
         }
-        /// <summary>صفحه ثبت‌نام عضو جدید (ویزارد)</summary>
+        /// <summary>
+        /// صفحه ثبت‌نام عضو جدید (ویزارد)
+        /// desk=1 → ثبت‌نام از «میز خدمت»؛ بعد از پایان به همان پنل ۵ کارتی برمی‌گردد (نه لاگین).
+        /// </summary>
         [HttpGet]
-        public IActionResult Register() => View();
+        public IActionResult Register(bool desk = false)
+        {
+            ViewData["DeskMode"] = desk;
+            return View();
+        }
 
         /// <summary>متن شرایط باشگاه (عمومی — برای صفحه ثبت‌نام)</summary>
         [HttpGet]

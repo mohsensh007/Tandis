@@ -1,8 +1,8 @@
 /* Member-only refinements. Keep data in its own scroll region, not off the page. */
 body.member-ui {
-    --member-accent: #66d3e8;
-    --member-purple: #667eea;
-    --member-purple-deep: #764ba2;
+    --member-accent: #54ACBF;
+    --member-purple: #26658C;
+    --member-purple-deep: #023859;
 }
 
 body.member-ui .member-main {
@@ -89,8 +89,8 @@ body.member-ui .header-clock {
     justify-self: stretch;
     min-width: 0;
     padding: 6px 8px;
-    background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18));
-    border-color: rgba(102,211,232,.35);
+    background: linear-gradient(135deg, rgba(2, 56, 89,.82), rgba(1, 28, 64,.78));
+    border-color: rgba(84, 172, 191,.35);
 }
 
 body.member-ui .hc-time {
@@ -114,8 +114,8 @@ body.member-ui .club-name-wrap {
     min-width: 0;
     margin: 0;
     padding: 6px 10px;
-    background: linear-gradient(135deg, rgba(102,126,234,.20), rgba(118,75,162,.16));
-    border: 1px solid rgba(102,211,232,.30);
+    background: linear-gradient(135deg, rgba(2, 56, 89,.82), rgba(1, 28, 64,.78));
+    border: 1px solid rgba(84, 172, 191,.30);
     border-radius: 12px;
     text-align: center;
 }
@@ -178,7 +178,7 @@ body.member-ui .member-message-title {
 body.member-ui #bottomNav {
     overflow: visible;
     padding: 8px 4px 6px;
-    background: linear-gradient(135deg, rgba(37,44,78,.96), rgba(45,31,64,.96)) !important;
+    background: linear-gradient(135deg, rgba(2, 56, 89,.8), rgba(1, 28, 64,.8)) !important;
 }
 
 body.member-ui #bottomNav::before,
@@ -217,7 +217,7 @@ body.member-ui #bottomNav .bn-glow {
     position: absolute;
     transform: translateX(0);
     background: linear-gradient(90deg, var(--member-purple), var(--member-accent));
-    box-shadow: 0 0 14px rgba(102,211,232,.55);
+    box-shadow: 0 0 14px rgba(84, 172, 191,.55);
 }
 
 /* The modal body is the scroll region; titles and dismiss actions stay reachable. */
@@ -418,8 +418,8 @@ body.member-ui .member-home .credit-icon {
     height: 40px;
     color: var(--member-accent);
     font-size: 1.3rem;
-    background: linear-gradient(135deg, rgba(102,126,234,.24), rgba(118,75,162,.22));
-    border: 1px solid rgba(102,211,232,.3);
+    background: linear-gradient(135deg, rgba(2, 56, 89,.82), rgba(1, 28, 64,.78));
+    border: 1px solid rgba(84, 172, 191,.3);
 }
 
 body.member-ui .member-home .credit-top {
@@ -455,7 +455,7 @@ body.member-ui .allmenu-panel {
     padding: calc(16px + env(safe-area-inset-top)) max(12px, env(safe-area-inset-right))
         calc(24px + env(safe-area-inset-bottom)) max(12px, env(safe-area-inset-left));
     overscroll-behavior: contain;
-    background: rgba(15,23,42,.92);
+    background: rgba(1, 28, 64,.8);
 }
 
 body.member-ui .allmenu-header {
@@ -464,7 +464,7 @@ body.member-ui .allmenu-header {
     z-index: 1;
     gap: 12px;
     padding-bottom: 8px;
-    background: rgba(15,23,42,.96);
+    background: rgba(1, 28, 64,.84);
 }
 
 body.member-ui .allmenu-close {
@@ -636,8 +636,8 @@ body.member-ui :is(#docList, #trafficList, #historyList, #basketList) :is(th, td
         width: auto;
         max-width: 60%;
         padding: 4px 10px;
-        background: linear-gradient(135deg, rgba(102,126,234,.18), rgba(118,75,162,.14));
-        border: 1px solid rgba(102,211,232,.28);
+        background: linear-gradient(135deg, rgba(2, 56, 89,.82), rgba(1, 28, 64,.78));
+        border: 1px solid rgba(84, 172, 191,.28);
         border-radius: 14px;
     }
 

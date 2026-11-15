@@ -4,7 +4,7 @@
     Layout = "_Layout";
 }
 
-<link rel="stylesheet" href="~/css/athlete.css?v=6" />
+<link rel="stylesheet" href="~/css/athlete.css" asp-append-version="true" asp-append-version="true" />
 
 <!-- ===== داده‌های اولیه برای JS ===== -->
 <script id="athlete-data" type="application/json">
@@ -68,10 +68,10 @@
             <div class="ath-checkin-ok">
                 <div>
                     <div class="fw-bold">@(Model.IsInside ? "✅ داخل باشگاه هستید" : "✅ امروز وارد شده‌اید (خروج زده‌اید)")</div>
-                    <div class="ath-sub">ساعت ورود (دستگاه تردد): <b style="color:#86efac;">@Model.TodayVisit.EnterTime</b></div>
+                    <div class="ath-sub">ساعت ورود (دستگاه تردد): <b style="color:#A7EBF2;">@Model.TodayVisit.EnterTime</b></div>
                     @if (!string.IsNullOrWhiteSpace(Model.TodayVisit.SessionName))
                     {
-                        <div class="ath-sub">سانس: <b style="color:#ddd6fe;">@Model.TodayVisit.SessionName</b></div>
+                        <div class="ath-sub">سانس: <b style="color:#A7EBF2;">@Model.TodayVisit.SessionName</b></div>
                     }
                     @if (!string.IsNullOrWhiteSpace(Model.TodayVisit.ExitTime))
                     {
@@ -145,7 +145,7 @@
             <div class="col-12 col-md-3 d-none d-md-block text-center">
                 <div class="ath-sub mb-1">پیشرفت روز</div>
                 <div class="ath-progress" style="height:8px; margin-top:5px;"><div id="progressBarMini"></div></div>
-                <small id="progressTextMini" style="font-size:.7rem; color:#86efac;">۰٪</small>
+                <small id="progressTextMini" style="font-size:.7rem; color:#A7EBF2;">۰٪</small>
             </div>
         </div>
 
@@ -209,8 +209,8 @@ else
                         <svg viewBox="0 0 120 120" class="sum-ring" role="img" aria-label="حلقه پیشرفت تمرین امروز" focusable="false">
                             <defs>
                                 <linearGradient id="sumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#66d3e8" />
-                                    <stop offset="100%" stop-color="#764ba2" />
+                                    <stop offset="0%" stop-color="#54ACBF" />
+                                    <stop offset="100%" stop-color="#023859" />
                                 </linearGradient>
                             </defs>
                             <circle class="sum-ring-bg" cx="60" cy="60" r="52" fill="none" />

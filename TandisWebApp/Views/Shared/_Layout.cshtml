@@ -62,13 +62,13 @@
     <meta charset="utf-8" />
     <!-- viewport-fit=cover → فعال‌شدن env(safe-area-inset-*) برای نچ (iPhone) و نوار پایین iOS -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#0f172a" />
+    <meta name="theme-color" content="#011C40" />
     <title>@ViewData["Title"] - تندیس</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/panels.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin-style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/panels.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-style.css" asp-append-version="true" asp-append-version="true" />
 
     <style>
         /* ===== نوار پایین شناور (فقط موبایل) ===== */
@@ -81,7 +81,7 @@
             display: flex;
             justify-content: space-around;
             align-items: stretch;
-            background: rgba(16, 20, 36, .82);
+            background: rgba(1, 28, 64,.82);
             -webkit-backdrop-filter: blur(14px);
             backdrop-filter: blur(14px);
             border: 1px solid rgba(255,255,255,.08);
@@ -98,7 +98,7 @@
             align-items: center;
             justify-content: center;
             gap: 3px;
-            color: #8a93a6;
+            color: #9FC6D2;
             text-decoration: none;
             font-size: .66rem;
             font-weight: 600;
@@ -137,8 +137,8 @@
             width: 34px;
             height: 4px;
             border-radius: 999px;
-            background: linear-gradient(90deg, #0d6efd, #6f42c1);
-            box-shadow: 0 0 14px rgba(13,110,253,.9);
+            background: linear-gradient(90deg, #54ACBF, #54ACBF);
+            box-shadow: 0 0 14px rgba(84, 172, 191,.9);
             transform: translateX(-200px) translateX(-50%);
             transition: transform .5s cubic-bezier(.22,.9,.35,1.15), opacity .3s;
             opacity: 0;
@@ -151,7 +151,7 @@
 
         /* ===== مودال تأیید خروج ===== */
         .logout-modal {
-            background: rgba(16, 20, 36, .96);
+            background: rgba(1, 28, 64,.96);
             border: 1px solid rgba(255,255,255,.15);
             border-radius: 18px;
             color: #fff;
@@ -165,14 +165,14 @@
         align-items: center;
         gap: 12px;
         padding: 4px 12px 4px 4px;
-        background: linear-gradient(135deg, rgba(102,126,234,.18), rgba(118,75,162,.14));
-        border: 1px solid rgba(102,211,232,.28);
+        background: linear-gradient(135deg, rgba(2, 56, 89,.18), rgba(84, 172, 191,.14));
+        border: 1px solid rgba(84, 172, 191,.28);
         border-radius: 14px;
         transition: all .25s;
     }
     .navbar-brand-club:hover {
-        border-color: rgba(102,211,232,.55);
-        box-shadow: 0 4px 14px rgba(118,75,162,.22);
+        border-color: rgba(84, 172, 191,.55);
+        box-shadow: 0 4px 14px rgba(84, 172, 191,.22);
         transform: translateY(-1px);
     }
     .club-logo {
@@ -195,7 +195,7 @@
     }
     .club-sub {
         font-size: .68rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         font-weight: 600;
     }
     /* ✅ در موبایل: لوگو بدون کادر، اسم باشگاه داخل کادر مجزا در گوشه چپ */
@@ -217,8 +217,8 @@
             order: 2;
             margin-right: auto;
             align-items: center;
-            background: linear-gradient(135deg, rgba(102,126,234,.20), rgba(118,75,162,.16));
-            border: 1px solid rgba(102,211,232,.30);
+            background: linear-gradient(135deg, rgba(2, 56, 89,.20), rgba(84, 172, 191,.16));
+            border: 1px solid rgba(84, 172, 191,.30);
             border-radius: 12px;
             padding: 5px 14px;
             box-shadow: 0 4px 12px rgba(0,0,0,.20);
@@ -239,8 +239,8 @@
             align-items: center;
             line-height: 1.15;
             padding: 3px 12px;
-            background: rgba(13,110,253,.12);
-            border: 1px solid rgba(13,110,253,.32);
+            background: rgba(84, 172, 191,.12);
+            border: 1px solid rgba(84, 172, 191,.32);
             border-radius: 12px;
         }
 
@@ -255,7 +255,7 @@
 
         .hc-date {
             font-size: .58rem;
-            color: #9fb3c8;
+            color: #A7EBF2;
             font-weight: 700;
             white-space: nowrap;
         }
@@ -338,8 +338,8 @@
                 align-items: center;
                 padding: 6px 20px;
                 border-radius: 16px;
-                background: linear-gradient(135deg, rgba(102,126,234,.22), rgba(118,75,162,.18));
-                border: 1px solid rgba(102,211,232,.35);
+                background: linear-gradient(135deg, rgba(2, 56, 89,.22), rgba(84, 172, 191,.18));
+                border: 1px solid rgba(84, 172, 191,.35);
                 box-shadow: 0 4px 18px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.07);
                 -webkit-backdrop-filter: blur(8px);
                 backdrop-filter: blur(8px);
@@ -350,12 +350,12 @@
                 font-weight: 800;
                 letter-spacing: 1.5px;
                 color: #fff;
-                text-shadow: 0 0 14px rgba(102,211,232,.5);
+                text-shadow: 0 0 14px rgba(84, 172, 191,.5);
             }
 
             .hc-date {
                 font-size: .62rem;
-                color: #9fb3c8;
+                color: #A7EBF2;
                 margin-top: 1px;
             }
             /* اسم باشگاه — سمت چپ، داخل کادر شیشه‌ای */
@@ -364,8 +364,8 @@
                 justify-self: end; /* RTL = چپ */
                 order: 0;
                 margin-right: 0; /* حذف auto تا grid درست بچینه */
-                background: linear-gradient(135deg, rgba(102,126,234,.20), rgba(118,75,162,.16));
-                border: 1px solid rgba(102,211,232,.30);
+                background: linear-gradient(135deg, rgba(2, 56, 89,.20), rgba(84, 172, 191,.16));
+                border: 1px solid rgba(84, 172, 191,.30);
                 border-radius: 12px;
                 padding: 5px 14px;
             }
@@ -384,13 +384,107 @@
         .navbar {
             padding-top: calc(8px + env(safe-area-inset-top));
         }
+        /* ===== هدر دو ردیفه (نمونهٔ ارسالی) ===== */
+        body.member-ui { overflow-x: clip !important; }
+        .mh2 {
+            position: sticky !important;
+            top: 0;
+            z-index: 1040;
+            padding: 0 !important;
+            background: linear-gradient(180deg, #023859 0%, #011C40 100%) !important;
+            border-bottom: 1px solid rgba(167, 235, 242,.22);
+            box-shadow: 0 10px 30px rgba(4,10,22,.35);
+            transition: transform .38s cubic-bezier(.22,.9,.35,1), box-shadow .3s;
+            will-change: transform;
+            -webkit-backdrop-filter: blur(14px);
+            backdrop-filter: blur(14px);
+        }
+        .mh2.mh-hidden { transform: translateY(-118%); box-shadow: none; }
+        .mh2-inner {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            padding: calc(8px + env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) 8px max(14px, env(safe-area-inset-left));
+        }
+        .mh2-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+        .mh2-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; min-width: 0; flex: 0 1 auto; max-width: 58%; }
+        .mh2-logo-wrap {
+            width: 44px;
+            height: 44px;
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            background: none;
+            border: 0;
+            box-shadow: none;
+            padding: 0;
+        }
+        .mh2-logo { width: 44px; height: 44px; object-fit: contain; border-radius: 0; filter: drop-shadow(0 3px 8px rgba(1, 28, 64, .55)); }
+        .mh2-titles { display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow: hidden; }
+        .mh2-title { font-size: 1rem; font-weight: 800; color: #A7EBF2; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mh2-sub { font-size: .62rem; color: #8FC3D0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* ✅ اسم باشگاه: چسبیده به لبهٔ چپ هدر (نه وسط، نه داخل باکس) */
+        .mh2-clubwrap { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 0 0 auto; margin-inline-start: auto; margin-inline-end: 0; padding-inline-end: 0; }
+        .mh2-sep { display: none; width: 1px; height: 26px; background: linear-gradient(180deg, transparent, rgba(167, 235, 242,.6), transparent); }
+        .mh2-club { color: #A7EBF2; font-size: clamp(.76rem, 2.6vw, .92rem); font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: min(48vw, 24rem); text-align: left; }
+        .mh2-rule { height: 1px; background: linear-gradient(90deg, rgba(167, 235, 242,.5), rgba(167, 235, 242,.10) 55%, transparent); }
+        .mh2-bottom { display: flex; align-items: center; justify-content: flex-start; gap: 8px; flex-wrap: nowrap; min-width: 0; }
+        .mh2-clock { display: flex; align-items: center; gap: 8px; font-size: .72rem; color: #CBE9EF; flex-wrap: wrap; }
+        .mh2-clock b { color: #A7EBF2; font-size: .8rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+        .mh2-lbl { color: #7FB6C6; }
+        .mh2-dot { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; box-shadow: 0 0 10px rgba(34,197,94,.85); flex: 0 0 auto; }
+        .mh2-actions { flex-direction: row; gap: 4px; margin: 0; align-items: center; }
+        .mh2-actions .nav-link {
+            color: #CBE9EF;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            min-width: 40px;
+            min-height: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            line-height: 1;
+        }
+        .mh2-actions .nav-link .bi,
+        .mh2-actions .nav-link i { display: block; font-size: 1.05rem; line-height: 1; }
+        .mh2-actions #memberBell .bi { font-size: 1.15rem; }
+        .mh2-actions .nav-link:hover { color: #fff; background: rgba(167, 235, 242,.12); }
+        .mh2-actions .member-user-name { max-width: 8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* ✅ چیدمان هدر بر اساس اندازهٔ دستگاه */
+        .mh2-inner { padding-left: max(10px, env(safe-area-inset-left)); }
+        @@media (max-width: 700px) {
+            .mh2-club { max-width: 42vw; }
+        }
+        @@media (max-width: 520px) {
+            .mh2-sub { display: none; }
+            .mh2-title { font-size: .92rem; }
+            .mh2-logo-wrap, .mh2-logo { width: 40px; height: 40px; }
+            .mh2-club { font-size: .78rem; max-width: 38vw; }
+            .mh2-clock { gap: 6px; font-size: .66rem; }
+            .mh2-clock b { font-size: .72rem; }
+        }
+        @@media (max-width: 380px) {
+            .mh2-date { display: none; }
+        }
+        @@media (max-width: 430px) {
+            .mh2-clock { gap: 5px; font-size: .64rem; }
+            .mh2-clock b { font-size: .7rem; }
+            .mh2-lbl { display: none; }
+            .mh2-actions .nav-link { width: 36px; height: 36px; min-width: 36px; min-height: 36px; }
+        }
+        @@media (max-width: 340px) {
+            .mh2-club, .mh2-sep { display: none; }
+        }
     </style>
-    <link rel="stylesheet" href="~/css/member-ui.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/member-ui.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" asp-append-version="true" />
     @if (loadCommerce)
     {
-        <link rel="stylesheet" href="~/css/member-commerce.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/member-commerce.css" asp-append-version="true" asp-append-version="true" />
     }
+    <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" asp-append-version="true" />
 </head>
 <body class="admin-glass-body member-ui">
     @if (!isAuthenticated)
@@ -402,113 +496,33 @@
     }
     else
     {
-        <nav class="navbar navbar-expand-md navbar-dark member-header" aria-label="ناوبری اصلی">
-            <div class="container-fluid px-3">
-                <!-- ✅ لوگو + اسم باشگاه (شیشه‌ای + گرادیانت) -->
-                <a class="navbar-brand navbar-brand-club" href="@(isCoach ? "/Coach" : "/Home")">
-                    <img src="~/images/logo2.png" alt="" width="38" height="38" decoding="async" class="club-logo" asp-append-version="true" />
-                    <!-- ✅ ساعت دیجیتال + تاریخ (بین لوگو و اسم باشگاه) -->
-                    <div class="header-clock">
-                        <span class="hc-time" id="hdrTime">--:--:--</span>
-                        <span class="hc-date" id="hdrDate">-</span>
+        <nav class="navbar member-header mh2" id="memberHeader" aria-label="ناوبری اصلی">
+            <div class="mh2-inner">
+                <div class="mh2-top">
+                    <a class="mh2-brand" href="@(isCoach ? "/Coach" : "/Home")" aria-label="@clubName">
+                        <span class="mh2-logo-wrap">
+                            <img src="~/images/logo2.png" alt="" width="38" height="38" decoding="async" class="mh2-logo" asp-append-version="true" />
+                        </span>
+                        <span class="mh2-titles">
+                            <span class="mh2-title">تندیس</span>
+                            <span class="mh2-sub">نرم‌افزار جامع اتوماسیون مراکز ورزشی</span>
+                        </span>
+                    </a>
+
+                    <div class="mh2-clubwrap">
+                        <span class="mh2-sep" aria-hidden="true"></span>
+                        <span class="mh2-club">@clubName</span>
                     </div>
-                    <div class="club-name-wrap">
-                        <span class="club-name">@clubName</span>
+                </div>
+
+                <div class="mh2-rule" aria-hidden="true"></div>
+
+                <div class="mh2-bottom">
+                    <div class="mh2-clock" aria-label="ساعت و تاریخ">
+                        <span class="mh2-dot" aria-hidden="true"></span>
+                        <span class="mh2-time"><span class="mh2-lbl">ساعت:</span> <b id="hdrTime">--:--:--</b></span>
+                        <span class="mh2-date"><span class="mh2-lbl">تاریخ:</span> <b id="hdrDate">-</b></span>
                     </div>
-                </a>
-
-                <!-- ✅ دکمه همبرگری حذف شد -->
-
-                <div class="collapse navbar-collapse" id="navbarMain">                  
-                    <!-- فضای خالی وسط -->
-                    <div class="flex-grow-1"></div>
-
-                    <!-- سمت چپ: زنگوله + نام + خروج (فقط از عرض md به بالا) -->
-                    <ul class="navbar-nav align-items-center gap-2">
-                        <!-- زنگوله -->
-                        <li class="nav-item dropdown">
-                            <a class="nav-link position-relative px-2" href="#" id="memberBell" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="پیام‌های جدید (@unreadCount)">
-                                <i class="bi bi-bell-fill" aria-hidden="true"></i>
-                                @if (unreadCount > 0)
-                                {
-                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size:10px;">@unreadCount</span>
-                                }
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end member-message-menu" aria-labelledby="memberBell">
-                                <li class="dropdown-header fw-bold"><i class="bi bi-bell-fill" aria-hidden="true"></i> پیام‌های جدید</li>
-                                <li><hr class="dropdown-divider"></li>
-
-                                @if (msgPreview.Count == 0)
-                                {
-                                    <li><span class="dropdown-item-text text-muted small">پیام جدیدی ندارید <i class="bi bi-check-circle" aria-hidden="true"></i></span></li>
-                                }
-                                else
-                                {
-                                    @foreach (var pm in msgPreview)
-                                    {
-                                        var label = string.IsNullOrEmpty(pm.Title)
-                                        ? (pm.Body.Length > 40 ? pm.Body.Substring(0, 40) + "…" : pm.Body)
-                                        : pm.Title;
-
-                                        /* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
-                                           لینک مستقیم به چت عضو با مربی برداشته شد؛ همه‌ی پیام‌ها از مودال «مشاهده همه پیام‌ها» باز می‌شود.
-                                           برای فعال‌سازی دوباره کافی است کامنت زیر برداشته شود. */
-                                        /*
-                                        var href = pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0
-                                        ? Url.Action("Messages", "Profile", new { coachID = pm.PeerMemberID.Value })
-                                        : "#";
-                                        var extraClass = pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0 ? "" : "lnk-open-msgs";
-                                        */
-                                        var href = "#";
-                                        var extraClass = "lnk-open-msgs";
-
-                                        <li>
-                                            <a class="dropdown-item small py-2 @extraClass" href="@href">
-                                                <div class="d-flex justify-content-between align-items-center gap-2 mb-1">
-                                                    @if (pm.PeerMemberID.HasValue && pm.PeerMemberID.Value > 0)
-                                                    {
-                                                        <span class="badge bg-success small"><i class="bi bi-person-badge" aria-hidden="true"></i> از @pm.PeerName</span>
-                                                    }
-                                                    else
-                                                    {
-                                                        <span class="badge bg-primary small"><i class="bi bi-megaphone" aria-hidden="true"></i> از مدیریت</span>
-                                                    }
-                                                    <span class="badge bg-danger" style="font-size:10px;">جدید</span>
-                                                </div>
-                                                <div class="fw-bold member-message-title">@label</div>
-                                                <div class="text-muted" style="font-size:11px;">@pm.CreationDate @pm.CreationTime</div>
-                                            </a>
-                                        </li>
-                                    }
-                                }
-                                <li><hr class="dropdown-divider"></li>
-                                <li>
-                                    @* ⛔ محدودسازی پیام‌رسانی (غیرفعال شده — فقط کامنت شده، حذف نشده):
-                                       لینک «مشاهده گفتگوهای مربی» برداشته شد (چت عضو↔مربی غیرفعال است).
-                                       برای فعال‌سازی دوباره کافی است کامنت زیر برداشته شود. *@
-                                    @*
-                                    <a href="/Profile/Messages" class="dropdown-item text-center small">💬 مشاهده گفتگوهای مربی</a>
-                                    *@
-                                </li>
-                                <li><a class="dropdown-item text-center text-primary fw-bold lnk-open-msgs" href="#">مشاهده همه پیام‌ها</a></li>
-                            </ul>
-                        </li>
-
-                        <!-- نام کاربر -->
-                        <li class="nav-item">
-                            <span class="nav-link d-flex align-items-center gap-2">
-                                <i class="bi bi-person-circle" aria-hidden="true"></i>
-                                <span class="d-none d-md-inline member-user-name">@fullName</span>
-                            </span>
-                        </li>
-
-                        <!-- خروج (با تأیید) -->
-                        <li class="nav-item">
-                            <a class="nav-link text-danger js-logout" href="/Account/Logout" title="خروج" aria-label="خروج از حساب">
-                                <i class="bi bi-box-arrow-right" aria-hidden="true"></i>
-                            </a>
-                        </li>
-                    </ul>
                 </div>
             </div>
         </nav>
@@ -768,6 +782,30 @@
                 initCalendar(inputId, null, allowPast || false);
                 new bootstrap.Modal('#datePickerModal').show();
             }
+        </script>
+
+        <script>
+            // ✅ هدر: با اسکرول به پایین مخفی، با اسکرول به بالا ظاهر می‌شود
+            (function () {
+                var hdr = document.getElementById('memberHeader');
+                if (!hdr) return;
+                var lastY = window.pageYOffset || document.documentElement.scrollTop || 0;
+                var ticking = false;
+                function onScroll() {
+                    var y = window.pageYOffset || document.documentElement.scrollTop || 0;
+                    if (y <= 12) { hdr.classList.remove('mh-hidden'); lastY = y; return; }
+                    var diff = y - lastY;
+                    if (Math.abs(diff) < 6) return;
+                    if (diff > 0 && y > 70) hdr.classList.add('mh-hidden');
+                    else hdr.classList.remove('mh-hidden');
+                    lastY = y;
+                }
+                window.addEventListener('scroll', function () {
+                    if (ticking) return;
+                    ticking = true;
+                    requestAnimationFrame(function () { onScroll(); ticking = false; });
+                }, { passive: true });
+            })();
         </script>
 
         <!-- ✅ اضافه شد -->

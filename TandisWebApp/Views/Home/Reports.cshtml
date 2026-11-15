@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "گزارش‌ها";
     var pc = new System.Globalization.PersianCalendar();
     var jY = pc.GetYear(DateTime.Now);
@@ -6,7 +6,7 @@
     var jD = pc.GetDayOfMonth(DateTime.Now);
 }
 
-<link rel="stylesheet" href="~/css/member-reports.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/member-reports.css" asp-append-version="true" asp-append-version="true" />
 
 <section class="member-reports" aria-labelledby="memberReportsTitle">
     <div class="member-reports-heading mb-3">
@@ -362,7 +362,6 @@
                                 '<span class="trf-toggle" aria-hidden="true"><i class="bi bi-chevron-left"></i></span>' +
                             '</button>' +
                             '<div class="trf-details" id="' + detailsId + '" role="region" aria-labelledby="' + toggleId + '" hidden>' +
-                                '<div class="trf-drow"><span><i class="bi bi-archive hd-icon" aria-hidden="true"></i> شماره کمد</span><b>' + (t.boxID != null ? esc(toFa(t.boxID)) : 'بدون کمد') + '</b></div>' +
                                 '<div class="trf-drow"><span>تاریخ ورود</span><b>' + reportDate(t.entryDate) + ' <span class="trf-day">' + dayName(t.entryDate) + '</span></b></div>' +
                                 '<div class="trf-drow"><span>ساعت ورود</span><b>' + reportDate(t.entryTime) + '</b></div>' +
                                 '<div class="trf-drow"><span>تاریخ خروج</span><b>' + reportDate(t.exitDate) + ' <span class="trf-day">' + dayName(t.exitDate) + '</span></b></div>' +

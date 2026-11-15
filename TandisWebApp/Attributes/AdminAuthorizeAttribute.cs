@@ -38,6 +38,30 @@ namespace TandisWebApp.Attributes
     }
 
     /// <summary>
+    /// فقط کاربران «میز خدمت» (Sec_Users با IsAdmin = false) اجازه دسترسی دارند.
+    /// Claim «DeskAccess» باید «true» باشد.
+    /// </summary>
+    public class DeskAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter
+    {
+        public void OnAuthorization(AuthorizationFilterContext context)
+        {
+            if (context.HttpContext.User.Identity?.IsAuthenticated != true)
+                return;
+
+            if (context.HttpContext.User.FindFirstValue("DeskAccess") == "true")
+                return;
+
+            var isApi = context.HttpContext.Request.Path.StartsWithSegments("/api") ||
+                        context.HttpContext.Request.Headers["X-Requested-With"] == "XMLHttpRequest" ||
+                        context.HttpContext.Request.Headers["Accept"].ToString().Contains("application/json");
+
+            context.Result = isApi
+                ? new StatusCodeResult(StatusCodes.Status403Forbidden)
+                : new RedirectResult("/Home");
+        }
+    }
+
+    /// <summary>
     /// فقط اعضا (کاربران عضو) اجازه دسترسی دارند.
     /// مدیران (IsAdmin == true) به این بخش‌ها دسترسی ندارند.
     /// </summary>

@@ -25,7 +25,8 @@
         timer: null,
         polls: 0,
         credit: null,   // null = هنوز نامعلوم
-        busy: false
+        busy: false,
+        busyTimer: null
     };
 
     function fmtMoney(n) {
@@ -74,6 +75,9 @@
         $('#posPayBtnPos').click(onPosClick);
         $('#posPayBtnBack').click(function () {
             stopPoll();
+            clearTimeout(st.busyTimer);
+            st.busyTimer = null;
+            setBusy(false);
             if (typeof st.retryFn === 'function') {
                 var f = st.retryFn;
                 st.retryFn = null;
@@ -85,6 +89,8 @@
         $('#posPayModal').on('hidden.bs.modal', function () {
             var wasPolling = st.timer !== null;
             stopPoll();
+            clearTimeout(st.busyTimer);
+            st.busyTimer = null;
             // اگر هنوز منتظر بودیم و کاربر مودال را بست → انصراف ثبت شود
             if (wasPolling) cancelPending();
         });
@@ -95,9 +101,13 @@
         $('#posPayStepChoose').toggle(name === 'choose');
         $('#posPayStepWaiting').toggle(name !== 'choose');
         if (name !== 'choose') {
-            $('#posPayBtnBack').toggle(name === 'error');
+            $('#posPayBtnBack').toggle(name === 'error' || name === 'busy');
             if (name === 'sending') {
                 $('#posPayWaitingText').text('در حال ارسال مبلغ به دستگاه...');
+                $('#posPayModal .spinner-border').show();
+            } else if (name === 'busy') {
+                $('#posPayWaitingText').text('دستگاه کارت‌خوان فعلاً مشغول است');
+                $('#posPayQueueInfo').text('چند ثانیه دیگر دوباره تلاش کنید — به‌صورت خودکار ادامه می‌دهیم').show();
                 $('#posPayModal .spinner-border').show();
             } else if (name === 'waiting') {
                 $('#posPayWaitingText').text('در صف پرداخت — لطفاً منتظر بمانید...');
@@ -168,6 +178,29 @@
     function onPosClick() {
         if (st.busy) return;
         setBusy(true);
+        showStep('busy');
+        $('#posPayWaitAmount').text(fmtMoney(st.opts.amount));
+        waitDeviceFree(sendToPos);
+    }
+
+    // ✅ تا وقتی دستگاه مشغول پرداخت برای کس دیگری است پیام می‌دهد و هر ۳ ثانیه دوباره چک می‌کند
+    function waitDeviceFree(done) {
+        apiCall('/api/PosPayment/Busy', 'GET', null, function (res) {
+            if (res && res.busy) {
+                clearTimeout(st.busyTimer);
+                st.busyTimer = setTimeout(function () { waitDeviceFree(done); }, 3000);
+                return;
+            }
+            clearTimeout(st.busyTimer);
+            st.busyTimer = null;
+            done();
+        }, function () {
+            // در صورت خطا مانع پرداخت نشو
+            done();
+        });
+    }
+
+    function sendToPos() {
         showStep('sending');
         $('#posPayWaitAmount').text(fmtMoney(st.opts.amount));
 
@@ -196,11 +229,15 @@
 
     function stopPoll() {
         if (st.timer) { clearInterval(st.timer); st.timer = null; }
+        if (st.busyTimer) { clearTimeout(st.busyTimer); st.busyTimer = null; }
     }
 
     // وضعیت صف همزمان: روی دستگاه است / در نوبت است
     function updateWaiting(d) {
-        if (d.processing) {
+        if (d.deviceBusy) {
+            $('#posPayWaitingText').text('دستگاه کارت‌خوان مشغول پرداخت برای مراجع دیگر است');
+            $('#posPayQueueInfo').text('چند ثانیه دیگر دوباره تلاش کنید — به‌محض آزاد شدن دستگاه مبلغ شما ارسال می‌شود').show();
+        } else if (d.processing) {
             $('#posPayWaitingText').text('مبلغ روی دستگاه نمایش داده شد — لطفاً کارت بکشید');
             $('#posPayQueueInfo').hide();
         } else if (d.queuePosition > 0) {

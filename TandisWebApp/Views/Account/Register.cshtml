@@ -1,7 +1,9 @@
 ﻿@{
     ViewData["Title"] = "ثبت‌نام";
     Layout = "_LoginLayout";
+    var deskMode = ViewData["DeskMode"] is bool b && b;
 }
+<script>window.DESK_MODE = @(deskMode ? "true" : "false");</script>
 
 <style>
    
@@ -26,7 +28,7 @@
         white-space: nowrap; /* ✅ هیچ‌وقت ۲ خطی نمی‌شه */
         font-size: clamp(.6rem, 2.6vw, .72rem);
         font-weight: 700;
-        color: #9fb3c8;
+        color: #A7EBF2;
         background: rgba(255,255,255,.06);
         border: 1px solid rgba(255,255,255,.12);
         border-radius: 999px;
@@ -37,20 +39,20 @@
     }
 
         .reg-step.on {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #26658C 0%, #023859 100%);
             border-color: transparent;
             color: #fff;
         }
 
         .reg-step.done {
-            background: linear-gradient(135deg, #38d9a9 0%, #2bbfa0 100%);
+            background: linear-gradient(135deg, #54ACBF 0%, #54ACBF 100%);
             border-color: transparent;
             color: #fff;
         }
 
     .rules-box {
         background: rgba(255,255,255,.06);
-        border: 1px solid rgba(102,211,232,.30);
+        border: 1px solid rgba(84, 172, 191,.30);
         border-radius: 14px;
         padding: 14px;
         max-height: 260px;
@@ -60,7 +62,7 @@
         white-space: pre-wrap;
         font-size: .82rem;
         line-height: 1.9;
-        color: #dce9ff;
+        color: #A7EBF2;
         margin-bottom: 14px;
     }
 
@@ -79,12 +81,12 @@
     }
 
         .reg-title i {
-            color: #66d3e8;
+            color: #54ACBF;
         }
 
     .done-info-box {
-        background: rgba(13,110,253,.10);
-        border: 1px solid rgba(13,110,253,.30);
+        background: rgba(84, 172, 191,.10);
+        border: 1px solid rgba(84, 172, 191,.30);
         border-radius: 14px;
         padding: 12px;
         margin-bottom: 10px;
@@ -95,7 +97,7 @@
         justify-content: space-between;
         padding: 6px 0;
         font-size: .82rem;
-        color: #dce9ff;
+        color: #A7EBF2;
         border-bottom: 1px solid rgba(255,255,255,.06);
     }
 
@@ -110,10 +112,10 @@
 
     .alert-warning-text {
         font-size: .74rem;
-        color: #ffa94d;
+        color: #54ACBF;
         padding: 8px;
-        background: rgba(255,169,77,.08);
-        border: 1px solid rgba(255,169,77,.25);
+        background: rgba(84, 172, 191,.08);
+        border: 1px solid rgba(84, 172, 191,.25);
         border-radius: 8px;
     }
 
@@ -132,8 +134,8 @@
         flex: 0 0 auto;
         width: 46px;
         border-radius: 10px;
-        border: 1px solid rgba(102,211,232,.35);
-        background: rgba(13,110,253,.12);
+        border: 1px solid rgba(84, 172, 191,.35);
+        background: rgba(84, 172, 191,.12);
         font-size: 1.15rem;
     }
 
@@ -142,7 +144,7 @@
         position: fixed;
         inset: 0;
         z-index: 1070;
-        background: rgba(6,9,18,.65);
+        background: rgba(1, 28, 64,.65);
         -webkit-backdrop-filter: blur(6px);
         backdrop-filter: blur(6px);
         display: none;
@@ -161,8 +163,8 @@
         transform: translate(-50%, -50%);
         z-index: 1075;
         width: min(92vw, 380px);
-        background: rgba(20,24,42,.98);
-        border: 1px solid rgba(102,211,232,.35);
+        background: rgba(1, 28, 64,.98);
+        border: 1px solid rgba(84, 172, 191,.35);
         border-radius: 16px;
         padding: 14px 10px 12px;
         box-shadow: 0 18px 50px rgba(0,0,0,.55);
@@ -188,9 +190,9 @@
         font-size: 1.15rem;
         text-decoration: none;
         border-radius: 12px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #26658C 0%, #023859 100%);
         border: 1px solid rgba(255,255,255,.25);
-        box-shadow: 0 4px 14px rgba(118,75,162,.45);
+        box-shadow: 0 4px 14px rgba(84, 172, 191,.45);
         transition: all .2s;
     }
 
@@ -212,8 +214,8 @@
     }
 
         .reg-arrow.lit {
-            color: #66d3e8;
-            text-shadow: 0 0 10px rgba(102,211,232,.7);
+            color: #54ACBF;
+            text-shadow: 0 0 10px rgba(84, 172, 191,.7);
         }
 
     @@keyframes bdPanelIn {
@@ -248,7 +250,7 @@
         }
 
         .bd-tile:hover {
-            border-color: rgba(102,211,232,.5);
+            border-color: rgba(84, 172, 191,.5);
         }
 
     .bd-tile-val {
@@ -261,7 +263,7 @@
     .bd-tile-lbl {
         display: block;
         font-size: .68rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         font-weight: 700;
         margin-top: 3px;
     }
@@ -271,7 +273,7 @@
         margin-top: 10px;
         font-size: .82rem;
         font-weight: 800;
-        color: #66d3e8;
+        color: #54ACBF;
         direction: ltr;
     }
 
@@ -283,7 +285,7 @@
 
     .bd-ok {
         flex: 1;
-        background: linear-gradient(135deg,#667eea,#764ba2);
+        background: linear-gradient(135deg,#26658C,#023859);
         color: #fff;
         border: none;
         border-radius: 10px;
@@ -295,7 +297,7 @@
         flex: 1;
         background: rgba(255,255,255,.08);
         border: 1px solid rgba(255,255,255,.18);
-        color: #dce9ff;
+        color: #A7EBF2;
         border-radius: 10px;
         padding: 9px;
         font-weight: 700;
@@ -309,7 +311,7 @@
         display: none;
         flex-direction: column;
         overflow: hidden;
-        background: rgba(6,9,18,.80);
+        background: rgba(1, 28, 64,.80);
         -webkit-backdrop-filter: blur(30px) saturate(.8);
         backdrop-filter: blur(30px) saturate(.8);
         --arcR: min(350px, 46vh);
@@ -411,7 +413,7 @@
 
         .bd-fs-head .bd-s2-title {
             font-weight: 800;
-            color: #66d3e8;
+            color: #54ACBF;
             font-size: 1.05rem;
         }
 
@@ -457,7 +459,7 @@
     .bd-fs .bd-hint {
         text-align: center;
         font-size: .72rem;
-        color: #8fa6c4;
+        color: #9FC6D2;
         padding-bottom: calc(14px + env(safe-area-inset-bottom));
     }
 
@@ -499,7 +501,7 @@
             display: block;
             font-size: .95rem;
             font-weight: 700;
-            color: #7d92b0;
+            color: #9FC6D2;
             transition: color .15s, font-size .15s;
         }
 
@@ -507,7 +509,7 @@
             color: #fff;
             font-size: 1.6rem;
             font-weight: 800;
-            text-shadow: 0 0 18px rgba(102,211,232,.65);
+            text-shadow: 0 0 18px rgba(84, 172, 191,.65);
         }
 
     .arc-marker {
@@ -518,8 +520,8 @@
         height: 4px;
         margin-left: -30px;
         border-radius: 2px;
-        background: linear-gradient(90deg, #66d3e8, #667eea);
-        box-shadow: 0 0 12px rgba(102,211,232,.7);
+        background: linear-gradient(90deg, #54ACBF, #26658C);
+        box-shadow: 0 0 12px rgba(84, 172, 191,.7);
         pointer-events: none;
         z-index: 5;
     }
@@ -533,8 +535,8 @@
 
     /* ===== باکس وضعیت چهره ===== */
     .face-status-box {
-        background: rgba(255,169,77,.08);
-        border: 1px solid rgba(255,169,77,.30);
+        background: rgba(84, 172, 191,.08);
+        border: 1px solid rgba(84, 172, 191,.30);
         border-radius: 14px;
         padding: 16px;
         margin: 14px 0 8px;
@@ -543,13 +545,13 @@
     }
 
         .face-status-box.done {
-            background: rgba(106,234,162,.10);
-            border-color: rgba(106,234,162,.35);
+            background: rgba(84, 172, 191,.10);
+            border-color: rgba(84, 172, 191,.35);
         }
 
         .face-status-box.existed {
-            background: rgba(102,211,232,.08);
-            border-color: rgba(102,211,232,.35);
+            background: rgba(84, 172, 191,.08);
+            border-color: rgba(84, 172, 191,.35);
         }
 
         .face-status-box.timeout {
@@ -559,7 +561,7 @@
 
     .face-icon-pending {
         font-size: 2.5rem;
-        color: #ffa94d;
+        color: #54ACBF;
         margin-bottom: 8px;
         animation: pulse 1.6s ease-in-out infinite;
     }
@@ -569,11 +571,11 @@
     }
 
     .face-status-box.done .face-icon-pending {
-        color: #6aeaa2;
+        color: #A7EBF2;
     }
 
     .face-status-box.existed .face-icon-pending {
-        color: #66d3e8;
+        color: #54ACBF;
     }
 
     .face-status-box.timeout .face-icon-pending {
@@ -583,16 +585,16 @@
     .face-status-text {
         font-size: .88rem;
         font-weight: 700;
-        color: #ffa94d;
+        color: #54ACBF;
         margin-bottom: 4px;
     }
 
     .face-status-box.done .face-status-text {
-        color: #6aeaa2;
+        color: #A7EBF2;
     }
 
     .face-status-box.existed .face-status-text {
-        color: #66d3e8;
+        color: #54ACBF;
     }
 
     .face-status-box.timeout .face-status-text {
@@ -601,7 +603,7 @@
 
     .face-hint {
         font-size: .72rem;
-        color: #9fb3c8;
+        color: #A7EBF2;
         margin-bottom: 6px;
     }
 
@@ -613,7 +615,7 @@
 
     .face-timer {
         font-size: .68rem;
-        color: #ffa94d;
+        color: #54ACBF;
         margin-top: 4px;
         font-variant-numeric: tabular-nums;
     }
@@ -680,8 +682,8 @@
         <div class="mb-3">
             <label class="form-label">جنسیت <span class="text-danger">*</span></label>
             <div class="d-flex gap-3">
-                <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;"><input type="radio" name="gender" value="true" checked /> <span>آقا</span></label>
-                <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#dce9ff;"><input type="radio" name="gender" value="false" /> <span>خانم</span></label>
+                <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#A7EBF2;"><input type="radio" name="gender" value="true" checked /> <span>آقا</span></label>
+                <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#A7EBF2;"><input type="radio" name="gender" value="false" /> <span>خانم</span></label>
             </div>
         </div>
         <button id="btnNextStep" class="btn btn-primary w-100 py-2">مرحله بعد <i class="bi bi-arrow-left"></i></button>
@@ -723,13 +725,13 @@
 
     <!-- ========== مرحله ۳ ========== -->
     <div id="stepDone" style="display:none;" class="text-center py-3">
-        <div style="font-size:3rem; color:#6aeaa2;">✅</div>
+        <div style="font-size:3rem; color:#A7EBF2;">✅</div>
         <div class="fw-bold text-white mb-2" style="font-size:1.1rem;">ثبت‌نام با موفقیت انجام شد</div>
-        <div class="mb-3 small" style="color:#9fb3c8;">اطلاعات ورود شما:</div>
+        <div class="mb-3 small" style="color:#A7EBF2;">اطلاعات ورود شما:</div>
         <div class="done-info-box">
             <div class="done-row"><span>کد عضویت:</span><b id="doneMemberID">-</b></div>
             <div class="done-row"><span>نام کاربری:</span><b id="doneNationalCode">-</b></div>
-            <div class="done-row"><span>رمز عبور اولیه:</span><b id="donePassword" style="color:#ffa94d;">-</b></div>
+            <div class="done-row"><span>رمز عبور اولیه:</span><b id="donePassword" style="color:#54ACBF;">-</b></div>
         </div>
 
         <!-- ✅ دکمه ثبت چهره (دستی) -->
@@ -831,6 +833,10 @@
                         nationalCode: res.data.nationalCode,
                         password: res.data.defaultPassword
                     }));
+                    // ✅ ثبت‌نام از میز خدمت: بعد از اتمام کار به همان پنل ۵ کارتی برگردد (نه صفحهٔ ورود)
+                    if (window.DESK_MODE && !document.getElementById('btnBackToDesk')) {
+                        $('#stepDone').append('<a href="/Desk" id="btnBackToDesk" class="btn btn-primary w-100 mt-2">بازگشت به میز خدمت</a>');
+                    }
                     showToast('ثبت‌نام با موفقیت انجام شد', 'success');
                 } else {
                     showToast(res.message, 'error');
@@ -903,7 +909,7 @@
                 if (res.data) {
                     devInfo = 'دستگاه: ' + (res.data.deviceIp || '-') + ' | پورت: ' + (res.data.devicePort || '-');
                     if (res.data.deviceReachable === false)
-                        devInfo += '<br><span style="color:#ffa94d;">⚠️ دستگاه در شبکه پاسخ نمی‌دهد</span>';
+                        devInfo += '<br><span style="color:#54ACBF;">⚠️ دستگاه در شبکه پاسخ نمی‌دهد</span>';
                 }
                 setFaceBox('', 'bi-person-bounding-box', 'دستور ارسال شد — مقابل دستگاه بایستید', 'چهره شما به‌صورت خودکار ثبت می‌شود', devInfo);
                 startFaceTimer();

@@ -94,6 +94,44 @@ namespace TandisWebApp.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        /// <summary>
+        /// توکن کاربر «میز خدمت» — کاربران Sec_Users با IsAdmin = false.
+        /// دسترسی محدود به /Desk (نه پنل مدیر).
+        /// </summary>
+        public string GenerateDeskToken(short userID, string username, short shiftID)
+        {
+            var jwtSettings = _config.GetSection("JwtSettings");
+            var secretKey = ResolveSecretKey();
+            var issuer = jwtSettings["Issuer"] ?? "TandisWebApp";
+            var audience = jwtSettings["Audience"] ?? "TandisWebAppUsers";
+            var expiryMin = int.Parse(jwtSettings["ExpiryMinutes"] ?? "1440");
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, username),
+                new Claim(ClaimTypes.Name, username),
+                new Claim("FullName", username),
+                new Claim("IsAdmin", "false"),
+                new Claim("DeskAccess", "true"),
+                new Claim("AdminUsername", username),
+                new Claim("AdminShiftID", shiftID.ToString()),
+                new Claim("UserID", userID.ToString())
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: issuer,
+                audience: audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(expiryMin),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
         private string ResolveSecretKey()
         {
             var configuredSecretKey = _config["JwtSettings:SecretKey"];

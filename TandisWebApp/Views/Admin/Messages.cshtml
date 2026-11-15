@@ -212,7 +212,7 @@
 </div>
 
 @section Scripts {
-    <link rel="stylesheet" href="~/css/admin-messages.css?v=1" />
+    <link rel="stylesheet" href="~/css/admin-messages.css" asp-append-version="true" asp-append-version="true" />
     <script src="~/js/admin-messages.js?v=8"></script>
 }
 <style>
@@ -221,14 +221,14 @@
     .btn-outline-secondary,
     .btn-outline-primary,
     .btn-outline-light {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #26658C 0%, #023859 100%);
         border: none;
         color: #fff;
         font-weight: 700;
         font-size: .78rem;
         padding: .5rem .95rem;
         border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(118,75,162,.35);
+        box-shadow: 0 4px 12px rgba(84, 172, 191,.35);
         transition: all .25s;
     }
 
@@ -243,14 +243,14 @@
 
     /* ===== دکمه ارسال پیام: همون گرادیان، تمام‌عرض ولی نه ضخیم ===== */
     .btn-primary {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #26658C 0%, #023859 100%);
         border: none;
         color: #fff;
         font-weight: 800;
         font-size: .88rem;
         padding: .6rem 1rem;
         border-radius: 14px;
-        box-shadow: 0 6px 16px rgba(118,75,162,.40);
+        box-shadow: 0 6px 16px rgba(84, 172, 191,.40);
         transition: all .25s;
     }
 
@@ -269,23 +269,23 @@
     }
 
         .form-control::placeholder {
-            color: #8a93a6;
+            color: #9FC6D2;
         }
 
         .form-control:focus, .form-select:focus {
             background: rgba(255,255,255,.12);
-            border-color: rgba(102,211,232,.5);
+            border-color: rgba(84, 172, 191,.5);
             color: #fff;
-            box-shadow: 0 0 0 .2rem rgba(102,211,232,.15);
+            box-shadow: 0 0 0 .2rem rgba(84, 172, 191,.15);
         }
 
         .form-select option {
-            background: #101424;
+            background: #011C40;
             color: #fff;
         }
 
     .form-label {
-        color: #9fb3c8;
+        color: #A7EBF2;
         font-size: .8rem;
         font-weight: 700;
     }
@@ -293,7 +293,7 @@
     /* ===== جدول اینباکس شیشه‌ای ===== */
     .table thead th {
         background: rgba(255,255,255,.06);
-        color: #9fb3c8;
+        color: #A7EBF2;
         font-size: .78rem;
         font-weight: 700;
         border-bottom: 1px solid rgba(255,255,255,.10);
@@ -302,24 +302,24 @@
     .table tbody td {
         border-color: rgba(255,255,255,.06);
         font-size: .82rem;
-        color: #cbd3da;
+        color: #9FC6D2;
     }
 
     .table-hover tbody tr:hover > * {
-        background: rgba(102,211,232,.06);
+        background: rgba(84, 172, 191,.06);
     }
 
     /* ===== بج‌های داخل جدول ===== */
     .badge.bg-warning {
-        background: rgba(255,193,7,.18) !important;
-        color: #ffd200;
-        border: 1px solid rgba(255,193,7,.4);
+        background: rgba(84, 172, 191,.18) !important;
+        color: #54ACBF;
+        border: 1px solid rgba(84, 172, 191,.4);
     }
 
     .badge.bg-success {
-        background: rgba(56,217,169,.18) !important;
-        color: #38d9a9;
-        border: 1px solid rgba(56,217,169,.4);
+        background: rgba(84, 172, 191,.18) !important;
+        color: #54ACBF;
+        border: 1px solid rgba(84, 172, 191,.4);
     }
 
     .badge.bg-danger {
@@ -334,8 +334,8 @@
         align-items: center;
         gap: 10px;
         background: rgba(255,255,255,.06);
-        border: 1px dashed rgba(102,211,232,.5);
-        color: #dce9ff;
+        border: 1px dashed rgba(84, 172, 191,.5);
+        color: #A7EBF2;
         border-radius: 14px;
         padding: .68rem .9rem;
         font-weight: 700;
@@ -345,21 +345,21 @@
     }
 
         .btn-recipients:hover, .btn-recipients:focus {
-            background: rgba(102,211,232,.12);
+            background: rgba(84, 172, 191,.12);
             color: #fff;
-            border-color: rgba(102,211,232,.8);
+            border-color: rgba(84, 172, 191,.8);
         }
 
         .btn-recipients .bi-caret-left-fill {
             margin-inline-start: auto;
-            color: #66d3e8;
+            color: #54ACBF;
         }
 
     /* ===== مودال انتخاب گیرندگان ===== */
     .rec-modal {
-        background: #131a2e;
+        background: #0A2647;
         border: 1px solid rgba(255,255,255,.10);
-        color: #e9ecef;
+        color: rgba(167, 235, 242, .18);
     }
 
     .rec-head {
@@ -374,7 +374,7 @@
         }
 
             .rec-head .modal-title i {
-                color: #66d3e8;
+                color: #54ACBF;
                 margin-left: 6px;
             }
 
@@ -391,7 +391,7 @@
         flex: 1 1 0;
         border: none;
         background: transparent;
-        color: #9fb3c8;
+        color: #A7EBF2;
         font-weight: 700;
         font-size: .78rem;
         padding: .55rem .3rem;
@@ -401,9 +401,9 @@
     }
 
         .rec-tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #26658C 0%, #023859 100%);
             color: #fff;
-            box-shadow: 0 4px 12px rgba(118,75,162,.4);
+            box-shadow: 0 4px 12px rgba(84, 172, 191,.4);
         }
 
     .rec-note {
@@ -412,12 +412,12 @@
         border-radius: 14px;
         padding: 14px;
         font-size: .85rem;
-        color: #cbd3da;
+        color: #9FC6D2;
         line-height: 1.9;
     }
 
         .rec-note i {
-            color: #66d3e8;
+            color: #54ACBF;
             margin-left: 6px;
         }
 
@@ -427,7 +427,7 @@
 
     .rec-counter {
         font-size: .74rem;
-        color: #66d3e8;
+        color: #54ACBF;
         margin: 0 2px 6px;
         min-height: 1em;
     }
@@ -441,7 +441,7 @@
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
         scrollbar-width: thin;
-        scrollbar-color: rgba(102,211,232,.55) rgba(255,255,255,.06);
+        scrollbar-color: rgba(84, 172, 191,.55) rgba(255,255,255,.06);
     }
 
         .rec-list::-webkit-scrollbar {
@@ -454,19 +454,19 @@
         }
 
         .rec-list::-webkit-scrollbar-thumb {
-            background: rgba(102,211,232,.55);
+            background: rgba(84, 172, 191,.55);
             border-radius: 8px;
         }
 
     .rec-more {
         text-align: center;
-        color: #8a93a6;
+        color: #9FC6D2;
         font-size: .74rem;
         padding: 10px 6px 4px;
     }
 
     .rec-hint {
-        color: #8a93a6;
+        color: #9FC6D2;
         font-size: .8rem;
         text-align: center;
         padding: 18px 8px;
@@ -489,13 +489,13 @@
         }
 
         .rec-item:hover {
-            background: rgba(102,211,232,.08);
+            background: rgba(84, 172, 191,.08);
         }
 
         .rec-item input {
             width: 18px;
             height: 18px;
-            accent-color: #667eea;
+            accent-color: #26658C;
             flex: 0 0 auto;
             margin: 0;
         }
@@ -516,7 +516,7 @@
 
     .rec-sub {
         font-size: .7rem;
-        color: #66d3e8;
+        color: #54ACBF;
         direction: ltr;
         text-align: right;
     }
@@ -540,17 +540,17 @@
         border-radius: 999px;
         padding: 8px 13px;
         font-size: .78rem;
-        color: #dce9ff;
+        color: #A7EBF2;
         cursor: pointer;
         min-height: 40px;
         transition: all .2s;
     }
 
         .rec-chip.on {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #26658C 0%, #023859 100%);
             border-color: transparent;
             color: #fff;
-            box-shadow: 0 4px 10px rgba(118,75,162,.4);
+            box-shadow: 0 4px 10px rgba(84, 172, 191,.4);
         }
 
         .rec-chip .bi-check2 {
@@ -569,13 +569,13 @@
         margin-top: 12px;
         font-size: .82rem;
         font-weight: 800;
-        color: #9fb3c8;
+        color: #A7EBF2;
     }
 
     .rec-badge {
-        background: rgba(102,211,232,.15);
-        color: #66d3e8;
-        border: 1px solid rgba(102,211,232,.35);
+        background: rgba(84, 172, 191,.15);
+        color: #54ACBF;
+        border: 1px solid rgba(84, 172, 191,.35);
         font-size: .7rem;
     }
 
@@ -596,7 +596,7 @@
         align-items: center;
         gap: 9px;
         font-size: .82rem;
-        color: #cbd3da;
+        color: #9FC6D2;
         background: rgba(255,255,255,.05);
         border: 1px solid rgba(255,255,255,.10);
         border-radius: 12px;
@@ -609,7 +609,7 @@
         .rec-radio input {
             width: 17px;
             height: 17px;
-            accent-color: #667eea;
+            accent-color: #26658C;
             margin: 0;
         }
 
@@ -637,14 +637,14 @@
         align-items: center;
         gap: 6px;
         font-size: .8rem;
-        color: #cbd3da;
+        color: #9FC6D2;
         margin: 0;
         white-space: nowrap;
         cursor: pointer;
     }
 
         .inbox-unread input {
-            accent-color: #667eea;
+            accent-color: #26658C;
         }
 
     /* ===== نوار رشته‌های انتخاب‌شده (task 3) ===== */
@@ -656,8 +656,8 @@
         flex-wrap: wrap;
         align-items: center;
         gap: 6px;
-        background: rgba(20, 26, 48, .97);
-        border: 1px solid rgba(102, 211, 232, .35);
+        background: rgba(20,26,48,.97);
+        border: 1px solid rgba(84, 172, 191,.35);
         border-radius: 12px;
         padding: 8px 10px;
         margin: 8px 0;
@@ -667,7 +667,7 @@
     .rsb-label {
         font-size: .76rem;
         font-weight: 800;
-        color: #66d3e8;
+        color: #54ACBF;
         display: inline-flex;
         align-items: center;
         gap: 4px;
@@ -677,7 +677,7 @@
         display: inline-flex;
         align-items: center;
         gap: 5px;
-        background: linear-gradient(135deg, rgba(102,126,234,.85), rgba(118,75,162,.8));
+        background: linear-gradient(135deg, rgba(2, 56, 89,.85), rgba(84, 172, 191,.8));
         border: 1px solid rgba(255,255,255,.25);
         color: #fff;
         border-radius: 999px;
@@ -717,9 +717,9 @@
     }
     /* ✅ بج گیرنده در لیست پیام‌های ارسال‌شده */
     .sent-badge {
-        background: rgba(102,211,232,.14);
-        color: #66d3e8;
-        border: 1px solid rgba(102,211,232,.35);
+        background: rgba(84, 172, 191,.14);
+        color: #54ACBF;
+        border: 1px solid rgba(84, 172, 191,.35);
         font-size: .74rem;
         font-weight: 700;
         border-radius: 10px;

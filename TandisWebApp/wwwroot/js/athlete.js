@@ -35,7 +35,7 @@
         t.textContent = msg;
         t.style.cssText = 'position:fixed;top:14px;right:50%;transform:translateX(50%);z-index:3000;' +
             'padding:10px 18px;border-radius:12px;font-weight:700;font-size:.85rem;color:#fff;' +
-            'background:' + (ok ? 'linear-gradient(135deg,#22c55e,#15803d)' : 'linear-gradient(135deg,#ef4444,#b91c1c)') +
+            'background:' + (ok ? 'linear-gradient(135deg,#3781fc,#15803d)' : 'linear-gradient(135deg,#ef4444,#b91c1c)') +
             ';box-shadow:0 10px 26px rgba(0,0,0,.4);transition:opacity .4s;';
         document.body.appendChild(t);
         setTimeout(function () { t.style.opacity = '0'; }, 2600);
@@ -241,8 +241,8 @@
             (data.logs || []).forEach(function (l) { states[l.itemID] = { done: l.isDone, seconds: l.durationSec }; }); // ✅ l.itemID, l.isDone, l.durationSec
 
             dayInfo.innerHTML =
-                (data.coachName ? 'مربی: <b style="color:#ddd6fe;">' + esc(data.coachName) + '</b> • ' : '') +
-                'روز: <b style="color:#ddd6fe;">' + esc(data.dayTitle || '—') + '</b> • ' + fa(dayItems.length) + ' حرکت';
+                (data.coachName ? 'مربی: <b style="color:#dce9fd;">' + esc(data.coachName) + '</b> • ' : '') +
+                'روز: <b style="color:#dce9fd;">' + esc(data.dayTitle || '—') + '</b> • ' + fa(dayItems.length) + ' حرکت';
 
             if (!dayItems.length) { exListBox.innerHTML = '<div class="ath-empty">برای این روز حرکتی ثبت نشده است.</div>'; updateProgress(); return; }
             exListBox.innerHTML = dayItems.map(function (it, idx) {
@@ -407,7 +407,7 @@
             if (sessionBar) sessionBar.style.display = 'none';
             pendingData = null; dayItems = []; states = {}; timers = {};
             if (!cmbProgram.value) { exListBox.innerHTML = '<div class="ath-empty">هنوز برنامه‌ی تمرینی فعالی ندارید. با مربی خود هماهنگ کنید.</div>'; dayInfo.textContent = ''; updateProgress(); return; }
-            dayInfo.innerHTML = 'روز انتخابی: <b style="color:#ddd6fe;">' + esc(cmbDay.value || '—') + '</b>';
+            dayInfo.innerHTML = 'روز انتخابی: <b style="color:#dce9fd;">' + esc(cmbDay.value || '—') + '</b>';
             exListBox.innerHTML = '<div class="ath-empty">برای دیدن حرکات این روز، «شروع تمرین» را بزنید.</div>';
             updateProgress();
         }
@@ -451,8 +451,8 @@
        ۴) ✅ خلاصه تمرین امروز — fetch زنده + حلقه و بندهای انیمیشن‌دار
        ============================================================ */
     var SUM_COLORS = [
-        ['#66d3e8', '#3bc9db'], ['#667eea', '#764ba2'], ['#38d9a9', '#2bbfa0'],
-        ['#ffa94d', '#ff922b'], ['#ff6b81', '#fa5252'], ['#8ab6ff', '#5c7cfa'],
+        ['#3781fc', '#3bc9db'], ['#1951fc', '#062db1'], ['#3781fc', '#3781fc'],
+        ['#3781fc', '#ff922b'], ['#ff6b81', '#fa5252'], ['#8ab6ff', '#5c7cfa'],
         ['#f783ac', '#e64980'], ['#99e9f2', '#3bc9db']
     ];
 

@@ -4,11 +4,11 @@
    ============================================================ */
 
 body.member-ui .commerce-page {
-    --commerce-accent: #66d3e8;
-    --commerce-blue: #1e6fd9;
-    --commerce-purple: #667eea;
-    --commerce-deep: #764ba2;
-    --commerce-success: #38d9a9;
+    --commerce-accent: #54ACBF;
+    --commerce-blue: #26658C;
+    --commerce-purple: #26658C;
+    --commerce-deep: #023859;
+    --commerce-success: #54ACBF;
     min-width: 0;
     padding-bottom: calc(92px + env(safe-area-inset-bottom));
 }
@@ -32,8 +32,8 @@ body.member-ui .commerce-hero {
     border-radius: 22px;
     color: #fff;
     background:
-        radial-gradient(circle at 12% 0%, rgba(102,211,232,.26), transparent 38%),
-        linear-gradient(135deg, rgba(102,126,234,.78), rgba(118,75,162,.82));
+        radial-gradient(circle at 12% 0%, rgba(84, 172, 191,.26), transparent 38%),
+        linear-gradient(135deg, rgba(2, 56, 89,.78), rgba(84, 172, 191,.82));
     box-shadow: 0 14px 35px rgba(30,31,86,.25);
 }
 
@@ -60,7 +60,7 @@ body.member-ui .commerce-kicker {
     align-items: center;
     gap: 6px;
     margin-bottom: 7px;
-    color: #dffaff;
+    color: #A7EBF2;
     font-size: .72rem;
     font-weight: 800;
 }
@@ -106,10 +106,10 @@ body.member-ui .commerce-notice {
     min-width: 0;
     margin-bottom: 14px;
     padding: 11px 13px;
-    border: 1px solid rgba(102,211,232,.22);
+    border: 1px solid rgba(84, 172, 191,.22);
     border-radius: 14px;
     color: #cfe8f1;
-    background: rgba(102,211,232,.08);
+    background: rgba(84, 172, 191,.08);
     font-size: .75rem;
     line-height: 1.9;
 }
@@ -170,10 +170,10 @@ body.member-ui .commerce-count {
     min-width: 34px;
     min-height: 28px;
     padding: 3px 9px;
-    border: 1px solid rgba(102,211,232,.28);
+    border: 1px solid rgba(84, 172, 191,.28);
     border-radius: 999px;
-    color: #dffaff;
-    background: rgba(102,211,232,.11);
+    color: #A7EBF2;
+    background: rgba(84, 172, 191,.11);
     font-size: .7rem;
     font-weight: 800;
 }
@@ -202,7 +202,7 @@ body.member-ui .commerce-product-card {
 body.member-ui .commerce-card:hover,
 body.member-ui .commerce-product-card:hover {
     transform: translateY(-3px);
-    border-color: rgba(102,211,232,.36);
+    border-color: rgba(84, 172, 191,.36);
     box-shadow: 0 13px 28px rgba(0,0,0,.22);
 }
 
@@ -225,7 +225,7 @@ body.member-ui .commerce-product-icon {
     border-radius: 14px;
     color: #fff;
     background: linear-gradient(135deg, var(--commerce-blue), var(--commerce-accent));
-    box-shadow: 0 7px 16px rgba(30,111,217,.25);
+    box-shadow: 0 7px 16px rgba(84, 172, 191,.25);
     font-size: 1.22rem;
 }
 
@@ -248,7 +248,7 @@ body.member-ui .commerce-product-title {
 body.member-ui .commerce-card-subtitle,
 body.member-ui .commerce-product-subtitle {
     margin: 3px 0 0;
-    color: #a9bad1;
+    color: #9FC6D2;
     font-size: .72rem;
     line-height: 1.75;
     overflow-wrap: anywhere;
@@ -291,7 +291,7 @@ body.member-ui .commerce-checkout {
     border-radius: 13px;
     color: #fff;
     background: linear-gradient(135deg, var(--commerce-purple), var(--commerce-deep));
-    box-shadow: 0 6px 15px rgba(118,75,162,.28);
+    box-shadow: 0 6px 15px rgba(84, 172, 191,.28);
     font-size: .78rem;
     font-weight: 900;
     transition: filter .2s ease, transform .2s ease;
@@ -320,7 +320,7 @@ body.member-ui .commerce-quantity {
 
 body.member-ui .commerce-quantity:focus {
     border-color: var(--commerce-accent);
-    box-shadow: 0 0 0 .2rem rgba(102,211,232,.14);
+    box-shadow: 0 0 0 .2rem rgba(84, 172, 191,.14);
     outline: none;
 }
 
@@ -332,7 +332,7 @@ body.member-ui .commerce-empty {
     justify-content: center;
     min-height: 150px;
     padding: 24px 16px;
-    color: #a9bad1;
+    color: #9FC6D2;
     text-align: center;
     line-height: 1.9;
 }
@@ -390,7 +390,7 @@ body.member-ui .commerce-category-button:hover {
     border-color: transparent;
     color: #fff;
     background: linear-gradient(135deg, var(--commerce-blue), var(--commerce-purple));
-    box-shadow: 0 5px 14px rgba(30,111,217,.25);
+    box-shadow: 0 5px 14px rgba(84, 172, 191,.25);
 }
 
 body.member-ui .commerce-cart-panel {
@@ -427,7 +427,7 @@ body.member-ui .commerce-cart-item-name {
 
 body.member-ui .commerce-cart-item-meta {
     margin-top: 2px;
-    color: #9fb3c8;
+    color: #A7EBF2;
     font-size: .68rem;
 }
 
@@ -449,7 +449,7 @@ body.member-ui .commerce-remove {
     height: 36px;
     border: 1px solid rgba(255,255,255,.14);
     border-radius: 10px;
-    color: #dce9ff;
+    color: #A7EBF2;
     background: rgba(255,255,255,.07);
 }
 
@@ -482,7 +482,7 @@ body.member-ui .commerce-total strong {
 body.member-ui .commerce-checkout {
     flex: 1 1 180px;
     max-width: 100%;
-    background: linear-gradient(135deg, #11998e, #38ef7d);
+    background: linear-gradient(135deg, #26658C, #54ACBF);
 }
 
 body.member-ui .commerce-visually-hidden {
