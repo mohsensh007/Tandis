@@ -12,8 +12,8 @@
     <title>میز خدمت | @clubName</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" />
     <style>
         body { min-height: 100vh; font-family: inherit; }
         .dk-modal {
@@ -88,21 +88,27 @@
         }
     </style>
 </head>
-<body>
+<body data-bio-type="desk">
     <div class="desk-wrap">
         <div class="desk-head">
             <div class="desk-brand">
-                <img src="/images/logo2.png" alt="" />
+                <img src="/images/logo2.png" alt="ایمن تردد تندیس" />
                 <div>
                     <b>@clubName</b>
-                    <span>میز خدمت — ۵ سرویس</span>
+                    <span>ایمن تردد تندیس — میز خدمت</span>
                 </div>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
                 <div class="desk-user"><i class="bi bi-person-badge"></i> @deskUser</div>
-                <a href="/Desk/Logout" class="desk-user" style="text-decoration:none;background:rgba(1, 28, 64,.10);color:#011C40;box-shadow:none;border:1px solid rgba(1, 28, 64,.20);">
+                <button type="button" id="btnDeskBio" class="desk-user" data-bio-enroll="password"
+                        style="border:1px solid rgba(167, 235, 242,.35);cursor:pointer;"
+                        title="ثبت/ورود با اثر انگشت یا چهره">
+                    <i class="bi bi-fingerprint"></i>
+                </button>
+                <button type="button" id="btnDeskLogout" class="desk-user"
+                        style="border:1px solid rgba(167, 235, 242,.45);cursor:pointer;">
                     <i class="bi bi-box-arrow-right"></i> خروج
-                </a>
+                </button>
             </div>
         </div>
 
@@ -319,16 +325,19 @@
             // ============================================================
             //  ۱) افزایش اعتبار
             // ============================================================
+            // ✅ چهار گزینهٔ افزایش اعتبار: ورزشی / فروشگاه / بوفه / خدمات
+            // فروشگاه و بوفه هر دو روی اعتبار فروشگاهی (کد ۲) می‌نشینند؛ برچسب برای متن رسید است.
             function creditTypesHtml() {
                 return '<div class="desk-chip" id="dkTypes">' +
-                    '<button type="button" data-t="11" class="on">ورزشی</button>' +
-                    '<button type="button" data-t="2">فروشگاه</button>' +
-                    '<button type="button" data-t="3">خدمات</button>' +
+                    '<button type="button" data-t="11" data-l="ورزشی" class="on">ورزشی</button>' +
+                    '<button type="button" data-t="2" data-l="فروشگاه">فروشگاه</button>' +
+                    '<button type="button" data-t="2" data-l="بوفه">بوفه</button>' +
+                    '<button type="button" data-t="3" data-l="خدمات">خدمات</button>' +
                     '</div>';
             }
 
             function openCharge() {
-                form = { creditType: 11 };
+                form = { creditType: 11, creditLabel: 'ورزشی' };
                 openModal('افزایش اعتبار', '' +
                     '<div class="dk-note">کد ملی و رمز عبور عضو را وارد کنید، سپس نوع اعتبار و مبلغ را انتخاب کنید.</div>' +
                     '<div style="margin-bottom:10px"><label>کد ملی</label>' +
@@ -366,7 +375,9 @@
                         document.getElementById('dkTypes').addEventListener('click', function (e) {
                             var b = e.target.closest('button'); if (!b) return;
                             [].forEach.call(this.querySelectorAll('button'), function (x) { x.classList.remove('on'); });
-                            b.classList.add('on'); form.creditType = Number(b.dataset.t);
+                            b.classList.add('on');
+                            form.creditType = Number(b.dataset.t);
+                            form.creditLabel = b.dataset.l || '';
                         });
                         document.getElementById('dkQuick').addEventListener('click', function (e) {
                             var b = e.target.closest('button'); if (!b) return;
@@ -380,13 +391,13 @@
                                 function () {
                                     return api('/api/Desk/Charge', {
                                         nationalCode: form.nc, password: form.pw,
-                                        amount: form.amount, creditType: form.creditType
+                                        amount: form.amount, creditType: form.creditType, label: form.creditLabel
                                     });
                                 },
                                 function (txn) {
                                     return api('/api/Desk/Charge', {
                                         nationalCode: form.nc, password: form.pw,
-                                        amount: form.amount, creditType: form.creditType, posTxnId: txn
+                                        amount: form.amount, creditType: form.creditType, label: form.creditLabel, posTxnId: txn
                                     });
                                 });
                         });
@@ -451,16 +462,22 @@
                     body.querySelector('.desk-list').addEventListener('click', function (e) {
                         var b = e.target.closest('.desk-item'); if (!b) return;
                         var id = Number(b.dataset.id), amt = Number(b.dataset.amt);
-                        openModal('تک جلسه', '<div class="dk-chosen"><span>مبلغ تک جلسه</span><b>' + money(amt) + ' ریال</b></div>' +
-                            '<div style="margin-bottom:12px"><label>کد ملی عضو</label>' +
-                            '<input class="form-control" id="dkNc" inputmode="numeric" maxlength="10" placeholder="۱۰ رقم" /></div>' +
+                        // ✅ تک جلسهٔ مهمان: کد ملی لازم نیست — فقط نام و موبایل
+                        openModal('تک جلسهٔ مهمان', '<div class="dk-chosen"><span>مبلغ تک جلسه</span><b>' + money(amt) + ' ریال</b></div>' +
+                            '<div class="dk-note">کد ملی لازم نیست. نام و شمارهٔ موبایل مهمان را وارد کنید؛ پس از پرداخت موفق، تردد به نام «مهمان» در سوابق باشگاه ثبت می‌شود.</div>' +
+                            '<div style="margin-bottom:10px"><label>نام و نام خانوادگی مهمان</label>' +
+                            '<input class="form-control" id="dkGName" placeholder="مثلاً علی رضایی" /></div>' +
+                            '<div style="margin-bottom:14px"><label>شمارهٔ موبایل</label>' +
+                            '<input class="form-control" id="dkGMobile" inputmode="numeric" maxlength="11" placeholder="۰۹xxxxxxxxx" /></div>' +
                             '<button type="button" class="dk-btn" id="dkPay">ارسال به کارت‌خوان</button>');
                         document.getElementById('dkPay').addEventListener('click', function () {
-                            var nc = (document.getElementById('dkNc').value || '').trim();
-                            if (nc.length !== 10) return toast('کد ملی باید ۱۰ رقم باشد', true);
+                            var gn = (document.getElementById('dkGName').value || '').trim();
+                            var gm = (document.getElementById('dkGMobile').value || '').replace(/[^0-9]/g, '');
+                            if (gn.length < 3) return toast('نام و نام خانوادگی مهمان را وارد کنید', true);
+                            if (!/^09\d{9}$/.test(gm)) return toast('شمارهٔ موبایل باید با 09 شروع و ۱۱ رقم باشد', true);
                             startPos(
-                                function () { return api('/api/Desk/BuySingle', { sportSanseID: id, nationalCode: nc }); },
-                                function (txn) { return api('/api/Desk/BuySingle', { sportSanseID: id, nationalCode: nc, posTxnId: txn }); });
+                                function () { return api('/api/Desk/BuySingleGuest', { sportSanseID: id, guestName: gn, guestMobile: gm }); },
+                                function (txn) { return api('/api/Desk/BuySingleGuest', { sportSanseID: id, guestName: gn, guestMobile: gm, posTxnId: txn }); });
                         });
                     });
                 });
@@ -550,7 +567,46 @@
                     else if (act === 'register') window.location.href = '/Account/Register?desk=1';
                 });
             });
+
+            // ============================================================
+            //  ✅ خروج امن — همیشه با رمز عبور (یا اثر انگشت ثبت‌شده)
+            // ============================================================
+            function openLogout() {
+                openModal('خروج از حساب', '' +
+                    '<div class="dk-note">برای خروج، رمز عبور خود را وارد کنید. کسی نمی‌تواند بدون رمز شما از حساب خارج شود.</div>' +
+                    '<div style="margin-bottom:14px"><label>رمز عبور</label>' +
+                    '<input class="form-control" id="dkOutPw" type="password" placeholder="رمز عبور شما" /></div>' +
+                    '<button type="button" class="dk-btn" id="dkOutGo">خروج</button>' +
+                    '<button type="button" class="dk-btn ghost" id="dkOutBio" style="margin-top:8px">' +
+                    '<i class="bi bi-fingerprint"></i> ورود با اثر انگشت / چهره</button>');
+
+                document.getElementById('dkOutGo').addEventListener('click', function () {
+                    var pw = document.getElementById('dkOutPw').value || '';
+                    if (!pw) return toast('رمز عبور را وارد کنید', true);
+                    loading('در حال بررسی...', null);
+                    api('/api/Desk/Logout', { password: pw }).then(function (r) {
+                        if (!r.success) return errorScreen(r.message);
+                        window.location.href = r.redirect || '/Account/Login';
+                    });
+                });
+
+                document.getElementById('dkOutBio').addEventListener('click', function () {
+                    if (!window.TandisBio) return toast('احراز هویت بیومتریک در دسترس نیست', true);
+                    loading('در حال بررسی اثر انگشت / چهره...', 'انگشت خود را روی سنسور دستگاه بگذارید');
+                    window.TandisBio.verify('desk-logout').then(function (ticket) {
+                        api('/api/Desk/Logout', { password: '', biometricTicket: ticket }).then(function (r) {
+                            if (!r.success) return errorScreen(r.message);
+                            window.location.href = r.redirect || '/Account/Login';
+                        });
+                    }).catch(function (e) {
+                        errorScreen((e && e.message) || 'تأیید بیومتریک انجام نشد');
+                    });
+                });
+            }
+
+            document.getElementById('btnDeskLogout').addEventListener('click', openLogout);
         })();
     </script>
+    <script src="~/js/biometric.js" asp-append-version="true"></script>
 </body>
 </html>

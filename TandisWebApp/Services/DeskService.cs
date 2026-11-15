@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TandisWebApp.Data;
 using TandisWebApp.DTOs;
+using TandisWebApp.Helpers;
 using TandisWebApp.Models;
 
 namespace TandisWebApp.Services
@@ -91,7 +92,7 @@ namespace TandisWebApp.Services
         // ============================================================
 
         public async Task<SimpleResponse> ChargeCreditAsync(short deskUserID, int memberID, long amount,
-                                                            short creditTypeId, long? posTxnId)
+                                                            short creditTypeId, long? posTxnId, string? label = null)
         {
             if (amount <= 0)
                 return new SimpleResponse { Success = false, Message = "مبلغ را صحیح وارد کنید" };
@@ -99,7 +100,10 @@ namespace TandisWebApp.Services
             if (creditTypeId != CREDIT_SPORT && creditTypeId != CREDIT_SHOP && creditTypeId != CREDIT_SERVICE)
                 return new SimpleResponse { Success = false, Message = "نوع اعتبار نامعتبر است" };
 
-            var typeName = creditTypeId == CREDIT_SHOP ? "فروشگاه"
+            // ✅ «بوفه» و «فروشگاه» هر دو از یک اعتبار (کد ۲) استفاده می‌کنند؛
+            // برچسب فقط برای متن رسید/پیام است تا کارشناس بداند بابت چه چیزی شارژ شده.
+            var typeName = !string.IsNullOrWhiteSpace(label) ? label!.Trim()
+                         : creditTypeId == CREDIT_SHOP ? "فروشگاه"
                          : creditTypeId == CREDIT_SERVICE ? "خدمات" : "ورزشی";
 
             // ---- مرحله ۱: ارسال مبلغ به دستگاه ----
@@ -145,6 +149,136 @@ namespace TandisWebApp.Services
                 await tx.RollbackAsync();
                 _logger.LogError(ex, "خطا در افزایش اعتبار میز خدمت برای عضو {MemberID}", memberID);
                 return new SimpleResponse { Success = false, Message = "خطا در ثبت اعتبار" };
+            }
+        }
+
+        // ============================================================
+        //  بررسی رمز عبور کاربر میز خدمت (برای خروج امن)
+        // ============================================================
+        public async Task<(bool ok, string message, string userName)> VerifyDeskPasswordAsync(short deskUserID, string? password)
+        {
+            if (string.IsNullOrEmpty(password))
+                return (false, "رمز عبور را وارد کنید", "");
+
+            var user = await _db.Sec_Users.AsNoTracking()
+                .FirstOrDefaultAsync(u => u.UserID == deskUserID);
+
+            if (user == null)
+                return (false, "کاربر یافت نشد", "");
+
+            if (user.IsActive == false)
+                return (false, "حساب کاربری شما غیرفعال است", user.UserName ?? "");
+
+            // 🔐 رمز کاربران Sec_Users رمزنگاری‌شده است؛ مثل خود صفحهٔ ورود بررسی می‌شود
+            if (!SecurityHelper.VerifyPassword(password, user.UPassword ?? ""))
+                return (false, "رمز عبور صحیح نیست", user.UserName ?? "");
+
+            return (true, "", user.UserName ?? "");
+        }
+
+        // ============================================================
+        //  ۳) تک جلسهٔ مهمان — بدون کد ملی، فقط نام و موبایل
+        // ============================================================
+        /// <summary>
+        /// مهمان (بدون عضویت) یک سانس تک‌جلسه می‌خرد: نام و شمارهٔ موبایل گرفته می‌شود،
+        /// پرداخت با کارت‌خوان انجام می‌شود و بعد از پرداخت موفق، یک رکورد تردد با IsGuest = true
+        /// در ACC_Traffic ثبت می‌شود (بدون MemberID).
+        /// </summary>
+        public async Task<SimpleResponse> SellGuestSingleSessionAsync(short deskUserID, short shiftID, int sportSanseID,
+                                                                      string? guestName, string? guestMobile, long? posTxnId)
+        {
+            var name = (guestName ?? "").Trim();
+            var mobile = NormalizeDigits((guestMobile ?? "").Trim());
+
+            if (name.Length < 3)
+                return new SimpleResponse { Success = false, Message = "نام و نام خانوادگی مهمان را وارد کنید" };
+
+            if (mobile.Length != 11 || !mobile.StartsWith("09") || !mobile.All(char.IsDigit))
+                return new SimpleResponse { Success = false, Message = "شمارهٔ موبایل باید با 09 شروع شده و ۱۱ رقم باشد" };
+
+            var sanse = await _db.Gen_SportSanses.AsNoTracking()
+                .FirstOrDefaultAsync(s => s.SportSanseID == sportSanseID);
+
+            if (sanse == null)
+                return new SimpleResponse { Success = false, Message = "سانس یافت نشد" };
+
+            if (sanse.SessionAmount == null || sanse.SessionAmount <= 0)
+                return new SimpleResponse { Success = false, Message = "این سانس تک‌جلسه ندارد" };
+
+            var targetLatin = DateTime.Now.DayOfWeek.ToString();
+            var hasSession = await (
+                from d in _db.Gen_SportSanseDetails
+                join w in _db.Gen_DayOfWeeks on d.DayID equals w.DayID
+                where d.SportSanseID == sanse.SportSanseID && d.IsActive == true && w.LatinName == targetLatin
+                select d
+            ).AsNoTracking().AnyAsync();
+
+            if (!hasSession)
+                return new SimpleResponse { Success = false, Message = "این سانس امروز جلسه ندارد" };
+
+            long amount = sanse.SessionAmount.Value;
+            int owner = OwnerId(deskUserID);
+
+            if (posTxnId == null)
+            {
+                var intent = await _pos.CreateIntentAsync(owner, amount, PosPaymentService.REF_ONESESSION);
+                if (!intent.Success)
+                    return new SimpleResponse { Success = false, Message = intent.Message };
+
+                return new SimpleResponse
+                {
+                    Success = true,
+                    PaymentPending = true,
+                    PosTxnId = intent.Data,
+                    PosAmount = amount,
+                    PosAmountDisplay = _helper.SetSeprator(amount) + " ریال",
+                    Message = "مبلغ روی دستگاه POS ارسال شد"
+                };
+            }
+
+            using var tx = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                var claimed = await _pos.ClaimAsync(posTxnId.Value, owner, amount, PosPaymentService.REF_ONESESSION);
+                if (!claimed)
+                    return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
+
+                var now = DateTime.Now;
+                var traffic = new ACC_Traffic
+                {
+                    MemberID = null,
+                    TrafficStatus = 1,               // 1 = ورود
+                    EntryDesc = $"تک جلسهٔ مهمان — موبایل {mobile} — سانس {sanse.SportSanseID}",
+                    ShiftID = shiftID,
+                    UserID = deskUserID,
+                    PersonName = name,
+                    EntryDateTime = now,
+                    EntryDate = _helper.GetToday(),
+                    EntryTime = _helper.GetThisTime(),
+                    IsManual = false,
+                    IsGuest = true,
+                    IsPos = true,
+                    Amount = amount
+                };
+
+                // ✅ تردد مهمان: بدون MemberID، با IsGuest=true و مبلغ پرداخت‌شده
+                _db.ACC_Traffics.Add(traffic);
+                await _db.SaveChangesAsync();
+
+                await _pos.SettleRefAsync(posTxnId.Value, traffic.TrafficID);
+                await tx.CommitAsync();
+
+                return new SimpleResponse
+                {
+                    Success = true,
+                    Message = $"تک جلسهٔ مهمان برای {name} ثبت شد — {_helper.SetSeprator(amount)} ریال"
+                };
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                _logger.LogError(ex, "خطا در ثبت تک جلسه مهمان (میز خدمت)");
+                return new SimpleResponse { Success = false, Message = "خطا در ثبت تک جلسه مهمان" };
             }
         }
 

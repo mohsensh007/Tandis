@@ -104,7 +104,8 @@ namespace TandisWebApp.Services
             var secretKey = ResolveSecretKey();
             var issuer = jwtSettings["Issuer"] ?? "TandisWebApp";
             var audience = jwtSettings["Audience"] ?? "TandisWebAppUsers";
-            var expiryMin = int.Parse(jwtSettings["ExpiryMinutes"] ?? "1440");
+            // ✅ توکن میز خدمت ۲۴ ساعت معتبر است (هم‌خوان با عمر کوکی X-Admin-Token)
+            const int expiryMin = 24 * 60;
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

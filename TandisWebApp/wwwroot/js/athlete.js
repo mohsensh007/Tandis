@@ -432,19 +432,67 @@
         var btnOpenLocker = document.getElementById('btnOpenLocker');
         if (!btnOpenLocker) return;
         var lockerMsg = document.getElementById('lockerMsg');
-        btnOpenLocker.addEventListener('click', function () {
-            var btn = this;
-            if (btn.disabled) return;
-            btn.disabled = true;
-            if (lockerMsg) { lockerMsg.className = 'ath-locker-msg'; lockerMsg.textContent = 'در حال ارسال فرمان به کنترلر…'; }
-            post('/Athlete/OpenMyLocker', {})
+        var modal = document.getElementById('lockerAuthModal');
+        var pwInput = document.getElementById('lockerPw');
+        var authMsg = document.getElementById('lockerAuthMsg');
+
+        // ✅ هر بار باز کردن کمد → تأیید هویت (رمز عبور یا اثر انگشت)
+        function showAuth() {
+            if (!modal) return;
+            modal.classList.add('show');
+            if (pwInput) { pwInput.value = ''; setTimeout(function () { pwInput.focus(); }, 80); }
+            if (authMsg) { authMsg.className = 'ath-locker-msg'; authMsg.textContent = ''; }
+        }
+        function hideAuth() { if (modal) modal.classList.remove('show'); }
+
+        function openLocker(payload) {
+            var okBtn = document.getElementById('lockerPwOk');
+            if (okBtn) okBtn.disabled = true;
+            if (authMsg) { authMsg.className = 'ath-locker-msg'; authMsg.textContent = 'در حال ارسال فرمان به کنترلر…'; }
+            return post('/Athlete/OpenMyLocker', payload)
                 .then(function (r) {
                     if (lockerMsg) { lockerMsg.className = 'ath-locker-msg ' + (r && r.Success ? 'ok' : 'err'); lockerMsg.textContent = (r && r.Message) || 'نتیجه‌ای دریافت نشد.'; }
                     toast((r && r.Message) || 'انجام شد', !!(r && r.Success));
+                    if (r && r.Success) hideAuth();
+                    else if (authMsg) { authMsg.className = 'ath-locker-msg err'; authMsg.textContent = (r && r.Message) || ''; }
+                    return r;
                 })
-                .catch(function () { if (lockerMsg) { lockerMsg.className = 'ath-locker-msg err'; lockerMsg.textContent = 'خطا در ارتباط با سرور.'; } })
-                .finally(function () { btn.disabled = false; });
+                .catch(function () {
+                    if (authMsg) { authMsg.className = 'ath-locker-msg err'; authMsg.textContent = 'خطا در ارتباط با سرور.'; }
+                })
+                .finally(function () { if (okBtn) okBtn.disabled = false; });
+        }
+
+        btnOpenLocker.addEventListener('click', showAuth);
+
+        document.getElementById('lockerPwOk').addEventListener('click', function () {
+            var pw = (pwInput && pwInput.value) || '';
+            if (!pw) { if (authMsg) { authMsg.className = 'ath-locker-msg err'; authMsg.textContent = 'رمز عبور را وارد کنید.'; } return; }
+            openLocker({ password: pw });
         });
+        if (pwInput) {
+            pwInput.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') document.getElementById('lockerPwOk').click();
+                if (e.key === 'Escape') hideAuth();
+            });
+        }
+        document.getElementById('lockerCancel').addEventListener('click', hideAuth);
+        if (modal) modal.addEventListener('click', function (e) { if (e.target === modal) hideAuth(); });
+
+        // ✅ دکمهٔ اثر انگشت — جای رمز عبور
+        var bioBtn = document.getElementById('lockerBio');
+        if (bioBtn) {
+            bioBtn.addEventListener('click', function () {
+                if (!window.TandisBio) { toast('اثر انگشت در دسترس نیست', false); return; }
+                if (authMsg) { authMsg.className = 'ath-locker-msg'; authMsg.textContent = 'در حال تأیید اثر انگشت / چهره…'; }
+                window.TandisBio.verify('locker').then(function (ticket) {
+                    return openLocker({ bioTicket: ticket });
+                }).catch(function (err) {
+                    if (err && err.cancelled) { if (authMsg) authMsg.textContent = ''; return; }
+                    if (authMsg) { authMsg.className = 'ath-locker-msg err'; authMsg.textContent = (err && err.message) || 'تأیید اثر انگشت انجام نشد.'; }
+                });
+            });
+        }
     })();
 
     /* ============================================================

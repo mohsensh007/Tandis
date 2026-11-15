@@ -145,6 +145,8 @@ builder.Services.AddScoped<AthleteService>();
 builder.Services.AddScoped<LockerService>();
 // ✅ تحلیل بدن عضو: BMI / BMR / TDEE / پروتئین / کالری هدف / نمودار تغییرات
 builder.Services.AddScoped<BodyAnalysisService>();
+// ✅ احراز هویت بیومتریک (اثر انگشت / چهره) — WebAuthn
+builder.Services.AddScoped<BiometricService>();
 builder.Services.AddHttpContextAccessor();
 
 // ✅ ایجنت POS: ارسال تراکنش‌های «در انتظار وب‌اپ» به دستگاه کارخوان و ثبت جواب در DB
@@ -279,6 +281,43 @@ using (var scope = app.Services.CreateScope())
         // ساخت جدول شکست خورد ولی نباید بالا آمدن اپ را متوقف کند
         app.Services.GetRequiredService<ILogger<Program>>()
             .LogWarning(ex, "ساخت جداول تحلیل بدن (Ath_Body*) انجام نشد");
+    }
+}
+
+// ============================================================
+// 5.6) ساخت جدول اعتبارنامه‌های بیومتریک (اثر انگشت / چهره) — idempotent
+// ============================================================
+using (var scope = app.Services.CreateScope())
+{
+    try
+    {
+        var db = scope.ServiceProvider.GetRequiredService<FullSportDbContext>();
+        await db.Database.ExecuteSqlRawAsync("""
+            IF OBJECT_ID(N'dbo.Sec_BiometricCredential', N'U') IS NULL
+            BEGIN
+                CREATE TABLE dbo.Sec_BiometricCredential
+                (
+                    CredentialID   INT           IDENTITY(1,1) NOT NULL CONSTRAINT PK_Sec_BiometricCredential PRIMARY KEY,
+                    UserType       VARCHAR(20)   NOT NULL,
+                    UserID         INT           NOT NULL,
+                    UserName       NVARCHAR(150) NULL,
+                    WebAuthnId   NVARCHAR(600) NOT NULL,
+                    PublicKeySpki  NVARCHAR(MAX) NOT NULL,
+                    Alg            INT           NOT NULL CONSTRAINT DF_Sec_Biometric_Alg DEFAULT (-7),
+                    SignCount      BIGINT        NOT NULL CONSTRAINT DF_Sec_Biometric_Counter DEFAULT (0),
+                    DeviceLabel    NVARCHAR(200) NULL,
+                    CreatedAt      DATETIME      NOT NULL CONSTRAINT DF_Sec_Biometric_Created DEFAULT (GETDATE()),
+                    LastUsedAt     DATETIME      NULL
+                );
+                CREATE INDEX IX_Sec_Biometric_User
+                    ON dbo.Sec_BiometricCredential (UserType, UserID);
+            END;
+            """);
+    }
+    catch (Exception ex)
+    {
+        app.Services.GetRequiredService<ILogger<Program>>()
+            .LogWarning(ex, "ساخت جدول اعتبارنامه‌های بیومتریک (Sec_BiometricCredential) انجام نشد");
     }
 }
 

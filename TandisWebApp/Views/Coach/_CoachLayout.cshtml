@@ -22,9 +22,9 @@
     <title>@ViewData["Title"] - پنل مربی | تندیس</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/panels.css" asp-append-version="true" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/panels.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" />
 
     <style>
         body.coach-glass-body {
@@ -55,7 +55,42 @@
             .coach-top-nav .navbar-brand {
                 color: #fff;
                 font-weight: 800;
+                min-width: 0;
             }
+
+            /* ✅ لوگو کامل و بدون پوشش/برش در همهٔ حالت‌ها */
+            .coach-top-nav .navbar-brand .brand-logo {
+                width: 34px;
+                height: 34px;
+                flex: 0 0 auto;
+                object-fit: contain;
+                object-position: center;
+                display: block;
+            }
+
+            .coach-top-nav .navbar-brand .brand-text {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                line-height: 1.24;
+                min-width: 0;
+                overflow: hidden;
+            }
+
+                .coach-top-nav .navbar-brand .brand-text b {
+                    font-size: clamp(.76rem, 2.6vw, .93rem);
+                    color: #EAF7FA;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .coach-top-nav .navbar-brand .brand-text small {
+                    font-size: clamp(.56rem, 2vw, .66rem);
+                    color: #A7EBF2;
+                    font-weight: 700;
+                    white-space: nowrap;
+                }
 
             .coach-top-nav .nav-link {
                 color: #9FC6D2;
@@ -182,16 +217,16 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="~/css/coach-panel.css" asp-append-version="true" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/coach-panel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" />
 </head>
 <body class="coach-glass-body">
     <!-- ========== نوار بالا ========== -->
     <nav class="navbar navbar-expand-lg coach-top-nav" aria-label="ناوبری اصلی پنل مربی">
         <div class="container-fluid px-3">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="/Coach">
-                <img src="~/images/logo2.png" alt="تندیس" width="34" height="34" decoding="async" />
-                <span>پنل مربی</span>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/Coach" aria-label="ایمن تردد تندیس — پنل مربی">
+                <img src="~/images/logo2.png" alt="ایمن تردد تندیس" width="34" height="34" decoding="async" class="brand-logo" />
+                <span class="brand-text"><b>ایمن تردد تندیس</b><small>پنل مربی</small></span>
             </a>
 
             <!-- لینک‌های دسکتاپ -->
@@ -220,6 +255,11 @@
 
             <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end">
                 <span class="d-none d-md-inline text-light small ms-2"><i class="bi bi-person-fill"></i> @coachName</span>
+                <button type="button" class="btn-logout-glass" data-bio-enroll="1"
+                        title="ثبت اثر انگشت / چهره" aria-label="ثبت اثر انگشت یا چهره"
+                        style="border:1px solid rgba(167,235,242,.34);cursor:pointer;">
+                    <i class="bi bi-fingerprint"></i>
+                </button>
                 <a class="btn-logout-glass js-logout" href="/Account/Logout">
                     <i class="bi bi-box-arrow-left"></i> خروج
                 </a>
@@ -283,6 +323,7 @@
         <script src="~/js/jalali-calendar.js" asp-append-version="true"></script>
     }
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/biometric.js" asp-append-version="true"></script>
     <script src="~/js/coach-panel.js" asp-append-version="true"></script>
 
     <script>

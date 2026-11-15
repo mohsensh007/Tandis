@@ -4,7 +4,7 @@
     Layout = "_Layout";
 }
 
-<link rel="stylesheet" href="~/css/athlete.css" asp-append-version="true" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/athlete.css" asp-append-version="true" />
 
 <!-- ===== داده‌های اولیه برای JS ===== -->
 <script id="athlete-data" type="application/json">
@@ -105,6 +105,7 @@
                     <div class="ath-locker-no" id="lockerNo">کمد @Model.MyLocker.BoxNo</div>
                 </div>
                 <button class="ath-btn w-100" id="btnOpenLocker"><i class="bi bi-unlock-fill"></i> باز کردن کمد</button>
+                <div class="ath-locker-note"><i class="bi bi-shield-lock-fill"></i> هر بار برای باز کردن کمد، رمز عبور یا اثر انگشت لازم است.</div>
             }
             else
             {
@@ -112,6 +113,19 @@
             }
 
             <div class="ath-locker-msg" id="lockerMsg"></div>
+        </div>
+
+        <!-- ===== مودال تأیید هویت کمد (رمز عبور یا اثر انگشت) ===== -->
+        <div class="ath-lock-modal" id="lockerAuthModal" aria-modal="true" role="dialog">
+            <div class="ath-lock-box">
+                <div class="ath-lock-title"><i class="bi bi-shield-lock-fill"></i> تأیید هویت برای باز کردن کمد</div>
+                <div class="ath-lock-sub">هر بار که می‌خواهید کمد را باز کنید باید رمز عبور یا اثر انگشت خود را وارد کنید.</div>
+                <input type="password" class="form-control" id="lockerPw" placeholder="رمز عبور" autocomplete="current-password" />
+                <button type="button" class="ath-btn w-100 mt-2" id="lockerPwOk"><i class="bi bi-unlock-fill"></i> باز کردن کمد</button>
+                <button type="button" class="ath-btn ath-btn-ghost w-100 mt-2" id="lockerBio"><i class="bi bi-fingerprint"></i> تأیید با اثر انگشت / چهره</button>
+                <button type="button" class="ath-btn ath-btn-ghost w-100 mt-2" id="lockerCancel">انصراف</button>
+                <div class="ath-locker-msg" id="lockerAuthMsg"></div>
+            </div>
         </div>
     }
 </div>

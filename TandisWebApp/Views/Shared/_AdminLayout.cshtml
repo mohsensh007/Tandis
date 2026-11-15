@@ -36,13 +36,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#011C40" />
     <title>@ViewData["Title"] - پنل مدیر | تندیس</title>
-    <link rel="stylesheet" href="~/css/admin-style.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/panels.css" asp-append-version="true" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/admin-responsive.css" asp-append-version="true" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/panels.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin-responsive.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/mobile-performance.css" asp-append-version="true" />
 
     <style>
         /* ===== نوار پایین شناور پنل ادمین ===== */
@@ -132,7 +132,42 @@
             .admin-top-nav .navbar-brand {
                 color: #fff;
                 font-weight: 800;
+                min-width: 0;
             }
+
+            /* ✅ لوگو کامل و بدون پوشش/برش در همهٔ حالت‌ها */
+            .admin-top-nav .navbar-brand .brand-logo {
+                width: 34px;
+                height: 34px;
+                flex: 0 0 auto;
+                object-fit: contain;
+                object-position: center;
+                display: block;
+            }
+
+            .admin-top-nav .navbar-brand .brand-text {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                line-height: 1.24;
+                min-width: 0;
+                overflow: hidden;
+            }
+
+                .admin-top-nav .navbar-brand .brand-text b {
+                    font-size: clamp(.78rem, 2.6vw, .95rem);
+                    color: #EAF7FA;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+
+                .admin-top-nav .navbar-brand .brand-text small {
+                    font-size: clamp(.56rem, 2vw, .66rem);
+                    color: #A7EBF2;
+                    font-weight: 700;
+                    white-space: nowrap;
+                }
 
             .admin-top-nav .nav-link {
                 color: #9FC6D2;
@@ -434,6 +469,8 @@
                 .admin-top-nav .navbar-brand img {
                     width: 30px;
                     height: 30px;
+                    object-fit: contain;
+                    flex: 0 0 auto;
                 }
 
             .admin-top-actions {
@@ -467,15 +504,15 @@
             }
         }
     </style>
-    <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" />
 </head>
 <body class="admin-glass-body">
     <!-- ========== نوار بالا (بدون همبرگری) ========== -->
     <nav class="navbar navbar-expand-lg admin-top-nav">
         <div class="container-fluid px-3">
-            <a class="navbar-brand d-flex align-items-center gap-2" href="/Admin">
-                <img src="~/images/logo2.png" alt="تندیس" width="34" height="34" decoding="async" />
-                <span>پنل مدیر</span>
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/Admin" aria-label="ایمن تردد تندیس — پنل مدیر">
+                <img src="~/images/logo2.png" alt="ایمن تردد تندیس" width="34" height="34" decoding="async" class="brand-logo" />
+                <span class="brand-text"><b>ایمن تردد تندیس</b><small>پنل مدیر</small></span>
             </a>
 
             <!-- ✅ لینک‌های دسکتاپ (فقط lg به بالا) -->
@@ -501,6 +538,12 @@
             <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end admin-top-actions">
                        
           
+                <!-- ✅ ثبت اثر انگشت / چهره -->
+                <button type="button" class="btn-key-glass" data-bio-enroll="1"
+                        title="ثبت اثر انگشت / چهره" aria-label="ثبت اثر انگشت یا چهره">
+                    <i class="bi bi-fingerprint"></i>
+                </button>
+
                 <!-- ✅ تغییر رمز -->
                 <button type="button" class="btn-key-glass" id="btnOpenChangePass"
                         title="تغییر رمز عبور" data-bs-toggle="tooltip" data-bs-placement="bottom">
@@ -647,6 +690,7 @@
         <script src="~/js/jalali-calendar.js" asp-append-version="true"></script>
     }
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/biometric.js" asp-append-version="true"></script>
     @if (loadReportPager)
     {
         <script src="~/js/report-pager.js" asp-append-version="true"></script>

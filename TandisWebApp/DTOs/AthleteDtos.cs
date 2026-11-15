@@ -100,6 +100,9 @@ namespace TandisWebApp.DTOs
         public bool Success { get; set; }
         public string Message { get; set; } = string.Empty;
         public string? Detail { get; set; }
+
+        /// <summary>برای باز کردن کمد باید رمز عبور (یا اثر انگشت) وارد شود</summary>
+        public bool NeedAuth { get; set; }
     }
 
     // ===== کل صفحه: پاسخ آماده نمایش =====

@@ -24,19 +24,22 @@ namespace TandisWebApp.Controllers
         private readonly LockerService _locker;
         private readonly CommonHelperService _helper;
         private readonly FullSportDbContext _db;
+        private readonly BiometricService _bio;
 
         public AthleteController(
             AthleteService athlete,
             CoachProgramService programs,
             LockerService locker,
             CommonHelperService helper,
-            FullSportDbContext db)
+            FullSportDbContext db,
+            BiometricService bio)
         {
             _athlete = athlete;
             _programs = programs;
             _locker = locker;
             _helper = helper;
             _db = db;
+            _bio = bio;
         }
 
         private int MemberID => int.Parse(User.FindFirstValue("MemberID") ?? "0");
@@ -125,7 +128,7 @@ namespace TandisWebApp.Controllers
         /// عضو رختکن/شماره کمد را انتخاب نمی‌کند؛ کمدِ خودش را باز می‌کند.
         /// 🔒 فقط وقتی عضو داخل باشگاهه.</summary>
         [HttpPost("/Athlete/OpenMyLocker")]
-        public async Task<IActionResult> OpenMyLocker()
+        public async Task<IActionResult> OpenMyLocker([FromBody] LockerAuthRequest? req)
         {
             var memberID = MemberID;
 
@@ -136,6 +139,44 @@ namespace TandisWebApp.Controllers
                     Success = false,
                     Message = "برای باز کردن کمد باید داخل باشگاه باشید."
                 });
+
+            // ✅ هر بار باید هویت تأیید شود: رمز عبور یا اثر انگشت/چهرهٔ ثبت‌شده
+            var okIdentity = false;
+            if (!string.IsNullOrWhiteSpace(req?.BioTicket))
+            {
+                var bioType = User.FindFirstValue("RoleID") == "2" ? "coach" : "member";
+                okIdentity = _bio.ConsumeTicket(req!.BioTicket, bioType, memberID);
+                if (!okIdentity)
+                    return Json(new LockerOpenResultDto
+                    {
+                        Success = false,
+                        Message = "تأیید اثر انگشت منقضی شده است؛ دوباره تلاش کنید."
+                    });
+            }
+            else
+            {
+                var pass = await _db.Gen_Members.AsNoTracking()
+                    .Where(m => m.MemberID == memberID)
+                    .Select(m => m.KioskPass)
+                    .FirstOrDefaultAsync();
+
+                if (string.IsNullOrEmpty(req?.Password))
+                    return Json(new LockerOpenResultDto
+                    {
+                        Success = false,
+                        Message = "برای باز کردن کمد، رمز عبور خود را وارد کنید.",
+                        NeedAuth = true
+                    });
+
+                okIdentity = !string.IsNullOrEmpty(pass) && string.Equals(pass, req!.Password, StringComparison.Ordinal);
+                if (!okIdentity)
+                    return Json(new LockerOpenResultDto
+                    {
+                        Success = false,
+                        Message = "رمز عبور صحیح نیست.",
+                        NeedAuth = true
+                    });
+            }
 
             var my = await GetMyLockerAsync(memberID);
             if (my == null || my.BoxNo <= 0)
@@ -246,6 +287,13 @@ namespace TandisWebApp.Controllers
             "پنجشنبه" => "پنجشنبه",
             _ => "جمعه"
         };
+    }
+
+    /// <summary>رمز عبور یا بلیت بیومتریک برای باز کردن کمد</summary>
+    public class LockerAuthRequest
+    {
+        public string? Password { get; set; }
+        public string? BioTicket { get; set; }
     }
 
     // ===== درخواست‌های JSON =====

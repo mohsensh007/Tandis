@@ -16,12 +16,14 @@ namespace TandisWebApp.Controllers
         private readonly DeskService _desk;
         private readonly CommonHelperService _helper;
         private readonly PosPaymentService _pos;
+        private readonly BiometricService _bio;
 
-        public DeskController(DeskService desk, CommonHelperService helper, PosPaymentService pos)
+        public DeskController(DeskService desk, CommonHelperService helper, PosPaymentService pos, BiometricService bio)
         {
             _desk = desk;
             _helper = helper;
             _pos = pos;
+            _bio = bio;
         }
 
         private short DeskUserID => short.TryParse(User.FindFirstValue("UserID"), out var id) ? id : (short)1;
@@ -39,12 +41,44 @@ namespace TandisWebApp.Controllers
             return View();
         }
 
+        /// <summary>
+        /// ✅ خروج امن: بدون رمز عبور انجام نمی‌شود.
+        /// این آدرس فقط کاربر را به همان پنل برمی‌گرداند (دکمهٔ خروج در UI مودال رمز باز می‌کند).
+        /// </summary>
         [HttpGet]
-        public IActionResult Logout()
+        public IActionResult Logout() => RedirectToAction("Index");
+
+        public class LogoutReq
         {
+            public string? Password { get; set; }
+            /// <summary>بلیت تأیید بیومتریک (اثر انگشت / چهره) به‌جای رمز</summary>
+            public string? BiometricTicket { get; set; }
+        }
+
+        /// <summary>✅ خروج با رمز عبور (یا اثر انگشت ثبت‌شده) — تا هر کسی نتواند دکمهٔ خروج را بزند</summary>
+        [HttpPost]
+        [Route("api/Desk/Logout")]
+        public async Task<IActionResult> LogoutApi([FromBody] LogoutReq? req)
+        {
+            var ok = false;
+            var msg = "";
+
+            if (!string.IsNullOrWhiteSpace(req?.BiometricTicket))
+            {
+                ok = _bio.ConsumeTicket(req!.BiometricTicket, "desk", DeskUserID);
+                if (!ok) msg = "تأیید اثر انگشت منقضی شده است؛ دوباره تلاش کنید";
+            }
+            else
+            {
+                (ok, msg, _) = await _desk.VerifyDeskPasswordAsync(DeskUserID, req?.Password);
+            }
+
+            if (!ok)
+                return Ok(new { success = false, message = msg });
+
             Response.Cookies.Delete("X-Admin-Token");
             Response.Cookies.Delete("X-Access-Token");
-            return RedirectToAction("Login", "Account");
+            return Ok(new { success = true, message = "خروج انجام شد", redirect = "/Account/Login" });
         }
 
         // ============================================================
@@ -89,6 +123,8 @@ namespace TandisWebApp.Controllers
             public string? Password { get; set; }
             public long Amount { get; set; }
             public short CreditType { get; set; } = 11;
+            /// <summary>برچسب اختیاری (فروشگاه / بوفه / خدمات) برای متن رسید</summary>
+            public string? Label { get; set; }
             public long? PosTxnId { get; set; }
         }
 
@@ -112,7 +148,7 @@ namespace TandisWebApp.Controllers
             }
 
             var result = await _desk.ChargeCreditAsync(DeskUserID, member.MemberID, amount ?? 0,
-                                                       req.CreditType, req.PosTxnId);
+                                                       req.CreditType, req.PosTxnId, req.Label);
 
             return Ok(new
             {
@@ -174,6 +210,32 @@ namespace TandisWebApp.Controllers
             public int SportSanseID { get; set; }
             public string? NationalCode { get; set; }
             public long? PosTxnId { get; set; }
+        }
+
+        /// <summary>✅ تک جلسهٔ مهمان: بدون کد ملی — فقط نام و شمارهٔ موبایل</summary>
+        public class GuestSingleReq
+        {
+            public int SportSanseID { get; set; }
+            public string? GuestName { get; set; }
+            public string? GuestMobile { get; set; }
+            public long? PosTxnId { get; set; }
+        }
+
+        [HttpPost]
+        [Route("api/Desk/BuySingleGuest")]
+        public async Task<IActionResult> BuySingleGuest([FromBody] GuestSingleReq req)
+        {
+            var result = await _desk.SellGuestSingleSessionAsync(DeskUserID, ShiftID, req.SportSanseID,
+                                                                 req.GuestName, req.GuestMobile, req.PosTxnId);
+            return Ok(new
+            {
+                result.Success,
+                result.Message,
+                result.PaymentPending,
+                result.PosTxnId,
+                result.PosAmount,
+                result.PosAmountDisplay
+            });
         }
 
         [HttpPost]
