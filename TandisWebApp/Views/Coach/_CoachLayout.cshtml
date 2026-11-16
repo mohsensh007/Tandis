@@ -1,4 +1,7 @@
-﻿@{
+﻿@inject TandisWebApp.Services.ProfileService ProfileService
+@{
+    var clubName = "باشگاه";
+    try { clubName = await ProfileService.GetClubNameAsync(); } catch { }
     var coachName = HttpContextAccessor.HttpContext?.User?.FindFirst("FullName")?.Value ?? "مربی";
     var currentPath = (Context.Request.Path.Value ?? "").TrimEnd('/').ToLowerInvariant();
     var loadJalaliCalendar = currentPath == "/coach/commission"
@@ -226,7 +229,7 @@
         <div class="container-fluid px-3">
             <a class="navbar-brand d-flex align-items-center gap-2" href="/Coach" aria-label="ایمن تردد تندیس — پنل مربی">
                 <img src="~/images/logo2.png" alt="ایمن تردد تندیس" width="34" height="34" decoding="async" class="brand-logo" />
-                <span class="brand-text"><b>ایمن تردد تندیس</b><small>پنل مربی</small></span>
+                <span class="brand-text"><b>ایمن تردد تندیس</b><small>نرم افزار جامع اتوماسیون مراکز ورزشی</small></span>
             </a>
 
             <!-- لینک‌های دسکتاپ -->
@@ -254,6 +257,8 @@
             </ul>
 
             <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end">
+                <!-- ✅ اسم باشگاه (از دیتابیس) — سمت چپ هدر -->
+                <span class="hdr-club d-none d-sm-inline-flex" title="@clubName"><i class="bi bi-building"></i> @clubName</span>
                 <span class="d-none d-md-inline text-light small ms-2"><i class="bi bi-person-fill"></i> @coachName</span>
                 <button type="button" class="btn-logout-glass" data-bio-enroll="1"
                         title="ثبت اثر انگشت / چهره" aria-label="ثبت اثر انگشت یا چهره"

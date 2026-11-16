@@ -1248,3 +1248,35 @@ html body:not(#lu) .ba-table caption {
         backdrop-filter: none !important;
     }
 }
+
+/* ============================================================
+   هدر — اسم باشگاه سمت چپ + زیرنویس برند (نرم‌افزار جامع …)
+   ============================================================ */
+.hdr-club {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: min(42vw, 19rem);
+    padding: 6px 12px;
+    border-radius: 999px;
+    background: rgba(167, 235, 242, .12);
+    border: 1px solid rgba(167, 235, 242, .26);
+    color: #CFF4F9;
+    font-size: .78rem;
+    font-weight: 800;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.admin-top-nav .navbar-brand .brand-text small,
+.coach-top-nav .navbar-brand .brand-text small {
+    display: block;
+    max-width: min(56vw, 20rem);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+@media (max-width: 575.98px) {
+    .admin-top-nav .navbar-brand .brand-text small,
+    .coach-top-nav .navbar-brand .brand-text small { max-width: 46vw; font-size: .52rem; }
+}

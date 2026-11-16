@@ -94,11 +94,13 @@
             <div class="desk-brand">
                 <img src="/images/logo2.png" alt="ایمن تردد تندیس" />
                 <div>
-                    <b>@clubName</b>
-                    <span>ایمن تردد تندیس — میز خدمت</span>
+                    <b>ایمن تردد تندیس</b>
+                    <span>نرم افزار جامع اتوماسیون مراکز ورزشی</span>
                 </div>
             </div>
             <div style="display:flex;align-items:center;gap:8px;">
+                <!-- ✅ اسم باشگاه (از دیتابیس) — سمت چپ هدر -->
+                <div class="desk-user" title="@clubName"><i class="bi bi-building"></i> @clubName</div>
                 <div class="desk-user"><i class="bi bi-person-badge"></i> @deskUser</div>
                 <button type="button" id="btnDeskBio" class="desk-user" data-bio-enroll="password"
                         style="border:1px solid rgba(167, 235, 242,.35);cursor:pointer;"
@@ -154,6 +156,33 @@
                 <span>
                     <span class="dc-title">تمدید دوره</span>
                     <span class="dc-sub">تمدید دوره‌های ورزشی — از اعتبار یا کارت‌خوان</span>
+                </span>
+                <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
+            </button>
+
+            <button type="button" class="desk-card" data-act="shop">
+                <span class="dc-icon"><i class="bi bi-bag-heart"></i></span>
+                <span>
+                    <span class="dc-title">فروشگاه</span>
+                    <span class="dc-sub">کالاهای فروشگاه برای عضو — اعتبار یا کارت‌خوان</span>
+                </span>
+                <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
+            </button>
+
+            <button type="button" class="desk-card" data-act="buffet">
+                <span class="dc-icon"><i class="bi bi-cup-hot"></i></span>
+                <span>
+                    <span class="dc-title">بوفه</span>
+                    <span class="dc-sub">خوراکی و نوشیدنی — ثبت خرید برای عضو</span>
+                </span>
+                <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
+            </button>
+
+            <button type="button" class="desk-card" data-act="services">
+                <span class="dc-icon"><i class="bi bi-spa"></i></span>
+                <span>
+                    <span class="dc-title">خدمات</span>
+                    <span class="dc-sub">ماساژ، مربی شخصی و سایر خدمات باشگاه</span>
                 </span>
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
@@ -565,6 +594,9 @@
                     else if (act === 'single') openSingle();
                     else if (act === 'renew') openRenew();
                     else if (act === 'register') window.location.href = '/Account/Register?desk=1';
+                    else if (act === 'shop') window.location.href = '/Desk/Shop';
+                    else if (act === 'buffet') window.location.href = '/Desk/Buffet';
+                    else if (act === 'services') window.location.href = '/Desk/Services';
                 });
             });
 

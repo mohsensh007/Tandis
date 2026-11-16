@@ -567,6 +567,59 @@ VALUES ({member.MemberID}, {sanse.SportSanseID}, {sanse.MembershipTypeID}, 1, 1,
         //  کمکی
         // ============================================================
 
+        // ============================================================
+        //  ✅ فروشگاه / بوفه / خدمات — جستجوی سریع عضو (کد ملی یا موبایل)
+        // ============================================================
+        public async Task<(bool ok, string message, DeskMemberDto? data)> QuickFindMemberAsync(string? query)
+        {
+            var q = NormalizeDigits((query ?? "").Trim());
+            if (q.Length < 10)
+                return (false, "کد ملی یا شماره موبایل را کامل (۱۰ یا ۱۱ رقم) وارد کنید", null);
+
+            var row = await (
+                from m in _db.Gen_Members
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                where p.NationalCode == q
+                   || (p.Mobile != null && p.Mobile.Trim() == q)
+                   || (p.Tel != null && p.Tel.Trim() == q)
+                select new { m, p }
+            ).FirstOrDefaultAsync();
+
+            if (row == null)
+                return (false, "عضوی با این کد ملی یا شماره موبایل یافت نشد", null);
+
+            return (true, "", await BuildMemberCardAsync(row.m, row.p));
+        }
+
+        /// <summary>کارت عضو (نام + اعتبارها) برای صفحهٔ خرید میز خدمت</summary>
+        public async Task<DeskMemberDto?> GetMemberCardAsync(int memberID)
+        {
+            if (memberID <= 0) return null;
+
+            var row = await (
+                from m in _db.Gen_Members
+                join p in _db.Gen_Persons on m.PersonID equals p.PersonID
+                where m.MemberID == memberID
+                select new { m, p }
+            ).FirstOrDefaultAsync();
+
+            return row == null ? null : await BuildMemberCardAsync(row.m, row.p);
+        }
+
+        private async Task<DeskMemberDto> BuildMemberCardAsync(Models.Gen_Member m, Models.Gen_Person p)
+        {
+            return new DeskMemberDto
+            {
+                MemberID = m.MemberID,
+                FullName = p.FullName ?? $"{p.FirstName} {p.LastName}".Trim(),
+                NationalCode = p.NationalCode ?? "",
+                ShiftID = m.ShiftID ?? 1,
+                SportCredit = await _helper.GetSportCreditAmountAsync(m.MemberID),
+                ShopCredit = await _helper.GetBuffetCreditAmountAsync(m.MemberID),
+                ServiceCredit = await _helper.GetServiceCreditAmountAsync(m.MemberID)
+            };
+        }
+
         private static string NormalizeDigits(string value)
         {
             return value.Replace('۰', '0').Replace('۱', '1').Replace('۲', '2')

@@ -1,4 +1,7 @@
+@inject TandisWebApp.Services.ProfileService ProfileService
 @{
+    var clubName = "باشگاه";
+    try { clubName = await ProfileService.GetClubNameAsync(); } catch { }
     var adminName = HttpContextAccessor.HttpContext?.User?.FindFirst("FullName")?.Value ?? "مدیر";
     var shiftID = HttpContextAccessor.HttpContext?.User?.FindFirst("AdminShiftID")?.Value ?? "1";
     var shiftName = shiftID == "2" ? "بانوان" : "آقایان";
@@ -512,7 +515,7 @@
         <div class="container-fluid px-3">
             <a class="navbar-brand d-flex align-items-center gap-2" href="/Admin" aria-label="ایمن تردد تندیس — پنل مدیر">
                 <img src="~/images/logo2.png" alt="ایمن تردد تندیس" width="34" height="34" decoding="async" class="brand-logo" />
-                <span class="brand-text"><b>ایمن تردد تندیس</b><small>پنل مدیر</small></span>
+                <span class="brand-text"><b>ایمن تردد تندیس</b><small>نرم افزار جامع اتوماسیون مراکز ورزشی</small></span>
             </a>
 
             <!-- ✅ لینک‌های دسکتاپ (فقط lg به بالا) -->
@@ -552,6 +555,9 @@
                 </button>
 
                 <!-- خروج (فقط دسکتاپ) -->
+                <!-- ✅ اسم باشگاه (از دیتابیس) — سمت چپ هدر -->
+                <span class="hdr-club d-none d-sm-inline-flex" title="@clubName"><i class="bi bi-building"></i> @clubName</span>
+
                 <a class="d-none d-md-inline-flex btn-logout-glass js-logout" href="/Admin/Logout">
                     <i class="bi bi-box-arrow-left"></i> خروج
                 </a>

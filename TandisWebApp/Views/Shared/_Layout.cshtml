@@ -407,6 +407,8 @@
             padding: calc(8px + env(safe-area-inset-top)) max(14px, env(safe-area-inset-right)) 8px max(14px, env(safe-area-inset-left));
         }
         .mh2-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; min-width: 0; }
+        .mh2-top-end { display: flex; align-items: center; gap: 8px; flex: 0 0 auto; margin-inline-start: auto; min-width: 0; }
+        .mh2-top-end .mh2-club { max-width: min(44vw, 20rem); }
         /* ✅ اسم باشگاه + لوگو + «ایمن تردد تندیس» همه در یک بلوک (اسم سمت چپ تصویر) */
         .mh2-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; min-width: 0; flex: 1 1 auto; max-width: 100%; }
         .mh2-logo-wrap {
@@ -525,16 +527,21 @@
                             <img src="~/images/logo2.png" alt="@clubName" width="38" height="38" decoding="async" class="mh2-logo" asp-append-version="true" />
                         </span>
                         <span class="mh2-titles">
-                            <span class="mh2-title">@clubName</span>
-                            <span class="mh2-sub">ایمن تردد تندیس</span>
+                            <span class="mh2-title">ایمن تردد تندیس</span>
+                            <span class="mh2-sub">نرم افزار جامع اتوماسیون مراکز ورزشی</span>
                         </span>
                     </a>
 
-                    <!-- ✅ ثبت اثر انگشت / چهره برای ورود بدون رمز -->
-                    <button type="button" class="mh2-bio" data-bio-enroll="1" id="btnMemberBio"
-                            title="ثبت اثر انگشت / چهره" aria-label="ثبت اثر انگشت یا چهره">
-                        <i class="bi bi-fingerprint" aria-hidden="true"></i>
-                    </button>
+                    <div class="mh2-top-end">
+                        <!-- ✅ اسم باشگاه (از دیتابیس) — سمت چپ هدر -->
+                        <span class="mh2-club" title="@clubName">@clubName</span>
+
+                        <!-- ✅ ثبت اثر انگشت / چهره برای ورود بدون رمز -->
+                        <button type="button" class="mh2-bio" data-bio-enroll="1" id="btnMemberBio"
+                                title="ثبت اثر انگشت / چهره" aria-label="ثبت اثر انگشت یا چهره">
+                            <i class="bi bi-fingerprint" aria-hidden="true"></i>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="mh2-rule" aria-hidden="true"></div>

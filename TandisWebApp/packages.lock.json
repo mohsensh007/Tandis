@@ -30,6 +30,12 @@
           "System.Drawing.Common": "6.0.0"
         }
       },
+      "SQLite": {
+        "type": "Direct",
+        "requested": "[3.54.1, )",
+        "resolved": "3.54.1",
+        "contentHash": "PVpXeQFwnsQ1vXFEiZR3JYYdzmsPLtxObig62uHVfeVOVX8hAemTpr3bRC1n+eVvrohV2BQ/fuQpXaj59uVnHw=="
+      },
       "System.Configuration.ConfigurationManager": {
         "type": "Direct",
         "requested": "[10.0.0, )",

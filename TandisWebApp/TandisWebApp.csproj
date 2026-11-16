@@ -40,6 +40,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
     <PackageReference Include="QRCoder" Version="1.8.0" />
+    <PackageReference Include="SQLite" Version="3.54.1" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.19.2" />
     <!-- وابستگی‌های SDK SEP روی .NET 10 (CodePages برای خواندن پاسخ دستگاه الزامی است) -->
     <PackageReference Include="System.Text.Encoding.CodePages" Version="10.0.0" />

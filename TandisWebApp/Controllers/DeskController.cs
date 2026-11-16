@@ -17,13 +17,18 @@ namespace TandisWebApp.Controllers
         private readonly CommonHelperService _helper;
         private readonly PosPaymentService _pos;
         private readonly BiometricService _bio;
+        private readonly ShopService _shop;
+        private readonly ServicePurchaseService _service;
 
-        public DeskController(DeskService desk, CommonHelperService helper, PosPaymentService pos, BiometricService bio)
+        public DeskController(DeskService desk, CommonHelperService helper, PosPaymentService pos, BiometricService bio,
+                              ShopService shop, ServicePurchaseService service)
         {
             _desk = desk;
             _helper = helper;
             _pos = pos;
             _bio = bio;
+            _shop = shop;
+            _service = service;
         }
 
         private short DeskUserID => short.TryParse(User.FindFirstValue("UserID"), out var id) ? id : (short)1;
@@ -304,6 +309,161 @@ namespace TandisWebApp.Controllers
                 return Ok(new { success = false, message = msg });
 
             var result = await _desk.RenewAsync(member.MemberID, req.SportSanseID, req.Method, req.PosTxnId, ShiftID);
+            return Ok(new
+            {
+                result.Success,
+                result.Message,
+                result.PaymentPending,
+                result.PosTxnId,
+                result.PosAmount,
+                result.PosAmountDisplay
+            });
+        }
+
+        // ============================================================
+        //  ✅ ۶-۸) فروشگاه / بوفه / خدمات — همان UI پنل عضو برای میز خدمت
+        // ============================================================
+        [HttpGet]
+        public Task<IActionResult> Shop(int? member) => CommercePage("shop", member);
+
+        [HttpGet]
+        public Task<IActionResult> Buffet(int? member) => CommercePage("buffet", member);
+
+        [HttpGet]
+        public Task<IActionResult> Services(int? member) => CommercePage("services", member);
+
+        private async Task<IActionResult> CommercePage(string kind, int? member)
+        {
+            ViewData["DeskUser"] = DeskName;
+            ViewData["ClubName"] = await _helper.GetClubNameAsync();
+            ViewData["Kind"] = kind;
+            ViewData["MemberCard"] = member.HasValue && member.Value > 0
+                ? await _desk.GetMemberCardAsync(member.Value)
+                : null;
+            return View("Commerce");
+        }
+
+        public class QuickFindReq
+        {
+            public string? Query { get; set; }
+        }
+
+        /// <summary>جستجوی عضو با کد ملی یا موبایل (بدون رمز — فقط برای میز خدمت)</summary>
+        [HttpPost]
+        [Route("api/Desk/Commerce/FindMember")]
+        public async Task<IActionResult> CommerceFindMember([FromBody] QuickFindReq req)
+        {
+            var (ok, msg, dto) = await _desk.QuickFindMemberAsync(req?.Query);
+            if (!ok || dto == null)
+                return Ok(new { success = false, message = msg });
+
+            return Ok(new
+            {
+                success = true,
+                data = new
+                {
+                    memberID = dto.MemberID,
+                    fullName = dto.FullName,
+                    nationalCode = dto.NationalCode,
+                    sportCredit = dto.SportCredit,
+                    shopCredit = dto.ShopCredit,
+                    serviceCredit = dto.ServiceCredit
+                }
+            });
+        }
+
+        public class CommerceCatReq
+        {
+            public bool IsBuffet { get; set; }
+        }
+
+        [HttpPost]
+        [Route("api/Desk/Commerce/Categories")]
+        public async Task<IActionResult> CommerceCategories([FromBody] CommerceCatReq? req)
+        {
+            var list = await _shop.GetCategoriesAsync(req?.IsBuffet ?? false, ShiftID);
+            return Ok(new { success = true, data = list });
+        }
+
+        public class CommerceStuffReq
+        {
+            public bool IsBuffet { get; set; }
+            public int? CategoryID { get; set; }
+        }
+
+        [HttpPost]
+        [Route("api/Desk/Commerce/Stuffs")]
+        public async Task<IActionResult> CommerceStuffs([FromBody] CommerceStuffReq? req)
+        {
+            var list = await _shop.GetStuffsAsync(req?.IsBuffet ?? false, ShiftID, req?.CategoryID);
+            return Ok(new { success = true, data = list });
+        }
+
+        [HttpPost]
+        [Route("api/Desk/Commerce/ServiceList")]
+        public async Task<IActionResult> CommerceServiceList()
+        {
+            var list = await _service.GetServiceListAsync(ShiftID);
+            return Ok(new { success = true, data = list });
+        }
+
+        public class CommerceBuyReq
+        {
+            public int MemberID { get; set; }
+            public List<BasketItem> Items { get; set; } = new();
+            public bool IsBuffet { get; set; }
+            public string Method { get; set; } = "credit";
+            public long? PosTxnId { get; set; }
+        }
+
+        [HttpPost]
+        [Route("api/Desk/Commerce/Buy")]
+        public async Task<IActionResult> CommerceBuy([FromBody] CommerceBuyReq? req)
+        {
+            if (req == null || req.MemberID <= 0)
+                return Ok(new { success = false, message = "عضو انتخاب نشده است" });
+
+            var result = await _shop.BuyAsync(req.MemberID, new ShopBuyRequest
+            {
+                Items = req.Items,
+                IsBuffet = req.IsBuffet,
+                Method = req.Method,
+                PosTxnId = req.PosTxnId
+            }, ShiftID);
+
+            return Ok(new
+            {
+                result.Success,
+                result.Message,
+                result.PaymentPending,
+                result.PosTxnId,
+                result.PosAmount,
+                result.PosAmountDisplay
+            });
+        }
+
+        public class CommerceServiceReq
+        {
+            public int MemberID { get; set; }
+            public short ServiceID { get; set; }
+            public string Method { get; set; } = "credit";
+            public long? PosTxnId { get; set; }
+        }
+
+        [HttpPost]
+        [Route("api/Desk/Commerce/BuyService")]
+        public async Task<IActionResult> CommerceBuyService([FromBody] CommerceServiceReq? req)
+        {
+            if (req == null || req.MemberID <= 0)
+                return Ok(new { success = false, message = "عضو انتخاب نشده است" });
+
+            var result = await _service.BuyServiceAsync(req.MemberID, new ServiceBuyRequest
+            {
+                ServiceID = req.ServiceID,
+                Method = req.Method,
+                PosTxnId = req.PosTxnId
+            }, ShiftID);
+
             return Ok(new
             {
                 result.Success,

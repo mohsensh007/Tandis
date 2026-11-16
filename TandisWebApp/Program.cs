@@ -34,9 +34,22 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 // ============================================================
 // 1) Database Context
 // ============================================================
+// ✅ رشته اتصال از تنظیمات محیط خوانده می‌شود:
+//    - لوکال (Development): همان دیتابیس کاری خودت در appsettings.json
+//    - هاست (Production): appsettings.Production.json یا متغیر محیطی ConnectionStrings__FullSportDB
+//      (نام دیتابیس همان FullSportDB است؛ فقط سرور/کاربر/رمز روی هاست فرق می‌کند)
+var fullSportConnection = builder.Configuration.GetConnectionString("FullSportDB");
+if (string.IsNullOrWhiteSpace(fullSportConnection) || fullSportConnection.Contains("CHANGE_ME"))
+{
+    throw new InvalidOperationException(
+        "Connection string is not configured. For production set the environment variable ConnectionStrings__FullSportDB " +
+        "(example: Server=localhost;Database=FullSportDB;User Id=USER;Password=PASS;TrustServerCertificate=True;Encrypt=False).");
+
+}
+
 builder.Services.AddDbContext<FullSportDbContext>(options =>
     options.UseSqlServer(
-        builder.Configuration.GetConnectionString("FullSportDB"),
+        fullSportConnection,
         sql => sql.CommandTimeout(60)
     ));
 
@@ -228,98 +241,6 @@ builder.Services.AddRateLimiter(options =>
 });
 
 var app = builder.Build();
-
-// ============================================================
-// 5.5) ساخت جداول «تحلیل بدن» در صورت نبود (idempotent — بدون EF Migration)
-// ============================================================
-using (var scope = app.Services.CreateScope())
-{
-    try
-    {
-        var db = scope.ServiceProvider.GetRequiredService<FullSportDbContext>();
-        await db.Database.ExecuteSqlRawAsync("""
-            IF OBJECT_ID(N'dbo.Ath_BodyProfile', N'U') IS NULL
-            BEGIN
-                CREATE TABLE dbo.Ath_BodyProfile
-                (
-                    MemberID         INT          NOT NULL CONSTRAINT PK_Ath_BodyProfile PRIMARY KEY,
-                    HeightCm         DECIMAL(5,1) NULL,
-                    ActivityLevel    TINYINT      NOT NULL CONSTRAINT DF_Ath_BodyProfile_Activity DEFAULT 2,
-                    SportHistory     TINYINT      NOT NULL CONSTRAINT DF_Ath_BodyProfile_History DEFAULT 0,
-                    Goal             TINYINT      NOT NULL CONSTRAINT DF_Ath_BodyProfile_Goal DEFAULT 3,
-                    SessionsPerWeek  TINYINT      NOT NULL CONSTRAINT DF_Ath_BodyProfile_Sessions DEFAULT 3,
-                    CreationDate     DATETIME     NULL,
-                    ModificationTime DATETIME     NULL
-                );
-            END;
-            IF OBJECT_ID(N'dbo.Ath_BodyRecord', N'U') IS NULL
-            BEGIN
-                CREATE TABLE dbo.Ath_BodyRecord
-                (
-                    RecordID       INT           IDENTITY(1,1) NOT NULL CONSTRAINT PK_Ath_BodyRecord PRIMARY KEY,
-                    MemberID       INT           NOT NULL,
-                    RecordDate     CHAR(10)      NOT NULL,
-                    RecordDateTime DATETIME      NULL,
-                    WeightKg       DECIMAL(5,1)  NULL,
-                    WaistCm        DECIMAL(5,1)  NULL,
-                    AbdomenCm      DECIMAL(5,1)  NULL,
-                    ChestCm        DECIMAL(5,1)  NULL,
-                    ArmCm          DECIMAL(5,1)  NULL,
-                    ThighCm        DECIMAL(5,1)  NULL,
-                    HipCm          DECIMAL(5,1)  NULL
-                );
-                CREATE NONCLUSTERED INDEX IX_Ath_BodyRecord_Member
-                    ON dbo.Ath_BodyRecord (MemberID, RecordDate);
-                ALTER TABLE dbo.Ath_BodyRecord WITH CHECK
-                    ADD CONSTRAINT FK_Ath_BodyRecord_Profile
-                    FOREIGN KEY (MemberID) REFERENCES dbo.Ath_BodyProfile (MemberID);
-            END;
-            """);
-    }
-    catch (Exception ex)
-    {
-        // ساخت جدول شکست خورد ولی نباید بالا آمدن اپ را متوقف کند
-        app.Services.GetRequiredService<ILogger<Program>>()
-            .LogWarning(ex, "ساخت جداول تحلیل بدن (Ath_Body*) انجام نشد");
-    }
-}
-
-// ============================================================
-// 5.6) ساخت جدول اعتبارنامه‌های بیومتریک (اثر انگشت / چهره) — idempotent
-// ============================================================
-using (var scope = app.Services.CreateScope())
-{
-    try
-    {
-        var db = scope.ServiceProvider.GetRequiredService<FullSportDbContext>();
-        await db.Database.ExecuteSqlRawAsync("""
-            IF OBJECT_ID(N'dbo.Sec_BiometricCredential', N'U') IS NULL
-            BEGIN
-                CREATE TABLE dbo.Sec_BiometricCredential
-                (
-                    CredentialID   INT           IDENTITY(1,1) NOT NULL CONSTRAINT PK_Sec_BiometricCredential PRIMARY KEY,
-                    UserType       VARCHAR(20)   NOT NULL,
-                    UserID         INT           NOT NULL,
-                    UserName       NVARCHAR(150) NULL,
-                    WebAuthnId   NVARCHAR(600) NOT NULL,
-                    PublicKeySpki  NVARCHAR(MAX) NOT NULL,
-                    Alg            INT           NOT NULL CONSTRAINT DF_Sec_Biometric_Alg DEFAULT (-7),
-                    SignCount      BIGINT        NOT NULL CONSTRAINT DF_Sec_Biometric_Counter DEFAULT (0),
-                    DeviceLabel    NVARCHAR(200) NULL,
-                    CreatedAt      DATETIME      NOT NULL CONSTRAINT DF_Sec_Biometric_Created DEFAULT (GETDATE()),
-                    LastUsedAt     DATETIME      NULL
-                );
-                CREATE INDEX IX_Sec_Biometric_User
-                    ON dbo.Sec_BiometricCredential (UserType, UserID);
-            END;
-            """);
-    }
-    catch (Exception ex)
-    {
-        app.Services.GetRequiredService<ILogger<Program>>()
-            .LogWarning(ex, "ساخت جدول اعتبارنامه‌های بیومتریک (Sec_BiometricCredential) انجام نشد");
-    }
-}
 
 // ============================================================
 // 6) Middleware Pipeline
