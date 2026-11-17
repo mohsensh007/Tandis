@@ -7,7 +7,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#EFF6FF" />
+    <meta name="theme-color" content="#DCE5F0" />
+    <script>(function(){try{var t=localStorage.getItem('tandis-theme');if(!t)t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
+    <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/theme-cool-mist.css" asp-append-version="true" />
     <title>QR باشگاه شما</title>
     <style>
         * { box-sizing: border-box; }
@@ -20,8 +23,8 @@
             align-items: center;
             justify-content: center;
             padding: calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));
-            background: radial-gradient(circle at 50% 0%, #FFFFFF 0%, #EFF6FF 62%);
-            color: #172554;
+            background: radial-gradient(circle at 50% 0%, var(--g-surface-solid) 0%, var(--g-surface-solid) 62%);
+            color: var(--g-text);
             font-family: 'Sahel', Tahoma, Arial, sans-serif;
         }
 
@@ -31,9 +34,9 @@
             text-align: center;
             padding: 26px 20px 22px;
             border-radius: 26px;
-            background: rgba(255,255,255,.8);
-            border: 1px solid rgba(59,130,246,.35);
-            box-shadow: 0 22px 60px rgba(23,37,84,.45), inset 0 1px 0 rgba(23,37,84,.07);
+            background: color-mix(in srgb, var(--g-surface-solid) 80%, transparent);
+            border: 1px solid color-mix(in srgb, var(--g-primary) 35%, transparent);
+            box-shadow: 0 22px 60px color-mix(in srgb, var(--g-text) 45%, transparent), inset 0 1px 0 color-mix(in srgb, var(--g-text) 7%, transparent);
             -webkit-backdrop-filter: blur(16px);
             backdrop-filter: blur(16px);
         }
@@ -46,7 +49,7 @@
 
         .qr-sub {
             font-size: .78rem;
-            color: #172554;
+            color: var(--g-text);
             margin: 0 0 18px;
         }
 
@@ -54,8 +57,8 @@
             display: inline-block;
             padding: 14px;
             border-radius: 20px;
-            background: #EFF6FF;
-            box-shadow: 0 10px 30px rgba(23,37,84,.35);
+            background: #EDF2F8;
+            box-shadow: var(--g-shadow);
         }
 
             .qr-box img {
@@ -66,12 +69,12 @@
 
         .qr-note {
             font-size: .8rem;
-            color: #172554;
+            color: var(--g-text);
             line-height: 1.9;
             margin: 18px 0 0;
         }
 
-            .qr-note b { color: #3B82F6; }
+            .qr-note b { color: var(--g-primary); }
 
         .qr-actions {
             display: flex;
@@ -90,23 +93,23 @@
             font-size: .85rem;
             font-weight: 700;
             text-decoration: none;
-            border: 1px solid rgba(59,130,246,.55);
-            color: #172554;
-            background: rgba(59,130,246,.55);
+            border: 1px solid color-mix(in srgb, var(--g-primary) 55%, transparent);
+            color: var(--g-text);
+            background: color-mix(in srgb, var(--g-primary) 55%, transparent);
             cursor: pointer;
             font-family: inherit;
         }
 
             .qr-btn.primary {
-                background: #3B82F6;
-                border-color: #3B82F6;
-                color: #172554;
+                background: var(--g-primary);
+                border-color: var(--g-primary);
+                color: var(--g-text);
             }
 
         @@media print {
-            body { background: #EFF6FF; color: #172554; }
-            .qr-card { box-shadow: none; border-color: #BFDBFE; background: #EFF6FF; }
-            .qr-sub, .qr-note { color: #172554; }
+            body { background: var(--g-surface-solid); color: var(--g-text); }
+            .qr-card { box-shadow: none; border-color: var(--g-nested-solid); background: var(--g-surface-solid); }
+            .qr-sub, .qr-note { color: var(--g-text); }
             .qr-actions { display: none; }
         }
     </style>
@@ -132,5 +135,6 @@
             }
         </div>
     </main>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
 </body>
 </html>

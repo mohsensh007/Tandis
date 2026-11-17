@@ -1,0 +1,456 @@
+/* Cool Mist and Midnight Blue shared design system */
+:root {
+    --g-bg: #DCE5F0;
+    --g-surface-solid: #EDF2F8;
+    --g-nested-solid: #CBD9E9;
+    --g-primary: #527DBB;
+    --g-text: #263750;
+    --g-main: rgba(237, 242, 248, .70);
+    --g-card: rgba(237, 242, 248, .60);
+    --g-nested: rgba(203, 217, 233, .50);
+    --g-main-solid: #EDF2F8;
+    --g-card-solid: #EDF2F8;
+    --g-nested-solid-fallback: #CBD9E9;
+    --g-border: rgba(82, 125, 187, .28);
+    --g-border-soft: rgba(82, 125, 187, .18);
+    --g-border-strong: rgba(82, 125, 187, .44);
+    --g-text-soft: rgba(38, 55, 80, .80);
+    --g-muted: rgba(38, 55, 80, .68);
+    --g-primary-soft: rgba(82, 125, 187, .14);
+    --g-primary-hover: rgba(82, 125, 187, .22);
+    --g-primary-action: color-mix(in srgb, var(--g-primary) 84%, var(--g-text));
+    --g-on-primary: #EDF2F8;
+    --g-highlight: rgba(237, 242, 248, .72);
+    --g-input: rgba(237, 242, 248, .72);
+    --g-track: rgba(203, 217, 233, .72);
+    --g-backdrop: rgba(38, 55, 80, .30);
+    --g-shadow: 0 12px 34px rgba(38, 55, 80, .12);
+    --g-shadow-lg: 0 24px 64px rgba(38, 55, 80, .18);
+    --g-inset: inset 0 1px 0 rgba(237, 242, 248, .78);
+    --g-blur-main: 20px;
+    --g-blur-card: 14px;
+    --g-blur-nested: 10px;
+    --bs-body-color: #263750;
+    --bs-body-bg: #DCE5F0;
+    --bs-emphasis-color: #263750;
+    --bs-heading-color: #263750;
+    --bs-secondary-color: rgba(38, 55, 80, .68);
+    --bs-border-color: rgba(82, 125, 187, .22);
+    --bs-link-color: #527DBB;
+    --bs-link-hover-color: #263750;
+    --lu-darkest: #263750;
+    --lu-dark: #527DBB;
+    --lu-light: #CBD9E9;
+    --lu-navy: #263750;
+    --lu-text: #263750;
+    --lu-muted: rgba(38, 55, 80, .68);
+    --lu-glass-text: #263750;
+    --lu-glass-border: rgba(82, 125, 187, .28);
+    --lu-glass-shadow: 0 16px 40px rgba(38, 55, 80, .14);
+    --lu-line: rgba(82, 125, 187, .24);
+    --lu-cyan: #527DBB;
+    --lu-teal: #527DBB;
+    --lu-steel: #CBD9E9;
+    --lu-deep: #263750;
+    color-scheme: light;
+}
+
+html[data-theme="dark"] {
+    --g-bg: #0B1220;
+    --g-surface-solid: #111C2E;
+    --g-nested-solid: #1E293B;
+    --g-primary: #60A5FA;
+    --g-text: #F1F5F9;
+    --g-main: rgba(17, 28, 46, .74);
+    --g-card: rgba(30, 41, 59, .62);
+    --g-nested: rgba(17, 28, 46, .58);
+    --g-main-solid: #111C2E;
+    --g-card-solid: #1E293B;
+    --g-nested-solid-fallback: #111C2E;
+    --g-border: rgba(96, 165, 250, .28);
+    --g-border-soft: rgba(96, 165, 250, .17);
+    --g-border-strong: rgba(96, 165, 250, .46);
+    --g-text-soft: rgba(241, 245, 249, .82);
+    --g-muted: rgba(241, 245, 249, .66);
+    --g-primary-soft: rgba(96, 165, 250, .15);
+    --g-primary-hover: rgba(96, 165, 250, .24);
+    --g-primary-action: #60A5FA;
+    --g-on-primary: #0B1220;
+    --g-highlight: rgba(241, 245, 249, .07);
+    --g-input: rgba(11, 18, 32, .66);
+    --g-track: rgba(30, 41, 59, .88);
+    --g-backdrop: rgba(11, 18, 32, .72);
+    --g-shadow: 0 14px 38px rgba(11, 18, 32, .58);
+    --g-shadow-lg: 0 26px 70px rgba(11, 18, 32, .72);
+    --g-inset: inset 0 1px 0 rgba(241, 245, 249, .07);
+    --bs-body-color: #F1F5F9;
+    --bs-body-bg: #0B1220;
+    --bs-emphasis-color: #F1F5F9;
+    --bs-heading-color: #F1F5F9;
+    --bs-secondary-color: rgba(241, 245, 249, .66);
+    --bs-border-color: rgba(96, 165, 250, .22);
+    --bs-link-color: #60A5FA;
+    --bs-link-hover-color: #F1F5F9;
+    --lu-darkest: #F1F5F9;
+    --lu-dark: #111C2E;
+    --lu-light: #1E293B;
+    --lu-navy: #0B1220;
+    --lu-text: #F1F5F9;
+    --lu-muted: rgba(241, 245, 249, .66);
+    --lu-glass-text: #F1F5F9;
+    --lu-glass-border: rgba(96, 165, 250, .28);
+    --lu-glass-shadow: 0 16px 40px rgba(11, 18, 32, .58);
+    --lu-line: rgba(96, 165, 250, .22);
+    --lu-cyan: #60A5FA;
+    --lu-teal: #60A5FA;
+    --lu-steel: #1E293B;
+    --lu-deep: #0B1220;
+    color-scheme: dark;
+}
+
+html[data-theme], html[data-theme] body {
+    min-height: 100%;
+    background-color: var(--g-bg) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) {
+    background-image:
+        radial-gradient(900px 560px at 92% -10%, var(--g-primary-hover), transparent 66%),
+        radial-gradient(760px 520px at -8% 18%, var(--g-primary-soft), transparent 68%),
+        radial-gradient(880px 620px at 48% 112%, var(--g-primary-soft), transparent 66%),
+        linear-gradient(145deg, var(--g-bg), var(--g-nested-solid) 145%) !important;
+    background-attachment: fixed !important;
+    accent-color: var(--g-primary);
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app)::before {
+    background-image: linear-gradient(135deg, var(--g-primary-soft), transparent) !important;
+    opacity: .55;
+}
+
+html.theme-anim body, html.theme-anim body * {
+    transition: background-color .28s ease, color .28s ease, border-color .28s ease, box-shadow .28s ease !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) ::selection { background: var(--g-primary) !important; color: var(--g-on-primary) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) ::-webkit-scrollbar { width: 10px; height: 10px; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) ::-webkit-scrollbar-track { background: var(--g-bg) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) ::-webkit-scrollbar-thumb { background: var(--g-border-strong) !important; border: 2px solid var(--g-bg); border-radius: 999px; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    .glass-strong, .login-glass-card, .modal-content, .offcanvas,
+    .dropdown-menu, .select2-container .select2-dropdown, .popover,
+    .dk-box, .dk-pay-box, .ath-lock-box, .bio-dialog,
+    .admin-settings-section, .admin-report-all-panel,
+    .commerce-hero, .commerce-basket-bar, .desk-summary
+) {
+    background: var(--g-main) !important;
+    background-image: linear-gradient(155deg, var(--g-highlight), transparent 42%) !important;
+    -webkit-backdrop-filter: blur(var(--g-blur-main)) saturate(1.12) !important;
+    backdrop-filter: blur(var(--g-blur-main)) saturate(1.12) !important;
+    border: 1px solid var(--g-border) !important;
+    box-shadow: var(--g-shadow-lg), var(--g-inset) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    header, .navbar, .site-header, .app-header, .topbar, .top-bar,
+    .admin-header, .admin-topbar, .admin-top-nav, .coach-header, .coach-top-nav,
+    .mh-header, .mh2, .mobile-header, .desk-head, .dk-top,
+    .sidebar, .side-bar, .admin-sidebar, .coach-sidebar,
+    .mobile-nav, .bottom-nav, .mh-bottom-nav, .admin-bottom-nav, .coach-bottom-nav
+) {
+    background: var(--g-main) !important;
+    background-image: linear-gradient(180deg, var(--g-highlight), transparent) !important;
+    -webkit-backdrop-filter: blur(var(--g-blur-main)) saturate(1.12) !important;
+    backdrop-filter: blur(var(--g-blur-main)) saturate(1.12) !important;
+    border-color: var(--g-border-soft) !important;
+    box-shadow: var(--g-shadow) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    .card, .glass, .glass-card, .glass-surface, .purple-style, .panel, .tile, .widget, .box, .surface,
+    .dash-card, .sanse-card, .session-card, .stat-card, .stats-card, .kpi, .metric-card,
+    .info-card, .section-card, .content-card, .table-card, .form-card, .auth-card, .login-card, .list-card,
+    .chart-card, .chart-box, .ath-card, .ath-stat, .ba-card, .ba-chart-box,
+    .msg-card, .msg-body-box, .note-box, .pe-card, .pe-item-card, .rep-card, .trf-card, .stu-panel,
+    .nav-card, .day-select-box, .empty-state, .att-cal-panel, .att-stats, .session-stats, .ath-stats,
+    .cf-card, .report-card, .admin-report-slide, .rgh-stat, .mpl-card, .mpl-stat, .pg-card,
+    .member-reports-card, .member-report-state, .sum-ring-wrap, .mp-info, .mp-day, .mp-empty, .mp-entry,
+    .admin-setting-card, .ch-main-card, .ch-share-card, .ch-side-card,
+    .coach-banner, .coach-card, .cstat-card, .cc-card, .cs-card, .sd-card, .sd-box,
+    .ms-card, .ch-box, .ch-form-card, .cm-filter, .cm-card, .cm-box, .pd-info, .pd-day,
+    .desk-card, .dc-card, .shift-banner, .sb-card,
+    .commerce-panel, .commerce-card, .commerce-product-card, .product-card, .service-card,
+    .member-card, .profile-card, .ticket-card, .plan-card, .rc-card, .admin-report-card, .admin-report-item, .qr-card
+) {
+    background: var(--g-card) !important;
+    background-image: linear-gradient(155deg, var(--g-highlight), transparent 46%) !important;
+    -webkit-backdrop-filter: blur(var(--g-blur-card)) saturate(1.1) !important;
+    backdrop-filter: blur(var(--g-blur-card)) saturate(1.1) !important;
+    border: 1px solid var(--g-border) !important;
+    box-shadow: var(--g-shadow), var(--g-inset) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    .nested, .inner-card, .sub-card, .money-cell, .list-group-item,
+    .card-header, .card-footer, .panel-header, .panel-footer, .modal-header, .modal-footer,
+    .grad-header, .card-head-purple, .coach-card-head, .sd-box-head, .cm-box-head, .stu-head,
+    .ch-main-head, .rc-head, .admin-report-all-header, .panel-head,
+    .admin-report-grid, .report-grid, .settings-grid, .mp-list, .mpf-bar, .mp-day-head,
+    .ch-chart-wrap, .desk-grid, .desk-list, .stu-grid, .pg-list, .cm-grid, .cs-grid, .ms-grid,
+    .ba-grid, .ath-grid, .pe-grid, .commerce-category-panel, .commerce-cart-panel,
+    .rec-panel, .ss-confirm-panel, .bd-panel, .done-info-box, .face-status-box, .renew-info-box,
+    .sent-table-wrap, .inside-table-wrap, .mp-ex, .desk-item, .ath-stat-row, .msg-item,
+    .mp-combo, .mp-tech, .mp-note, .mp-tech-drop, .txn-row,
+    .dk-member-inner, .dk-open-inner, .dk-chosen, .dk-member, .dk-note, .qr-box, .bd-tile,
+    .rules-box, .rules-card, .bd-rules
+) {
+    background: var(--g-nested) !important;
+    background-image: none !important;
+    -webkit-backdrop-filter: blur(var(--g-blur-nested)) !important;
+    backdrop-filter: blur(var(--g-blur-nested)) !important;
+    border-color: var(--g-border-soft) !important;
+    box-shadow: var(--g-inset) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.card, .panel, .glass-card, .purple-style) :is(.card, .panel, .glass-card, .inner-card, .sub-card) {
+    background: var(--g-nested) !important;
+    background-image: none !important;
+    -webkit-backdrop-filter: blur(var(--g-blur-nested)) !important;
+    backdrop-filter: blur(var(--g-blur-nested)) !important;
+    border-color: var(--g-border-soft) !important;
+    box-shadow: var(--g-inset) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.card-body, .card > .card-body, .panel-body) {
+    background: transparent !important;
+    border-color: var(--g-border-soft) !important;
+    box-shadow: none !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6) { color: var(--g-text) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    p, li, dt, dd, label, legend, caption, address, blockquote,
+    .text-dark, .text-black, .text-body, .text-body-secondary, .text-light, .text-white,
+    .admin-settings-title, .rc-title, .admin-report-title, .ch-main-title, .ch-share-title,
+    .ch-side-title, .admin-report-label, .mp-day-title, .mp-coach, .mp-period, .mp-ex-name,
+    .mp-combo-title, .mp-combo-name, .mp-tech, .mp-note, .mp-pill, .mp-pill-sm, .mp-type,
+    .mp-tempo-desc, .mp-entry-title, .asc-title, .rc-arrow, .dk-commerce-title,
+    .dk-pay-box h2, .dk-pay-amount, .sb-title, .brand-text, .desk-brand b
+) { color: var(--g-text) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    .text-muted, .text-secondary, .text-white-50, .muted, .sub, .subtitle, .desc, .hint,
+    .form-text, small, .rc-desc, .asc-desc, .mp-entry-sub, .ch-main-sub, .ch-help p,
+    .ch-side-nums small, .ch-side-foot, .ch-legend, .ch-range.prev, .ch-delta small,
+    .commerce-kicker, .commerce-muted, .commerce-status, .dc-sub, .dc-desc,
+    .dk-member span, .dk-member-inner span, .dk-pay-help, .dk-pay-note, .desk-brand span, .sb-sub
+) { color: var(--g-muted) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link):not(.desk-item):not(.nav-card) { color: var(--g-primary) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link):hover { color: var(--g-text) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    .navbar a, .navbar span, .navbar strong, .navbar i, .site-header a, .topbar a,
+    .sidebar a, .mobile-nav a, .bottom-nav a, .nav-link, .dropdown-item,
+    .hdr-club, .desk-user, .mh2-club, .dk-back, .menu-item, .side-link,
+    .cbn-item, .abn-item, .bn-item, .mh2-nav a
+) { color: var(--g-text-soft) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.bi, [class^="bi-"], [class*=" bi-"], .icon, .dc-icon, .asc-icon, .rc-icon) { color: currentColor; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.mp-entry-icon i, .mp-pill i, .mp-pill-sm i, .mp-tech > i, .asc-icon i, .rc-icon i, .dc-icon i, .commerce-price, .text-primary) { color: var(--g-primary) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]):not([type=submit]):not([type=button]):not([type=hidden]),
+    select, textarea, .form-control, .form-select, .select2-selection
+) {
+    background: var(--g-input) !important;
+    background-image: none !important;
+    border: 1px solid var(--g-border) !important;
+    border-radius: 12px !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text);
+    box-shadow: inset 0 1px 0 var(--g-highlight) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(input, select, textarea, .form-control, .form-select):focus {
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text);
+    border-color: var(--g-primary) !important;
+    box-shadow: 0 0 0 3px var(--g-primary-soft) !important;
+    outline: none !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(input, textarea, .form-control)::placeholder { color: var(--g-muted) !important; -webkit-text-fill-color: var(--g-muted); opacity: 1 !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(option, optgroup) { background: var(--g-surface-solid) !important; color: var(--g-text) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(label, .form-label, .control-label, .recipient-button-label) { color: var(--g-text-soft) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.input-group-text, .form-check-input) { background: var(--g-input) !important; color: var(--g-text) !important; border-color: var(--g-border) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(input[type=checkbox], input[type=radio]) { accent-color: var(--g-primary); color: var(--g-text) !important; border-color: var(--g-primary) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .form-check-input:checked { background-color: var(--g-primary) !important; border-color: var(--g-primary) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(input, select, textarea, .form-control, .form-select):disabled { background: var(--g-nested-solid-fallback) !important; color: var(--g-muted) !important; -webkit-text-fill-color: var(--g-muted); opacity: 1; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    .btn, .btn-primary, .btn-success, .btn-info, .btn-fill, .btn-solid, .btn-purple, .btn-gradient,
+    .pe-save-btn, .pg-edit-btn, .pg-new-btn, .cm-apply, .combo-add-btn, .pe-add-btn,
+    .commerce-add, .commerce-buy, .btn-buy-basket, .dk-pay-btn.btn-primary
+) {
+    background: var(--g-primary) !important;
+    background: var(--g-primary-action) !important;
+    background-image: none !important;
+    color: var(--g-on-primary) !important;
+    -webkit-text-fill-color: var(--g-on-primary);
+    border: 1px solid var(--g-primary) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 7px 20px var(--g-primary-soft), inset 0 1px 0 var(--g-highlight) !important;
+    font-weight: 750;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.btn, .btn-primary, .commerce-add, .commerce-buy) :is(i, span, svg) { color: inherit !important; -webkit-text-fill-color: currentColor; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.btn-primary, .btn, .commerce-add, .commerce-buy):hover { background: var(--g-primary) !important; color: var(--g-on-primary) !important; -webkit-text-fill-color: var(--g-on-primary); border-color: var(--g-primary) !important; filter: brightness(1.04); }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    .btn-secondary, .btn-light, .btn-outline, .btn-outline-primary, .btn-outline-secondary, .btn-outline-light,
+    .btn-ghost, .btn-glass, .btn-back-glass, .btn-logout-glass, .btn-key-glass,
+    .cm-back-pill, .coach-back-pill, .pg-view-btn, .pg-del-btn, .class-btn, .cm-month,
+    .dk-pay-btn.btn-glass, .dk-back, .theme-toggle, .desk-user, .qr-btn, .bd-cal-btn
+) {
+    background: var(--g-nested) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text);
+    border: 1px solid var(--g-border) !important;
+    box-shadow: var(--g-inset) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.btn-secondary, .btn-light, .btn-outline-primary, .btn-outline-secondary, .btn-ghost, .btn-glass, .btn-back-glass, .btn-logout-glass, .dk-back, .theme-toggle):hover { background: var(--g-primary-soft) !important; color: var(--g-text) !important; -webkit-text-fill-color: var(--g-text); border-color: var(--g-primary) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .qr-btn.primary { background: var(--g-primary-action) !important; color: var(--g-on-primary) !important; -webkit-text-fill-color: var(--g-on-primary); border-color: var(--g-primary) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .qr-note b { color: var(--g-primary) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.btn-danger, .btn-warning, .pg-del-btn.danger) { background: var(--g-text) !important; background-image: none !important; color: var(--g-bg) !important; -webkit-text-fill-color: var(--g-bg); border-color: var(--g-text) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.btn, button, .dk-pay-btn):disabled, html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.btn, button).disabled { background: var(--g-nested-solid-fallback) !important; background-image: none !important; color: var(--g-muted) !important; -webkit-text-fill-color: var(--g-muted); border-color: var(--g-border-soft) !important; box-shadow: none !important; opacity: 1 !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.nav-tabs, .tabs, .ch-period, .rep-tabs, .list-group) { background: var(--g-nested) !important; border: 1px solid var(--g-border-soft) !important; border-radius: 14px !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    .badge, .chip, .pill, .tag, .delta-badge, [class*="badge-"],
+    .ch-pill, .ch-navbtn, .mpf-chip, .mp-badge, .mp-pill, .mp-pill-sm, .mp-type, .mp-day-count,
+    .cb-chip, .cs-count, .pg-badge, .pd-badge, .pd-pill, .pd-pill-sm, .class-pill, .cc-pill,
+    .cs-pill, .pg-pill, .status-badge, .stt, .cm-rev, .cm-new, .ff-chip, .filter-pill,
+    .desk-chip button, .desk-amount button, .btn-all-reports, .dk-credits em,
+    .period-btn, .seg-btn, .rep-tab, .commerce-category-button
+) {
+    background: var(--g-nested) !important;
+    background-image: none !important;
+    border: 1px solid var(--g-border-soft) !important;
+    color: var(--g-text-soft) !important;
+    -webkit-text-fill-color: var(--g-text-soft);
+    box-shadow: var(--g-inset) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    .badge.bg-primary, .badge-primary, .ch-pill.active, .ch-pill.ch-pill-on,
+    .mpf-chip.active, .mpf-chip.mpf-on, .mp-badge.mp-on, .desk-chip button.on,
+    .pill-active, .active-pill, .nav-pill.active, .mp-pill.on, .period-btn.active,
+    .seg-btn.active, .rep-tab.active, .commerce-category-button.active,
+    .nav-tabs .nav-link.active, .tab.active, .tab-btn.active, .btn-check:checked + .period-btn
+) { background: var(--g-primary-action) !important; color: var(--g-on-primary) !important; -webkit-text-fill-color: var(--g-on-primary); border-color: var(--g-primary) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    .nav-link.active, .nav-link.nav-active, .dropdown-item.active, .list-group-item.active,
+    .sidebar a.active, .mobile-nav a.active, .bottom-nav a.active, .nav-item.active > .nav-link,
+    .menu-item.active, .side-item.active, .cbn-item.cbn-active, .abn-item.abn-active, .bn-item.active
+) { background: var(--g-primary-soft) !important; color: var(--g-primary) !important; border-color: var(--g-border) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.nav-link, .dropdown-item, .list-group-item, .menu-item, .side-link) { background-color: transparent !important; color: var(--g-text-soft) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.dropdown-item, .nav-link):hover { background: var(--g-primary-soft) !important; color: var(--g-text) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.table-responsive, .table, table) {
+    --bs-table-color: var(--g-text);
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--g-border-soft);
+    --bs-table-striped-bg: var(--g-primary-soft);
+    --bs-table-striped-color: var(--g-text);
+    --bs-table-hover-bg: var(--g-primary-hover);
+    --bs-table-hover-color: var(--g-text);
+    background: transparent !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(table thead th, .table thead th, .ba-table th) { background: var(--g-nested-solid-fallback) !important; color: var(--g-text) !important; border-color: var(--g-border) !important; font-weight: 750; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(table td, table th, .table > :not(caption) > * > *, .ba-table td) { background-color: transparent !important; color: var(--g-text) !important; border-color: var(--g-border-soft) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(table tbody tr:hover > *, .table tbody tr:hover > *) { background: var(--g-primary-soft) !important; color: var(--g-text) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.alert, .toast, .notification, .dk-toast, .app-toast, .bio-notification) {
+    background: var(--g-main) !important;
+    background-image: linear-gradient(155deg, var(--g-highlight), transparent) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border) !important;
+    border-radius: 14px !important;
+    -webkit-backdrop-filter: blur(var(--g-blur-main)) !important;
+    backdrop-filter: blur(var(--g-blur-main)) !important;
+    box-shadow: var(--g-shadow-lg) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.modal-backdrop, .dk-modal, .dk-pay-modal, .dk-glass-backdrop, .ath-lock-modal, .bio-backdrop) { background: var(--g-backdrop) !important; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .modal-backdrop.show { opacity: 1; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .tooltip-inner { background: var(--g-text) !important; color: var(--g-bg) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .progress { background: var(--g-track) !important; border: 1px solid var(--g-border-soft) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .progress-bar { background: var(--g-primary) !important; color: var(--g-on-primary) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.page-link, .pagination a) { background: var(--g-nested) !important; color: var(--g-text) !important; border: 1px solid var(--g-border-soft) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.page-item.active .page-link, .pagination .active a) { background: var(--g-primary-action) !important; color: var(--g-on-primary) !important; border-color: var(--g-primary) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.empty, .empty-state, .no-data, .commerce-empty) { color: var(--g-muted) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.rc-icon, .asc-icon, .dc-icon, .admin-report-all-close) { background: var(--g-primary-soft) !important; border: 1px solid var(--g-border) !important; color: var(--g-primary) !important; box-shadow: var(--g-inset) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(
+    .stat-card, .dash-card, .sanse-card, .session-card, .ath-card, .pe-card, .rep-card,
+    .pg-card, .report-card, .admin-report-slide, .mp-entry, .admin-setting-card,
+    .ch-main-card, .ch-share-card, .ch-side-card, .cc-card, .cs-card, .ms-card,
+    .cstat-card, .sd-card, .cm-card, .pd-info, .desk-card, .commerce-product-card
+):hover { border-color: var(--g-border-strong) !important; box-shadow: var(--g-shadow-lg), var(--g-inset) !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.bg-white, .bg-light, .bg-body, .bg-white-50) { background: var(--g-nested) !important; color: var(--g-text) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.border, .border-top, .border-bottom, .border-start, .border-end, hr) { border-color: var(--g-border-soft) !important; opacity: 1; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen, html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-background { background-color: var(--g-bg) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-background { background-image: radial-gradient(circle at 18% 6%, var(--g-primary-hover), transparent 36rem), radial-gradient(circle at 82% 12%, var(--g-primary-soft), transparent 32rem), linear-gradient(155deg, var(--g-bg), var(--g-nested-solid)) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .bg-overlay { background: linear-gradient(180deg, transparent, var(--g-primary-soft)) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.ch-axlabel, .ch-donut-center) { fill: var(--g-primary) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.ch-gridline, .ch-gridline-main) { stroke: var(--g-border) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(#chLine, #chDot) { stroke: var(--g-primary) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) #chLinePrev { stroke: var(--g-muted) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(#chArea, #chAreaPrev) { fill: var(--g-primary-soft) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(#chDot, #chDotPrev) { fill: var(--g-primary) !important; stroke: var(--g-surface-solid) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) #chCursor { stroke: var(--g-text-soft) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .ch-tooltip { background: var(--g-main-solid) !important; border: 1px solid var(--g-border) !important; color: var(--g-text) !important; box-shadow: var(--g-shadow) !important; }
+
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 42px; height: 42px; padding: 0; border-radius: 14px; cursor: pointer; font-size: 1.15rem; line-height: 1; transition: transform .2s ease, background-color .25s ease, color .25s ease; }
+.theme-toggle:hover { transform: translateY(-1px); }
+.theme-toggle:focus-visible { outline: 2px solid var(--g-primary); outline-offset: 2px; }
+.theme-toggle-floating { position: fixed; top: 12px; left: 12px; z-index: 1090; }
+.bi-fingerprint { font-size: 1.6em !important; line-height: 1 !important; vertical-align: -.12em; }
+button .bi-fingerprint, .desk-user .bi-fingerprint, .mh2-bio .bi-fingerprint, .btn-logout-glass .bi-fingerprint { font-size: 1.85em !important; }
+#btnDeskBio, .mh2-bio, button[data-bio-enroll] { min-width: 46px; min-height: 46px; display: inline-flex; align-items: center; justify-content: center; padding: 8px !important; }
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) [style*="#172554" i], html[data-theme] body:not(#lu):not(#mt-theme):not(#app) [style*="23,37,84" i], html[data-theme] body:not(#lu):not(#mt-theme):not(#app) [style*="23, 37, 84" i] { color: var(--g-text) !important; }
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) [style*="#3B82F6" i] { color: var(--g-primary) !important; }
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) :is([style*="background:#fff" i], [style*="background: #fff" i], [style*="background:#EFF6FF" i], [style*="background: #EFF6FF" i], [style*="background-color:#fff" i], [style*="background-color: #fff" i], [style*="background-color:#EFF6FF" i], [style*="background-color: #EFF6FF" i]) { background: var(--g-nested) !important; color: var(--g-text) !important; }
+
+@supports not ((backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))) {
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.glass-strong, .login-glass-card, .modal-content, .offcanvas, .dropdown-menu, header, .navbar, .admin-top-nav, .coach-top-nav, .bottom-nav, .admin-bottom-nav, .coach-bottom-nav, .desk-head, .dk-box, .dk-pay-box) { background: var(--g-main-solid) !important; }
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.card, .glass-card, .glass-surface, .purple-style, .panel, .stat-card, .report-card, .admin-setting-card, .coach-card, .mp-entry, .desk-card, .commerce-card, .commerce-product-card, .commerce-panel) { background: var(--g-card-solid) !important; }
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.nested, .inner-card, .sub-card, .list-group-item, .card-header, .card-footer, .mp-ex, .desk-item, .ath-stat-row, .msg-item, .dk-note) { background: var(--g-nested-solid-fallback) !important; }
+}
+
+@media (max-width: 767.98px) { :root { --g-blur-main: 16px; --g-blur-card: 12px; } }
+@media (prefers-reduced-motion: reduce) { html.theme-anim body, html.theme-anim body * { transition: none !important; } }
+@media print {
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) { background: #EDF2F8 !important; color: #263750 !important; }
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.card, .panel, .modal-content, .glass-card, .purple-style) { background: #EDF2F8 !important; color: #263750 !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+}

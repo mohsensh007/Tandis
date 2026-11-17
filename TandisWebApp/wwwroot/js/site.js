@@ -19,22 +19,15 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
         (function () {
             var css = '' +
                 '#toastContainer.tandis-toasts{position:fixed !important;top:calc(16px + env(safe-area-inset-top)) !important;left:0 !important;right:0 !important;margin:0 auto !important;width:calc(100% - 32px) !important;max-width:420px !important;display:flex !important;flex-direction:column !important;gap:10px !important;z-index:4000 !important;pointer-events:none !important;background:transparent !important;border:none !important;padding:0 !important;}' +
-                '#toastContainer .tandis-toast{display:flex !important;align-items:flex-start !important;gap:10px !important;width:100% !important;max-width:100% !important;background:linear-gradient(135deg,rgba(23, 37, 84,.30),rgba(59, 130, 246,.26)) !important;backdrop-filter:blur(14px) !important;-webkit-backdrop-filter:blur(14px) !important;border:1px solid rgba(191,219,254,.45) !important;border-radius:16px !important;padding:12px 16px !important;color:#fff !important;box-shadow:0 16px 40px rgba(23,37,84,.35) !important;opacity:1 !important;pointer-events:auto !important;position:relative !important;overflow:hidden !important;animation:toastPop .35s cubic-bezier(.22,.9,.35,1.2) !important;}' +
-                '#toastContainer .tandis-toast::before{content:"";position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,rgba(59, 130, 246,.30),transparent 70%);pointer-events:none;}' +
-                '#toastContainer .tandis-toast::after{content:"";position:absolute;bottom:-50px;left:-30px;width:110px;height:110px;background:radial-gradient(circle,rgba(59, 130, 246,.35),transparent 70%);pointer-events:none;}' +
-                '#toastContainer .tandis-toast.success{border-right:4px solid #3B82F6 !important;}' +
-                '#toastContainer .tandis-toast.error{border-right:4px solid #172554 !important;}' +
-                '#toastContainer .tandis-toast.warning{border-right:4px solid #3B82F6 !important;}' +
-                '#toastContainer .tandis-toast.info{border-right:4px solid #3B82F6 !important;}' +
-                '#toastContainer .tandis-toast .tandis-toast-icon{flex:0 0 auto !important;width:22px !important;height:22px !important;margin-top:1px;}' +
-                '#toastContainer .tandis-toast.success .tandis-toast-icon{stroke:#3B82F6 !important;}' +
-                '#toastContainer .tandis-toast.error .tandis-toast-icon{stroke:#172554 !important;}' +
-                '#toastContainer .tandis-toast.warning .tandis-toast-icon{stroke:#3B82F6 !important;}' +
-                '#toastContainer .tandis-toast.info .tandis-toast-icon{stroke:#3B82F6 !important;}' +
+                '#toastContainer .tandis-toast{display:flex !important;align-items:flex-start !important;gap:10px !important;width:100% !important;max-width:100% !important;background:var(--g-main) !important;backdrop-filter:blur(var(--g-blur-main)) !important;-webkit-backdrop-filter:blur(var(--g-blur-main)) !important;border:1px solid var(--g-border) !important;border-radius:16px !important;padding:12px 16px !important;color:var(--g-text) !important;box-shadow:var(--g-shadow-lg) !important;opacity:1 !important;pointer-events:auto !important;position:relative !important;overflow:hidden !important;animation:toastPop .35s cubic-bezier(.22,.9,.35,1.2) !important;}' +
+                '#toastContainer .tandis-toast::before{content:"";position:absolute;top:-40px;right:-40px;width:120px;height:120px;background:radial-gradient(circle,var(--g-primary-soft),transparent 70%);pointer-events:none;}' +
+                '#toastContainer .tandis-toast::after{content:"";position:absolute;bottom:-50px;left:-30px;width:110px;height:110px;background:radial-gradient(circle,var(--g-primary-soft),transparent 70%);pointer-events:none;}' +
+                '#toastContainer .tandis-toast{border-right:4px solid var(--g-primary) !important;}' +
+                '#toastContainer .tandis-toast .tandis-toast-icon{flex:0 0 auto !important;width:22px !important;height:22px !important;margin-top:1px;stroke:var(--g-primary) !important;}' +
                 '#toastContainer .tandis-toast-content{flex:1 1 auto !important;min-width:0 !important;text-align:center !important;}' +
-                '#toastContainer .tandis-toast-message{white-space:normal !important;word-break:break-word !important;line-height:1.8 !important;font-size:.86rem !important;font-weight:700 !important;color:#fff !important;}' +
-                '#toastContainer .tandis-toast-close{flex:0 0 auto !important;background:rgba(191,219,254,.35) !important;border:none !important;color:#EFF6FF !important;width:26px !important;height:26px !important;border-radius:8px !important;display:flex !important;align-items:center !important;justify-content:center !important;padding:0 !important;margin:0 !important;cursor:pointer !important;transition:all .2s !important;}' +
-                '#toastContainer .tandis-toast-close:hover{background:rgba(23,37,84,.14) !important;color:#172554 !important;}' +
+                '#toastContainer .tandis-toast-message{white-space:normal !important;word-break:break-word !important;line-height:1.8 !important;font-size:.86rem !important;font-weight:700 !important;color:var(--g-text) !important;}' +
+                '#toastContainer .tandis-toast-close{flex:0 0 auto !important;background:var(--g-nested) !important;border:1px solid var(--g-border-soft) !important;color:var(--g-text) !important;width:26px !important;height:26px !important;border-radius:8px !important;display:flex !important;align-items:center !important;justify-content:center !important;padding:0 !important;margin:0 !important;cursor:pointer !important;transition:all .2s !important;}' +
+                '#toastContainer .tandis-toast-close:hover{background:var(--g-primary-soft) !important;color:var(--g-primary) !important;}' +
                 '@keyframes toastPop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}' +
                 '@keyframes slideIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}';
             var st = document.createElement('style');
@@ -165,10 +158,10 @@ if (typeof window.__SITE_LOADED__ === 'undefined') {
     }
 
     // ===== آیکن‌های توست با رنگ تم تندیس =====
-    var ICON_SUCCESS = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
-    var ICON_ERROR = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="#172554" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
-    var ICON_WARNING = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
-    var ICON_INFO = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
+    var ICON_SUCCESS = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    var ICON_ERROR = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+    var ICON_WARNING = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>';
+    var ICON_INFO = '<svg class="tandis-toast-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>';
     var ICON_CLOSE = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
 
     var ICONS = { success: ICON_SUCCESS, error: ICON_ERROR, warning: ICON_WARNING, info: ICON_INFO };

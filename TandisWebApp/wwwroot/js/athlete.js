@@ -33,10 +33,9 @@
     function toast(msg, ok) {
         var t = document.createElement('div');
         t.textContent = msg;
+        t.className = 'bio-notification';
         t.style.cssText = 'position:fixed;top:14px;right:50%;transform:translateX(50%);z-index:3000;' +
-            'padding:10px 18px;border-radius:12px;font-weight:700;font-size:.85rem;color:#fff;' +
-            'background:' + (ok ? 'linear-gradient(135deg,#3B82F6,#172554)' : 'linear-gradient(135deg,#172554,#172554)') +
-            ';box-shadow:0 10px 26px rgba(23,37,84,.28);transition:opacity .4s;';
+            'padding:10px 18px;border-radius:12px;font-weight:700;font-size:.85rem;transition:opacity .4s;';
         document.body.appendChild(t);
         setTimeout(function () { t.style.opacity = '0'; }, 2600);
         setTimeout(function () { t.remove(); }, 3100);
@@ -241,8 +240,8 @@
             (data.logs || []).forEach(function (l) { states[l.itemID] = { done: l.isDone, seconds: l.durationSec }; }); // ✅ l.itemID, l.isDone, l.durationSec
 
             dayInfo.innerHTML =
-                (data.coachName ? 'مربی: <b style="color:#EFF6FF;">' + esc(data.coachName) + '</b> • ' : '') +
-                'روز: <b style="color:#EFF6FF;">' + esc(data.dayTitle || '—') + '</b> • ' + fa(dayItems.length) + ' حرکت';
+                (data.coachName ? 'مربی: <b style="color:var(--g-text);">' + esc(data.coachName) + '</b> • ' : '') +
+                'روز: <b style="color:var(--g-text);">' + esc(data.dayTitle || '—') + '</b> • ' + fa(dayItems.length) + ' حرکت';
 
             if (!dayItems.length) { exListBox.innerHTML = '<div class="ath-empty">برای این روز حرکتی ثبت نشده است.</div>'; updateProgress(); return; }
             exListBox.innerHTML = dayItems.map(function (it, idx) {
@@ -407,7 +406,7 @@
             if (sessionBar) sessionBar.style.display = 'none';
             pendingData = null; dayItems = []; states = {}; timers = {};
             if (!cmbProgram.value) { exListBox.innerHTML = '<div class="ath-empty">هنوز برنامه‌ی تمرینی فعالی ندارید. با مربی خود هماهنگ کنید.</div>'; dayInfo.textContent = ''; updateProgress(); return; }
-            dayInfo.innerHTML = 'روز انتخابی: <b style="color:#EFF6FF;">' + esc(cmbDay.value || '—') + '</b>';
+            dayInfo.innerHTML = 'روز انتخابی: <b style="color:var(--g-text);">' + esc(cmbDay.value || '—') + '</b>';
             exListBox.innerHTML = '<div class="ath-empty">برای دیدن حرکات این روز، «شروع تمرین» را بزنید.</div>';
             updateProgress();
         }
@@ -499,9 +498,9 @@
        ۴) ✅ خلاصه تمرین امروز — fetch زنده + حلقه و بندهای انیمیشن‌دار
        ============================================================ */
     var SUM_COLORS = [
-        ['#3B82F6', '#3B82F6'], ['#3B82F6', '#172554'], ['#3B82F6', '#3B82F6'],
-        ['#3B82F6', '#172554'], ['#172554', '#172554'], ['#BFDBFE', '#3B82F6'],
-        ['#172554', '#172554'], ['#3B82F6', '#3B82F6']
+        ['var(--g-primary)', 'var(--g-primary)'], ['var(--g-primary)', 'var(--g-text)'], ['var(--g-primary)', 'var(--g-primary)'],
+        ['var(--g-primary)', 'var(--g-text)'], ['var(--g-text)', 'var(--g-text)'], ['var(--g-nested-solid)', 'var(--g-primary)'],
+        ['var(--g-text)', 'var(--g-text)'], ['var(--g-primary)', 'var(--g-primary)']
     ];
 
     function summaryReducedMotion() {

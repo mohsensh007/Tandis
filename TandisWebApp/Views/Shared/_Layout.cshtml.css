@@ -8,30 +8,30 @@ a.navbar-brand {
 }
 
 a {
-  color: #172554;
+  color: var(--g-text);
 }
 
 .btn-primary {
-  color: #172554;
-  background-color: #3B82F6;
-  border-color: #3B82F6;
+  color: var(--g-on-primary);
+  background-color: var(--g-primary);
+  border-color: var(--g-primary);
 }
 
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #172554;
-  background-color: #3B82F6;
-  border-color: #3B82F6;
+  color: var(--g-on-primary);
+  background-color: var(--g-primary);
+  border-color: var(--g-primary);
 }
 
 .border-top {
-  border-top: 1px solid #BFDBFE;
+  border-top: 1px solid var(--g-border-soft);
 }
 .border-bottom {
-  border-bottom: 1px solid #BFDBFE;
+  border-bottom: 1px solid var(--g-border-soft);
 }
 
 .box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(23,37,84, .05);
+  box-shadow: 0 .25rem .75rem color-mix(in srgb, var(--g-text) 5%, transparent);
 }
 
 button.accept-policy {

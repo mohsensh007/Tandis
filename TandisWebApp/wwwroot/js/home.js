@@ -69,7 +69,7 @@ var ssSelectedDate = '';
 function loadSingleSessionList() {
     var $list = $('#singleSessionList');
     var $days = $('#ssDays');
-    var loadingHtml = '<div class="text-center py-4" style="color:rgba(23,37,84,.62);">' +
+    var loadingHtml = '<div class="text-center py-4" style="color:var(--g-muted);">' +
         '<div class="spinner-border spinner-border-sm" role="status"></div> ' +
         'در حال بارگذاری...</div>';
 
@@ -295,7 +295,7 @@ function updateTfFilterLabel() {
 function loadTarefeTab() {
     var $list = $('#tarefeList');
     $('#tfFilterBar').toggle(tfTab === 'shahriye');
-    $list.html('<div class="text-center py-4" style="color:rgba(23,37,84,.62);">' +
+    $list.html('<div class="text-center py-4" style="color:var(--g-muted);">' +
         '<div class="spinner-border spinner-border-sm" role="status"></div> ' +
         'در حال بارگذاری...</div>');
 
@@ -484,16 +484,16 @@ function buildCircle(pct, used, total, remaining) {
     var r = 30, cx = 36, cy = 36;
     var c = 2 * Math.PI * r;
     var offset = c - (pct / 100) * c;
-    var color = pct >= 90 ? '#172554' : pct >= 70 ? '#3B82F6' : '#3B82F6';
+    var color = 'var(--g-primary)';
     return '<div class="d-flex flex-column align-items-center" style="min-width:86px">' +
         '<svg viewBox="0 0 72 72" width="84" height="84">' +
-        '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="rgba(191,219,254,.35)" stroke-width="7"/>' +
+        '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="var(--g-track)" stroke-width="7"/>' +
         '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + color + '" stroke-width="7" stroke-linecap="round" stroke-dasharray="' + c + '" stroke-dashoffset="' + offset + '" transform="rotate(-90 ' + cx + ' ' + cy + ')" style="transition:stroke-dashoffset 1s ease"/>' +
-        '<text x="' + cx + '" y="' + (cy - 2) + '" text-anchor="middle" dominant-baseline="middle" fill="#ffffff" font-size="15" font-weight="800" font-family="Sahel, Tahoma">' + toFa(pct) + '٪</text>' +
-        '<text x="' + cx + '" y="' + (cy + 13) + '" text-anchor="middle" fill="rgba(23,37,84,.62)" font-size="7" font-family="Sahel, Tahoma">مصرف شده</text>' +
+        '<text x="' + cx + '" y="' + (cy - 2) + '" text-anchor="middle" dominant-baseline="middle" fill="var(--g-text)" font-size="15" font-weight="800" font-family="Sahel, Tahoma">' + toFa(pct) + '٪</text>' +
+        '<text x="' + cx + '" y="' + (cy + 13) + '" text-anchor="middle" fill="var(--g-muted)" font-size="7" font-family="Sahel, Tahoma">مصرف شده</text>' +
         '</svg>' +
         '<div class="sans-remain mt-1" style="font-size:.8rem;">' + toFa(remaining) + ' جلسه مانده</div>' +
-        '<div style="font-size:.68rem; color:rgba(23,37,84,.62);">مصرف: ' + toFa(used) + ' از ' + toFa(total) + '</div>' +
+        '<div style="font-size:.68rem; color:var(--g-muted);">مصرف: ' + toFa(used) + ' از ' + toFa(total) + '</div>' +
         '</div>';
 }
 

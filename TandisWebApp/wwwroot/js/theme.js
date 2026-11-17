@@ -30,7 +30,7 @@
         }
 
         var meta = document.querySelector('meta[name="theme-color"]');
-        if (meta) meta.setAttribute('content', t === 'dark' ? '#0B1220' : '#EFF6FF');
+        if (meta) meta.setAttribute('content', t === 'dark' ? '#0B1220' : '#DCE5F0');
 
         document.querySelectorAll('[data-theme-toggle]').forEach(function (btn) {
             btn.setAttribute('aria-pressed', t === 'dark' ? 'true' : 'false');
@@ -39,6 +39,8 @@
             var icon = btn.querySelector('i');
             if (icon) icon.className = 'bi ' + (t === 'dark' ? 'bi-moon-stars-fill' : 'bi-sun-fill');
         });
+
+        document.dispatchEvent(new CustomEvent('tandis:themechange', { detail: { theme: t } }));
     }
 
     function current() {

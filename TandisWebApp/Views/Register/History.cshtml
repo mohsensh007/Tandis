@@ -24,8 +24,8 @@
                         var badge = h.isActive ? '<span class="badge badge-active">فعال</span>' : '<span class="badge badge-inactive">غیرفعال</span>';
                         // ✅ badge نوع: ثبت‌نام یا تمدید
                         var typeBadge = h.isRevival
-                            ? '<span class="badge" style="background:rgba(59,130,246,.15);color:#3B82F6;border:1px solid rgba(59,130,246,.4);">تمدید</span>'
-                            : '<span class="badge" style="background:rgba(59,130,246,.15);color:#3B82F6;border:1px solid rgba(59,130,246,.4);">ثبت‌نام</span>';
+                            ? '<span class="badge" style="background:color-mix(in srgb, var(--g-primary) 15%, transparent);color:var(--g-primary);border:1px solid color-mix(in srgb, var(--g-primary) 40%, transparent);">تمدید</span>'
+                            : '<span class="badge" style="background:color-mix(in srgb, var(--g-primary) 15%, transparent);color:var(--g-primary);border:1px solid color-mix(in srgb, var(--g-primary) 40%, transparent);">ثبت‌نام</span>';
                         html += '<tr><td>' + h.sportSanseName + '</td><td>' + typeBadge + '</td><td>' + (h.coachName || '-') + '</td>' +
                             '<td>' + (h.startDate || '-') + '</td><td>' + (h.endDate || '-') + '</td>' +
                             '<td>' + badge + '</td><td>' + h.finalPaymentDisplay + '</td><td>' + h.remainingSessions + '</td></tr>';

@@ -4,13 +4,13 @@
    ===================================================== */
 
 body.admin-glass-body {
-    --charts-purple: #3B82F6;
-    --charts-purple-deep: #FFFFFF;
-    --charts-blue: #3B82F6;
-    --charts-turquoise: #3B82F6;
-    --charts-mint: #3B82F6;
-    --charts-muted: rgba(23,37,84, .62);
-    --charts-border: rgba(23,37,84,.15);
+    --charts-purple: var(--g-primary);
+    --charts-purple-deep: var(--g-surface-solid);
+    --charts-blue: var(--g-primary);
+    --charts-turquoise: var(--g-primary);
+    --charts-mint: var(--g-primary);
+    --charts-muted: color-mix(in srgb, var(--g-text) 62%, transparent);
+    --charts-border: color-mix(in srgb, var(--g-text) 15%, transparent);
 }
 
 body.admin-glass-body .ch-main-card,
@@ -19,8 +19,8 @@ body.admin-glass-body .ch-side-card {
     min-width: 0;
     max-width: 100%;
     border-color: var(--charts-border) !important;
-    background: linear-gradient(145deg, rgba(59,130,246,.17), rgba(191, 219, 254,.055)) !important;
-    box-shadow: 0 10px 30px rgba(239,246,255,.22);
+    background: linear-gradient(145deg, color-mix(in srgb, var(--g-primary) 17%, transparent), color-mix(in srgb, var(--g-nested-solid) 5.5%, transparent)) !important;
+    box-shadow: 0 10px 30px color-mix(in srgb, var(--g-surface-solid) 22%, transparent);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
 }
@@ -112,8 +112,8 @@ body.admin-glass-body .ch-chart-wrap {
     max-width: 100%;
     overflow: hidden;
     contain: layout paint;
-    border: 1px solid rgba(23,37,84,.07);
-    background: linear-gradient(180deg, rgba(191, 219, 254,.24), rgba(23,37,84,.06));
+    border: 1px solid color-mix(in srgb, var(--g-text) 7%, transparent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--g-nested-solid) 24%, transparent), color-mix(in srgb, var(--g-text) 6%, transparent));
 }
 
 body.admin-glass-body .ch-chart {
@@ -129,7 +129,7 @@ body.admin-glass-body .ch-chart .ch-axlabel {
     font-size: 12px;
     letter-spacing: 0;
     paint-order: stroke;
-    stroke: rgba(239,246,255,.32);
+    stroke: color-mix(in srgb, var(--g-surface-solid) 32%, transparent);
     stroke-width: .8px;
     stroke-linejoin: round;
 }

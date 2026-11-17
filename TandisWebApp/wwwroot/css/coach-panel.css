@@ -4,27 +4,27 @@
    ===================================================== */
 
 body.coach-glass-body {
-    --coach-bg: #EFF6FF;
-    --coach-surface: rgba(255,255,255,.8);
-    --coach-surface-strong: rgba(59,130,246,.8);
-    --coach-border: rgba(59,130,246,.2);
-    --coach-border-soft: rgba(23,37,84,.09);
-    --coach-purple: #FFFFFF;
-    --coach-purple-deep: #EFF6FF;
-    --coach-blue: #3B82F6;
-    --coach-turquoise: #3B82F6;
-    --coach-mint: #3B82F6;
-    --coach-danger: #172554;
-    --coach-text: #172554;
-    --coach-muted: rgba(23,37,84, .62);
+    --coach-bg: var(--g-surface-solid);
+    --coach-surface: color-mix(in srgb, var(--g-surface-solid) 80%, transparent);
+    --coach-surface-strong: color-mix(in srgb, var(--g-primary) 80%, transparent);
+    --coach-border: color-mix(in srgb, var(--g-primary) 20%, transparent);
+    --coach-border-soft: color-mix(in srgb, var(--g-text) 9%, transparent);
+    --coach-purple: var(--g-surface-solid);
+    --coach-purple-deep: var(--g-surface-solid);
+    --coach-blue: var(--g-primary);
+    --coach-turquoise: var(--g-primary);
+    --coach-mint: var(--g-primary);
+    --coach-danger: var(--g-text);
+    --coach-text: var(--g-text);
+    --coach-muted: color-mix(in srgb, var(--g-text) 62%, transparent);
     --coach-control-height: 44px;
     --coach-radius: 18px;
     max-width: 100%;
     overflow-x: hidden;
     background:
-        radial-gradient(circle at 12% 6%, rgba(59,130,246,.4), transparent 32rem),
-        radial-gradient(circle at 88% 18%, rgba(59,130,246,.14), transparent 26rem),
-        linear-gradient(160deg, #EFF6FF 0%, #EFF6FF 55%, #EFF6FF 100%) !important;
+        radial-gradient(circle at 12% 6%, color-mix(in srgb, var(--g-primary) 40%, transparent), transparent 32rem),
+        radial-gradient(circle at 88% 18%, color-mix(in srgb, var(--g-primary) 14%, transparent), transparent 26rem),
+        linear-gradient(160deg, var(--g-surface-solid) 0%, var(--g-surface-solid) 55%, var(--g-surface-solid) 100%) !important;
     color: var(--coach-text);
 }
 
@@ -88,9 +88,9 @@ body.coach-glass-body textarea {
 body.coach-glass-body .coach-top-nav {
     max-width: 100%;
     overflow: hidden;
-    background: rgba(239,246,255,.82) !important;
-    border-bottom-color: rgba(59,130,246,.14);
-    box-shadow: 0 8px 26px rgba(239,246,255,.2);
+    background: color-mix(in srgb, var(--g-surface-solid) 82%, transparent) !important;
+    border-bottom-color: color-mix(in srgb, var(--g-primary) 14%, transparent);
+    box-shadow: 0 8px 26px color-mix(in srgb, var(--g-surface-solid) 20%, transparent);
 }
 
 body.coach-glass-body .coach-top-nav .container-fluid {
@@ -146,9 +146,9 @@ body.coach-glass-body .coach-bottom-nav {
     min-width: 0;
     min-height: 64px;
     padding: 6px;
-    border-color: rgba(59,130,246,.16);
-    background: rgba(239,246,255,.82) !important;
-    box-shadow: 0 14px 34px rgba(239,246,255,.42), inset 0 1px 0 rgba(23,37,84,.06);
+    border-color: color-mix(in srgb, var(--g-primary) 16%, transparent);
+    background: color-mix(in srgb, var(--g-surface-solid) 82%, transparent) !important;
+    box-shadow: 0 14px 34px color-mix(in srgb, var(--g-surface-solid) 42%, transparent), inset 0 1px 0 color-mix(in srgb, var(--g-text) 6%, transparent);
 }
 
 body.coach-glass-body .coach-bottom-nav .cbn-item {
@@ -195,9 +195,9 @@ body.coach-glass-body .pg-empty {
     min-width: 0;
     max-width: 100%;
     border-color: var(--coach-border) !important;
-    background: linear-gradient(145deg, rgba(255,255,255,.84), rgba(239,246,255,.8)) !important;
+    background: linear-gradient(145deg, color-mix(in srgb, var(--g-surface-solid) 84%, transparent), color-mix(in srgb, var(--g-surface-solid) 80%, transparent)) !important;
     color: var(--coach-text);
-    box-shadow: 0 8px 26px rgba(239,246,255,.18);
+    box-shadow: 0 8px 26px color-mix(in srgb, var(--g-surface-solid) 18%, transparent);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
 }
@@ -235,8 +235,8 @@ body.coach-glass-body .cc-card:hover,
 body.coach-glass-body .cs-card:hover,
 body.coach-glass-body .pg-card:hover,
 body.coach-glass-body .ms-card:hover {
-    border-color: rgba(59,130,246,.48) !important;
-    box-shadow: 0 14px 36px rgba(239,246,255,.3);
+    border-color: color-mix(in srgb, var(--g-primary) 48%, transparent) !important;
+    box-shadow: 0 14px 36px color-mix(in srgb, var(--g-surface-solid) 30%, transparent);
     transform: translateY(-2px);
 }
 
@@ -245,7 +245,7 @@ body.coach-glass-body .sd-box-head,
 body.coach-glass-body .cm-box-head,
 body.coach-glass-body .stu-head {
     background: linear-gradient(135deg, var(--coach-purple), var(--coach-purple-deep)) !important;
-    color: #172554;
+    color: var(--g-text);
 }
 
 body.coach-glass-body .coach-card-head,
@@ -272,7 +272,7 @@ body.coach-glass-body .ch-title,
 body.coach-glass-body .cb-title {
     min-width: 0;
     max-width: 100%;
-    color: #172554;
+    color: var(--g-text);
     overflow-wrap: anywhere;
 }
 
@@ -331,16 +331,16 @@ body.coach-glass-body .stu-search {
     width: 100%;
     min-width: 0;
     min-height: var(--coach-control-height);
-    border-color: rgba(23,37,84,.18) !important;
-    background: rgba(191, 219, 254,.075) !important;
-    color: #172554 !important;
+    border-color: color-mix(in srgb, var(--g-text) 18%, transparent) !important;
+    background: color-mix(in srgb, var(--g-nested-solid) 7.5%, transparent) !important;
+    color: var(--g-text) !important;
 }
 
 body.coach-glass-body .glass-search::placeholder,
 body.coach-glass-body .ch-input::placeholder,
 body.coach-glass-body .pe-input::placeholder,
 body.coach-glass-body .stu-search::placeholder {
-    color: rgba(23, 37, 84,.62);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
 }
 
 body.coach-glass-body .glass-search:focus,
@@ -349,16 +349,16 @@ body.coach-glass-body .pe-input:focus,
 body.coach-glass-body .ch-input:focus,
 body.coach-glass-body .stu-search:focus {
     border-color: var(--coach-turquoise) !important;
-    background: rgba(191, 219, 254,.12) !important;
-    box-shadow: 0 0 0 .22rem rgba(59,130,246,.14);
+    background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent) !important;
+    box-shadow: 0 0 0 .22rem color-mix(in srgb, var(--g-primary) 14%, transparent);
     outline: none;
 }
 
 body.coach-glass-body select.pe-input option,
 body.coach-glass-body select.form-select option,
 body.coach-glass-body select option {
-    background: #EFF6FF;
-    color: #172554;
+    background: var(--g-surface-solid);
+    color: var(--g-text);
 }
 
 body.coach-glass-body .cm-input,

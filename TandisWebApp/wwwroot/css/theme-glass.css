@@ -3,35 +3,35 @@
    این فایل بعد از theme-arctic.css بارگذاری می‌شود و:
    • در حالت روشن: شیشهٔ سفید-یخی روی پس‌زمینهٔ آبی روشن
    • در حالت تاریک: شیشهٔ سرمه‌ای روی پس‌زمینهٔ Midnight
-   رنگ‌های مجاز روشن:  #FFFFFF #EFF6FF #BFDBFE #3B82F6 #172554
+   رنگ‌های مجاز روشن:  var(--g-surface-solid) var(--g-surface-solid) var(--g-nested-solid) var(--g-primary) var(--g-text)
    رنگ‌های مجاز تاریک:  #0B1220 #111C2E #1E293B #60A5FA #F1F5F9
    ===================================================================== */
 
 /* ---------- ۱) توکن‌های تم ---------- */
 html {
-    --g-bg: #EFF6FF;
-    --g-bg-deep: #EFF6FF;
-    --g-surface: rgba(255, 255, 255, .62);
-    --g-surface-strong: rgba(255, 255, 255, .80);
-    --g-surface-soft: rgba(255, 255, 255, .46);
-    --g-nested: rgba(239, 246, 255, .58);
-    --g-border: rgba(255, 255, 255, .78);
-    --g-border-soft: rgba(191, 219, 254, .85);
-    --g-text: #172554;
-    --g-text-soft: rgba(23, 37, 84, .70);
-    --g-muted: rgba(23, 37, 84, .60);
-    --g-primary: #3B82F6;
-    --g-primary-text: #FFFFFF;
-    --g-primary-soft: rgba(59, 130, 246, .14);
-    --g-highlight: rgba(191, 219, 254, .5);
-    --g-shadow: 0 10px 30px rgba(23, 37, 84, .08);
-    --g-shadow-lg: 0 20px 50px rgba(23, 37, 84, .14);
+    --g-bg: var(--g-surface-solid);
+    --g-bg-deep: var(--g-surface-solid);
+    --g-surface: color-mix(in srgb, var(--g-surface-solid) 62%, transparent);
+    --g-surface-strong: color-mix(in srgb, var(--g-surface-solid) 80%, transparent);
+    --g-surface-soft: color-mix(in srgb, var(--g-surface-solid) 46%, transparent);
+    --g-nested: color-mix(in srgb, var(--g-surface-solid) 58%, transparent);
+    --g-border: color-mix(in srgb, var(--g-surface-solid) 78%, transparent);
+    --g-border-soft: color-mix(in srgb, var(--g-nested-solid) 85%, transparent);
+    --g-text: var(--g-text);
+    --g-text-soft: color-mix(in srgb, var(--g-text) 70%, transparent);
+    --g-muted: color-mix(in srgb, var(--g-text) 60%, transparent);
+    --g-primary: var(--g-primary);
+    --g-primary-text: var(--g-surface-solid);
+    --g-primary-soft: color-mix(in srgb, var(--g-primary) 14%, transparent);
+    --g-highlight: color-mix(in srgb, var(--g-nested-solid) 50%, transparent);
+    --g-shadow: 0 10px 30px color-mix(in srgb, var(--g-text) 8%, transparent);
+    --g-shadow-lg: 0 20px 50px color-mix(in srgb, var(--g-text) 14%, transparent);
     --g-blur: 16px;
     --g-blur-strong: 24px;
-    --g-input: rgba(255, 255, 255, .84);
-    --g-hover: rgba(191, 219, 254, .38);
-    --g-track: rgba(191, 219, 254, .5);
-    --g-inset: inset 0 1px 0 rgba(255, 255, 255, .85);
+    --g-input: color-mix(in srgb, var(--g-surface-solid) 84%, transparent);
+    --g-hover: color-mix(in srgb, var(--g-nested-solid) 38%, transparent);
+    --g-track: color-mix(in srgb, var(--g-nested-solid) 50%, transparent);
+    --g-inset: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 85%, transparent);
     color-scheme: light;
 }
 
@@ -195,7 +195,7 @@ body:not(#lu):not(#mt-theme) .coach-bottom-nav {
     -webkit-backdrop-filter: blur(var(--g-blur)) saturate(1.2) !important;
     border-color: var(--g-border-soft) !important;
     color: var(--g-text) !important;
-    box-shadow: 0 6px 22px rgba(23, 37, 84, .06) !important;
+    box-shadow: 0 6px 22px color-mix(in srgb, var(--g-text) 6%, transparent) !important;
 }
 
 /* ---------- ۴) متن‌ها ---------- */
@@ -360,7 +360,7 @@ body:not(#lu):not(#mt-theme) .theme-toggle {
     border-radius: 12px !important;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 14px rgba(23, 37, 84, .06) !important;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--g-text) 6%, transparent) !important;
 }
 
 body:not(#lu):not(#mt-theme) .btn-secondary:hover,
@@ -556,7 +556,7 @@ body:not(#lu):not(#mt-theme) .dk-back {
 body:not(#lu):not(#mt-theme) .dk-back:hover { background: var(--g-hover) !important; }
 
 body:not(#lu):not(#mt-theme) .dk-pay-modal { background: rgba(11, 18, 32, .42) !important; }
-html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme) .dk-pay-modal { background: rgba(23, 37, 84, .28) !important; }
+html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme) .dk-pay-modal { background: color-mix(in srgb, var(--g-text) 28%, transparent) !important; }
 
 body:not(#lu):not(#mt-theme) .dk-pay-box {
     background: var(--g-surface-strong) !important;
@@ -593,7 +593,7 @@ body:not(#lu):not(#mt-theme) .dk-toast {
     color: var(--g-text);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 14px rgba(23, 37, 84, .08);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--g-text) 8%, transparent);
     transition: transform .2s ease, background-color .25s ease, color .25s ease;
 }
 
@@ -719,7 +719,7 @@ html[data-theme="dark"] body #authCard input {
     body:not(#lu):not(#mt-theme) .dropdown-menu,
     body:not(#lu):not(#mt-theme) header,
     body:not(#lu):not(#mt-theme) .navbar {
-        background: #FFFFFF !important;
+        background: var(--g-surface-solid) !important;
     }
 
     html[data-theme="dark"] body:not(#lu):not(#mt-theme) .card,
@@ -873,25 +873,25 @@ html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .asc-desc {
 
 /* ---------- ۱۸) لینک‌های خوانا در حالت روشن ---------- */
 body:not(#lu):not(#mt-theme) a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link) {
-    color: #172554 !important;
+    color: var(--g-text) !important;
 }
 body:not(#lu):not(#mt-theme) a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link):hover {
-    color: #3B82F6 !important;
+    color: var(--g-primary) !important;
 }
 body:not(#lu):not(#mt-theme) .sidebar a,
 body:not(#lu):not(#mt-theme) .admin-sidebar a,
 body:not(#lu):not(#mt-theme) .coach-sidebar a,
 body:not(#lu):not(#mt-theme) .mobile-nav a,
 body:not(#lu):not(#mt-theme) .bottom-nav a {
-    color: #172554 !important;
+    color: var(--g-text) !important;
 }
 body:not(#lu):not(#mt-theme) .sidebar a.active,
 body:not(#lu):not(#mt-theme) .admin-sidebar a.active,
 body:not(#lu):not(#mt-theme) .coach-sidebar a.active,
 body:not(#lu):not(#mt-theme) .mobile-nav a.active,
 body:not(#lu):not(#mt-theme) .bottom-nav a.active {
-    color: #172554 !important;
-    background: rgba(191, 219, 254, .55) !important;
+    color: var(--g-text) !important;
+    background: color-mix(in srgb, var(--g-nested-solid) 55%, transparent) !important;
 }
 html[data-theme="dark"] body:not(#lu):not(#mt-theme) .sidebar a,
 html[data-theme="dark"] body:not(#lu):not(#mt-theme) .admin-sidebar a,
@@ -1214,11 +1214,11 @@ html[data-theme="dark"] body .btn.btn-primary:focus {
 html:not([data-theme="dark"]) body .btn.btn-primary,
 html:not([data-theme="dark"]) body .btn-primary,
 html:not([data-theme="dark"]) body button.btn-primary {
-    background-color: #3B82F6 !important;
+    background-color: var(--g-primary) !important;
     background-image: none !important;
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF;
-    border-color: #3B82F6 !important;
+    color: var(--g-surface-solid) !important;
+    -webkit-text-fill-color: var(--g-surface-solid);
+    border-color: var(--g-primary) !important;
 }
 
 /* ---------- ۲۹) کنتراست قطعی دکمهٔ اصلی (اولویت کامل) ---------- */
@@ -1237,11 +1237,11 @@ html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme):not(#app) .btn.btn-pr
 html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme):not(#app) .btn-primary,
 html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme):not(#app) button.btn-primary,
 html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme):not(#app) a.btn-primary {
-    background-color: #3B82F6 !important;
+    background-color: var(--g-primary) !important;
     background-image: none !important;
-    color: #FFFFFF !important;
-    -webkit-text-fill-color: #FFFFFF;
-    border-color: #3B82F6 !important;
+    color: var(--g-surface-solid) !important;
+    -webkit-text-fill-color: var(--g-surface-solid);
+    border-color: var(--g-primary) !important;
 }
 
 html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .btn.btn-primary:disabled,

@@ -5,7 +5,7 @@
 
 /* ===== آیکن‌های فیروزه‌ای در عنوان‌ها ===== */
 .hd-icon {
-    color: #3B82F6;
+    color: var(--g-primary);
     margin-left: 6px;
     font-size: 1rem;
 }
@@ -18,9 +18,9 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(191, 219, 254,.08);
-    border: 1px solid rgba(23,37,84,.18);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-nested-solid) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 18%, transparent);
+    color: var(--g-text);
     border-radius: 999px;
     padding: 7px 18px;
     font-size: .82rem;
@@ -35,7 +35,7 @@
     .btn-back-glass i,
     .mp-back-pill i,
     .pd-back-pill i {
-        color: #3B82F6;
+        color: var(--g-primary);
         transition: transform .25s;
     }
 
@@ -43,8 +43,8 @@
     .btn-back-glass:hover,
     .mp-back-pill:hover,
     .pd-back-pill:hover {
-        background: rgba(191, 219, 254,.14);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-nested-solid) 14%, transparent);
+        color: var(--g-text);
     }
 
         .coach-back-pill:hover i,
@@ -57,9 +57,9 @@
 /* ===== اینپوت جستجوی شیشه‌ای ===== */
 .glass-search {
     width: 100%;
-    background: rgba(191, 219, 254,.08);
-    border: 1px solid rgba(23,37,84,.18);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-nested-solid) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 18%, transparent);
+    color: var(--g-text);
     border-radius: 999px;
     padding: 10px 18px;
     font-size: .85rem;
@@ -67,8 +67,8 @@
 
     .glass-search:focus {
         outline: none;
-        border-color: rgba(59,130,246,.5);
-        background: rgba(191, 219, 254,.12);
+        border-color: color-mix(in srgb, var(--g-primary) 50%, transparent);
+        background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
     }
 
 /* ===== Badge سراسری ===== */
@@ -85,23 +85,23 @@
 
 .badge-active,
 .badge-on {
-    background: rgba(59,130,246,.18);
-    color: #3B82F6;
-    border: 1px solid rgba(59,130,246,.45);
+    background: color-mix(in srgb, var(--g-primary) 18%, transparent);
+    color: var(--g-primary);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 45%, transparent);
 }
 
 .badge-inactive,
 .badge-off {
-    background: rgba(191, 219, 254,.12);
-    color: rgba(23,37,84, .62);
-    border: 1px solid rgba(23,37,84,.25);
+    background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 25%, transparent);
 }
 
 /* ===== Empty State (وقتی لیست خالیه) ===== */
 .empty-state {
     text-align: center;
     padding: 40px 20px;
-    color: #172554;
+    color: var(--g-text);
     font-size: .9rem;
 }
 
@@ -113,8 +113,8 @@
 
 /* ===== کارت عمومی شیشه‌ای ===== */
 .glass-card {
-    background: linear-gradient(160deg, rgba(191, 219, 254,.10), rgba(23,37,84,.04));
-    border: 1px solid rgba(23,37,84,.14);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--g-nested-solid) 10%, transparent), color-mix(in srgb, var(--g-text) 4%, transparent));
+    border: 1px solid color-mix(in srgb, var(--g-text) 14%, transparent);
     border-radius: 20px;
     padding: 18px;
     -webkit-backdrop-filter: blur(8px);
@@ -123,8 +123,8 @@
 
 /* ===== هدر کارت با گرادیان بنفش ===== */
 .card-head-purple {
-    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
-    color: #172554;
+    background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
+    color: var(--g-text);
     font-weight: 800;
     font-size: 1rem;
     padding: 13px 20px;
@@ -139,8 +139,8 @@
 }
 
     .dark-table thead th {
-        background: linear-gradient(135deg, #3B82F6, #FFFFFF);
-        color: #172554;
+        background: linear-gradient(135deg, var(--g-primary), var(--g-surface-solid));
+        color: var(--g-text);
         font-weight: 600;
         font-size: .8rem;
         padding: 10px 14px;
@@ -161,8 +161,8 @@
     .dark-table tbody td {
         padding: 10px 14px;
         font-size: .85rem;
-        color: rgba(23, 37, 84, .62);
-        border-bottom: 1px solid rgba(23,37,84,.06);
+        color: color-mix(in srgb, var(--g-text) 62%, transparent);
+        border-bottom: 1px solid color-mix(in srgb, var(--g-text) 6%, transparent);
     }
 
     .dark-table tbody tr:last-child td {
@@ -170,7 +170,7 @@
     }
 
     .dark-table tbody tr:hover {
-        background: rgba(59,130,246,.06);
+        background: color-mix(in srgb, var(--g-primary) 6%, transparent);
     }
 
 /* ===== Chip‌های چندانتخابی ===== */
@@ -181,9 +181,9 @@
 }
 
 .chip {
-    background: rgba(191, 219, 254,.07);
-    border: 1px solid rgba(23,37,84,.16);
-    color: rgba(23,37,84, .62);
+    background: color-mix(in srgb, var(--g-nested-solid) 7%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 16%, transparent);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
     border-radius: 999px;
     padding: 6px 14px;
     font-size: .76rem;
@@ -193,28 +193,28 @@
 }
 
     .chip:hover {
-        background: rgba(191, 219, 254,.13);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-nested-solid) 13%, transparent);
+        color: var(--g-text);
     }
 
     .chip.chip-active {
-        background: linear-gradient(135deg, #3B82F6, #3B82F6);
+        background: linear-gradient(135deg, var(--g-primary), var(--g-primary));
         border-color: transparent;
-        color: #172554;
-        box-shadow: 0 4px 12px rgba(59,130,246,.35);
+        color: var(--g-text);
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--g-primary) 35%, transparent);
     }
 
 /* ===== Label کوچک برای input ها ===== */
 .lbl-small {
     display: block;
     font-size: .72rem;
-    color: #172554;
+    color: var(--g-text);
     font-weight: 700;
     margin-bottom: 4px;
 }
 
     .lbl-small i {
-        color: #3B82F6;
+        color: var(--g-primary);
     }
 
 /* ===== دکمه اصلی بنفش (ذخیره/ثبت) ===== */
@@ -222,21 +222,21 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
+    background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
     border: none;
-    color: #172554;
+    color: var(--g-text);
     font-weight: 800;
     font-size: .9rem;
     border-radius: 14px;
     padding: 10px 26px;
-    box-shadow: 0 6px 16px rgba(59,130,246,.4);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--g-primary) 40%, transparent);
     transition: all .25s;
     cursor: pointer;
 }
 
     .btn-purple-main:hover {
         filter: brightness(1.1);
-        color: #172554;
+        color: var(--g-text);
         transform: translateY(-1px);
     }
 
@@ -245,21 +245,21 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    background: linear-gradient(135deg, #3B82F6, #3B82F6);
+    background: linear-gradient(135deg, var(--g-primary), var(--g-primary));
     border: none;
-    color: #172554;
+    color: var(--g-text);
     border-radius: 12px;
     padding: 8px 18px;
     font-size: .82rem;
     font-weight: 700;
-    box-shadow: 0 5px 14px rgba(59,130,246,.3);
+    box-shadow: 0 5px 14px color-mix(in srgb, var(--g-primary) 30%, transparent);
     transition: all .25s;
     cursor: pointer;
 }
 
     .btn-blue-action:hover {
         filter: brightness(1.12);
-        color: #172554;
+        color: var(--g-text);
         transform: translateY(-1px);
     }
 
@@ -275,9 +275,9 @@
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    background: rgba(59,130,246,.14);
-    border: 1px solid rgba(59,130,246,.30);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-primary) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent);
+    color: var(--g-text);
     border-radius: 999px;
     padding: 3px 10px;
     font-size: .72rem;
@@ -285,7 +285,7 @@
 }
 
     .pill-mini i {
-        color: #3B82F6;
+        color: var(--g-primary);
         font-size: .78rem;
     }
 
@@ -296,16 +296,16 @@
     gap: 6px;
     margin-top: 8px;
     font-size: .74rem;
-    color: rgba(23,37,84, .62);
-    background: rgba(59,130,246,.08);
-    border: 1px solid rgba(59,130,246,.22);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
+    background: color-mix(in srgb, var(--g-primary) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent);
     border-radius: 10px;
     padding: 6px 10px;
     line-height: 1.7;
 }
 
     .note-box i {
-        color: #3B82F6;
+        color: var(--g-primary);
         font-size: .8rem;
         margin-top: 2px;
         flex: 0 0 auto;
@@ -329,8 +329,8 @@
         }
 
         .dark-table tr {
-            background: rgba(191, 219, 254,.05);
-            border: 1px solid rgba(23,37,84,.08);
+            background: color-mix(in srgb, var(--g-nested-solid) 5%, transparent);
+            border: 1px solid color-mix(in srgb, var(--g-text) 8%, transparent);
             border-radius: 10px;
             padding: 10px;
             margin-bottom: 8px;
@@ -341,7 +341,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 6px 4px;
-            border-bottom: 1px solid rgba(23,37,84,.05);
+            border-bottom: 1px solid color-mix(in srgb, var(--g-text) 5%, transparent);
         }
 
             .dark-table td:last-child {
@@ -351,7 +351,7 @@
             .dark-table td::before {
                 content: attr(data-label);
                 font-weight: 700;
-                color: #3B82F6;
+                color: var(--g-primary);
                 font-size: .72rem;
             }
 }
@@ -361,8 +361,8 @@
 
 /* ===== کارت اصلی ویرایش برنامه ===== */
 .pe-card {
-    background: linear-gradient(160deg, rgba(191, 219, 254,.10), rgba(23,37,84,.04));
-    border: 1px solid rgba(23,37,84,.14);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--g-nested-solid) 10%, transparent), color-mix(in srgb, var(--g-text) 4%, transparent));
+    border: 1px solid color-mix(in srgb, var(--g-text) 14%, transparent);
     border-radius: 20px;
     padding: 18px;
 }
@@ -370,20 +370,20 @@
 .pe-lbl {
     display: block;
     font-size: .72rem;
-    color: #172554;
+    color: var(--g-text);
     font-weight: 700;
     margin-bottom: 4px;
 }
 
     .pe-lbl i {
-        color: #3B82F6;
+        color: var(--g-primary);
     }
 
 .pe-input {
     width: 100%;
-    background: rgba(191, 219, 254,.08);
-    border: 1px solid rgba(23,37,84,.18);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-nested-solid) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 18%, transparent);
+    color: var(--g-text);
     border-radius: 12px;
     padding: 9px 12px;
     font-size: .85rem;
@@ -391,8 +391,8 @@
 
     .pe-input:focus {
         outline: none;
-        background: rgba(191, 219, 254,.12);
-        border-color: rgba(59,130,246,.5);
+        background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
+        border-color: color-mix(in srgb, var(--g-primary) 50%, transparent);
     }
 
     .pe-input[readonly] {
@@ -400,8 +400,8 @@
     }
 
 select.pe-input option {
-    background: #EFF6FF;
-    color: #172554;
+    background: var(--g-surface-solid);
+    color: var(--g-text);
 }
 
 .pe-cal-btn {
@@ -409,23 +409,23 @@ select.pe-input option {
     width: 40px;
     height: 40px;
     border-radius: 12px;
-    background: rgba(191, 219, 254,.08);
-    border: 1px solid rgba(23,37,84,.16);
-    color: #3B82F6;
+    background: color-mix(in srgb, var(--g-nested-solid) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 16%, transparent);
+    color: var(--g-primary);
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
     .pe-cal-btn:hover {
-        background: rgba(59,130,246,.2);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-primary) 20%, transparent);
+        color: var(--g-text);
     }
 
 /* ===== باکس انتخاب روز ===== */
 .day-select-box {
-    background: rgba(59,130,246,.10);
-    border: 1px dashed rgba(59,130,246,.45);
+    background: color-mix(in srgb, var(--g-primary) 10%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--g-primary) 45%, transparent);
     border-radius: 16px;
     padding: 12px 14px;
 }
@@ -436,7 +436,7 @@ select.pe-input option {
     gap: 7px;
     font-size: .8rem;
     font-weight: 800;
-    color: #3B82F6;
+    color: var(--g-primary);
     margin-bottom: 10px;
 }
 
@@ -447,9 +447,9 @@ select.pe-input option {
 }
 
 .ds-chip {
-    background: rgba(191, 219, 254,.07);
-    border: 1px solid rgba(23,37,84,.16);
-    color: rgba(23,37,84, .62);
+    background: color-mix(in srgb, var(--g-nested-solid) 7%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 16%, transparent);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
     border-radius: 999px;
     padding: 7px 15px;
     font-size: .78rem;
@@ -458,38 +458,38 @@ select.pe-input option {
 }
 
     .ds-chip:hover {
-        background: rgba(191, 219, 254,.13);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-nested-solid) 13%, transparent);
+        color: var(--g-text);
     }
 
     .ds-chip.ds-on {
-        background: linear-gradient(135deg, #3B82F6, #3B82F6);
+        background: linear-gradient(135deg, var(--g-primary), var(--g-primary));
         border-color: transparent;
-        color: #172554;
-        box-shadow: 0 4px 12px rgba(59,130,246,.35);
+        color: var(--g-text);
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--g-primary) 35%, transparent);
     }
 
 .ds-hint {
     margin-top: 9px;
     font-size: .72rem;
-    color: #3B82F6;
+    color: var(--g-primary);
 }
 
 .ds-selected {
     margin-top: 9px;
     font-size: .75rem;
-    color: #172554;
+    color: var(--g-text);
 }
 
     .ds-selected b {
-        color: #3B82F6;
+        color: var(--g-primary);
     }
 
 /* ===== کارت حرکت ===== */
 .pe-item-card {
     position: relative;
-    background: rgba(191, 219, 254,.05);
-    border: 1px solid rgba(23,37,84,.10);
+    background: color-mix(in srgb, var(--g-nested-solid) 5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 10%, transparent);
     border-radius: 16px;
     padding: 14px;
     margin-bottom: 12px;
@@ -503,7 +503,7 @@ select.pe-input option {
         right: 0;
         width: 3px;
         border-radius: 3px;
-        background: linear-gradient(180deg, #3B82F6, #3B82F6);
+        background: linear-gradient(180deg, var(--g-primary), var(--g-primary));
         opacity: .6;
     }
 
@@ -511,9 +511,9 @@ select.pe-input option {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(59,130,246,.14);
-    border: 1px solid rgba(59,130,246,.35);
-    color: #3B82F6;
+    background: color-mix(in srgb, var(--g-primary) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 35%, transparent);
+    color: var(--g-primary);
     border-radius: 999px;
     padding: 4px 13px;
     font-size: .72rem;
@@ -521,9 +521,9 @@ select.pe-input option {
 }
 
 .pe-del-item {
-    background: rgba(191, 219, 254,.12);
-    border: 1px solid rgba(23,37,84,.35);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 35%, transparent);
+    color: var(--g-text);
     border-radius: 10px;
     width: 36px;
     height: 36px;
@@ -534,8 +534,8 @@ select.pe-input option {
 }
 
     .pe-del-item:hover {
-        background: rgba(191, 219, 254,.25);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-nested-solid) 25%, transparent);
+        color: var(--g-text);
     }
 
 /* ===== فیلدهای تکنیک‌ها ===== */
@@ -547,18 +547,18 @@ select.pe-input option {
     display: flex;
     align-items: center;
     gap: 7px;
-    background: rgba(59,130,246,.14);
-    border: 1px solid rgba(59,130,246,.35);
+    background: color-mix(in srgb, var(--g-primary) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 35%, transparent);
     border-radius: 10px;
     padding: 7px 12px;
-    color: rgba(23,37,84, .62);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
     font-size: .76rem;
     font-weight: 800;
     margin-bottom: 8px;
 }
 
     .tech-head i {
-        color: rgba(23,37,84, .62);
+        color: color-mix(in srgb, var(--g-text) 62%, transparent);
     }
 
 /* ===== اسلات‌های combo ===== */
@@ -570,8 +570,8 @@ select.pe-input option {
 
 .combo-slot {
     position: relative;
-    background: rgba(59,130,246,.06);
-    border: 1px dashed rgba(59,130,246,.35);
+    background: color-mix(in srgb, var(--g-primary) 6%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--g-primary) 35%, transparent);
     border-radius: 10px;
     padding: 10px;
 }
@@ -580,9 +580,9 @@ select.pe-input option {
     position: absolute;
     top: 6px;
     left: 6px;
-    background: rgba(191, 219, 254,.12);
-    border: 1px solid rgba(23,37,84,.35);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 35%, transparent);
+    color: var(--g-text);
     width: 26px;
     height: 26px;
     border-radius: 8px;
@@ -593,14 +593,14 @@ select.pe-input option {
 }
 
     .combo-del:hover {
-        background: rgba(191, 219, 254,.25);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-nested-solid) 25%, transparent);
+        color: var(--g-text);
     }
 
 .combo-add-btn {
-    background: rgba(59,130,246,.12);
-    border: 1px solid rgba(59,130,246,.40);
-    color: #3B82F6;
+    background: color-mix(in srgb, var(--g-primary) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 40%, transparent);
+    color: var(--g-primary);
     border-radius: 10px;
     padding: 6px 14px;
     font-size: .76rem;
@@ -612,8 +612,8 @@ select.pe-input option {
 }
 
     .combo-add-btn:hover {
-        background: rgba(59,130,246,.22);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-primary) 22%, transparent);
+        color: var(--g-text);
     }
 
 /* ===== اورلی انتخاب شاگرد ===== */
@@ -621,7 +621,7 @@ select.pe-input option {
     position: fixed;
     inset: 0;
     z-index: 1080;
-    background: rgba(239,246,255,.55);
+    background: color-mix(in srgb, var(--g-surface-solid) 55%, transparent);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     display: flex;
@@ -636,28 +636,28 @@ select.pe-input option {
     max-height: 82vh;
     display: flex;
     flex-direction: column;
-    background: rgba(239,246,255,.97);
-    border: 1px solid rgba(23,37,84,.15);
+    background: color-mix(in srgb, var(--g-surface-solid) 97%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 15%, transparent);
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(23,37,84,.6);
+    box-shadow: 0 20px 60px color-mix(in srgb, var(--g-text) 60%, transparent);
 }
 
 .stu-head {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(135deg, #3B82F6, #3B82F6);
-    color: #172554;
+    background: linear-gradient(135deg, var(--g-primary), var(--g-primary));
+    color: var(--g-text);
     font-weight: 800;
     font-size: .92rem;
     padding: 12px 16px;
 }
 
 .stu-close {
-    background: rgba(191, 219, 254,.15);
+    background: color-mix(in srgb, var(--g-nested-solid) 15%, transparent);
     border: none;
-    color: #172554;
+    color: var(--g-text);
     width: 32px;
     height: 32px;
     border-radius: 10px;
@@ -667,7 +667,7 @@ select.pe-input option {
 }
 
     .stu-close:hover {
-        background: rgba(191, 219, 254,.4);
+        background: color-mix(in srgb, var(--g-nested-solid) 40%, transparent);
     }
 
 .stu-body {
@@ -688,8 +688,8 @@ select.pe-input option {
 }
 
 .stu-row {
-    background: rgba(191, 219, 254,.06);
-    border: 1px solid rgba(23,37,84,.10);
+    background: color-mix(in srgb, var(--g-nested-solid) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 10%, transparent);
     border-radius: 12px;
     padding: 10px 14px;
     cursor: pointer;
@@ -697,25 +697,25 @@ select.pe-input option {
 }
 
     .stu-row:hover {
-        border-color: rgba(59,130,246,.5);
-        background: rgba(59,130,246,.10);
+        border-color: color-mix(in srgb, var(--g-primary) 50%, transparent);
+        background: color-mix(in srgb, var(--g-primary) 10%, transparent);
     }
 
 .stu-name {
-    color: #172554;
+    color: var(--g-text);
     font-weight: 800;
     font-size: .88rem;
 }
 
 .stu-sub {
-    color: #172554;
+    color: var(--g-text);
     font-size: .72rem;
     margin-top: 3px;
 }
 
 .stu-empty {
     text-align: center;
-    color: #172554;
+    color: var(--g-text);
     padding: 26px 0;
     font-size: .85rem;
 }
@@ -724,20 +724,20 @@ select.pe-input option {
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    background: linear-gradient(135deg, #3B82F6, #3B82F6);
+    background: linear-gradient(135deg, var(--g-primary), var(--g-primary));
     border: none;
-    color: #172554;
+    color: var(--g-text);
     border-radius: 12px;
     padding: 8px 18px;
     font-size: .82rem;
     font-weight: 700;
-    box-shadow: 0 5px 14px rgba(59,130,246,.3);
+    box-shadow: 0 5px 14px color-mix(in srgb, var(--g-primary) 30%, transparent);
     transition: all .25s;
 }
 
     .pe-add-btn:hover {
         filter: brightness(1.12);
-        color: #172554;
+        color: var(--g-text);
         transform: translateY(-1px);
     }
 
@@ -752,34 +752,34 @@ select.pe-input option {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
+    background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
     border: none;
-    color: #172554;
+    color: var(--g-text);
     font-weight: 800;
     font-size: .9rem;
     border-radius: 14px;
     padding: 10px 26px;
-    box-shadow: 0 6px 16px rgba(59,130,246,.4);
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--g-primary) 40%, transparent);
     transition: all .25s;
 }
 
     .pe-save-btn:hover {
         filter: brightness(1.1);
-        color: #172554;
+        color: var(--g-text);
     }
 
 .pe-modal {
-    background: rgba(239,246,255,.97);
-    border: 1px solid rgba(23,37,84,.15);
+    background: color-mix(in srgb, var(--g-surface-solid) 97%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 15%, transparent);
     border-radius: 18px;
-    color: #172554;
+    color: var(--g-text);
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
 }
 
 .pe-modal-head {
-    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
-    color: #172554;
+    background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
+    color: var(--g-text);
     font-weight: 800;
 }
 /* =====================================================
@@ -796,15 +796,15 @@ select.pe-input option {
 }
 
 .mp-on, .pd-on {
-    background: rgba(59,130,246,.18);
-    color: #3B82F6;
-    border: 1px solid rgba(59,130,246,.45);
+    background: color-mix(in srgb, var(--g-primary) 18%, transparent);
+    color: var(--g-primary);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 45%, transparent);
 }
 
 .mp-off, .pd-off {
-    background: rgba(191, 219, 254,.12);
-    color: rgba(23,37,84, .62);
-    border: 1px solid rgba(23,37,84,.25);
+    background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 25%, transparent);
 }
 
 /* ===== کارت اطلاعات برنامه ===== */
@@ -814,7 +814,7 @@ select.pe-input option {
     gap: 10px;
     border-radius: 16px;
     padding: 12px 16px;
-    color: #172554;
+    color: var(--g-text);
 }
 
 .mp-coach {
@@ -829,18 +829,18 @@ select.pe-input option {
 }
 
 .mp-hd-icon {
-    color: #3B82F6;
+    color: var(--g-primary);
     margin-left: 6px;
 }
 
 /* ===== حالت خالی ===== */
 .mp-empty {
-    background: linear-gradient(160deg, rgba(191, 219, 254,.08), rgba(23,37,84,.03));
-    border: 1px solid rgba(23,37,84,.14);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--g-nested-solid) 8%, transparent), color-mix(in srgb, var(--g-text) 3%, transparent));
+    border: 1px solid color-mix(in srgb, var(--g-text) 14%, transparent);
     border-radius: 20px;
     text-align: center;
     padding: 40px 16px;
-    color: #172554;
+    color: var(--g-text);
     font-size: .9rem;
 }
 
@@ -850,8 +850,8 @@ select.pe-input option {
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 14px;
-    background: rgba(59,130,246,.08);
-    border: 1px dashed rgba(59,130,246,.40);
+    background: color-mix(in srgb, var(--g-primary) 8%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--g-primary) 40%, transparent);
     border-radius: 16px;
     padding: 10px 12px;
 }
@@ -860,9 +860,9 @@ select.pe-input option {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: rgba(191, 219, 254,.07);
-    border: 1px solid rgba(23,37,84,.16);
-    color: rgba(23,37,84, .62);
+    background: color-mix(in srgb, var(--g-nested-solid) 7%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 16%, transparent);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
     border-radius: 999px;
     padding: 6px 14px;
     font-size: .76rem;
@@ -871,21 +871,21 @@ select.pe-input option {
 }
 
     .mpf-chip:hover {
-        background: rgba(191, 219, 254,.13);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-nested-solid) 13%, transparent);
+        color: var(--g-text);
     }
 
     .mpf-chip.mpf-on {
-        background: linear-gradient(135deg, #3B82F6, #3B82F6);
+        background: linear-gradient(135deg, var(--g-primary), var(--g-primary));
         border-color: transparent;
-        color: #172554;
-        box-shadow: 0 4px 12px rgba(59,130,246,.35);
+        color: var(--g-text);
+        box-shadow: 0 4px 12px color-mix(in srgb, var(--g-primary) 35%, transparent);
     }
 
 /* ===== باکس روز ===== */
 .mp-day, .pd-day {
-    background: rgba(191, 219, 254,.05);
-    border: 1px solid rgba(23,37,84,.10);
+    background: color-mix(in srgb, var(--g-nested-solid) 5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 10%, transparent);
     border-radius: 14px;
     overflow: hidden;
     margin-bottom: 10px;
@@ -895,8 +895,8 @@ select.pe-input option {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: rgba(59,130,246,.10);
-    border-bottom: 1px solid rgba(59,130,246,.25);
+    background: color-mix(in srgb, var(--g-primary) 10%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 25%, transparent);
     padding: 9px 12px;
 }
 
@@ -906,15 +906,15 @@ select.pe-input option {
 
 .mp-day-title, .pd-day-title {
     flex-grow: 1;
-    color: #3B82F6;
+    color: var(--g-primary);
     font-weight: 800;
     font-size: .85rem;
 }
 
 .mp-day-count, .pd-day-count {
-    background: rgba(59,130,246,.14);
-    border: 1px solid rgba(59,130,246,.35);
-    color: #3B82F6;
+    background: color-mix(in srgb, var(--g-primary) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 35%, transparent);
+    color: var(--g-primary);
     border-radius: 999px;
     padding: 2px 10px;
     font-size: .64rem;
@@ -928,8 +928,8 @@ select.pe-input option {
 /* ===== کارت حرکت ===== */
 .mp-ex, .pd-ex {
     position: relative;
-    background: rgba(191, 219, 254,.06);
-    border: 1px solid rgba(23,37,84,.09);
+    background: color-mix(in srgb, var(--g-nested-solid) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 9%, transparent);
     border-radius: 12px;
     padding: 10px 12px;
     margin-bottom: 8px;
@@ -947,7 +947,7 @@ select.pe-input option {
         right: 0;
         width: 3px;
         border-radius: 3px;
-        background: linear-gradient(180deg, #3B82F6, #3B82F6);
+        background: linear-gradient(180deg, var(--g-primary), var(--g-primary));
         opacity: .6;
     }
 
@@ -959,7 +959,7 @@ select.pe-input option {
 }
 
 .mp-ex-name, .pd-ex-name {
-    color: #172554;
+    color: var(--g-text);
     font-weight: 800;
     font-size: .88rem;
     line-height: 1.6;
@@ -968,9 +968,9 @@ select.pe-input option {
 
 .mp-type, .pd-type {
     flex: 0 0 auto;
-    background: rgba(59,130,246,.22);
-    border: 1px solid rgba(59,130,246,.5);
-    color: rgba(23,37,84, .62);
+    background: color-mix(in srgb, var(--g-primary) 22%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 50%, transparent);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
     border-radius: 999px;
     padding: 2px 10px;
     font-size: .64rem;
@@ -990,9 +990,9 @@ select.pe-input option {
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    background: rgba(59,130,246,.14);
-    border: 1px solid rgba(59,130,246,.30);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-primary) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent);
+    color: var(--g-text);
     border-radius: 999px;
     padding: 3px 10px;
     font-size: .7rem;
@@ -1000,7 +1000,7 @@ select.pe-input option {
 }
 
     .mp-pill i, .pd-pill i {
-        color: #3B82F6;
+        color: var(--g-primary);
         font-size: .78rem;
     }
 
@@ -1008,9 +1008,9 @@ select.pe-input option {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    background: rgba(191, 219, 254,.08);
-    border: 1px solid rgba(23,37,84,.15);
-    color: rgba(23,37,84, .62);
+    background: color-mix(in srgb, var(--g-nested-solid) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 15%, transparent);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
     border-radius: 999px;
     padding: 2px 8px;
     font-size: .66rem;
@@ -1018,21 +1018,21 @@ select.pe-input option {
 }
 
     .mp-pill-sm i, .pd-pill-sm i {
-        color: #172554;
+        color: var(--g-text);
         font-size: .68rem;
     }
 
 /* ===== combo ===== */
 .mp-combo, .pd-combo {
     margin-top: 10px;
-    background: rgba(59,130,246,.07);
-    border: 1px dashed rgba(59,130,246,.40);
+    background: color-mix(in srgb, var(--g-primary) 7%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--g-primary) 40%, transparent);
     border-radius: 10px;
     padding: 10px 12px;
 }
 
 .mp-combo-title, .pd-combo-title {
-    color: #3B82F6;
+    color: var(--g-primary);
     font-size: .74rem;
     font-weight: 800;
     margin-bottom: 6px;
@@ -1043,7 +1043,7 @@ select.pe-input option {
     align-items: flex-start;
     gap: 10px;
     padding: 6px 0;
-    border-top: 1px solid rgba(23,37,84,.06);
+    border-top: 1px solid color-mix(in srgb, var(--g-text) 6%, transparent);
 }
 
     .mp-combo-row:first-of-type, .pd-combo-row:first-of-type {
@@ -1055,8 +1055,8 @@ select.pe-input option {
     width: 24px;
     height: 24px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #3B82F6, #FFFFFF);
-    color: #172554;
+    background: linear-gradient(135deg, var(--g-primary), var(--g-surface-solid));
+    color: var(--g-text);
     font-size: .68rem;
     font-weight: 800;
     display: inline-flex;
@@ -1065,7 +1065,7 @@ select.pe-input option {
 }
 
 .mp-combo-name, .pd-combo-name {
-    color: #172554;
+    color: var(--g-text);
     font-weight: 700;
     font-size: .82rem;
     line-height: 1.5;
@@ -1079,74 +1079,74 @@ select.pe-input option {
     align-items: center;
     gap: 6px;
     margin-top: 8px;
-    background: rgba(59,130,246,.12);
-    border: 1px solid rgba(59,130,246,.35);
+    background: color-mix(in srgb, var(--g-primary) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 35%, transparent);
     border-radius: 10px;
     padding: 7px 12px;
     font-size: .74rem;
     font-weight: 700;
-    color: #172554;
+    color: var(--g-text);
     line-height: 1.5;
 }
 
     .mp-tech > i, .pd-tech > i {
-        color: rgba(23,37,84, .62);
+        color: color-mix(in srgb, var(--g-text) 62%, transparent);
         font-size: .9rem;
         flex: 0 0 auto;
     }
 
     .mp-tech b, .pd-tech b {
-        color: #172554;
+        color: var(--g-text);
     }
 
 .mp-tech-sep, .pd-tech-sep {
-    color: rgba(23, 37, 84, .62);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
     margin: 0 2px;
 }
 
 .mp-tech-drop {
-    background: rgba(191, 219, 254,.10);
-    border-color: rgba(23,37,84,.30);
-    color: #3B82F6;
+    background: color-mix(in srgb, var(--g-nested-solid) 10%, transparent);
+    border-color: color-mix(in srgb, var(--g-text) 30%, transparent);
+    color: var(--g-primary);
 }
 
     .mp-tech-drop > i {
-        color: #172554;
+        color: var(--g-text);
     }
 
 .mp-tech-pyramid {
-    background: rgba(59,130,246,.10);
-    border-color: rgba(59,130,246,.30);
-    color: #3B82F6;
+    background: color-mix(in srgb, var(--g-primary) 10%, transparent);
+    border-color: color-mix(in srgb, var(--g-primary) 30%, transparent);
+    color: var(--g-primary);
 }
 
     .mp-tech-pyramid > i {
-        color: #3B82F6;
+        color: var(--g-primary);
     }
 
 .mp-tech-pause {
-    background: rgba(59,130,246,.10);
-    border-color: rgba(59,130,246,.35);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-primary) 10%, transparent);
+    border-color: color-mix(in srgb, var(--g-primary) 35%, transparent);
+    color: var(--g-text);
 }
 
     .mp-tech-pause > i {
-        color: #3B82F6;
+        color: var(--g-primary);
     }
 
 .mp-tech-tempo {
-    background: rgba(59,130,246,.10);
-    border-color: rgba(59,130,246,.30);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-primary) 10%, transparent);
+    border-color: color-mix(in srgb, var(--g-primary) 30%, transparent);
+    color: var(--g-text);
 }
 
     .mp-tech-tempo > i {
-        color: #3B82F6;
+        color: var(--g-primary);
     }
 
 .mp-tempo-code {
     font-family: 'Courier New', monospace;
-    background: rgba(191, 219, 254,.25);
+    background: color-mix(in srgb, var(--g-nested-solid) 25%, transparent);
     border-radius: 6px;
     padding: 1px 8px;
     letter-spacing: 1px;
@@ -1154,7 +1154,7 @@ select.pe-input option {
 
 .mp-tempo-desc {
     font-size: .66rem;
-    color: rgba(23,37,84,.75);
+    color: color-mix(in srgb, var(--g-text) 75%, transparent);
     font-weight: 600;
 }
 
@@ -1165,16 +1165,16 @@ select.pe-input option {
     gap: 6px;
     margin-top: 8px;
     font-size: .74rem;
-    color: rgba(23,37,84, .62);
-    background: rgba(59,130,246,.08);
-    border: 1px solid rgba(59,130,246,.22);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
+    background: color-mix(in srgb, var(--g-primary) 8%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent);
     border-radius: 10px;
     padding: 6px 10px;
     line-height: 1.7;
 }
 
     .mp-note i, .pd-note i {
-        color: #3B82F6;
+        color: var(--g-primary);
         font-size: .8rem;
         margin-top: 2px;
         flex: 0 0 auto;
@@ -1185,9 +1185,9 @@ select.pe-input option {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: linear-gradient(135deg, #3B82F6, #3B82F6);
+    background: linear-gradient(135deg, var(--g-primary), var(--g-primary));
     border: none;
-    color: #172554;
+    color: var(--g-text);
     border-radius: 999px;
     padding: 7px 16px;
     font-size: .78rem;
@@ -1197,7 +1197,7 @@ select.pe-input option {
 
     .pd-edit-btn:hover {
         filter: brightness(1.1);
-        color: #172554;
+        color: var(--g-text);
     }
 .mp-combo-body {
     flex: 1 1 auto;
@@ -1209,8 +1209,8 @@ select.pe-input option {
 
 /* ===== هدر بنفش لیست‌ها ===== */
 .coach-list-header {
-    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
-    color: #172554;
+    background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
+    color: var(--g-text);
     font-weight: 800;
     font-size: 1rem;
     padding: 13px 20px;
@@ -1218,16 +1218,16 @@ select.pe-input option {
 
 /* ===== بج کنار عنوان ===== */
 .hd-badge {
-    background: rgba(59,130,246,.25);
-    border: 1px solid rgba(59,130,246,.45);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-primary) 25%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 45%, transparent);
+    color: var(--g-text);
     font-weight: 700;
 }
 
 /* ===== کارت تردد (بازشو) ===== */
 .trf-card {
-    background: rgba(191, 219, 254,.06);
-    border: 1px solid rgba(23,37,84,.10);
+    background: color-mix(in srgb, var(--g-nested-solid) 6%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 10%, transparent);
     border-radius: 14px;
     margin-bottom: 10px;
     overflow: hidden;
@@ -1246,14 +1246,14 @@ select.pe-input option {
     width: 34px;
     height: 34px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
-    color: #172554;
+    background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
+    color: var(--g-text);
     font-weight: 800;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: .78rem;
-    box-shadow: 0 4px 10px rgba(59,130,246,.35);
+    box-shadow: 0 4px 10px color-mix(in srgb, var(--g-primary) 35%, transparent);
 }
 
 .trf-mid {
@@ -1263,7 +1263,7 @@ select.pe-input option {
 
 .trf-line {
     font-size: .8rem;
-    color: rgba(23,37,84, .62);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
     display: flex;
     align-items: center;
     gap: 6px;
@@ -1273,14 +1273,14 @@ select.pe-input option {
 }
 
     .trf-line b {
-        color: #172554;
+        color: var(--g-text);
     }
 
 .trf-toggle {
     flex: 0 0 auto;
-    background: rgba(191, 219, 254,.08);
+    background: color-mix(in srgb, var(--g-nested-solid) 8%, transparent);
     border: none;
-    color: #172554;
+    color: var(--g-text);
     width: 32px;
     height: 32px;
     border-radius: 10px;
@@ -1292,15 +1292,15 @@ select.pe-input option {
 
 .trf-card.open .trf-toggle {
     transform: rotate(-90deg);
-    background: rgba(59,130,246,.35);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-primary) 35%, transparent);
+    color: var(--g-text);
 }
 
 .trf-details {
     display: none;
     padding: 10px 12px 12px;
-    border-top: 1px dashed rgba(23,37,84,.15);
-    background: rgba(191, 219, 254,.15);
+    border-top: 1px dashed color-mix(in srgb, var(--g-text) 15%, transparent);
+    background: color-mix(in srgb, var(--g-nested-solid) 15%, transparent);
 }
 
 .trf-drow {
@@ -1309,7 +1309,7 @@ select.pe-input option {
     align-items: center;
     font-size: .78rem;
     padding: 6px 0;
-    border-bottom: 1px solid rgba(23,37,84,.06);
+    border-bottom: 1px solid color-mix(in srgb, var(--g-text) 6%, transparent);
 }
 
     .trf-drow:last-child {
@@ -1317,11 +1317,11 @@ select.pe-input option {
     }
 
     .trf-drow span {
-        color: rgba(23,37,84, .62);
+        color: color-mix(in srgb, var(--g-text) 62%, transparent);
     }
 
     .trf-drow b {
-        color: rgba(23, 37, 84, .62);
+        color: color-mix(in srgb, var(--g-text) 62%, transparent);
         font-weight: 700;
     }
 /* =====================================================
@@ -1330,9 +1330,9 @@ select.pe-input option {
 
 /* ===== دکمه تقویم روی هدر بنفش ===== */
 .att-cal-btn {
-    background: rgba(191, 219, 254,.15);
-    border: 1px solid rgba(23,37,84,.30);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-nested-solid) 15%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 30%, transparent);
+    color: var(--g-text);
     width: 34px;
     height: 34px;
     border-radius: 10px;
@@ -1344,7 +1344,7 @@ select.pe-input option {
 }
 
     .att-cal-btn:hover {
-        background: rgba(191, 219, 254,.28);
+        background: color-mix(in srgb, var(--g-nested-solid) 28%, transparent);
         transform: translateY(-1px);
     }
 
@@ -1380,7 +1380,7 @@ body.att-open {
 .att-cal-backdrop {
     position: absolute;
     inset: 0;
-    background: rgba(239,246,255,.45);
+    background: color-mix(in srgb, var(--g-surface-solid) 45%, transparent);
     opacity: 0;
     transition: opacity .3s;
 }
@@ -1394,8 +1394,8 @@ body.att-open {
     width: 100%;
     max-width: 420px;
     border-radius: 20px;
-    border: 1px solid rgba(23,37,84,.15);
-    box-shadow: 0 20px 60px rgba(23,37,84,.6);
+    border: 1px solid color-mix(in srgb, var(--g-text) 15%, transparent);
+    box-shadow: 0 20px 60px color-mix(in srgb, var(--g-text) 60%, transparent);
     transform: scale(.85) translateY(24px);
     opacity: 0;
     transition: transform .4s cubic-bezier(.22,.9,.35,1.15), opacity .3s;
@@ -1410,9 +1410,9 @@ body.att-open {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
+    background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
     padding: 10px 14px;
-    color: #172554;
+    color: var(--g-text);
 }
 
 .att-cal-title {
@@ -1424,9 +1424,9 @@ body.att-open {
 
 .att-nav,
 .att-close {
-    background: rgba(191, 219, 254,.15);
+    background: color-mix(in srgb, var(--g-nested-solid) 15%, transparent);
     border: none;
-    color: #172554;
+    color: var(--g-text);
     width: 30px;
     height: 30px;
     border-radius: 9px;
@@ -1438,7 +1438,7 @@ body.att-open {
 
     .att-nav:hover,
     .att-close:hover {
-        background: rgba(191, 219, 254,.3);
+        background: color-mix(in srgb, var(--g-nested-solid) 30%, transparent);
     }
 
 .att-cal-body {
@@ -1455,7 +1455,7 @@ body.att-open {
     .att-week span {
         text-align: center;
         font-size: .68rem;
-        color: #172554;
+        color: var(--g-text);
         font-weight: 700;
     }
 
@@ -1475,21 +1475,21 @@ body.att-open {
 
 /* ===== روزها: سبز / قرمز / خاکستری ===== */
 .att-on {
-    background: rgba(59,130,246,.18);
-    border: 1px solid rgba(59,130,246,.45);
-    color: #3B82F6;
+    background: color-mix(in srgb, var(--g-primary) 18%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 45%, transparent);
+    color: var(--g-primary);
 }
 
 .att-off {
-    background: rgba(191, 219, 254,.14);
-    border: 1px solid rgba(23,37,84,.40);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-nested-solid) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 40%, transparent);
+    color: var(--g-text);
 }
 
 .att-future {
-    background: rgba(191, 219, 254,.05);
-    border: 1px solid rgba(23,37,84,.10);
-    color: rgba(23,37,84, .62);
+    background: color-mix(in srgb, var(--g-nested-solid) 5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 10%, transparent);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
 }
 
 .att-empty {
@@ -1527,14 +1527,14 @@ body.att-open {
 }
 
 .att-chip-on {
-    background: rgba(59,130,246,.14);
-    border: 1px solid rgba(59,130,246,.35);
-    color: #3B82F6;
+    background: color-mix(in srgb, var(--g-primary) 14%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 35%, transparent);
+    color: var(--g-primary);
 }
 
 .att-chip-off {
-    background: rgba(191, 219, 254,.12);
-    border: 1px solid rgba(23,37,84,.35);
-    color: #172554;
+    background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 35%, transparent);
+    color: var(--g-text);
 }
 

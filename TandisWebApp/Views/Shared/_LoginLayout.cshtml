@@ -31,7 +31,7 @@
     <meta charset="utf-8" />
     <!-- viewport-fit=cover → فعال‌شدن env(safe-area-inset-*) برای نچ (iPhone) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#EFF6FF" />
+    <meta name="theme-color" content="#DCE5F0" />
     <title>@ViewData["Title"] - تندیس</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
@@ -79,18 +79,19 @@
             height: 40px;
             border-radius: 10px;
             opacity: .92;
-            filter: drop-shadow(0 2px 6px rgba(23,37,84,.4));
+            filter: drop-shadow(0 2px 6px color-mix(in srgb, var(--g-text) 40%, transparent));
         }
 
         /* ===== ✅ فلش بازگشت به ورود (فقط صفحه ثبت‌نام) ===== */
         .reg-back-arrow:hover {
-            color: #3B82F6 !important;
+            color: var(--g-primary) !important;
             transform: scale(1.1);
         }
     </style>
     <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-arctic.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-glass.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme-cool-mist.css" asp-append-version="true" />
 </head>
 <body>
     <div class="login-fullscreen">
@@ -113,8 +114,8 @@
                 var backTitle = isDeskRegister ? "بازگشت به میز خدمت" : "بازگشت به ورود";
                 <a href="javascript:void(0)" onclick="flipNavigate('@backUrl')" title="@backTitle" id="regBackArrow"
                    style="position:absolute; top:12px; right:12px; z-index:6;
-                              color:#172554; font-size:1.45rem; text-decoration:none;
-                              text-shadow:0 0 10px rgba(59,130,246,.5);
+                              color:var(--g-text); font-size:1.45rem; text-decoration:none;
+                              text-shadow:0 0 10px color-mix(in srgb, var(--g-primary) 50%, transparent);
                               transition:all .2s;">
                     <i class="bi bi-arrow-right"></i>
                 </a>
@@ -253,6 +254,9 @@
                     d.y += d.vy;
                 }
 
+                var dark = document.documentElement.getAttribute('data-theme') === 'dark';
+                var lineRgb = dark ? '96,165,250' : '82,125,187';
+                var dotRgb = dark ? '241,245,249' : '38,55,80';
                 ctx.lineWidth = 1.15;
                 for (i = 0; i < dots.length; i++) {
                     d = dots[i];
@@ -262,7 +266,7 @@
                         dy = d.y - e.y;
                         dist = Math.sqrt(dx * dx + dy * dy);
                         if (dist < LINK) {
-                            ctx.strokeStyle = 'rgba(239,246,255,' + (0.34 * (1 - dist / LINK)).toFixed(3) + ')';
+                            ctx.strokeStyle = 'rgba(' + lineRgb + ',' + (0.34 * (1 - dist / LINK)).toFixed(3) + ')';
                             ctx.beginPath();
                             ctx.moveTo(d.x, d.y);
                             ctx.lineTo(e.x, e.y);
@@ -275,7 +279,7 @@
                     d = dots[i];
                     ctx.beginPath();
                     ctx.arc(d.x, d.y, 2.2, 0, 6.2832);
-                    ctx.fillStyle = 'rgba(255,255,255, .85)';
+                    ctx.fillStyle = 'rgba(' + dotRgb + ',.85)';
                     ctx.fill();
                 }
 

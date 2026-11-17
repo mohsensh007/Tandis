@@ -22,7 +22,7 @@
     <meta charset="utf-8" />
     <!-- viewport-fit=cover → فعال‌شدن env(safe-area-inset-*) برای نچ (iPhone) و نوار پایین iOS -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#EFF6FF" />
+    <meta name="theme-color" content="#DCE5F0" />
     <title>@ViewData["Title"] - پنل مربی | تندیس</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
@@ -32,10 +32,10 @@
 
     <style>
         body.coach-glass-body {
-            background-color: #EFF6FF;
+            background-color: var(--g-surface-solid);
             min-height: 100vh;
             min-height: 100dvh; /* ارتفاع واقعی در مرورگرهای موبایل */
-            color: rgba(23, 37, 84, .62);
+            color: color-mix(in srgb, var(--g-text) 62%, transparent);
         }
 
             body.coach-glass-body::before {
@@ -43,21 +43,21 @@
                 position: fixed;
                 inset: 0;
                 z-index: -1;
-                background: linear-gradient(135deg, rgba(239,246,255,.88), rgba(239,246,255,.85));
+                background: linear-gradient(135deg, color-mix(in srgb, var(--g-surface-solid) 88%, transparent), color-mix(in srgb, var(--g-surface-solid) 85%, transparent));
                 transform: translateZ(0);
                 pointer-events: none;
             }
 
         .coach-top-nav {
-            background: rgba(239,246,255,.8) !important;
+            background: color-mix(in srgb, var(--g-surface-solid) 80%, transparent) !important;
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(23,37,84,.08);
+            border-bottom: 1px solid color-mix(in srgb, var(--g-text) 8%, transparent);
             padding-top: calc(8px + env(safe-area-inset-top));
         }
 
             .coach-top-nav .navbar-brand {
-                color: #172554;
+                color: var(--g-text);
                 font-weight: 800;
                 min-width: 0;
             }
@@ -83,7 +83,7 @@
 
                 .coach-top-nav .navbar-brand .brand-text b {
                     font-size: clamp(.76rem, 2.6vw, .93rem);
-                    color: #172554;
+                    color: var(--g-text);
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
@@ -91,24 +91,24 @@
 
                 .coach-top-nav .navbar-brand .brand-text small {
                     font-size: clamp(.56rem, 2vw, .66rem);
-                    color: #172554;
+                    color: var(--g-text);
                     font-weight: 700;
                     white-space: nowrap;
                 }
 
             .coach-top-nav .nav-link {
-                color: rgba(23,37,84, .62);
+                color: color-mix(in srgb, var(--g-text) 62%, transparent);
                 font-size: .85rem;
             }
 
                 .coach-top-nav .nav-link:hover {
-                    color: #172554;
+                    color: var(--g-text);
                 }
 
                 .coach-top-nav .nav-link.nav-active {
-                    color: #172554 !important;
-                    background: rgba(59,130,246,.16);
-                    border: 1px solid rgba(59,130,246,.35);
+                    color: var(--g-text) !important;
+                    background: color-mix(in srgb, var(--g-primary) 16%, transparent);
+                    border: 1px solid color-mix(in srgb, var(--g-primary) 35%, transparent);
                     border-radius: 10px;
                 }
 
@@ -116,9 +116,9 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            background: rgba(191, 219, 254,.12);
-            border: 1px solid rgba(23,37,84,.40);
-            color: #172554;
+            background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
+            border: 1px solid color-mix(in srgb, var(--g-text) 40%, transparent);
+            color: var(--g-text);
             border-radius: 999px;
             padding: 6px 16px;
             font-size: .8rem;
@@ -128,9 +128,9 @@
         }
 
             .btn-logout-glass:hover {
-                background: rgba(191, 219, 254,.25);
-                color: #172554;
-                border-color: rgba(23,37,84,.6);
+                background: color-mix(in srgb, var(--g-nested-solid) 25%, transparent);
+                color: var(--g-text);
+                border-color: color-mix(in srgb, var(--g-text) 60%, transparent);
             }
 
         .coach-bottom-nav {
@@ -142,12 +142,12 @@
             display: flex;
             justify-content: space-around;
             align-items: stretch;
-            background: rgba(239,246,255,.88);
+            background: color-mix(in srgb, var(--g-surface-solid) 88%, transparent);
             -webkit-backdrop-filter: blur(14px);
             backdrop-filter: blur(14px);
-            border: 1px solid rgba(23,37,84,.10);
+            border: 1px solid color-mix(in srgb, var(--g-text) 10%, transparent);
             border-radius: 22px;
-            box-shadow: 0 12px 32px rgba(23,37,84,.45), inset 0 1px 0 rgba(23,37,84,.06);
+            box-shadow: 0 12px 32px color-mix(in srgb, var(--g-text) 45%, transparent), inset 0 1px 0 color-mix(in srgb, var(--g-text) 6%, transparent);
             padding: 8px 6px;
         }
 
@@ -159,7 +159,7 @@
             align-items: center;
             justify-content: center;
             gap: 3px;
-            color: rgba(23,37,84, .62);
+            color: color-mix(in srgb, var(--g-text) 62%, transparent);
             text-decoration: none;
             font-size: .64rem;
             font-weight: 600;
@@ -178,13 +178,13 @@
             }
 
             .cbn-item.cbn-active {
-                color: #172554;
+                color: var(--g-text);
             }
 
                 .cbn-item.cbn-active i {
                     opacity: 1;
                     transform: translateY(-2px) scale(1.1);
-                    color: #3B82F6;
+                    color: var(--g-primary);
                 }
 
         .cbn-glow {
@@ -194,8 +194,8 @@
             width: 34px;
             height: 4px;
             border-radius: 999px;
-            background: linear-gradient(90deg, #3B82F6, #3B82F6);
-            box-shadow: 0 0 14px rgba(59,130,246,.5);
+            background: linear-gradient(90deg, var(--g-primary), var(--g-primary));
+            box-shadow: 0 0 14px color-mix(in srgb, var(--g-primary) 50%, transparent);
             transform: translateX(-200px) translateX(-50%);
             transition: transform .5s cubic-bezier(.22,.9,.35,1.15), opacity .3s;
             opacity: 0;
@@ -207,10 +207,10 @@
             }
 
         #coachLogoutModal .modal-content {
-            background: rgba(239,246,255,.97);
-            border: 1px solid rgba(23,37,84,.15);
+            background: color-mix(in srgb, var(--g-surface-solid) 97%, transparent);
+            border: 1px solid color-mix(in srgb, var(--g-text) 15%, transparent);
             border-radius: 18px;
-            color: #172554;
+            color: var(--g-text);
             -webkit-backdrop-filter: blur(14px);
             backdrop-filter: blur(14px);
         }
@@ -225,6 +225,7 @@
     <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-arctic.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-glass.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme-cool-mist.css" asp-append-version="true" />
 </head>
 <body class="coach-glass-body">
     <!-- ========== نوار بالا ========== -->
@@ -265,7 +266,7 @@
                 <span class="d-none d-md-inline text-light small ms-2"><i class="bi bi-person-fill"></i> @coachName</span>
                 <button type="button" class="btn-logout-glass" data-bio-enroll="1"
                         title="ثبت اثر انگشت / چهره" aria-label="ثبت اثر انگشت یا چهره"
-                        style="border:1px solid rgba(23,37,84,.34);cursor:pointer;">
+                        style="border:1px solid color-mix(in srgb, var(--g-text) 34%, transparent);cursor:pointer;">
                     <i class="bi bi-fingerprint"></i>
                 </button>
                 <a class="btn-logout-glass js-logout" href="/Account/Logout">
@@ -312,7 +313,7 @@
                 <div class="modal-body text-center p-4">
                     <div style="font-size:2.6rem" class="mb-2">🚪</div>
                     <div class="fw-bold mb-1" id="coachLogoutTitle">خروج از پنل مربی</div>
-                    <div class="small mb-3" id="coachLogoutDescription" style="color:#172554">آیا مطمئن هستید که می‌خواهید خارج شوید؟</div>
+                    <div class="small mb-3" id="coachLogoutDescription" style="color:var(--g-text)">آیا مطمئن هستید که می‌خواهید خارج شوید؟</div>
                     <div class="d-flex gap-2">
                         <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal">انصراف</button>
                         <button type="button" class="btn btn-danger w-100" id="btnConfirmCoachLogout">

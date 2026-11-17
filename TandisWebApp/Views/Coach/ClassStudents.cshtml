@@ -67,17 +67,17 @@ else
         align-items: center;
         gap: 10px;
         flex-wrap: wrap;
-        background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
+        background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
         border-radius: 16px;
         padding: 12px 16px;
-        color: #172554;
+        color: var(--g-text);
     }
 
     .cs-head-icon {
         width: 40px;
         height: 40px;
         border-radius: 12px;
-        background: rgba(191, 219, 254,.18);
+        background: color-mix(in srgb, var(--g-nested-solid) 18%, transparent);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -96,7 +96,7 @@ else
     }
 
     .cs-count {
-        background: rgba(191, 219, 254,.18);
+        background: color-mix(in srgb, var(--g-nested-solid) 18%, transparent);
         border-radius: 999px;
         padding: 5px 14px;
         font-size: .72rem;
@@ -107,9 +107,9 @@ else
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: rgba(191, 219, 254,.14);
-        border: 1px solid rgba(23,37,84,.25);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-nested-solid) 14%, transparent);
+        border: 1px solid color-mix(in srgb, var(--g-text) 25%, transparent);
+        color: var(--g-text);
         border-radius: 999px;
         padding: 7px 18px;
         font-size: .82rem;
@@ -119,15 +119,15 @@ else
     }
 
         .coach-back-pill:hover {
-            background: rgba(191, 219, 254,.25);
-            color: #172554;
+            background: color-mix(in srgb, var(--g-nested-solid) 25%, transparent);
+            color: var(--g-text);
         }
 
     .glass-search {
         width: 100%;
-        background: rgba(191, 219, 254,.08);
-        border: 1px solid rgba(23,37,84,.18);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-nested-solid) 8%, transparent);
+        border: 1px solid color-mix(in srgb, var(--g-text) 18%, transparent);
+        color: var(--g-text);
         border-radius: 999px;
         padding: 10px 18px;
         font-size: .85rem;
@@ -135,25 +135,25 @@ else
 
         .glass-search:focus {
             outline: none;
-            border-color: rgba(59,130,246,.5);
-            background: rgba(191, 219, 254,.12);
+            border-color: color-mix(in srgb, var(--g-primary) 50%, transparent);
+            background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
         }
 
     .cs-empty {
-        background: linear-gradient(160deg, rgba(191, 219, 254,.08), rgba(23,37,84,.03));
-        border: 1px solid rgba(23,37,84,.14);
+        background: linear-gradient(160deg, color-mix(in srgb, var(--g-nested-solid) 8%, transparent), color-mix(in srgb, var(--g-text) 3%, transparent));
+        border: 1px solid color-mix(in srgb, var(--g-text) 14%, transparent);
         border-radius: 20px;
         text-align: center;
         padding: 44px 16px;
-        color: #172554;
+        color: var(--g-text);
         font-size: .9rem;
     }
 
     .cs-card {
         position: relative;
         overflow: hidden;
-        background: linear-gradient(160deg, rgba(191, 219, 254,.10), rgba(23,37,84,.04));
-        border: 1px solid rgba(23,37,84,.14);
+        background: linear-gradient(160deg, color-mix(in srgb, var(--g-nested-solid) 10%, transparent), color-mix(in srgb, var(--g-text) 4%, transparent));
+        border: 1px solid color-mix(in srgb, var(--g-text) 14%, transparent);
         border-radius: 18px;
         padding: 16px;
         transition: transform .25s, border-color .25s;
@@ -166,13 +166,13 @@ else
             left: -40px;
             width: 130px;
             height: 130px;
-            background: radial-gradient(circle, rgba(191, 219, 254,.25), transparent 70%);
+            background: radial-gradient(circle, color-mix(in srgb, var(--g-nested-solid) 25%, transparent), transparent 70%);
             pointer-events: none;
         }
 
     a:hover .cs-card {
         transform: translateY(-4px);
-        border-color: rgba(59,130,246,.45);
+        border-color: color-mix(in srgb, var(--g-primary) 45%, transparent);
     }
 
     .cs-avatar {
@@ -184,14 +184,14 @@ else
         align-items: center;
         justify-content: center;
         font-size: 1.2rem;
-        color: #172554;
-        background: linear-gradient(135deg, #3B82F6, #3B82F6);
-        box-shadow: 0 5px 14px rgba(23,37,84,.35);
+        color: var(--g-text);
+        background: linear-gradient(135deg, var(--g-primary), var(--g-primary));
+        box-shadow: 0 5px 14px color-mix(in srgb, var(--g-text) 35%, transparent);
     }
 
     .cs-name {
         font-weight: 800;
-        color: #172554;
+        color: var(--g-text);
         font-size: .92rem;
         white-space: nowrap;
         overflow: hidden;
@@ -200,7 +200,7 @@ else
 
     .cs-mobile {
         font-size: .73rem;
-        color: #3B82F6;
+        color: var(--g-primary);
         margin-top: 2px;
         text-align: right;
     }
@@ -209,9 +209,9 @@ else
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        background: rgba(59,130,246,.14);
-        border: 1px solid rgba(59,130,246,.30);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-primary) 14%, transparent);
+        border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent);
+        color: var(--g-text);
         border-radius: 999px;
         padding: 4px 12px;
         font-size: .72rem;
@@ -219,7 +219,7 @@ else
     }
 
         .cs-pill i {
-            color: #3B82F6;
+            color: var(--g-primary);
             font-size: .8rem;
         }
 
@@ -227,20 +227,20 @@ else
         display: flex;
         align-items: center;
         gap: 6px;
-        color: #3B82F6;
+        color: var(--g-primary);
         font-size: .76rem;
         font-weight: 700;
-        border-top: 1px dashed rgba(23,37,84,.12);
+        border-top: 1px dashed color-mix(in srgb, var(--g-text) 12%, transparent);
         padding-top: 10px;
     }
 
     .cs-hint {
-        color: #172554;
+        color: var(--g-text);
         font-size: .75rem;
     }
 
         .cs-hint i {
-            color: #3B82F6;
+            color: var(--g-primary);
         }
 
     .stt {
@@ -252,27 +252,27 @@ else
     }
 
     .stt-success {
-        background: rgba(59,130,246,.16);
-        color: #3B82F6;
-        border: 1px solid rgba(59,130,246,.4);
+        background: color-mix(in srgb, var(--g-primary) 16%, transparent);
+        color: var(--g-primary);
+        border: 1px solid color-mix(in srgb, var(--g-primary) 40%, transparent);
     }
 
     .stt-warning {
-        background: rgba(59,130,246,.16);
-        color: #3B82F6;
-        border: 1px solid rgba(59,130,246,.4);
+        background: color-mix(in srgb, var(--g-primary) 16%, transparent);
+        color: var(--g-primary);
+        border: 1px solid color-mix(in srgb, var(--g-primary) 40%, transparent);
     }
 
     .stt-secondary {
-        background: rgba(191, 219, 254,.10);
-        color: #172554;
-        border: 1px solid rgba(23,37,84,.2);
+        background: color-mix(in srgb, var(--g-nested-solid) 10%, transparent);
+        color: var(--g-text);
+        border: 1px solid color-mix(in srgb, var(--g-text) 20%, transparent);
     }
 
     .stt-danger {
-        background: rgba(191, 219, 254,.16);
-        color: #172554;
-        border: 1px solid rgba(23,37,84,.4);
+        background: color-mix(in srgb, var(--g-nested-solid) 16%, transparent);
+        color: var(--g-text);
+        border: 1px solid color-mix(in srgb, var(--g-text) 40%, transparent);
     }
 </style>
 

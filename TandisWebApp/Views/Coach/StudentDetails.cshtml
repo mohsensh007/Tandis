@@ -104,14 +104,14 @@
         align-items: center;
         justify-content: center;
         font-size: 1.4rem;
-        color: #172554;
-        background: linear-gradient(135deg, #3B82F6, #3B82F6);
-        box-shadow: 0 6px 16px rgba(59,130,246,.35);
+        color: var(--g-text);
+        background: linear-gradient(135deg, var(--g-primary), var(--g-primary));
+        box-shadow: 0 6px 16px color-mix(in srgb, var(--g-primary) 35%, transparent);
     }
 
     .sd-sub {
         font-size: .78rem;
-        color: #172554;
+        color: var(--g-text);
         margin-top: 3px;
     }
 
@@ -119,9 +119,9 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: rgba(191, 219, 254,.08);
-        border: 1px solid rgba(23,37,84,.18);
-        color: #172554;
+        background: color-mix(in srgb, var(--g-nested-solid) 8%, transparent);
+        border: 1px solid color-mix(in srgb, var(--g-text) 18%, transparent);
+        color: var(--g-text);
         border-radius: 999px;
         padding: 7px 18px;
         font-size: .82rem;
@@ -133,13 +133,13 @@
     }
 
         .coach-back-pill i {
-            color: #3B82F6;
+            color: var(--g-primary);
             transition: transform .25s;
         }
 
         .coach-back-pill:hover {
-            background: rgba(191, 219, 254,.14);
-            color: #172554;
+            background: color-mix(in srgb, var(--g-nested-solid) 14%, transparent);
+            color: var(--g-text);
         }
 
             .coach-back-pill:hover i {
@@ -149,8 +149,8 @@
     .sd-card {
         position: relative;
         overflow: hidden;
-        background: linear-gradient(160deg, rgba(191, 219, 254,.10), rgba(23,37,84,.04));
-        border: 1px solid rgba(23,37,84,.14);
+        background: linear-gradient(160deg, color-mix(in srgb, var(--g-nested-solid) 10%, transparent), color-mix(in srgb, var(--g-text) 4%, transparent));
+        border: 1px solid color-mix(in srgb, var(--g-text) 14%, transparent);
         border-radius: 18px;
         padding: 18px 14px;
         text-align: center;
@@ -163,7 +163,7 @@
             left: -35px;
             width: 110px;
             height: 110px;
-            background: radial-gradient(circle, rgba(191, 219, 254,.25), transparent 70%);
+            background: radial-gradient(circle, color-mix(in srgb, var(--g-nested-solid) 25%, transparent), transparent 70%);
             pointer-events: none;
         }
 
@@ -175,37 +175,37 @@
         align-items: center;
         justify-content: center;
         font-size: 1.25rem;
-        color: #172554;
-        box-shadow: 0 6px 16px rgba(23,37,84,.3);
+        color: var(--g-text);
+        box-shadow: 0 6px 16px color-mix(in srgb, var(--g-text) 30%, transparent);
         margin-bottom: 10px;
     }
 
     .grad-blue {
-        background: linear-gradient(135deg, #3B82F6, #3B82F6);
+        background: linear-gradient(135deg, var(--g-primary), var(--g-primary));
     }
 
     .grad-turquoise {
-        background: linear-gradient(135deg, #3B82F6, #3B82F6);
+        background: linear-gradient(135deg, var(--g-primary), var(--g-primary));
     }
 
     .grad-purple {
-        background: linear-gradient(135deg, #3B82F6, #FFFFFF);
+        background: linear-gradient(135deg, var(--g-primary), var(--g-surface-solid));
     }
 
     .grad-pink {
-        background: linear-gradient(135deg, #3B82F6, #FFFFFF);
+        background: linear-gradient(135deg, var(--g-primary), var(--g-surface-solid));
     }
 
     .sd-label {
         font-size: .75rem;
-        color: #172554;
+        color: var(--g-text);
         font-weight: 700;
     }
 
     .sd-value {
         font-size: 1.5rem;
         font-weight: 800;
-        color: #172554;
+        color: var(--g-text);
         margin-top: 4px;
     }
 
@@ -214,24 +214,24 @@
     }
 
     .sd-tel {
-        color: #3B82F6;
+        color: var(--g-primary);
         text-decoration: none;
     }
 
         .sd-tel:hover {
-            color: #172554;
+            color: var(--g-text);
         }
 
     .sd-box {
-        background: linear-gradient(160deg, rgba(191, 219, 254,.08), rgba(23,37,84,.03));
-        border: 1px solid rgba(23,37,84,.14);
+        background: linear-gradient(160deg, color-mix(in srgb, var(--g-nested-solid) 8%, transparent), color-mix(in srgb, var(--g-text) 3%, transparent));
+        border: 1px solid color-mix(in srgb, var(--g-text) 14%, transparent);
         border-radius: 20px;
         overflow: hidden;
     }
 
     .sd-box-head {
-        background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
-        color: #172554;
+        background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
+        color: var(--g-text);
         font-weight: 800;
         font-size: .95rem;
         padding: 12px 16px;
@@ -240,7 +240,7 @@
     .sd-empty {
         text-align: center;
         padding: 34px 10px;
-        color: #172554;
+        color: var(--g-text);
         font-size: .88rem;
     }
 
@@ -250,8 +250,8 @@
         align-items: center;
         gap: 10px;
         flex-wrap: wrap;
-        background: rgba(191, 219, 254,.05);
-        border: 1px solid rgba(23,37,84,.10);
+        background: color-mix(in srgb, var(--g-nested-solid) 5%, transparent);
+        border: 1px solid color-mix(in srgb, var(--g-text) 10%, transparent);
         border-radius: 14px;
         padding: 10px 14px;
         margin-bottom: 8px;
@@ -263,18 +263,18 @@
 
     .sd-line {
         font-size: .78rem;
-        color: rgba(23,37,84, .62);
+        color: color-mix(in srgb, var(--g-text) 62%, transparent);
         display: flex;
         align-items: center;
         gap: 6px;
     }
 
         .sd-line b {
-            color: #172554;
+            color: var(--g-text);
         }
 
         .sd-line i {
-            color: #3B82F6;
+            color: var(--g-primary);
         }
 
     .stt {
@@ -285,26 +285,26 @@
     }
 
     .stt-success {
-        background: rgba(59,130,246,.16);
-        color: #3B82F6;
-        border: 1px solid rgba(59,130,246,.4);
+        background: color-mix(in srgb, var(--g-primary) 16%, transparent);
+        color: var(--g-primary);
+        border: 1px solid color-mix(in srgb, var(--g-primary) 40%, transparent);
     }
 
     .stt-warning {
-        background: rgba(59,130,246,.16);
-        color: #3B82F6;
-        border: 1px solid rgba(59,130,246,.4);
+        background: color-mix(in srgb, var(--g-primary) 16%, transparent);
+        color: var(--g-primary);
+        border: 1px solid color-mix(in srgb, var(--g-primary) 40%, transparent);
     }
 
     .stt-secondary {
-        background: rgba(191, 219, 254,.10);
-        color: #172554;
-        border: 1px solid rgba(23,37,84,.2);
+        background: color-mix(in srgb, var(--g-nested-solid) 10%, transparent);
+        color: var(--g-text);
+        border: 1px solid color-mix(in srgb, var(--g-text) 20%, transparent);
     }
 
     .stt-danger {
-        background: rgba(191, 219, 254,.16);
-        color: #172554;
-        border: 1px solid rgba(23,37,84,.4);
+        background: color-mix(in srgb, var(--g-nested-solid) 16%, transparent);
+        color: var(--g-text);
+        border: 1px solid color-mix(in srgb, var(--g-text) 40%, transparent);
     }
 </style>

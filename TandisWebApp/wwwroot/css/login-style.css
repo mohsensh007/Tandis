@@ -12,7 +12,7 @@
     /* فاصله از نچ و نوار پایین iOS هنگام نصب به‌عنوان وب‌اپ */
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
     box-sizing: border-box;
-    background: #EFF6FF;
+    background: var(--g-surface-solid);
 }
 
 /* پس‌زمینهٔ گرادیانی سرمه‌ای — عکس حذف شد */
@@ -24,10 +24,10 @@
     height: 100%;
     z-index: 0;
     background:
-        radial-gradient(circle at 16% 8%, rgba(59,130,246, .55), transparent 36rem),
-        radial-gradient(circle at 84% 16%, rgba(59,130,246, .16), transparent 30rem),
-        radial-gradient(circle at 50% 108%, rgba(59,130,246, .08), transparent 26rem),
-        linear-gradient(155deg, #EFF6FF 0%, #EFF6FF 52%, #EFF6FF 100%);
+        radial-gradient(circle at 16% 8%, color-mix(in srgb, var(--g-primary) 55%, transparent), transparent 36rem),
+        radial-gradient(circle at 84% 16%, color-mix(in srgb, var(--g-primary) 16%, transparent), transparent 30rem),
+        radial-gradient(circle at 50% 108%, color-mix(in srgb, var(--g-primary) 8%, transparent), transparent 26rem),
+        linear-gradient(155deg, var(--g-surface-solid) 0%, var(--g-surface-solid) 52%, var(--g-surface-solid) 100%);
 }
 
 .bg-image {
@@ -40,7 +40,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(180deg, rgba(239,246,255, .16) 0%, rgba(239,246,255, .55) 100%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--g-surface-solid) 16%, transparent) 0%, color-mix(in srgb, var(--g-surface-solid) 55%, transparent) 100%);
 }
 
 /* کارت شیشه‌ای لاگین — ۸۰٪ تیره / ۲۰٪ شفاف */
@@ -50,12 +50,12 @@
     width: 90%;
     max-width: 420px;
     padding: 40px 35px;
-    background: linear-gradient(150deg, rgba(255,255,255, .84), rgba(239,246,255, .8));
+    background: linear-gradient(150deg, color-mix(in srgb, var(--g-surface-solid) 84%, transparent), color-mix(in srgb, var(--g-surface-solid) 80%, transparent));
     -webkit-backdrop-filter: blur(22px) saturate(120%);
     backdrop-filter: blur(22px) saturate(120%);
     border-radius: 24px;
-    border: 1px solid rgba(59,130,246, .22);
-    box-shadow: 0 24px 60px rgba(239,246,255, .55), inset 0 1px 0 rgba(23,37,84, .06);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent);
+    box-shadow: 0 24px 60px color-mix(in srgb, var(--g-surface-solid) 55%, transparent), inset 0 1px 0 color-mix(in srgb, var(--g-text) 6%, transparent);
     animation: fadeInUp 0.6s ease;
 }
 
@@ -67,7 +67,7 @@
 .main-logo {
     max-width: 120px;
     height: auto;
-    filter: drop-shadow(0 6px 14px rgba(23,37,84, 0.45));
+    filter: drop-shadow(0 6px 14px color-mix(in srgb, var(--g-text) 45%, transparent));
     transition: transform 0.3s ease;
 }
 
@@ -76,11 +76,11 @@
     }
 
 .brand-text {
-    color: #172554;
+    color: var(--g-text);
     font-size: 24px;
     font-weight: 700;
     letter-spacing: 0.5px;
-    text-shadow: 0 2px 8px rgba(23,37,84, 0.45);
+    text-shadow: 0 2px 8px color-mix(in srgb, var(--g-text) 45%, transparent);
     margin: 0;
 }
 
@@ -91,54 +91,54 @@
 
 /* استایل فیلدها */
 .form-control {
-    background: rgba(239,246,255, .55);
-    border: 1px solid rgba(59,130,246, .22);
+    background: color-mix(in srgb, var(--g-surface-solid) 55%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent);
     border-radius: 12px;
     padding: 14px 16px;
     font-size: 16px; /* 16px → جلوگیری از زوم خودکار iOS Safari */
     transition: all 0.3s ease;
-    color: #172554;
+    color: var(--g-text);
 }
 
     .form-control::placeholder {
-        color: rgba(23, 37, 84, .62);
+        color: color-mix(in srgb, var(--g-text) 62%, transparent);
     }
 
     .form-control:focus {
-        background: rgba(239,246,255, .8);
-        border-color: #3B82F6;
-        box-shadow: 0 0 0 4px rgba(59,130,246, 0.16);
+        background: color-mix(in srgb, var(--g-surface-solid) 80%, transparent);
+        border-color: var(--g-primary);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--g-primary) 16%, transparent);
         outline: none;
-        color: #172554;
+        color: var(--g-text);
     }
 
 .form-label {
     font-weight: 600;
-    color: #3B82F6;
+    color: var(--g-primary);
     margin-bottom: 8px;
     font-size: 14px;
 }
 
 /* دکمه لاگین */
 .btn-primary {
-    background: linear-gradient(225deg, #EFF6FF 0%, #3B82F6 100%);
+    background: linear-gradient(225deg, var(--g-surface-solid) 0%, var(--g-primary) 100%);
     border: none;
     border-radius: 12px;
     padding: 14px;
     font-weight: 800;
     font-size: 16px;
-    color: #172554;
+    color: var(--g-text);
     letter-spacing: 0.5px;
     transition: all 0.3s ease;
-    box-shadow: 0 10px 26px rgba(59,130,246, 0.22);
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--g-primary) 22%, transparent);
     margin-top: 10px;
 }
 
     .btn-primary:hover {
         transform: translateY(-2px);
-        box-shadow: 0 14px 32px rgba(59,130,246, 0.32);
-        background: linear-gradient(225deg, #EFF6FF 0%, #3B82F6 100%);
-        color: #172554;
+        box-shadow: 0 14px 32px color-mix(in srgb, var(--g-primary) 32%, transparent);
+        background: linear-gradient(225deg, var(--g-surface-solid) 0%, var(--g-primary) 100%);
+        color: var(--g-text);
     }
 
     .btn-primary:active {
@@ -147,35 +147,35 @@
 
 /* دکمه تغییر رمز — لهجهٔ نارنجی محدود */
 .btn-warning {
-    background: linear-gradient(135deg, #3B82F6 0%, #EFF6FF 100%);
+    background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
     border: none;
     border-radius: 12px;
     padding: 14px;
     font-weight: 800;
     font-size: 16px;
-    color: #172554;
+    color: var(--g-text);
     transition: all 0.3s ease;
-    box-shadow: 0 10px 26px rgba(59,130,246, 0.22);
+    box-shadow: 0 10px 26px color-mix(in srgb, var(--g-primary) 22%, transparent);
 }
 
     .btn-warning:hover {
         transform: translateY(-2px);
-        box-shadow: 0 14px 32px rgba(59,130,246, 0.3);
-        color: #172554;
+        box-shadow: 0 14px 32px color-mix(in srgb, var(--g-primary) 30%, transparent);
+        color: var(--g-text);
     }
 
 /* فرم تغییر رمز */
 #changePassForm {
-    background: rgba(255,255,255, .8);
+    background: color-mix(in srgb, var(--g-surface-solid) 80%, transparent);
     border-radius: 12px;
     padding: 20px;
-    border: 1px solid rgba(59,130,246, .2);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 20%, transparent);
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
 }
 
     #changePassForm h6 {
-        color: #3B82F6;
+        color: var(--g-primary);
     }
 
 /* انیمیشن ورود */
@@ -227,19 +227,19 @@
 }
 
 /* ---------- بک‌گراند روشن‌تر + بوم نقطه‌های تعاملی ---------- */
-body { background: #FFFFFF; }
+body { background: var(--g-surface-solid); }
 
-.login-fullscreen { background: #FFFFFF; }
+.login-fullscreen { background: var(--g-surface-solid); }
 
 .login-background {
     background:
-        radial-gradient(circle at 18% 6%, rgba(59,130,246, .20), transparent 34rem),
-        radial-gradient(circle at 82% 12%, rgba(191, 219, 254, .10), transparent 30rem),
-        linear-gradient(155deg, #FFFFFF 0%, #3B82F6 55%, #FFFFFF 100%);
+        radial-gradient(circle at 18% 6%, color-mix(in srgb, var(--g-primary) 20%, transparent), transparent 34rem),
+        radial-gradient(circle at 82% 12%, color-mix(in srgb, var(--g-nested-solid) 10%, transparent), transparent 30rem),
+        linear-gradient(155deg, var(--g-surface-solid) 0%, var(--g-primary) 55%, var(--g-surface-solid) 100%);
 }
 
 .bg-overlay {
-    background: linear-gradient(180deg, rgba(239,246,255, .06) 0%, rgba(239,246,255, .30) 100%);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--g-surface-solid) 6%, transparent) 0%, color-mix(in srgb, var(--g-surface-solid) 30%, transparent) 100%);
 }
 
 .login-dots {

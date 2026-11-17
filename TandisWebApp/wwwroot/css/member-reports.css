@@ -1,7 +1,7 @@
 /* Member reports: scoped to this view and its body-level calendar. */
 .member-reports {
     min-width: 0;
-    color: #172554;
+    color: var(--g-text);
 }
 
 .member-reports-heading {
@@ -37,7 +37,7 @@ body.admin-glass-body .member-reports .member-reports-card:hover {
 .member-reports .coach-list-header {
     gap: .75rem;
     padding: .75rem 1rem;
-    background: linear-gradient(135deg, #3B82F6, #FFFFFF);
+    background: linear-gradient(135deg, var(--g-primary), var(--g-surface-solid));
 }
 
 .member-reports .att-cal-btn {
@@ -50,9 +50,9 @@ body.admin-glass-body .member-reports .member-reports-card:hover {
     gap: .375rem;
     width: 100%;
     padding: .25rem;
-    border: 1px solid rgba(59,130,246,.2);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 20%, transparent);
     border-radius: 14px;
-    background: rgba(239,246,255,.35);
+    background: color-mix(in srgb, var(--g-surface-solid) 35%, transparent);
 }
 
 .member-reports .nav-tabs-custom .nav-item {
@@ -78,29 +78,29 @@ body.admin-glass-body .member-reports .member-reports-card:hover {
 }
 
 .member-reports .nav-tabs-custom .nav-link i {
-    color: #3B82F6;
+    color: var(--g-primary);
     font-size: 1.1rem;
 }
 
 body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
-    color: #172554 !important;
+    color: var(--g-text) !important;
 }
 
 .member-reports .nav-tabs-custom .nav-link:not(.active):hover {
-    background: rgba(255,255,255,.22);
+    background: color-mix(in srgb, var(--g-surface-solid) 22%, transparent);
 }
 
 .member-reports .nav-tabs-custom .nav-link.active {
-    background: linear-gradient(135deg, #3B82F6, #FFFFFF);
-    box-shadow: inset 0 -3px 0 #3B82F6;
-    color: #172554;
+    background: linear-gradient(135deg, var(--g-primary), var(--g-surface-solid));
+    box-shadow: inset 0 -3px 0 var(--g-primary);
+    color: var(--g-text);
 }
 
 .member-reports :is(button, a, [tabindex]):focus-visible,
 #attCalOverlay.member-reports-calendar :is(button, [tabindex]):focus-visible {
-    outline: 3px solid #3B82F6;
+    outline: 3px solid var(--g-primary);
     outline-offset: 3px;
-    box-shadow: 0 0 0 5px rgba(239,246,255,.8);
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--g-surface-solid) 80%, transparent);
 }
 
 .member-reports .tab-pane:focus-visible {
@@ -156,13 +156,13 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 .member-reports .finance-credit,
-.member-reports .rgh-green { color: #3B82F6; }
+.member-reports .rgh-green { color: var(--g-primary); }
 .member-reports .finance-debit,
-.member-reports .rgh-red { color: #172554; }
-.member-reports .rgh-blue { color: #3B82F6; }
+.member-reports .rgh-red { color: var(--g-text); }
+.member-reports .rgh-blue { color: var(--g-primary); }
 
 .member-reports .finance-currency {
-    color: rgba(23,37,84, .62);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
     font-size: .8rem;
     font-weight: 500;
 }
@@ -177,20 +177,20 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 .member-reports .badge-credit {
-    background: rgba(191, 219, 254,.85);
-    border: 1px solid rgba(23,37,84,.4);
-    color: #3B82F6;
+    background: color-mix(in srgb, var(--g-nested-solid) 85%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 40%, transparent);
+    color: var(--g-primary);
 }
 
 .member-reports .badge-debit {
-    background: rgba(191, 219, 254,.7);
-    border: 1px solid rgba(23,37,84,.4);
-    color: #3B82F6;
+    background: color-mix(in srgb, var(--g-nested-solid) 70%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 40%, transparent);
+    color: var(--g-primary);
 }
 
 .member-reports .member-report-state {
     padding: 1.5rem .75rem;
-    color: rgba(23,37,84, .62);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
     text-align: center;
     overflow-wrap: anywhere;
 }
@@ -198,7 +198,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 .member-reports .member-report-state > i {
     display: block;
     margin-bottom: .5rem;
-    color: #3B82F6;
+    color: var(--g-primary);
     font-size: 2rem;
 }
 
@@ -209,9 +209,9 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 
 .member-reports .member-report-retry {
     margin-top: .75rem;
-    color: #172554;
-    background: rgba(255,255,255,.2);
-    border: 1px solid rgba(59,130,246,.5);
+    color: var(--g-text);
+    background: color-mix(in srgb, var(--g-surface-solid) 20%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 50%, transparent);
     border-radius: 10px;
     padding: .4rem 1rem;
 }
@@ -231,8 +231,8 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
     min-width: 0;
     padding: .85rem .5rem;
     text-align: center;
-    background: rgba(239,246,255,.35);
-    border: 1px solid rgba(23,37,84,.16);
+    background: color-mix(in srgb, var(--g-surface-solid) 35%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-text) 16%, transparent);
     border-radius: 14px;
 }
 
@@ -244,14 +244,14 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 .member-reports .rgh-lbl {
-    color: rgba(23,37,84, .62);
+    color: color-mix(in srgb, var(--g-text) 62%, transparent);
     font-size: .8rem;
     line-height: 1.7;
 }
 
 .member-reports .trf-card {
-    background: rgba(239,246,255,.38);
-    border-color: rgba(23,37,84,.18);
+    background: color-mix(in srgb, var(--g-surface-solid) 38%, transparent);
+    border-color: color-mix(in srgb, var(--g-text) 18%, transparent);
 }
 
 .member-reports .trf-head {
@@ -270,7 +270,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 .member-reports .trf-head:hover {
-    background: rgba(255,255,255,.12);
+    background: color-mix(in srgb, var(--g-surface-solid) 12%, transparent);
 }
 
 .member-reports .trf-line {
@@ -290,7 +290,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 .member-reports .trf-line > i {
-    color: #3B82F6;
+    color: var(--g-primary);
 }
 
 .member-reports .trf-toggle {
@@ -312,7 +312,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
     overflow-wrap: anywhere;
 }
 
-.member-reports .trf-drow > span { color: rgba(23,37,84, .62); }
+.member-reports .trf-drow > span { color: color-mix(in srgb, var(--g-text) 62%, transparent); }
 .member-reports .trf-drow > b { min-width: 0; text-align: end; }
 .member-reports .trf-drow .hd-icon { font-size: .9rem; }
 
@@ -320,9 +320,9 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
     display: inline-block;
     margin-inline-start: .25rem;
     padding: .05rem .5rem;
-    color: #3B82F6;
-    background: rgba(59,130,246,.12);
-    border: 1px solid rgba(59,130,246,.3);
+    color: var(--g-primary);
+    background: color-mix(in srgb, var(--g-primary) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent);
     border-radius: 999px;
     font-size: .75rem;
     text-shadow: none;
@@ -363,8 +363,8 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
         gap: .7rem 1rem;
         padding: 1rem;
         margin-bottom: .75rem;
-        background: rgba(239,246,255,.5) !important;
-        border: 1px solid rgba(59,130,246,.25);
+        background: color-mix(in srgb, var(--g-surface-solid) 50%, transparent) !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 25%, transparent);
         border-radius: 14px;
     }
 
@@ -379,7 +379,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
     .member-reports .finance-label {
         display: block;
         margin-bottom: .25rem;
-        color: rgba(23,37,84, .62);
+        color: color-mix(in srgb, var(--g-text) 62%, transparent);
         font-size: .78rem;
         font-weight: 500;
     }
@@ -389,7 +389,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 
     body.admin-glass-body .member-reports .member-finance-table .finance-amount {
         padding-top: .7rem;
-        border-top: 1px solid rgba(23,37,84,.15);
+        border-top: 1px solid color-mix(in srgb, var(--g-text) 15%, transparent);
     }
 
     .member-reports .finance-amount-value { font-size: 1.05rem; }
@@ -448,7 +448,7 @@ body.admin-glass-body .member-reports .nav-tabs-custom .nav-link:hover {
 }
 
 #attCalOverlay.member-reports-calendar .att-day { min-width: 0; font-variant-numeric: tabular-nums; }
-#attCalOverlay.member-reports-calendar .att-future { color: rgba(23,37,84, .62); }
+#attCalOverlay.member-reports-calendar .att-future { color: color-mix(in srgb, var(--g-text) 62%, transparent); }
 #attCalOverlay.member-reports-calendar :is(.att-legend, .att-stats) { flex-wrap: wrap; gap: .5rem; }
 
 @media (prefers-reduced-motion: reduce) {

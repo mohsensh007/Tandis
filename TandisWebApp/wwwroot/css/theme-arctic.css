@@ -1,73 +1,73 @@
 /* =====================================================================
    ARCTIC BLUE — لایهٔ طراحی سراسری
-   فقط پنج رنگ: #FFFFFF / #EFF6FF / #BFDBFE / #3B82F6 / #172554
+   فقط پنج رنگ: var(--g-surface-solid) / var(--g-surface-solid) / var(--g-nested-solid) / var(--g-primary) / var(--g-text)
    آخرین CSS همهٔ پنل‌ها؛ اختلاف رنگ صفحات را یکدست می‌کند.
    ===================================================================== */
 
 :root {
-    --ar-white: #FFFFFF;
-    --ar-bg: #EFF6FF;
-    --ar-light: #BFDBFE;
-    --ar-blue: #3B82F6;
-    --ar-navy: #172554;
+    --ar-white: var(--g-surface-solid);
+    --ar-bg: var(--g-surface-solid);
+    --ar-light: var(--g-nested-solid);
+    --ar-blue: var(--g-primary);
+    --ar-navy: var(--g-text);
 
-    --ar-body: #172554;
-    --ar-muted: rgba(23, 37, 84, .62);
-    --ar-border: rgba(191, 219, 254, .9);
-    --ar-shadow: 0 6px 24px rgba(23, 37, 84, .08);
-    --ar-shadow-sm: 0 2px 10px rgba(23, 37, 84, .06);
+    --ar-body: var(--g-text);
+    --ar-muted: color-mix(in srgb, var(--g-text) 62%, transparent);
+    --ar-border: color-mix(in srgb, var(--g-nested-solid) 90%, transparent);
+    --ar-shadow: 0 6px 24px color-mix(in srgb, var(--g-text) 8%, transparent);
+    --ar-shadow-sm: 0 2px 10px color-mix(in srgb, var(--g-text) 6%, transparent);
     --ar-radius: 14px;
 }
 
 /* ---------- 1) پایه ---------- */
 html body:not(#lu):not(#mt-theme) {
-    background-color: #EFF6FF !important;
-    color: #172554 !important;
+    background-color: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
 
     /* متغیرهای لایهٔ لونا (تم روشن) */
-    --lu-darkest: #172554;
-    --lu-dark: #EFF6FF;
-    --lu-primary: #3B82F6;
-    --lu-sky: #3B82F6;
-    --lu-light: #BFDBFE;
-    --lu-glass-text: #172554;
-    --lu-glass-border: rgba(191, 219, 254, .9);
-    --lu-glass-shadow: 0 10px 30px rgba(23, 37, 84, .10);
-    --lu-cyan: #3B82F6;
-    --lu-teal: #3B82F6;
-    --lu-steel: #3B82F6;
-    --lu-deep: #FFFFFF;
-    --lu-navy: #172554;
-    --lu-text: #172554;
-    --lu-muted: rgba(23, 37, 84, .62);
-    --lu-line: rgba(191, 219, 254, .9);
-    --lu-shadow-out: 0 10px 28px rgba(23, 37, 84, .10);
-    --lu-shadow-in: inset 0 1px 0 rgba(255, 255, 255, .9), inset 0 -1px 0 rgba(191, 219, 254, .8);
-    --lu-bg-box: linear-gradient(180deg, #FFFFFF 0%, #EFF6FF 100%);
-    --lu-bg-card: #FFFFFF;
-    --lu-bg-card-dark: #EFF6FF;
+    --lu-darkest: var(--g-text);
+    --lu-dark: var(--g-surface-solid);
+    --lu-primary: var(--g-primary);
+    --lu-sky: var(--g-primary);
+    --lu-light: var(--g-nested-solid);
+    --lu-glass-text: var(--g-text);
+    --lu-glass-border: color-mix(in srgb, var(--g-nested-solid) 90%, transparent);
+    --lu-glass-shadow: 0 10px 30px color-mix(in srgb, var(--g-text) 10%, transparent);
+    --lu-cyan: var(--g-primary);
+    --lu-teal: var(--g-primary);
+    --lu-steel: var(--g-primary);
+    --lu-deep: var(--g-surface-solid);
+    --lu-navy: var(--g-text);
+    --lu-text: var(--g-text);
+    --lu-muted: color-mix(in srgb, var(--g-text) 62%, transparent);
+    --lu-line: color-mix(in srgb, var(--g-nested-solid) 90%, transparent);
+    --lu-shadow-out: 0 10px 28px color-mix(in srgb, var(--g-text) 10%, transparent);
+    --lu-shadow-in: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 90%, transparent), inset 0 -1px 0 color-mix(in srgb, var(--g-nested-solid) 80%, transparent);
+    --lu-bg-box: linear-gradient(180deg, var(--g-surface-solid) 0%, var(--g-surface-solid) 100%);
+    --lu-bg-card: var(--g-surface-solid);
+    --lu-bg-card-dark: var(--g-surface-solid);
 
-    --bs-body-color: #172554;
-    --bs-body-bg: #EFF6FF;
-    --bs-emphasis-color: #172554;
-    --bs-heading-color: #172554;
-    --bs-table-color: #172554;
-    --bs-table-bg: #FFFFFF;
+    --bs-body-color: var(--g-text);
+    --bs-body-bg: var(--g-surface-solid);
+    --bs-emphasis-color: var(--g-text);
+    --bs-heading-color: var(--g-text);
+    --bs-table-color: var(--g-text);
+    --bs-table-bg: var(--g-surface-solid);
 }
 
 html body:not(#lu):not(#mt-theme) *::selection {
-    background: #BFDBFE !important;
-    color: #172554 !important;
+    background: var(--g-nested-solid) !important;
+    color: var(--g-text) !important;
 }
 
 html body:not(#lu):not(#mt-theme) ::-webkit-scrollbar { width: 10px; height: 10px; }
-html body:not(#lu):not(#mt-theme) ::-webkit-scrollbar-track { background: #EFF6FF !important; }
+html body:not(#lu):not(#mt-theme) ::-webkit-scrollbar-track { background: var(--g-surface-solid) !important; }
 html body:not(#lu):not(#mt-theme) ::-webkit-scrollbar-thumb {
-    background: #BFDBFE !important;
+    background: var(--g-nested-solid) !important;
     border-radius: 8px;
-    border: 2px solid #EFF6FF;
+    border: 2px solid var(--g-surface-solid);
 }
-html body:not(#lu):not(#mt-theme) ::-webkit-scrollbar-thumb:hover { background: #3B82F6 !important; }
+html body:not(#lu):not(#mt-theme) ::-webkit-scrollbar-thumb:hover { background: var(--g-primary) !important; }
 
 /* ---------- 2) تایپوگرافی ---------- */
 html body:not(#lu):not(#mt-theme) h1,
@@ -82,7 +82,7 @@ html body:not(#lu):not(#mt-theme) .h3,
 html body:not(#lu):not(#mt-theme) .h4,
 html body:not(#lu):not(#mt-theme) .h5,
 html body:not(#lu):not(#mt-theme) .h6 {
-    color: #172554 !important;
+    color: var(--g-text) !important;
     text-shadow: none !important;
 }
 
@@ -93,11 +93,11 @@ html body:not(#lu):not(#mt-theme) .subtitle,
 html body:not(#lu):not(#mt-theme) .desc,
 html body:not(#lu):not(#mt-theme) .hint,
 html body:not(#lu):not(#mt-theme) .form-text {
-    color: rgba(23, 37, 84, .62) !important;
+    color: color-mix(in srgb, var(--g-text) 62%, transparent) !important;
 }
 
-html body:not(#lu):not(#mt-theme) a { color: #3B82F6; }
-html body:not(#lu):not(#mt-theme) a:hover { color: #172554; }
+html body:not(#lu):not(#mt-theme) a { color: var(--g-primary); }
+html body:not(#lu):not(#mt-theme) a:hover { color: var(--g-text); }
 
 /* ---------- 3) هدر، سایدبار، منو ---------- */
 html body:not(#lu):not(#mt-theme) header,
@@ -111,11 +111,11 @@ html body:not(#lu):not(#mt-theme) .coach-header,
 html body:not(#lu):not(#mt-theme) .dk-top,
 html body:not(#lu):not(#mt-theme) .mh-header,
 html body:not(#lu):not(#mt-theme) .mobile-header {
-    background: #FFFFFF !important;
+    background: var(--g-surface-solid) !important;
     background-image: none !important;
-    color: #172554 !important;
-    border-bottom: 1px solid rgba(191, 219, 254, .9) !important;
-    box-shadow: 0 2px 12px rgba(23, 37, 84, .05) !important;
+    color: var(--g-text) !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--g-nested-solid) 90%, transparent) !important;
+    box-shadow: 0 2px 12px color-mix(in srgb, var(--g-text) 5%, transparent) !important;
     backdrop-filter: none !important;
 }
 
@@ -127,10 +127,10 @@ html body:not(#lu):not(#mt-theme) .offcanvas,
 html body:not(#lu):not(#mt-theme) .mobile-nav,
 html body:not(#lu):not(#mt-theme) .bottom-nav,
 html body:not(#lu):not(#mt-theme) .mh-bottom-nav {
-    background: #FFFFFF !important;
+    background: var(--g-surface-solid) !important;
     background-image: none !important;
-    color: #172554 !important;
-    border-color: rgba(191, 219, 254, .9) !important;
+    color: var(--g-text) !important;
+    border-color: color-mix(in srgb, var(--g-nested-solid) 90%, transparent) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .navbar a,
@@ -141,14 +141,14 @@ html body:not(#lu):not(#mt-theme) .sidebar a,
 html body:not(#lu):not(#mt-theme) .mobile-nav a,
 html body:not(#lu):not(#mt-theme) .bottom-nav a,
 html body:not(#lu):not(#mt-theme) .nav-link {
-    color: rgba(23, 37, 84, .78) !important;
+    color: color-mix(in srgb, var(--g-text) 78%, transparent) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .navbar a:hover,
 html body:not(#lu):not(#mt-theme) .sidebar a:hover,
 html body:not(#lu):not(#mt-theme) .mobile-nav a:hover,
 html body:not(#lu):not(#mt-theme) .bottom-nav a:hover,
-html body:not(#lu):not(#mt-theme) .nav-link:hover { color: #172554 !important; }
+html body:not(#lu):not(#mt-theme) .nav-link:hover { color: var(--g-text) !important; }
 
 html body:not(#lu):not(#mt-theme) .nav-link.active,
 html body:not(#lu):not(#mt-theme) .navbar a.active,
@@ -158,8 +158,8 @@ html body:not(#lu):not(#mt-theme) .bottom-nav a.active,
 html body:not(#lu):not(#mt-theme) .nav-item.active > .nav-link,
 html body:not(#lu):not(#mt-theme) .menu-item.active,
 html body:not(#lu):not(#mt-theme) .side-item.active {
-    color: #3B82F6 !important;
-    background: rgba(59, 130, 246, .10) !important;
+    color: var(--g-primary) !important;
+    background: color-mix(in srgb, var(--g-primary) 10%, transparent) !important;
     border-radius: 10px;
 }
 
@@ -189,10 +189,10 @@ html body:not(#lu):not(#mt-theme) .modal-content,
 html body:not(#lu):not(#mt-theme) .dropdown-menu,
 html body:not(#lu):not(#mt-theme) .accordion-item,
 html body:not(#lu):not(#mt-theme) .list-group-item {
-    background: #FFFFFF !important;
+    background: var(--g-surface-solid) !important;
     background-image: none !important;
-    color: #172554 !important;
-    border: 1px solid rgba(191, 219, 254, .9) !important;
+    color: var(--g-text) !important;
+    border: 1px solid color-mix(in srgb, var(--g-nested-solid) 90%, transparent) !important;
     border-radius: var(--ar-radius) !important;
     box-shadow: var(--ar-shadow-sm) !important;
     backdrop-filter: none !important;
@@ -204,7 +204,7 @@ html body:not(#lu):not(#mt-theme) .card .panel,
 html body:not(#lu):not(#mt-theme) .nested,
 html body:not(#lu):not(#mt-theme) .inner-card,
 html body:not(#lu):not(#mt-theme) .sub-card {
-    background: #EFF6FF !important;
+    background: var(--g-surface-solid) !important;
     box-shadow: none !important;
 }
 
@@ -214,10 +214,10 @@ html body:not(#lu):not(#mt-theme) .panel-header,
 html body:not(#lu):not(#mt-theme) .panel-footer,
 html body:not(#lu):not(#mt-theme) .modal-header,
 html body:not(#lu):not(#mt-theme) .modal-footer {
-    background: #EFF6FF !important;
+    background: var(--g-surface-solid) !important;
     background-image: none !important;
-    color: #172554 !important;
-    border-color: rgba(191, 219, 254, .9) !important;
+    color: var(--g-text) !important;
+    border-color: color-mix(in srgb, var(--g-nested-solid) 90%, transparent) !important;
 }
 
 /* ---------- 5) دکمه‌ها ---------- */
@@ -227,12 +227,12 @@ html body:not(#lu):not(#mt-theme) .btn-success,
 html body:not(#lu):not(#mt-theme) .btn-info,
 html body:not(#lu):not(#mt-theme) .btn-fill,
 html body:not(#lu):not(#mt-theme) .btn-solid {
-    background: #3B82F6 !important;
+    background: var(--g-primary) !important;
     background-image: none !important;
-    color: #FFFFFF !important;
-    border: 1px solid #3B82F6 !important;
+    color: var(--g-surface-solid) !important;
+    border: 1px solid var(--g-primary) !important;
     border-radius: 12px !important;
-    box-shadow: 0 4px 14px rgba(59, 130, 246, .25) !important;
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--g-primary) 25%, transparent) !important;
     font-weight: 600;
 }
 
@@ -241,9 +241,9 @@ html body:not(#lu):not(#mt-theme) .btn-primary:focus,
 html body:not(#lu):not(#mt-theme) .btn-success:hover,
 html body:not(#lu):not(#mt-theme) .btn-info:hover,
 html body:not(#lu):not(#mt-theme) .btn:hover {
-    background: rgba(59, 130, 246, .88) !important;
-    color: #FFFFFF !important;
-    border-color: rgba(59, 130, 246, .88) !important;
+    background: color-mix(in srgb, var(--g-primary) 88%, transparent) !important;
+    color: var(--g-surface-solid) !important;
+    border-color: color-mix(in srgb, var(--g-primary) 88%, transparent) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .btn-outline-primary,
@@ -254,10 +254,10 @@ html body:not(#lu):not(#mt-theme) .btn-ghost,
 html body:not(#lu):not(#mt-theme) .btn-glass,
 html body:not(#lu):not(#mt-theme) .btn-back-glass,
 html body:not(#lu):not(#mt-theme) .btn-logout-glass {
-    background: #FFFFFF !important;
+    background: var(--g-surface-solid) !important;
     background-image: none !important;
-    color: #172554 !important;
-    border: 1px solid #BFDBFE !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-nested-solid) !important;
     box-shadow: none !important;
 }
 
@@ -269,31 +269,31 @@ html body:not(#lu):not(#mt-theme) .btn-ghost:hover,
 html body:not(#lu):not(#mt-theme) .btn-glass:hover,
 html body:not(#lu):not(#mt-theme) .btn-back-glass:hover,
 html body:not(#lu):not(#mt-theme) .btn-logout-glass:hover {
-    background: #EFF6FF !important;
-    color: #172554 !important;
-    border-color: #3B82F6 !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-primary) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .btn-danger,
 html body:not(#lu):not(#mt-theme) .btn-warning {
-    background: #172554 !important;
-    color: #FFFFFF !important;
-    border: 1px solid #172554 !important;
+    background: var(--g-text) !important;
+    color: var(--g-surface-solid) !important;
+    border: 1px solid var(--g-text) !important;
     box-shadow: none !important;
 }
 
 html body:not(#lu):not(#mt-theme) .btn-danger:hover,
 html body:not(#lu):not(#mt-theme) .btn-warning:hover {
-    background: rgba(23, 37, 84, .86) !important;
-    color: #FFFFFF !important;
+    background: color-mix(in srgb, var(--g-text) 86%, transparent) !important;
+    color: var(--g-surface-solid) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .btn:disabled,
 html body:not(#lu):not(#mt-theme) .btn.disabled,
 html body:not(#lu):not(#mt-theme) button:disabled {
-    background: #EFF6FF !important;
-    color: rgba(23, 37, 84, .62) !important;
-    border-color: #BFDBFE !important;
+    background: var(--g-surface-solid) !important;
+    color: color-mix(in srgb, var(--g-text) 62%, transparent) !important;
+    border-color: var(--g-nested-solid) !important;
     box-shadow: none !important;
     opacity: 1 !important;
 }
@@ -306,9 +306,9 @@ html body:not(#lu):not(#mt-theme) select,
 html body:not(#lu):not(#mt-theme) textarea,
 html body:not(#lu):not(#mt-theme) .input,
 html body:not(#lu):not(#mt-theme) .search-input {
-    background: #FFFFFF !important;
-    color: #172554 !important;
-    border: 1px solid #BFDBFE !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-nested-solid) !important;
     border-radius: 12px !important;
     box-shadow: none !important;
 }
@@ -318,17 +318,17 @@ html body:not(#lu):not(#mt-theme) .form-select:focus,
 html body:not(#lu):not(#mt-theme) input:focus,
 html body:not(#lu):not(#mt-theme) select:focus,
 html body:not(#lu):not(#mt-theme) textarea:focus {
-    background: #FFFFFF !important;
-    color: #172554 !important;
-    border-color: #3B82F6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, .18) !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-primary) !important;
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--g-primary) 18%, transparent) !important;
     outline: none !important;
 }
 
 html body:not(#lu):not(#mt-theme) input::placeholder,
 html body:not(#lu):not(#mt-theme) textarea::placeholder,
 html body:not(#lu):not(#mt-theme) .form-control::placeholder {
-    color: rgba(23, 37, 84, .45) !important;
+    color: color-mix(in srgb, var(--g-text) 45%, transparent) !important;
     opacity: 1 !important;
 }
 
@@ -337,88 +337,88 @@ html body:not(#lu):not(#mt-theme) input:disabled,
 html body:not(#lu):not(#mt-theme) select:disabled,
 html body:not(#lu):not(#mt-theme) textarea:disabled,
 html body:not(#lu):not(#mt-theme) .form-control[readonly] {
-    background: #EFF6FF !important;
-    color: rgba(23, 37, 84, .55) !important;
-    border-color: #BFDBFE !important;
+    background: var(--g-surface-solid) !important;
+    color: color-mix(in srgb, var(--g-text) 55%, transparent) !important;
+    border-color: var(--g-nested-solid) !important;
 }
 
 html body:not(#lu):not(#mt-theme) option,
 html body:not(#lu):not(#mt-theme) optgroup {
-    background: #FFFFFF !important;
-    color: #172554 !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
 }
 
 html body:not(#lu):not(#mt-theme) label,
 html body:not(#lu):not(#mt-theme) .form-label,
 html body:not(#lu):not(#mt-theme) .control-label {
-    color: #172554 !important;
+    color: var(--g-text) !important;
     font-weight: 600;
 }
 
 html body:not(#lu):not(#mt-theme) .form-check-input {
-    background-color: #FFFFFF !important;
-    border: 1px solid #BFDBFE !important;
+    background-color: var(--g-surface-solid) !important;
+    border: 1px solid var(--g-nested-solid) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .form-check-input:checked {
-    background-color: #3B82F6 !important;
-    border-color: #3B82F6 !important;
+    background-color: var(--g-primary) !important;
+    border-color: var(--g-primary) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .input-group-text {
-    background: #EFF6FF !important;
-    color: #172554 !important;
-    border: 1px solid #BFDBFE !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-nested-solid) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .invalid-feedback,
 html body:not(#lu):not(#mt-theme) .field-validation-error,
 html body:not(#lu):not(#mt-theme) .text-danger,
 html body:not(#lu):not(#mt-theme) .validation-summary-errors {
-    color: #172554 !important;
+    color: var(--g-text) !important;
     font-weight: 600;
 }
 
 html body:not(#lu):not(#mt-theme) .is-invalid,
 html body:not(#lu):not(#mt-theme) .input-validation-error {
-    border-color: #172554 !important;
-    background: #EFF6FF !important;
+    border-color: var(--g-text) !important;
+    background: var(--g-surface-solid) !important;
 }
 
 /* ---------- 7) جدول‌ها ---------- */
 html body:not(#lu):not(#mt-theme) .table,
 html body:not(#lu):not(#mt-theme) table {
-    background: #FFFFFF !important;
-    color: #172554 !important;
-    border-color: rgba(191, 219, 254, .9) !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
+    border-color: color-mix(in srgb, var(--g-nested-solid) 90%, transparent) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .table > :not(caption) > * > *,
 html body:not(#lu):not(#mt-theme) table td,
 html body:not(#lu):not(#mt-theme) table th {
     background-color: transparent !important;
-    color: #172554 !important;
-    border-color: rgba(191, 219, 254, .75) !important;
+    color: var(--g-text) !important;
+    border-color: color-mix(in srgb, var(--g-nested-solid) 75%, transparent) !important;
     box-shadow: none !important;
 }
 
 html body:not(#lu):not(#mt-theme) .table thead th,
 html body:not(#lu):not(#mt-theme) table thead th,
 html body:not(#lu):not(#mt-theme) table th {
-    background: #EFF6FF !important;
-    color: #172554 !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
     font-weight: 700;
 }
 
 html body:not(#lu):not(#mt-theme) .table tbody tr:hover > *,
 html body:not(#lu):not(#mt-theme) table tbody tr:hover td {
-    background: #EFF6FF !important;
-    color: #172554 !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .table-striped tbody tr:nth-of-type(odd) > * {
-    background: rgba(239, 246, 255, .7) !important;
-    color: #172554 !important;
+    background: color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+    color: var(--g-text) !important;
 }
 
 /* ---------- 8) بج، تب، قرص ---------- */
@@ -427,9 +427,9 @@ html body:not(#lu):not(#mt-theme) .chip,
 html body:not(#lu):not(#mt-theme) .pill,
 html body:not(#lu):not(#mt-theme) .tag,
 html body:not(#lu):not(#mt-theme) .delta-badge {
-    background: #EFF6FF !important;
-    color: #172554 !important;
-    border: 1px solid #BFDBFE !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-nested-solid) !important;
     border-radius: 999px !important;
     font-weight: 600;
 }
@@ -440,17 +440,17 @@ html body:not(#lu):not(#mt-theme) .badge.bg-success,
 html body:not(#lu):not(#mt-theme) .badge.bg-danger,
 html body:not(#lu):not(#mt-theme) .badge.bg-warning,
 html body:not(#lu):not(#mt-theme) .badge.bg-info {
-    background: #3B82F6 !important;
-    color: #FFFFFF !important;
-    border-color: #3B82F6 !important;
+    background: var(--g-primary) !important;
+    color: var(--g-surface-solid) !important;
+    border-color: var(--g-primary) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .nav-tabs,
 html body:not(#lu):not(#mt-theme) .tabs,
 html body:not(#lu):not(#mt-theme) .ch-period,
 html body:not(#lu):not(#mt-theme) .rep-tabs {
-    background: #EFF6FF !important;
-    border: 1px solid #BFDBFE !important;
+    background: var(--g-surface-solid) !important;
+    border: 1px solid var(--g-nested-solid) !important;
     border-radius: 12px !important;
     padding: 4px !important;
 }
@@ -464,7 +464,7 @@ html body:not(#lu):not(#mt-theme) .mpf-chip,
 html body:not(#lu):not(#mt-theme) .seg-btn,
 html body:not(#lu):not(#mt-theme) .period-btn {
     background: transparent !important;
-    color: #172554 !important;
+    color: var(--g-text) !important;
     border: 1px solid transparent !important;
     border-radius: 9px !important;
 }
@@ -478,35 +478,35 @@ html body:not(#lu):not(#mt-theme) .mpf-chip.active,
 html body:not(#lu):not(#mt-theme) .mpf-chip.mpf-on,
 html body:not(#lu):not(#mt-theme) .seg-btn.active,
 html body:not(#lu):not(#mt-theme) .btn-check:checked + .period-btn {
-    background: #3B82F6 !important;
+    background: var(--g-primary) !important;
     background-image: none !important;
-    color: #FFFFFF !important;
-    border-color: #3B82F6 !important;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, .22) !important;
+    color: var(--g-surface-solid) !important;
+    border-color: var(--g-primary) !important;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--g-primary) 22%, transparent) !important;
 }
 
 /* ---------- 9) منوهای بازشو ---------- */
 html body:not(#lu):not(#mt-theme) .dropdown-item,
 html body:not(#lu):not(#mt-theme) .menu-item,
 html body:not(#lu):not(#mt-theme) .list-group-item {
-    color: #172554 !important;
+    color: var(--g-text) !important;
     background: transparent !important;
-    border-color: rgba(191, 219, 254, .8) !important;
+    border-color: color-mix(in srgb, var(--g-nested-solid) 80%, transparent) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .dropdown-item:hover,
 html body:not(#lu):not(#mt-theme) .dropdown-item:focus,
 html body:not(#lu):not(#mt-theme) .menu-item:hover,
 html body:not(#lu):not(#mt-theme) .list-group-item:hover {
-    background: #EFF6FF !important;
-    color: #172554 !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
 }
 
 /* ---------- 10) مودال ---------- */
-html body:not(#lu):not(#mt-theme) .modal-backdrop { background-color: #172554 !important; }
+html body:not(#lu):not(#mt-theme) .modal-backdrop { background-color: var(--g-text) !important; }
 html body:not(#lu):not(#mt-theme) .modal-backdrop.show { opacity: .35 !important; }
 html body:not(#lu):not(#mt-theme) .modal-title,
-html body:not(#lu):not(#mt-theme) .modal-body { color: #172554 !important; }
+html body:not(#lu):not(#mt-theme) .modal-body { color: var(--g-text) !important; }
 html body:not(#lu):not(#mt-theme) .btn-close { filter: none !important; opacity: .65 !important; }
 
 /* ---------- 11) اعلان، توست، خالی ---------- */
@@ -517,9 +517,9 @@ html body:not(#lu):not(#mt-theme) .alert-warning,
 html body:not(#lu):not(#mt-theme) .alert-danger,
 html body:not(#lu):not(#mt-theme) .toast,
 html body:not(#lu):not(#mt-theme) .notification {
-    background: #EFF6FF !important;
-    color: #172554 !important;
-    border: 1px solid #BFDBFE !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-nested-solid) !important;
     border-radius: 12px !important;
     box-shadow: var(--ar-shadow-sm) !important;
 }
@@ -529,58 +529,58 @@ html body:not(#lu):not(#mt-theme) .empty-state,
 html body:not(#lu):not(#mt-theme) .no-data,
 html body:not(#lu):not(#mt-theme) .placeholder-text {
     background: transparent !important;
-    color: rgba(23, 37, 84, .62) !important;
+    color: color-mix(in srgb, var(--g-text) 62%, transparent) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .empty i,
 html body:not(#lu):not(#mt-theme) .empty-state i,
-html body:not(#lu):not(#mt-theme) .no-data i { color: #3B82F6 !important; }
+html body:not(#lu):not(#mt-theme) .no-data i { color: var(--g-primary) !important; }
 
 /* ---------- 12) پیشرفت، صفحه‌بندی، تولتیپ ---------- */
 html body:not(#lu):not(#mt-theme) .progress {
-    background: #EFF6FF !important;
-    border: 1px solid #BFDBFE !important;
+    background: var(--g-surface-solid) !important;
+    border: 1px solid var(--g-nested-solid) !important;
     border-radius: 999px !important;
     height: 10px;
 }
 
 html body:not(#lu):not(#mt-theme) .progress-bar,
 html body:not(#lu):not(#mt-theme) .bar-fill {
-    background: #3B82F6 !important;
+    background: var(--g-primary) !important;
     background-image: none !important;
     border-radius: 999px !important;
-    color: #FFFFFF !important;
+    color: var(--g-surface-solid) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .page-link,
 html body:not(#lu):not(#mt-theme) .pagination a,
 html body:not(#lu):not(#mt-theme) .pager a {
-    background: #FFFFFF !important;
-    color: #172554 !important;
-    border: 1px solid #BFDBFE !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-nested-solid) !important;
     border-radius: 10px !important;
 }
 
 html body:not(#lu):not(#mt-theme) .page-item.active .page-link,
 html body:not(#lu):not(#mt-theme) .pagination .active a {
-    background: #3B82F6 !important;
-    color: #FFFFFF !important;
-    border-color: #3B82F6 !important;
+    background: var(--g-primary) !important;
+    color: var(--g-surface-solid) !important;
+    border-color: var(--g-primary) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .tooltip-inner {
-    background: #172554 !important;
-    color: #FFFFFF !important;
+    background: var(--g-text) !important;
+    color: var(--g-surface-solid) !important;
     border-radius: 8px !important;
 }
 
-html body:not(#lu):not(#mt-theme) .tooltip .tooltip-arrow::before { border-top-color: #172554 !important; }
+html body:not(#lu):not(#mt-theme) .tooltip .tooltip-arrow::before { border-top-color: var(--g-text) !important; }
 
 /* ---------- 13) فوکوس ---------- */
 html body:not(#lu):not(#mt-theme) a:focus-visible,
 html body:not(#lu):not(#mt-theme) button:focus-visible,
 html body:not(#lu):not(#mt-theme) .btn:focus-visible {
-    outline: 2px solid #3B82F6 !important;
+    outline: 2px solid var(--g-primary) !important;
     outline-offset: 2px !important;
 }
 
@@ -588,7 +588,7 @@ html body:not(#lu):not(#mt-theme) .btn:focus-visible {
 html body:not(#lu):not(#mt-theme) .login-wrap,
 html body:not(#lu):not(#mt-theme) .auth-wrap,
 html body:not(#lu):not(#mt-theme) .login-page {
-    background: #EFF6FF !important;
+    background: var(--g-surface-solid) !important;
     background-image: none !important;
 }
 
@@ -597,15 +597,15 @@ html body:not(#lu):not(#mt-theme) .commerce-card,
 html body:not(#lu):not(#mt-theme) .commerce-product-card,
 html body:not(#lu):not(#mt-theme) .product-card,
 html body:not(#lu):not(#mt-theme) .service-card {
-    background: #FFFFFF !important;
-    border: 1px solid rgba(191, 219, 254, .9) !important;
-    color: #172554 !important;
+    background: var(--g-surface-solid) !important;
+    border: 1px solid color-mix(in srgb, var(--g-nested-solid) 90%, transparent) !important;
+    color: var(--g-text) !important;
     box-shadow: var(--ar-shadow-sm) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .commerce-price,
 html body:not(#lu):not(#mt-theme) .price {
-    color: #3B82F6 !important;
+    color: var(--g-primary) !important;
     font-weight: 700;
 }
 
@@ -613,15 +613,15 @@ html body:not(#lu):not(#mt-theme) .price {
 html body:not(#lu):not(#mt-theme) .chart-box,
 html body:not(#lu):not(#mt-theme) .chart-card,
 html body:not(#lu):not(#mt-theme) .chart-container {
-    background: #FFFFFF !important;
-    border: 1px solid rgba(191, 219, 254, .9) !important;
+    background: var(--g-surface-solid) !important;
+    border: 1px solid color-mix(in srgb, var(--g-nested-solid) 90%, transparent) !important;
     border-radius: var(--ar-radius) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .legend-item,
 html body:not(#lu):not(#mt-theme) .chart-legend,
 html body:not(#lu):not(#mt-theme) .ch-legend {
-    color: rgba(23, 37, 84, .75) !important;
+    color: color-mix(in srgb, var(--g-text) 75%, transparent) !important;
 }
 
 /* ---------- 17) کمکی‌های رنگ ---------- */
@@ -629,21 +629,21 @@ html body:not(#lu):not(#mt-theme) .text-white,
 html body:not(#lu):not(#mt-theme) .text-light,
 html body:not(#lu):not(#mt-theme) .text-white-50,
 html body:not(#lu):not(#mt-theme) .text-dark {
-    color: #172554 !important;
+    color: var(--g-text) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .bg-dark,
 html body:not(#lu):not(#mt-theme) .bg-black,
 html body:not(#lu):not(#mt-theme) .bg-primary {
-    background: #3B82F6 !important;
-    color: #FFFFFF !important;
+    background: var(--g-primary) !important;
+    color: var(--g-surface-solid) !important;
 }
 
 html body:not(#lu):not(#mt-theme) .bg-light,
 html body:not(#lu):not(#mt-theme) .bg-white,
 html body:not(#lu):not(#mt-theme) .bg-body {
-    background: #FFFFFF !important;
-    color: #172554 !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
 }
 
 /* ---------- 18) واکنش‌گرا ---------- */
@@ -657,27 +657,27 @@ html body:not(#lu):not(#mt-theme) .bg-body {
 
 /* ---------- 19) اولویت قطعی روی لایه‌های قبلی ---------- */
 html body:not(#lu):not(#mt-theme) :is(.ch-pill, .ch-navbtn, .mpf-chip, .mp-badge, .pill-active, .active-pill, .nav-pill, .mp-pill) {
-    background-color: rgba(191, 219, 254, .35) !important;
+    background-color: color-mix(in srgb, var(--g-nested-solid) 35%, transparent) !important;
     background-image: none !important;
-    border: 1px solid #BFDBFE !important;
-    color: #172554 !important;
+    border: 1px solid var(--g-nested-solid) !important;
+    color: var(--g-text) !important;
 }
 
 html body:not(#lu):not(#mt-theme) :is(.ch-pill.active, .mpf-chip.mpf-on, .mp-badge.mp-on, .desk-chip button.on, .pill-active, .active-pill, .nav-pill.active, .mp-pill.on, .rep-tab.active) {
-    background-color: #3B82F6 !important;
+    background-color: var(--g-primary) !important;
     background-image: none !important;
-    border-color: #3B82F6 !important;
-    color: #FFFFFF !important;
-    box-shadow: 0 6px 16px rgba(59, 130, 246, .28) !important;
+    border-color: var(--g-primary) !important;
+    color: var(--g-surface-solid) !important;
+    box-shadow: 0 6px 16px color-mix(in srgb, var(--g-primary) 28%, transparent) !important;
 }
 
 /* ---------- 20) بج‌های وضعیت (بستانکار/بدهکار و مانند آن) ---------- */
 html body:not(#lu):not(#mt-theme) [class*="badge-"],
 html body:not(#lu):not(#mt-theme) [class*="tag-"],
 html body:not(#lu):not(#mt-theme) [class*="chip-"] {
-    background: #EFF6FF !important;
-    color: #172554 !important;
-    border: 1px solid #BFDBFE !important;
+    background: var(--g-surface-solid) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-nested-solid) !important;
     font-weight: 600;
 }
 
@@ -686,6 +686,6 @@ html body:not(#lu):not(#mt-theme) .dk-back,
 html body:not(#lu):not(#mt-theme) .dk-top a,
 html body:not(#lu):not(#mt-theme) .dk-top span,
 html body:not(#lu):not(#mt-theme) .dk-member-inner a {
-    color: #172554 !important;
+    color: var(--g-text) !important;
     font-weight: 700;
 }
