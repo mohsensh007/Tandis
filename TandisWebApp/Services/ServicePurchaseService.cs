@@ -199,5 +199,107 @@ namespace TandisWebApp.Services
                 return new SimpleResponse { Success = false, Message = "خطا در ثبت اطلاعات" };
             }
         }
+
+        /// <summary>
+        /// خرید «مهمان» سرویس — فقط با کارت‌خوان و بدون نیاز به عضویت.
+        /// یک رکورد تردد مهمان (IsGuest) به همراه ردیف سرویس ثبت می‌شود و هیچ سند بدهی برای عضو زده نمی‌شود.
+        /// </summary>
+        public async Task<SimpleResponse> BuyGuestServiceAsync(short serviceID, string? guestName,
+                                                               long? posTxnId, short shiftID)
+        {
+            var name = (guestName ?? "").Trim();
+            if (name.Length < 3) name = "مهمان";
+            if (name.Length > 50) name = name.Substring(0, 50);
+
+            var service = await _db.Gen_Services.AsNoTracking()
+                .FirstOrDefaultAsync(s => s.ServiceID == serviceID && s.ShiftID == shiftID);
+            if (service == null)
+                return new SimpleResponse { Success = false, Message = "سرویس یافت نشد" };
+
+            long amount = service.Amount ?? 0;
+            if (amount <= 0)
+                return new SimpleResponse { Success = false, Message = "مبلغ این سرویس نامعتبر است" };
+
+            if (posTxnId == null)
+            {
+                var intent = await _pos.CreateIntentAsync(0, amount, PosPaymentService.REF_SERVICE);
+                if (!intent.Success)
+                    return new SimpleResponse { Success = false, Message = intent.Message };
+
+                return new SimpleResponse
+                {
+                    Success = true,
+                    PaymentPending = true,
+                    PosTxnId = intent.Data,
+                    PosAmount = amount,
+                    PosAmountDisplay = _helper.SetSeprator(amount) + " ریال",
+                    Message = "مبلغ روی دستگاه POS ارسال شد"
+                };
+            }
+
+            using var tx = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                var claimed = await _pos.ClaimAsync(posTxnId.Value, 0, amount, PosPaymentService.REF_SERVICE);
+                if (!claimed)
+                    return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
+
+                var now = DateTime.Now;
+                var traffic = new ACC_Traffic
+                {
+                    MemberID = null,
+                    TrafficStatus = 2, // Service
+                    EntryDesc = $"خرید خدمات مهمان — {service.ServiceDesc}",
+                    IsGuest = true,
+                    IsPos = true,
+                    Amount = amount,
+                    PersonName = name,
+                    UserID = WEB_USER_ID,
+                    ShiftID = shiftID,
+                    EntryDate = _helper.GetToday(),
+                    EntryTime = _helper.GetThisTime(),
+                    EntryDateTime = now,
+                    IsManual = true
+                };
+                _db.ACC_Traffics.Add(traffic);
+                await _db.SaveChangesAsync();
+
+                var ms = new ACC_MemberService
+                {
+                    TrafficID = traffic.TrafficID,
+                    ServiceID = service.ServiceID,
+                    SalonID = 1,
+                    UserID = WEB_USER_ID,
+                    ShiftID = shiftID,
+                    ServiceAmount = amount,
+                    IsReceipt = false,
+                    IsPosReceipt = true,
+                    ServiceDesc = ($"{name} — {service.ServiceDesc}").Trim(),
+                    CreationDate = _helper.GetToday(),
+                    CreationTime = _helper.GetThisTime(),
+                    AcceptedDate = now,
+                    AgentMemberID = service.RefMemberID,
+                    CommissionPercent = service.Refpercent,
+                    CommissionAmount = amount * (service.Refpercent ?? 0) / 100
+                };
+                _db.ACC_MemberServices.Add(ms);
+                await _db.SaveChangesAsync();
+
+                await _pos.SettleRefAsync(posTxnId.Value, traffic.TrafficID);
+                await tx.CommitAsync();
+
+                return new SimpleResponse
+                {
+                    Success = true,
+                    Message = $"خرید مهمان «{name}» ثبت شد — {_helper.SetSeprator(amount)} ریال"
+                };
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                _logger.LogError(ex, "خطا در خرید سرویس مهمان");
+                return new SimpleResponse { Success = false, Message = "خطا در ثبت اطلاعات" };
+            }
+        }
     }
 }

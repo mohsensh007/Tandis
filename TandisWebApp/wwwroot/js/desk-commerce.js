@@ -56,32 +56,26 @@
     }
 
     /* ------------------------------------------------------------
-       انتخاب عضو (کد ملی / موبایل)
+       اطلاعات پرداخت: کد ملی/رمز عضو (اختیاری) و نام مهمان
        ------------------------------------------------------------ */
-    function initMemberPicker() {
-        var input = byId('dkFindInput');
-        var btn = byId('dkFindBtn');
-        if (!input || !btn) return;
+    function payCreds() {
+        var nc = (byId('dkPayNational') ? byId('dkPayNational').value : '').trim();
+        var pw = (byId('dkPayPassword') ? byId('dkPayPassword').value : '');
+        var name = (byId('dkPayGuest') ? byId('dkPayGuest').value : '').trim();
+        return {
+            nc: nc.replace(/[۰-۹]/g, function (d) { return '۰۱۲۳۴۵۶۷۸۹'.indexOf(d); })
+                   .replace(/[٠-٩]/g, function (d) { return '٠١٢٣٤٥٦٧٨٩'.indexOf(d); })
+                   .replace(/\D/g, ''),
+            pw: pw,
+            name: name
+        };
+    }
 
-        function search() {
-            var q = (input.value || '').trim();
-            if (q.length < 10) { toast('کد ملی یا موبایل را کامل وارد کنید', true); return; }
-            btn.disabled = true;
-            api('/api/Desk/Commerce/FindMember', { query: q }).then(function (res) {
-                btn.disabled = false;
-                if (!res || !res.success) { toast((res && res.message) || 'عضو یافت نشد', true); return; }
-                var url = new URL(window.location.href);
-                url.searchParams.set('member', res.data.memberID);
-                window.location.href = url.toString();
-            }).catch(function () {
-                btn.disabled = false;
-                toast('اتصال به سرور برقرار نشد', true);
-            });
-        }
-
-        btn.addEventListener('click', search);
-        input.addEventListener('keydown', function (e) { if (e.key === 'Enter') search(); });
-        input.focus();
+    function clearPayCreds() {
+        ['dkPayNational', 'dkPayPassword', 'dkPayGuest'].forEach(function (id) {
+            var el = byId(id);
+            if (el) el.value = '';
+        });
     }
 
     /* ------------------------------------------------------------
@@ -98,11 +92,16 @@
         byId('dkPayAmount').textContent = money(amount);
         byId('dkPayNote').textContent = '';
         payModal().classList.add('open');
+        var nc = byId('dkPayNational');
+        if (nc) setTimeout(function () { nc.focus(); }, 120);
     }
 
     function closePay() {
         payModal().classList.remove('open');
         if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
+        setPayBusy(false);
+        var posBtn = byId('dkPayPos');
+        if (posBtn) posBtn.innerHTML = '<i class="bi bi-credit-card-2-front"></i> پرداخت با کارت‌خوان (مهمان)';
     }
 
     function setPayBusy(busy, note) {
@@ -114,7 +113,20 @@
 
     function payWithCredit() {
         if (payState.busy) return;
-        setPayBusy(true, 'در حال ثبت خرید از اعتبار…');
+
+        var creds = payCreds();
+        if (creds.nc.length !== 10) {
+            byId('dkPayNote').textContent = 'برای پرداخت از اعتبار، کد ملی ۱۰ رقمی عضو را وارد کنید.';
+            if (byId('dkPayNational')) byId('dkPayNational').focus();
+            return;
+        }
+        if (!creds.pw) {
+            byId('dkPayNote').textContent = 'رمز عبور عضو را وارد کنید.';
+            if (byId('dkPayPassword')) byId('dkPayPassword').focus();
+            return;
+        }
+
+        setPayBusy(true, 'در حال تأیید هویت عضو و ثبت خرید از اعتبار…');
         payState.credit().then(function (res) {
             setPayBusy(false);
             if (!res || !res.success) {
@@ -201,6 +213,7 @@
 
     function afterSuccess() {
         if (state.basket) state.basket = [];
+        clearPayCreds();
         setTimeout(function () { window.location.reload(); }, 1400);
     }
 
@@ -363,7 +376,17 @@
         });
 
         function body(method, posTxnId) {
-            return { memberID: ctx.memberID, items: items, isBuffet: state.isBuffet, method: method, posTxnId: posTxnId || null };
+            var creds = payCreds();
+            return {
+                memberID: ctx.memberID,
+                nationalCode: creds.nc || null,
+                password: creds.pw || null,
+                guestName: creds.name || null,
+                items: items,
+                isBuffet: state.isBuffet,
+                method: method,
+                posTxnId: posTxnId || null
+            };
         }
 
         openPay(total,
@@ -404,7 +427,16 @@
 
     function buyService(id, amount) {
         function body(method, posTxnId) {
-            return { memberID: ctx.memberID, serviceID: id, method: method, posTxnId: posTxnId || null };
+            var creds = payCreds();
+            return {
+                memberID: ctx.memberID,
+                serviceID: id,
+                nationalCode: creds.nc || null,
+                password: creds.pw || null,
+                guestName: creds.name || null,
+                method: method,
+                posTxnId: posTxnId || null
+            };
         }
         openPay(amount,
             function () { return api('/api/Desk/Commerce/BuyService', body('credit')); },
@@ -424,10 +456,7 @@
         return null;
     }
 
-    if (!ctx.memberID || !root) {
-        initMemberPicker();
-        return;
-    }
+    if (!root) return;
 
     initPayModal();
 

@@ -407,6 +407,36 @@ namespace TandisWebApp.Controllers
             return Ok(new { success = true, data = list });
         }
 
+        public class VerifyMemberReq
+        {
+            public string? NationalCode { get; set; }
+            public string? Password { get; set; }
+        }
+
+        /// <summary>تأیید هویت عضو با کد ملی + رمز — در لحظهٔ پرداخت از اعتبار</summary>
+        [HttpPost]
+        [Route("api/Desk/Commerce/VerifyMember")]
+        public async Task<IActionResult> CommerceVerifyMember([FromBody] VerifyMemberReq? req)
+        {
+            var (ok, msg, dto) = await _desk.FindMemberAsync(req?.NationalCode, req?.Password, true);
+            if (!ok || dto == null)
+                return Ok(new { success = false, message = msg });
+
+            return Ok(new
+            {
+                success = true,
+                data = new
+                {
+                    memberID = dto.MemberID,
+                    fullName = dto.FullName,
+                    nationalCode = dto.NationalCode,
+                    sportCredit = dto.SportCredit,
+                    shopCredit = dto.ShopCredit,
+                    serviceCredit = dto.ServiceCredit
+                }
+            });
+        }
+
         public class CommerceBuyReq
         {
             public int MemberID { get; set; }
@@ -414,20 +444,69 @@ namespace TandisWebApp.Controllers
             public bool IsBuffet { get; set; }
             public string Method { get; set; } = "credit";
             public long? PosTxnId { get; set; }
+
+            // ✅ خرید برای همه باز است: اگر کد ملی + رمز داده شود، خرید روی حساب همان عضو می‌رود؛
+            //    در غیر این صورت با کارت‌خوان به‌عنوان مهمان ثبت می‌شود.
+            public string? NationalCode { get; set; }
+            public string? Password { get; set; }
+            public string? GuestName { get; set; }
+        }
+
+        /// <summary>تشخیص عضو از روی کد ملی + رمز؛ خروجی (OK, MemberID, ErrorMessage)</summary>
+        private async Task<(bool ok, int memberID, string message)> ResolveMemberAsync(string? nationalCode, string? password)
+        {
+            if (string.IsNullOrWhiteSpace(nationalCode) && string.IsNullOrWhiteSpace(password))
+                return (true, 0, "");
+
+            var (ok, msg, dto) = await _desk.FindMemberAsync(nationalCode, password, true);
+            if (!ok || dto == null)
+                return (false, 0, msg);
+
+            return (true, dto.MemberID, "");
         }
 
         [HttpPost]
         [Route("api/Desk/Commerce/Buy")]
         public async Task<IActionResult> CommerceBuy([FromBody] CommerceBuyReq? req)
         {
-            if (req == null || req.MemberID <= 0)
-                return Ok(new { success = false, message = "عضو انتخاب نشده است" });
+            if (req == null)
+                return Ok(new { success = false, message = "درخواست نامعتبر است" });
 
-            var result = await _shop.BuyAsync(req.MemberID, new ShopBuyRequest
+            string method = (req.Method ?? "credit").ToLowerInvariant();
+            bool hasCredentials = !string.IsNullOrWhiteSpace(req.NationalCode) || !string.IsNullOrWhiteSpace(req.Password);
+
+            var member = await ResolveMemberAsync(req.NationalCode, req.Password);
+            if (!member.ok && (method == "credit" || hasCredentials))
+                return Ok(new { success = false, message = member.message });
+
+            int memberID = member.ok ? member.memberID : 0;
+            if (memberID <= 0) memberID = req.MemberID > 0 ? req.MemberID : 0;
+
+            // اعتبار فقط برای عضو شناخته‌شده
+            if (method == "credit" && memberID <= 0)
+                return Ok(new { success = false, message = "برای پرداخت از اعتبار، کد ملی و رمز عضو را وارد کنید" });
+
+            // کارت‌خوان با عضو شناخته‌شده → روی حساب عضو، در غیر این صورت → مهمان
+            if (method != "credit" && memberID <= 0)
+            {
+                var guest = await _shop.BuyGuestAsync(req.Items, req.IsBuffet, req.GuestName, req.PosTxnId, ShiftID);
+                return Ok(new
+                {
+                    guest.Success,
+                    guest.Message,
+                    guest.PaymentPending,
+                    guest.PosTxnId,
+                    guest.PosAmount,
+                    guest.PosAmountDisplay,
+                    isGuest = true
+                });
+            }
+
+            var result = await _shop.BuyAsync(memberID, new ShopBuyRequest
             {
                 Items = req.Items,
                 IsBuffet = req.IsBuffet,
-                Method = req.Method,
+                Method = method,
                 PosTxnId = req.PosTxnId
             }, ShiftID);
 
@@ -438,7 +517,8 @@ namespace TandisWebApp.Controllers
                 result.PaymentPending,
                 result.PosTxnId,
                 result.PosAmount,
-                result.PosAmountDisplay
+                result.PosAmountDisplay,
+                isGuest = false
             });
         }
 
@@ -448,19 +528,50 @@ namespace TandisWebApp.Controllers
             public short ServiceID { get; set; }
             public string Method { get; set; } = "credit";
             public long? PosTxnId { get; set; }
+            public string? NationalCode { get; set; }
+            public string? Password { get; set; }
+            public string? GuestName { get; set; }
         }
 
         [HttpPost]
         [Route("api/Desk/Commerce/BuyService")]
         public async Task<IActionResult> CommerceBuyService([FromBody] CommerceServiceReq? req)
         {
-            if (req == null || req.MemberID <= 0)
-                return Ok(new { success = false, message = "عضو انتخاب نشده است" });
+            if (req == null)
+                return Ok(new { success = false, message = "درخواست نامعتبر است" });
 
-            var result = await _service.BuyServiceAsync(req.MemberID, new ServiceBuyRequest
+            string method = (req.Method ?? "credit").ToLowerInvariant();
+            bool hasCredentials = !string.IsNullOrWhiteSpace(req.NationalCode) || !string.IsNullOrWhiteSpace(req.Password);
+
+            var member = await ResolveMemberAsync(req.NationalCode, req.Password);
+            if (!member.ok && (method == "credit" || hasCredentials))
+                return Ok(new { success = false, message = member.message });
+
+            int memberID = member.ok ? member.memberID : 0;
+            if (memberID <= 0) memberID = req.MemberID > 0 ? req.MemberID : 0;
+
+            if (method == "credit" && memberID <= 0)
+                return Ok(new { success = false, message = "برای پرداخت از اعتبار، کد ملی و رمز عضو را وارد کنید" });
+
+            if (method != "credit" && memberID <= 0)
+            {
+                var guest = await _service.BuyGuestServiceAsync(req.ServiceID, req.GuestName, req.PosTxnId, ShiftID);
+                return Ok(new
+                {
+                    guest.Success,
+                    guest.Message,
+                    guest.PaymentPending,
+                    guest.PosTxnId,
+                    guest.PosAmount,
+                    guest.PosAmountDisplay,
+                    isGuest = true
+                });
+            }
+
+            var result = await _service.BuyServiceAsync(memberID, new ServiceBuyRequest
             {
                 ServiceID = req.ServiceID,
-                Method = req.Method,
+                Method = method,
                 PosTxnId = req.PosTxnId
             }, ShiftID);
 
@@ -471,7 +582,8 @@ namespace TandisWebApp.Controllers
                 result.PaymentPending,
                 result.PosTxnId,
                 result.PosAmount,
-                result.PosAmountDisplay
+                result.PosAmountDisplay,
+                isGuest = false
             });
         }
 

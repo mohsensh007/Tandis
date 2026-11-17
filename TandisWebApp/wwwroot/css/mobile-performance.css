@@ -17,7 +17,7 @@
     .login-glass-card {
         -webkit-backdrop-filter: none !important;
         backdrop-filter: none !important;
-        box-shadow: 0 6px 18px rgba(0,0,0,.24) !important;
+        box-shadow: 0 6px 18px rgba(23,37,84,.24) !important;
     }
 
     .member-ui .allmenu-item,

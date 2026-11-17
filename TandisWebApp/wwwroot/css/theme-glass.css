@@ -1,0 +1,1331 @@
+/* =====================================================================
+   ARCTIC BLUE (Light)  /  MIDNIGHT BLUE (Dark)  —  Glassmorphism Layer
+   این فایل بعد از theme-arctic.css بارگذاری می‌شود و:
+   • در حالت روشن: شیشهٔ سفید-یخی روی پس‌زمینهٔ آبی روشن
+   • در حالت تاریک: شیشهٔ سرمه‌ای روی پس‌زمینهٔ Midnight
+   رنگ‌های مجاز روشن:  #FFFFFF #EFF6FF #BFDBFE #3B82F6 #172554
+   رنگ‌های مجاز تاریک:  #0B1220 #111C2E #1E293B #60A5FA #F1F5F9
+   ===================================================================== */
+
+/* ---------- ۱) توکن‌های تم ---------- */
+html {
+    --g-bg: #EFF6FF;
+    --g-bg-deep: #EFF6FF;
+    --g-surface: rgba(255, 255, 255, .62);
+    --g-surface-strong: rgba(255, 255, 255, .80);
+    --g-surface-soft: rgba(255, 255, 255, .46);
+    --g-nested: rgba(239, 246, 255, .58);
+    --g-border: rgba(255, 255, 255, .78);
+    --g-border-soft: rgba(191, 219, 254, .85);
+    --g-text: #172554;
+    --g-text-soft: rgba(23, 37, 84, .70);
+    --g-muted: rgba(23, 37, 84, .60);
+    --g-primary: #3B82F6;
+    --g-primary-text: #FFFFFF;
+    --g-primary-soft: rgba(59, 130, 246, .14);
+    --g-highlight: rgba(191, 219, 254, .5);
+    --g-shadow: 0 10px 30px rgba(23, 37, 84, .08);
+    --g-shadow-lg: 0 20px 50px rgba(23, 37, 84, .14);
+    --g-blur: 16px;
+    --g-blur-strong: 24px;
+    --g-input: rgba(255, 255, 255, .84);
+    --g-hover: rgba(191, 219, 254, .38);
+    --g-track: rgba(191, 219, 254, .5);
+    --g-inset: inset 0 1px 0 rgba(255, 255, 255, .85);
+    color-scheme: light;
+}
+
+html[data-theme="dark"] {
+    --g-bg: #0B1220;
+    --g-bg-deep: #111C2E;
+    --g-surface: rgba(30, 41, 59, .58);
+    --g-surface-strong: rgba(30, 41, 59, .76);
+    --g-surface-soft: rgba(17, 28, 46, .52);
+    --g-nested: rgba(17, 28, 46, .60);
+    --g-border: rgba(96, 165, 250, .22);
+    --g-border-soft: rgba(96, 165, 250, .16);
+    --g-text: #F1F5F9;
+    --g-text-soft: rgba(241, 245, 249, .80);
+    --g-muted: rgba(241, 245, 249, .66);
+    --g-primary: #60A5FA;
+    --g-primary-text: #0B1220;
+    --g-primary-soft: rgba(96, 165, 250, .18);
+    --g-highlight: rgba(30, 41, 59, .75);
+    --g-shadow: 0 12px 34px rgba(0, 0, 0, .45);
+    --g-shadow-lg: 0 24px 60px rgba(0, 0, 0, .55);
+    --g-input: rgba(17, 28, 46, .78);
+    --g-hover: rgba(96, 165, 250, .14);
+    --g-track: rgba(30, 41, 59, .85);
+    --g-inset: inset 0 1px 0 rgba(241, 245, 249, .06);
+    color-scheme: dark;
+
+    /* متغیرهای لایهٔ قدیمی برای حالت تاریک */
+    --lu-darkest: #F1F5F9;
+    --lu-dark: #111C2E;
+    --lu-light: #1E293B;
+    --lu-navy: #F1F5F9;
+    --lu-text: #F1F5F9;
+    --lu-muted: rgba(241, 245, 249, .68);
+    --lu-glass-text: #F1F5F9;
+    --lu-glass-border: rgba(96, 165, 250, .22);
+    --lu-glass-shadow: 0 16px 40px rgba(0, 0, 0, .45);
+    --lu-line: rgba(96, 165, 250, .2);
+    --lu-bg-card: rgba(30, 41, 59, .58);
+    --lu-bg-card-dark: rgba(17, 28, 46, .7);
+    --lu-bg-box: linear-gradient(180deg, rgba(30, 41, 59, .65) 0%, rgba(17, 28, 46, .7) 100%);
+    --bs-body-color: #F1F5F9;
+    --bs-body-bg: #0B1220;
+    --bs-emphasis-color: #F1F5F9;
+    --bs-heading-color: #F1F5F9;
+    --bs-table-color: #F1F5F9;
+    --bs-table-bg: transparent;
+}
+
+/* ---------- ۲) پس‌زمینهٔ برنامه ---------- */
+html[data-theme] body {
+    background-color: var(--g-bg) !important;
+    background-image:
+        radial-gradient(1100px 620px at 88% -8%, var(--g-primary-soft), transparent 62%),
+        radial-gradient(900px 520px at 0% 100%, var(--g-highlight), transparent 58%) !important;
+    background-attachment: fixed !important;
+    color: var(--g-text) !important;
+    transition: background-color .35s ease, color .35s ease;
+}
+
+html.theme-anim,
+html.theme-anim body,
+html.theme-anim body * {
+    transition: background-color .35s ease, color .35s ease, border-color .35s ease, box-shadow .35s ease !important;
+}
+
+/* ---------- ۳) شیشه — لایه‌های اصلی ---------- */
+body:not(#lu):not(#mt-theme) .card,
+body:not(#lu):not(#mt-theme) .panel,
+body:not(#lu):not(#mt-theme) .widget,
+body:not(#lu):not(#mt-theme) .box,
+body:not(#lu):not(#mt-theme) .surface,
+body:not(#lu):not(#mt-theme) .stat-card,
+body:not(#lu):not(#mt-theme) .stats-card,
+body:not(#lu):not(#mt-theme) .kpi,
+body:not(#lu):not(#mt-theme) .metric-card,
+body:not(#lu):not(#mt-theme) .info-card,
+body:not(#lu):not(#mt-theme) .section-card,
+body:not(#lu):not(#mt-theme) .content-card,
+body:not(#lu):not(#mt-theme) .table-card,
+body:not(#lu):not(#mt-theme) .form-card,
+body:not(#lu):not(#mt-theme) .auth-card,
+body:not(#lu):not(#mt-theme) .login-card,
+body:not(#lu):not(#mt-theme) .list-card,
+body:not(#lu):not(#mt-theme) .chart-card,
+body:not(#lu):not(#mt-theme) .chart-box,
+body:not(#lu):not(#mt-theme) .glass,
+body:not(#lu):not(#mt-theme) .glass-card,
+body:not(#lu):not(#mt-theme) .dash-card,
+body:not(#lu):not(#mt-theme) .admin-setting-card,
+body:not(#lu):not(#mt-theme) .commerce-panel {
+    background: var(--g-surface) !important;
+    background-image: linear-gradient(160deg, var(--g-surface-soft) 0%, var(--g-surface) 55%, var(--g-nested) 100%) !important;
+    backdrop-filter: blur(var(--g-blur)) saturate(1.25) !important;
+    -webkit-backdrop-filter: blur(var(--g-blur)) saturate(1.25) !important;
+    border: 1px solid var(--g-border) !important;
+    border-radius: 16px !important;
+    box-shadow: var(--g-shadow), var(--g-inset) !important;
+    color: var(--g-text) !important;
+}
+
+/* سطوح برجسته: مودال، منو، پنل‌های شناور */
+body:not(#lu):not(#mt-theme) .modal-content,
+body:not(#lu):not(#mt-theme) .dropdown-menu,
+body:not(#lu):not(#mt-theme) .offcanvas,
+body:not(#lu):not(#mt-theme) .popover,
+body:not(#lu):not(#mt-theme) .toast,
+body:not(#lu):not(#mt-theme) .glass-strong {
+    background: var(--g-surface-strong) !important;
+    background-image: linear-gradient(165deg, var(--g-surface) 0%, var(--g-surface-strong) 100%) !important;
+    backdrop-filter: blur(var(--g-blur-strong)) saturate(1.3) !important;
+    -webkit-backdrop-filter: blur(var(--g-blur-strong)) saturate(1.3) !important;
+    border: 1px solid var(--g-border) !important;
+    border-radius: 20px !important;
+    box-shadow: var(--g-shadow-lg) !important;
+    color: var(--g-text) !important;
+}
+
+/* شیشهٔ ضعیف‌تر برای کارت‌های تودرتو */
+body:not(#lu):not(#mt-theme) .card .card,
+body:not(#lu):not(#mt-theme) .panel .panel,
+body:not(#lu):not(#mt-theme) .card .panel,
+body:not(#lu):not(#mt-theme) .card-body .card,
+body:not(#lu):not(#mt-theme) .nested,
+body:not(#lu):not(#mt-theme) .inner-card,
+body:not(#lu):not(#mt-theme) .sub-card,
+body:not(#lu):not(#mt-theme) .glass-surface,
+body:not(#lu):not(#mt-theme) .money-cell,
+body:not(#lu):not(#mt-theme) .admin-setting-card .card {
+    background: var(--g-nested) !important;
+    background-image: none !important;
+    backdrop-filter: blur(10px) saturate(1.15) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(1.15) !important;
+    border: 1px solid var(--g-border-soft) !important;
+    box-shadow: none !important;
+    color: var(--g-text) !important;
+}
+
+/* هدر، سایدبار، نوار پایین */
+body:not(#lu):not(#mt-theme) header,
+body:not(#lu):not(#mt-theme) .navbar,
+body:not(#lu):not(#mt-theme) .site-header,
+body:not(#lu):not(#mt-theme) .app-header,
+body:not(#lu):not(#mt-theme) .topbar,
+body:not(#lu):not(#mt-theme) .admin-header,
+body:not(#lu):not(#mt-theme) .coach-header,
+body:not(#lu):not(#mt-theme) .dk-top,
+body:not(#lu):not(#mt-theme) .mh-header,
+body:not(#lu):not(#mt-theme) .desk-head,
+body:not(#lu):not(#mt-theme) .mobile-header,
+body:not(#lu):not(#mt-theme) .sidebar,
+body:not(#lu):not(#mt-theme) .admin-sidebar,
+body:not(#lu):not(#mt-theme) .coach-sidebar,
+body:not(#lu):not(#mt-theme) .mobile-nav,
+body:not(#lu):not(#mt-theme) .bottom-nav,
+body:not(#lu):not(#mt-theme) .mh-bottom-nav,
+body:not(#lu):not(#mt-theme) .coach-bottom-nav {
+    background: var(--g-surface-strong) !important;
+    background-image: linear-gradient(180deg, var(--g-surface) 0%, var(--g-surface-soft) 100%) !important;
+    backdrop-filter: blur(var(--g-blur)) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(var(--g-blur)) saturate(1.2) !important;
+    border-color: var(--g-border-soft) !important;
+    color: var(--g-text) !important;
+    box-shadow: 0 6px 22px rgba(23, 37, 84, .06) !important;
+}
+
+/* ---------- ۴) متن‌ها ---------- */
+body:not(#lu):not(#mt-theme) h1,
+body:not(#lu):not(#mt-theme) h2,
+body:not(#lu):not(#mt-theme) h3,
+body:not(#lu):not(#mt-theme) h4,
+body:not(#lu):not(#mt-theme) h5,
+body:not(#lu):not(#mt-theme) h6,
+body:not(#lu):not(#mt-theme) .h1,
+body:not(#lu):not(#mt-theme) .h2,
+body:not(#lu):not(#mt-theme) .h3,
+body:not(#lu):not(#mt-theme) .h4 {
+    color: var(--g-text) !important;
+}
+
+body:not(#lu):not(#mt-theme) .text-muted,
+body:not(#lu):not(#mt-theme) .muted,
+body:not(#lu):not(#mt-theme) .sub,
+body:not(#lu):not(#mt-theme) .subtitle,
+body:not(#lu):not(#mt-theme) .desc,
+body:not(#lu):not(#mt-theme) .hint,
+body:not(#lu):not(#mt-theme) .form-text,
+body:not(#lu):not(#mt-theme) small {
+    color: var(--g-muted) !important;
+}
+
+body:not(#lu):not(#mt-theme) a { color: var(--g-primary) !important; }
+body:not(#lu):not(#mt-theme) a:hover { color: var(--g-text) !important; }
+
+/* ---------- ۵) جدول‌ها ---------- */
+body:not(#lu):not(#mt-theme) .table-responsive,
+body:not(#lu):not(#mt-theme) .table,
+body:not(#lu):not(#mt-theme) table {
+    background: transparent !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+body:not(#lu):not(#mt-theme) table thead th,
+body:not(#lu):not(#mt-theme) .table thead th {
+    background: var(--g-nested) !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+    font-weight: 700;
+}
+
+body:not(#lu):not(#mt-theme) table td,
+body:not(#lu):not(#mt-theme) table th,
+body:not(#lu):not(#mt-theme) .table > :not(caption) > * > * {
+    background-color: transparent !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+body:not(#lu):not(#mt-theme) table tbody tr:hover > *,
+body:not(#lu):not(#mt-theme) .table tbody tr:hover > * {
+    background: var(--g-hover) !important;
+    color: var(--g-text) !important;
+}
+
+/* ---------- ۶) فرم‌ها ---------- */
+body:not(#lu):not(#mt-theme) .form-control,
+body:not(#lu):not(#mt-theme) .form-select,
+body:not(#lu):not(#mt-theme) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="hidden"]),
+body:not(#lu):not(#mt-theme) select,
+body:not(#lu):not(#mt-theme) textarea {
+    background: var(--g-input) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: none !important;
+}
+
+body:not(#lu):not(#mt-theme) .form-control:focus,
+body:not(#lu):not(#mt-theme) .form-select:focus,
+body:not(#lu):not(#mt-theme) input:focus,
+body:not(#lu):not(#mt-theme) select:focus,
+body:not(#lu):not(#mt-theme) textarea:focus {
+    background: var(--g-surface-strong) !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-primary) !important;
+    box-shadow: 0 0 0 3px var(--g-primary-soft) !important;
+    outline: none !important;
+}
+
+body:not(#lu):not(#mt-theme) input::placeholder,
+body:not(#lu):not(#mt-theme) textarea::placeholder,
+body:not(#lu):not(#mt-theme) .form-control::placeholder {
+    color: var(--g-muted) !important;
+    opacity: 1 !important;
+}
+
+body:not(#lu):not(#mt-theme) option,
+body:not(#lu):not(#mt-theme) optgroup {
+    background: var(--g-bg) !important;
+    color: var(--g-text) !important;
+}
+
+body:not(#lu):not(#mt-theme) label,
+body:not(#lu):not(#mt-theme) .form-label,
+body:not(#lu):not(#mt-theme) .control-label {
+    color: var(--g-text) !important;
+    font-weight: 600;
+}
+
+body:not(#lu):not(#mt-theme) .input-group-text {
+    background: var(--g-nested) !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+body:not(#lu):not(#mt-theme) .form-control:disabled,
+body:not(#lu):not(#mt-theme) input:disabled,
+body:not(#lu):not(#mt-theme) select:disabled,
+body:not(#lu):not(#mt-theme) textarea:disabled {
+    background: var(--g-nested) !important;
+    color: var(--g-muted) !important;
+    -webkit-text-fill-color: var(--g-muted);
+}
+
+/* ---------- ۷) دکمه‌ها ---------- */
+body:not(#lu):not(#mt-theme) .btn,
+body:not(#lu):not(#mt-theme) .btn-primary,
+body:not(#lu):not(#mt-theme) .btn-success,
+body:not(#lu):not(#mt-theme) .btn-info,
+body:not(#lu):not(#mt-theme) .btn-fill,
+body:not(#lu):not(#mt-theme) .dk-pay-btn.btn-primary,
+body:not(#lu):not(#mt-theme) .theme-toggle[aria-pressed="false"] {
+    background: var(--g-primary) !important;
+    background-image: none !important;
+    color: var(--g-primary-text) !important;
+    border: 1px solid var(--g-primary) !important;
+    border-radius: 12px !important;
+    box-shadow: 0 6px 18px var(--g-primary-soft) !important;
+    font-weight: 700;
+}
+
+body:not(#lu):not(#mt-theme) .btn:hover,
+body:not(#lu):not(#mt-theme) .btn-primary:hover,
+body:not(#lu):not(#mt-theme) .btn-primary:focus {
+    filter: brightness(.96);
+    color: var(--g-primary-text) !important;
+}
+
+body:not(#lu):not(#mt-theme) .btn-secondary,
+body:not(#lu):not(#mt-theme) .btn-light,
+body:not(#lu):not(#mt-theme) .btn-outline,
+body:not(#lu):not(#mt-theme) .btn-outline-primary,
+body:not(#lu):not(#mt-theme) .btn-ghost,
+body:not(#lu):not(#mt-theme) .btn-glass,
+body:not(#lu):not(#mt-theme) .btn-back-glass,
+body:not(#lu):not(#mt-theme) .btn-logout-glass,
+body:not(#lu):not(#mt-theme) .dk-pay-btn.btn-glass,
+body:not(#lu):not(#mt-theme) .theme-toggle {
+    background: var(--g-surface) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+    border-radius: 12px !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 14px rgba(23, 37, 84, .06) !important;
+}
+
+body:not(#lu):not(#mt-theme) .btn-secondary:hover,
+body:not(#lu):not(#mt-theme) .btn-light:hover,
+body:not(#lu):not(#mt-theme) .btn-ghost:hover,
+body:not(#lu):not(#mt-theme) .btn-glass:hover,
+body:not(#lu):not(#mt-theme) .dk-pay-btn.btn-glass:hover,
+body:not(#lu):not(#mt-theme) .theme-toggle:hover {
+    background: var(--g-hover) !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-primary) !important;
+}
+
+body:not(#lu):not(#mt-theme) .btn-danger,
+body:not(#lu):not(#mt-theme) .btn-warning {
+    background: var(--g-text) !important;
+    color: var(--g-bg) !important;
+    border-color: var(--g-text) !important;
+}
+
+body:not(#lu):not(#mt-theme) .btn:disabled,
+body:not(#lu):not(#mt-theme) .btn.disabled,
+body:not(#lu):not(#mt-theme) button:disabled {
+    background: var(--g-nested) !important;
+    color: var(--g-muted) !important;
+    border-color: var(--g-border-soft) !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
+/* ---------- ۸) بج/تب/قرص ---------- */
+body:not(#lu):not(#mt-theme) .badge,
+body:not(#lu):not(#mt-theme) .chip,
+body:not(#lu):not(#mt-theme) .pill,
+body:not(#lu):not(#mt-theme) .tag,
+body:not(#lu):not(#mt-theme) .delta-badge,
+body:not(#lu):not(#mt-theme) [class*="badge-"] {
+    background: var(--g-nested) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+    border-radius: 999px !important;
+    font-weight: 600;
+}
+
+body:not(#lu):not(#mt-theme) .badge.bg-primary,
+body:not(#lu):not(#mt-theme) .badge-primary {
+    background: var(--g-primary) !important;
+    color: var(--g-primary-text) !important;
+    border-color: var(--g-primary) !important;
+}
+
+body:not(#lu):not(#mt-theme) .nav-tabs,
+body:not(#lu):not(#mt-theme) .tabs,
+body:not(#lu):not(#mt-theme) .ch-period,
+body:not(#lu):not(#mt-theme) .rep-tabs {
+    background: var(--g-nested) !important;
+    border: 1px solid var(--g-border-soft) !important;
+    border-radius: 12px !important;
+}
+
+body:not(#lu):not(#mt-theme) .nav-tabs .nav-link,
+body:not(#lu):not(#mt-theme) .tab,
+body:not(#lu):not(#mt-theme) .tab-btn,
+body:not(#lu):not(#mt-theme) .ch-pill,
+body:not(#lu):not(#mt-theme) .ch-navbtn,
+body:not(#lu):not(#mt-theme) .rep-tab,
+body:not(#lu):not(#mt-theme) .mpf-chip,
+body:not(#lu):not(#mt-theme) .seg-btn,
+body:not(#lu):not(#mt-theme) .period-btn {
+    background: transparent !important;
+    color: var(--g-text) !important;
+    border: 1px solid transparent !important;
+}
+
+body:not(#lu):not(#mt-theme) .nav-tabs .nav-link.active,
+body:not(#lu):not(#mt-theme) .tab.active,
+body:not(#lu):not(#mt-theme) .tab-btn.active,
+body:not(#lu):not(#mt-theme) .ch-pill.active,
+body:not(#lu):not(#mt-theme) .rep-tab.active,
+body:not(#lu):not(#mt-theme) .mpf-chip.active,
+body:not(#lu):not(#mt-theme) .mpf-chip.mpf-on,
+body:not(#lu):not(#mt-theme) .seg-btn.active,
+body:not(#lu):not(#mt-theme) .btn-check:checked + .period-btn,
+body:not(#lu):not(#mt-theme) .nav-link.active {
+    background: var(--g-primary) !important;
+    background-image: none !important;
+    color: var(--g-primary-text) !important;
+    border-color: var(--g-primary) !important;
+    box-shadow: 0 6px 16px var(--g-primary-soft) !important;
+}
+
+/* ---------- ۹) اعلان/توست/ابزارها ---------- */
+body:not(#lu):not(#mt-theme) .alert,
+body:not(#lu):not(#mt-theme) .toast,
+body:not(#lu):not(#mt-theme) .notification {
+    background: var(--g-surface) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+    border-radius: 14px !important;
+    backdrop-filter: blur(var(--g-blur));
+    -webkit-backdrop-filter: blur(var(--g-blur));
+    box-shadow: var(--g-shadow) !important;
+}
+
+body:not(#lu):not(#mt-theme) .tooltip-inner {
+    background: var(--g-text) !important;
+    color: var(--g-bg) !important;
+}
+
+body:not(#lu):not(#mt-theme) .progress {
+    background: var(--g-track) !important;
+    border: 1px solid var(--g-border-soft) !important;
+}
+
+body:not(#lu):not(#mt-theme) .progress-bar {
+    background: var(--g-primary) !important;
+    color: var(--g-primary-text) !important;
+}
+
+body:not(#lu):not(#mt-theme) .page-link,
+body:not(#lu):not(#mt-theme) .pagination a {
+    background: var(--g-surface) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+}
+
+body:not(#lu):not(#mt-theme) .page-item.active .page-link,
+body:not(#lu):not(#mt-theme) .pagination .active a {
+    background: var(--g-primary) !important;
+    color: var(--g-primary-text) !important;
+    border-color: var(--g-primary) !important;
+}
+
+body:not(#lu):not(#mt-theme) .empty,
+body:not(#lu):not(#mt-theme) .empty-state,
+body:not(#lu):not(#mt-theme) .no-data,
+body:not(#lu):not(#mt-theme) .commerce-empty,
+body:not(#lu):not(#mt-theme) .commerce-status {
+    background: transparent !important;
+    color: var(--g-muted) !important;
+}
+
+/* ---------- ۱۰) فروشگاه/میز خدمت ---------- */
+body:not(#lu):not(#mt-theme) .commerce-product-card,
+body:not(#lu):not(#mt-theme) .commerce-card,
+body:not(#lu):not(#mt-theme) .product-card,
+body:not(#lu):not(#mt-theme) .service-card,
+body:not(#lu):not(#mt-theme) .commerce-category-button {
+    background: var(--g-surface) !important;
+    background-image: none !important;
+    border: 1px solid var(--g-border) !important;
+    color: var(--g-text) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: var(--g-shadow) !important;
+}
+
+body:not(#lu):not(#mt-theme) .commerce-product-card *,
+body:not(#lu):not(#mt-theme) .commerce-card *,
+body:not(#lu):not(#mt-theme) .commerce-category-button {
+    color: var(--g-text);
+}
+
+body:not(#lu):not(#mt-theme) .commerce-price {
+    color: var(--g-primary) !important;
+    font-weight: 800;
+}
+
+body:not(#lu):not(#mt-theme) .commerce-category-button.active {
+    background: var(--g-primary) !important;
+    color: var(--g-primary-text) !important;
+    border-color: var(--g-primary) !important;
+}
+
+body:not(#lu):not(#mt-theme) .commerce-add,
+body:not(#lu):not(#mt-theme) .commerce-buy,
+body:not(#lu):not(#mt-theme) .btn-buy-basket {
+    background: var(--g-primary) !important;
+    color: var(--g-primary-text) !important;
+    border: 1px solid var(--g-primary) !important;
+}
+
+body:not(#lu):not(#mt-theme) .dk-member-inner,
+body:not(#lu):not(#mt-theme) .dk-open-inner,
+body:not(#lu):not(#mt-theme) .dk-back {
+    background: var(--g-surface) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+body:not(#lu):not(#mt-theme) .dk-back:hover { background: var(--g-hover) !important; }
+
+body:not(#lu):not(#mt-theme) .dk-pay-modal { background: rgba(11, 18, 32, .42) !important; }
+html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme) .dk-pay-modal { background: rgba(23, 37, 84, .28) !important; }
+
+body:not(#lu):not(#mt-theme) .dk-pay-box {
+    background: var(--g-surface-strong) !important;
+    background-image: linear-gradient(165deg, var(--g-surface) 0%, var(--g-surface-strong) 100%) !important;
+    border: 1px solid var(--g-border) !important;
+    color: var(--g-text) !important;
+    box-shadow: var(--g-shadow-lg) !important;
+    backdrop-filter: blur(var(--g-blur-strong));
+    -webkit-backdrop-filter: blur(var(--g-blur-strong));
+}
+
+body:not(#lu):not(#mt-theme) .dk-toast {
+    background: var(--g-surface-strong) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+    box-shadow: var(--g-shadow-lg) !important;
+    backdrop-filter: blur(var(--g-blur));
+    -webkit-backdrop-filter: blur(var(--g-blur));
+}
+
+/* ---------- ۱۱) دکمهٔ تم ---------- */
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-size: 1.15rem;
+    line-height: 1;
+    border: 1px solid var(--g-border-soft);
+    background: var(--g-surface);
+    color: var(--g-text);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 14px rgba(23, 37, 84, .08);
+    transition: transform .2s ease, background-color .25s ease, color .25s ease;
+}
+
+.theme-toggle:hover { transform: translateY(-1px); }
+.theme-toggle:focus-visible { outline: 2px solid var(--g-primary); outline-offset: 2px; }
+
+.theme-toggle-floating {
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    z-index: 1090;
+}
+
+/* ---------- ۱۲) آیکن اثر انگشت (بزرگ‌تر و واضح‌تر) ---------- */
+.bi-fingerprint {
+    font-size: 1.6em !important;
+    line-height: 1 !important;
+    vertical-align: -0.12em;
+}
+
+button .bi-fingerprint,
+.desk-user .bi-fingerprint,
+.mh2-bio .bi-fingerprint,
+.btn-logout-glass .bi-fingerprint {
+    font-size: 1.85em !important;
+}
+
+#btnDeskBio,
+.mh2-bio,
+button[data-bio-enroll] {
+    min-width: 46px;
+    min-height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px !important;
+}
+
+/* ---------- ۱۳) منطق رنگ در حالت تاریک ---------- */
+html[data-theme="dark"] body .card,
+html[data-theme="dark"] body .panel,
+html[data-theme="dark"] body .widget,
+html[data-theme="dark"] body .modal-content,
+html[data-theme="dark"] body .dropdown-menu {
+    border-color: var(--g-border) !important;
+}
+
+html[data-theme="dark"] body h1,
+html[data-theme="dark"] body h2,
+html[data-theme="dark"] body h3,
+html[data-theme="dark"] body h4,
+html[data-theme="dark"] body h5,
+html[data-theme="dark"] body h6,
+html[data-theme="dark"] body p,
+html[data-theme="dark"] body span,
+html[data-theme="dark"] body li,
+html[data-theme="dark"] body td,
+html[data-theme="dark"] body th,
+html[data-theme="dark"] body label,
+html[data-theme="dark"] body b,
+html[data-theme="dark"] body strong,
+html[data-theme="dark"] body div {
+    color: var(--g-text);
+}
+
+html[data-theme="dark"] body .text-muted,
+html[data-theme="dark"] body small,
+html[data-theme="dark"] body .sub,
+html[data-theme="dark"] body .subtitle,
+html[data-theme="dark"] body .desc,
+html[data-theme="dark"] body .hint {
+    color: var(--g-muted) !important;
+}
+
+html[data-theme="dark"] body .commerce-price { color: var(--g-primary) !important; }
+
+/* عناصری که در CSS قدیمی پس‌زمینهٔ روشن دارند */
+html[data-theme="dark"] body .bg-white,
+html[data-theme="dark"] body .bg-light,
+html[data-theme="dark"] body .bg-body,
+html[data-theme="dark"] body .bg-white-50 {
+    background: var(--g-nested) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme="dark"] body .logo-strip,
+html[data-theme="dark"] body .brand,
+html[data-theme="dark"] body .header-brand span,
+html[data-theme="dark"] body .hdr-club,
+html[data-theme="dark"] body .desk-user,
+html[data-theme="dark"] body .mh2-club,
+html[data-theme="dark"] body .dk-commerce-title,
+html[data-theme="dark"] body .dk-back {
+    color: var(--g-text) !important;
+}
+
+/* صفحهٔ ورود */
+html[data-theme="dark"] body .login-background { background: var(--g-bg) !important; }
+html[data-theme="dark"] body .auth-card,
+html[data-theme="dark"] body .login-card,
+html[data-theme="dark"] body #authCard {
+    background: var(--g-surface-strong) !important;
+    background-image: linear-gradient(165deg, var(--g-surface) 0%, var(--g-surface-strong) 100%) !important;
+    border: 1px solid var(--g-border) !important;
+    color: var(--g-text) !important;
+    box-shadow: var(--g-shadow-lg) !important;
+}
+html[data-theme="dark"] body .login-card *,
+html[data-theme="dark"] body #authCard * { color: var(--g-text); }
+html[data-theme="dark"] body .login-card input,
+html[data-theme="dark"] body #authCard input {
+    background: var(--g-input) !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+/* ---------- ۱۴) بازگشت به حالت بدون شیشه برای مرورگرهای قدیمی ---------- */
+@supports not ((backdrop-filter: blur(4px)) or (-webkit-backdrop-filter: blur(4px))) {
+    body:not(#lu):not(#mt-theme) .card,
+    body:not(#lu):not(#mt-theme) .panel,
+    body:not(#lu):not(#mt-theme) .widget,
+    body:not(#lu):not(#mt-theme) .modal-content,
+    body:not(#lu):not(#mt-theme) .dropdown-menu,
+    body:not(#lu):not(#mt-theme) header,
+    body:not(#lu):not(#mt-theme) .navbar {
+        background: #FFFFFF !important;
+    }
+
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme) .card,
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme) .panel,
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme) .widget,
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme) .modal-content,
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme) .dropdown-menu,
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme) header,
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme) .navbar {
+        background: #111C2E !important;
+    }
+}
+
+/* ---------- ۱۵) احترام به کاهش انیمیشن ---------- */
+@media (prefers-reduced-motion: reduce) {
+    html,
+    html body,
+    html body * {
+        transition: none !important;
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+/* ---------- ۱۶) اولویت نهایی (سه :not برای برد کامل روی CSS قدیمی) ---------- */
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) {
+    background-color: var(--g-bg) !important;
+    background-image:
+        radial-gradient(1100px 620px at 88% -8%, var(--g-primary-soft), transparent 62%),
+        radial-gradient(900px 520px at 0% 100%, var(--g-highlight), transparent 58%) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="submit"]):not([type="button"]):not([type="hidden"]),
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) select,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) textarea,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .form-control,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .form-select {
+    background: var(--g-input) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+    -webkit-text-fill-color: var(--g-text);
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) input::placeholder,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) textarea::placeholder {
+    color: var(--g-muted) !important;
+    -webkit-text-fill-color: var(--g-muted);
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h1,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h2,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h3,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h4,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h5,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h6,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) p,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) span,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) li,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) td,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) th,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) label,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) div,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) b,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) strong,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) a {
+    color: var(--g-text);
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .text-muted,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .muted,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .sub,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .subtitle,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desc,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .hint,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .form-text,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) small {
+    color: var(--g-muted) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .btn,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .btn-primary,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-pay-btn.btn-primary {
+    background: var(--g-primary) !important;
+    background-image: none !important;
+    color: var(--g-primary-text) !important;
+    border-color: var(--g-primary) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .btn-secondary,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .btn-glass,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .btn-light,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .btn-ghost,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-pay-btn.btn-glass {
+    background: var(--g-surface) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .card,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .panel,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .widget,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .modal-content,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dropdown-menu,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) header,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .navbar {
+    background-color: var(--g-surface) !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border) !important;
+}
+
+/* پس‌زمینهٔ بادی‌های اختصاصی پنل‌ها (admin/coach/member) */
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app)::before {
+    opacity: .5;
+}
+
+/* ---------- ۱۷) متن‌های باقی‌ماندهٔ آبی تیره در حالت شب ---------- */
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h1,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h2,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h3,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h4,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h5,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) h6,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) p,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) span,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) li,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) td,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) th,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) label,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) div,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) b,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) strong,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) i,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .hdr-club,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .sb-title,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .sb-sub,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .asc-title,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .asc-desc,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .period-btn {
+    color: var(--g-text) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .sb-title,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .sb-sub,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .asc-title,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .asc-desc {
+    background: transparent !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+/* ---------- ۱۸) لینک‌های خوانا در حالت روشن ---------- */
+body:not(#lu):not(#mt-theme) a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link) {
+    color: #172554 !important;
+}
+body:not(#lu):not(#mt-theme) a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link):hover {
+    color: #3B82F6 !important;
+}
+body:not(#lu):not(#mt-theme) .sidebar a,
+body:not(#lu):not(#mt-theme) .admin-sidebar a,
+body:not(#lu):not(#mt-theme) .coach-sidebar a,
+body:not(#lu):not(#mt-theme) .mobile-nav a,
+body:not(#lu):not(#mt-theme) .bottom-nav a {
+    color: #172554 !important;
+}
+body:not(#lu):not(#mt-theme) .sidebar a.active,
+body:not(#lu):not(#mt-theme) .admin-sidebar a.active,
+body:not(#lu):not(#mt-theme) .coach-sidebar a.active,
+body:not(#lu):not(#mt-theme) .mobile-nav a.active,
+body:not(#lu):not(#mt-theme) .bottom-nav a.active {
+    color: #172554 !important;
+    background: rgba(191, 219, 254, .55) !important;
+}
+html[data-theme="dark"] body:not(#lu):not(#mt-theme) .sidebar a,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme) .admin-sidebar a,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme) .coach-sidebar a,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme) .mobile-nav a,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme) .bottom-nav a {
+    color: var(--g-text) !important;
+}
+html[data-theme="dark"] body:not(#lu):not(#mt-theme) .sidebar a.active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme) .admin-sidebar a.active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme) .coach-sidebar a.active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme) .mobile-nav a.active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme) .bottom-nav a.active {
+    color: var(--g-primary) !important;
+    background: var(--g-primary-soft) !important;
+}
+
+/* کارت ورود */
+body:not(#lu):not(#mt-theme) .login-glass-card,
+body:not(#lu):not(#mt-theme) .purple-style {
+    backdrop-filter: blur(var(--g-blur)) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(var(--g-blur)) saturate(1.2) !important;
+    border: 1px solid var(--g-border) !important;
+    box-shadow: var(--g-shadow-lg) !important;
+}
+
+/* ---------- ۱۹) بلوک‌های روشن باقی‌مانده در حالت شب ---------- */
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .sb-title,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .sb-sub,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .delta-badge,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .delta-badge.up,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .delta-badge.down,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .badge,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .chip,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .pill,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .tag {
+    background: var(--g-nested) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .sb-title,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .sb-sub {
+    background: transparent !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .badge.bg-primary,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .badge-primary {
+    background: var(--g-primary) !important;
+    color: var(--g-primary-text) !important;
+}
+
+/* ---------- ۲۰) اصلاح نهایی عناصر ناوبری و دکمه‌های شیشه‌ای در حالت شب ---------- */
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .nav-link,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dropdown-item,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .list-group-item,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .menu-item,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .side-link {
+    color: var(--g-text) !important;
+    background: transparent !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .nav-link.active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .nav-link.nav-active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dropdown-item.active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .list-group-item.active {
+    color: var(--g-primary) !important;
+    background: var(--g-primary-soft) !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .btn-glass,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .btn-logout-glass,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .btn-back-glass,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) a.d-none.d-md-inline-flex,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .purple-style,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .shift-banner,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .sb-header,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .sb-card {
+    background: var(--g-surface) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .shift-banner *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .purple-style * {
+    color: var(--g-text) !important;
+}
+
+/* ---------- ۲۱) شیشهٔ تاریک برای فروشگاه/خدمات میز خدمت ---------- */
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-product-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-category-button,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-hero,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-basket-bar,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-panel {
+    background: var(--g-surface) !important;
+    background-image: linear-gradient(155deg, var(--g-surface-soft) 0%, var(--g-surface) 100%) !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border) !important;
+    box-shadow: var(--g-shadow) !important;
+    backdrop-filter: blur(var(--g-blur)) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(var(--g-blur)) saturate(1.2) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-card *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-product-card *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-hero *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-basket-bar * {
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft);
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-price,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-card .commerce-price {
+    color: var(--g-primary) !important;
+    font-weight: 800;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-kicker,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-muted,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-status {
+    color: var(--g-muted) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dk-back,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dk-commerce-title,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dk-credits em,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dk-open-inner,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dk-member-inner {
+    background: var(--g-surface) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dk-open-inner *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dk-member-inner *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dk-back * {
+    color: var(--g-text) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-add,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-buy,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-card button.btn-primary {
+    background: var(--g-primary) !important;
+    color: var(--g-primary-text) !important;
+    border-color: var(--g-primary) !important;
+}
+
+/* ---------- ۲۲) کارت‌های پنل عضو در حالت شب ---------- */
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .nav-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mp-entry,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mp-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mp-section,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mh2-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .member-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .profile-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .ticket-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .session-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .plan-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .card-header,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .card-footer,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .list-group,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .txn-row {
+    background: var(--g-surface) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .nav-card *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mp-entry *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mp-card *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mp-entry-title,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mp-entry-sub {
+    color: var(--g-text) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mp-entry-sub {
+    color: var(--g-muted) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .card-header,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .card-footer {
+    background: var(--g-nested) !important;
+}
+
+/* ---------- ۲۳) قرص‌های دورهٔ نمودار در حالت شب ---------- */
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .ch-pill,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .ch-navbtn,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .period-btn,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .seg-btn,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .rep-tab,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mpf-chip {
+    background: var(--g-nested) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .ch-pill.active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .ch-pill.ch-pill-on,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .period-btn.active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .seg-btn.active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .rep-tab.active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mpf-chip.active,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .mpf-chip.mpf-on {
+    background: var(--g-primary) !important;
+    color: var(--g-primary-text) !important;
+    border-color: var(--g-primary) !important;
+}
+
+/* ---------- ۲۴) کارت‌های گزارش مدیر در حالت شب ---------- */
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .rc-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .report-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .admin-report-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .admin-report-item,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .admin-report-title,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .admin-report-sub {
+    background: var(--g-surface) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .admin-report-card *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .rc-card *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .report-card * {
+    color: var(--g-text) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .admin-report-sub,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .rc-sub {
+    color: var(--g-muted) !important;
+}
+
+/* ---------- ۲۵) کادر قوانین و دکمهٔ غیرفعال ---------- */
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .rules-box,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .bd-rules,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .rules-card {
+    background: var(--g-surface-strong) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .rules-box *,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .bd-rules * {
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .btn:disabled,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .btn.disabled,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) button:disabled,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-pay-btn:disabled {
+    background: var(--g-nested) !important;
+    background-image: none !important;
+    color: var(--g-muted) !important;
+    -webkit-text-fill-color: var(--g-muted);
+    border-color: var(--g-border-soft) !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+    cursor: default;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) input:disabled,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .form-control:disabled {
+    color: var(--g-muted) !important;
+    -webkit-text-fill-color: var(--g-muted);
+}
+
+/* ---------- ۲۶) دکمهٔ اصلی غیرفعال (مثل پذیرش قوانین) ---------- */
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .btn.btn-primary:disabled,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .btn.btn-primary.disabled,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) button.btn.btn-primary[disabled],
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .btn[disabled] {
+    background: var(--g-nested) !important;
+    background-image: none !important;
+    color: var(--g-muted) !important;
+    -webkit-text-fill-color: var(--g-muted);
+    border: 1px solid var(--g-border-soft) !important;
+    box-shadow: none !important;
+    opacity: 1 !important;
+}
+
+/* ---------- ۲۷) شیشهٔ شفاف کارت ورود ---------- */
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-glass-card,
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .purple-style.login-glass-card {
+    background: var(--g-surface) !important;
+    background-image: linear-gradient(165deg, var(--g-surface-soft) 0%, var(--g-surface) 100%) !important;
+    backdrop-filter: blur(var(--g-blur-strong)) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(var(--g-blur-strong)) saturate(1.2) !important;
+    border: 1px solid var(--g-border) !important;
+    box-shadow: var(--g-shadow-lg) !important;
+    color: var(--g-text) !important;
+}
+
+/* ---------- ۲۸) تضمین کنتراست دکمهٔ اصلی در حالت شب ---------- */
+html[data-theme="dark"] body .btn.btn-primary,
+html[data-theme="dark"] body .btn-primary,
+html[data-theme="dark"] body button.btn-primary,
+html[data-theme="dark"] body a.btn-primary,
+html[data-theme="dark"] body .dk-pay-btn.btn-primary {
+    background-color: #60A5FA !important;
+    background-image: none !important;
+    color: #0B1220 !important;
+    -webkit-text-fill-color: #0B1220;
+    border-color: #60A5FA !important;
+}
+
+html[data-theme="dark"] body .btn.btn-primary:hover,
+html[data-theme="dark"] body .btn-primary:hover,
+html[data-theme="dark"] body .btn.btn-primary:focus {
+    background-color: #60A5FA !important;
+    color: #0B1220 !important;
+}
+
+html:not([data-theme="dark"]) body .btn.btn-primary,
+html:not([data-theme="dark"]) body .btn-primary,
+html:not([data-theme="dark"]) body button.btn-primary {
+    background-color: #3B82F6 !important;
+    background-image: none !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF;
+    border-color: #3B82F6 !important;
+}
+
+/* ---------- ۲۹) کنتراست قطعی دکمهٔ اصلی (اولویت کامل) ---------- */
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .btn.btn-primary,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .btn-primary,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) button.btn-primary,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) a.btn-primary {
+    background-color: #60A5FA !important;
+    background-image: none !important;
+    color: #0B1220 !important;
+    -webkit-text-fill-color: #0B1220;
+    border-color: #60A5FA !important;
+}
+
+html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme):not(#app) .btn.btn-primary,
+html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme):not(#app) .btn-primary,
+html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme):not(#app) button.btn-primary,
+html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme):not(#app) a.btn-primary {
+    background-color: #3B82F6 !important;
+    background-image: none !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF;
+    border-color: #3B82F6 !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .btn.btn-primary:disabled,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .btn.btn-primary.disabled,
+html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme):not(#app) .btn.btn-primary:disabled,
+html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme):not(#app) .btn.btn-primary.disabled {
+    background-color: var(--g-nested) !important;
+    color: var(--g-muted) !important;
+    -webkit-text-fill-color: var(--g-muted);
+    border-color: var(--g-border-soft) !important;
+    box-shadow: none !important;
+}
+
+/* ---------- ۳۰) کارت‌های پنل میز خدمت در حالت شب ---------- */
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .desk-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dc-card,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .desk-user,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dc-go,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dk-top,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .desk-head {
+    background: var(--g-surface) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    border: 1px solid var(--g-border-soft) !important;
+    box-shadow: var(--g-shadow) !important;
+    backdrop-filter: blur(var(--g-blur)) saturate(1.2) !important;
+    -webkit-backdrop-filter: blur(var(--g-blur)) saturate(1.2) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .desk-card *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dc-card * {
+    color: var(--g-text) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dc-sub,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dc-desc {
+    color: var(--g-muted) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dc-go {
+    background: var(--g-primary-soft) !important;
+    color: var(--g-primary) !important;
+}
+
+/* ---------- ۳۱) جدول‌های داده در حالت شب ---------- */
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .card-body,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) table,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .table {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: var(--g-text) !important;
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--g-text);
+    --bs-table-striped-bg: transparent;
+    --bs-table-accent-bg: transparent;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) table thead th,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) table th,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .table thead th {
+    background: var(--g-nested) !important;
+    background-color: var(--g-nested) !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) table td,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) table tbody td,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .table tbody td,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .table > :not(caption) > * > *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .table-striped > tbody > tr:nth-of-type(odd) > *,
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .table-striped > tbody > tr:nth-of-type(even) > * {
+    background: transparent !important;
+    background-color: transparent !important;
+    color: var(--g-text) !important;
+    border-color: var(--g-border-soft) !important;
+    box-shadow: none !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) table tbody tr:hover > * {
+    background: var(--g-hover) !important;
+}
+
+html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .table-responsive {
+    background: transparent !important;
+    border-color: var(--g-border-soft) !important;
+}

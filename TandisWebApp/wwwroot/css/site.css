@@ -42,26 +42,26 @@ html {
 
 body {
     direction: rtl;
-    background: #011C40;
+    background: #EFF6FF;
     min-height: 100vh;
     min-height: 100dvh; /* مرورگرهای مدرن موبایل (Safari/Chrome/Firefox) — ارتفاع واقعی بدون نوار آدرس */
 }
 
 /* === Navbar === */
 .navbar {
-    box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    box-shadow: 0 2px 8px rgba(23,37,84,.15);
 }
 
 /* === کارت‌ها === */
 .card {
     border: none;
     border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,.08);
+    box-shadow: 0 2px 12px rgba(23,37,84,.08);
     margin-bottom: 16px;
 }
 
 .card-header {
-    background: linear-gradient(135deg, #26658C 0%, #023859 100%);
+    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
     color: white;
     border-radius: 12px 12px 0 0 !important;
     font-weight: bold;
@@ -78,7 +78,7 @@ body {
 
     .dash-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 6px 20px rgba(0,0,0,.12);
+        box-shadow: 0 6px 20px rgba(23,37,84,.12);
     }
 
     .dash-card .icon {
@@ -93,32 +93,32 @@ body {
 
 /* === دکمه‌ها === */
 .btn-primary {
-    background: linear-gradient(135deg, #26658C 0%, #023859 100%);
+    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
     border: none;
 }
 
     .btn-primary:hover {
-        background: linear-gradient(135deg, #023859 0%, #26658C 100%);
+        background: linear-gradient(135deg, #FFFFFF 0%, #3B82F6 100%);
     }
 
 .btn-success {
-    background: linear-gradient(225deg, #CFF4F9 0%, #54ACBF 100%);
+    background: linear-gradient(225deg, #EFF6FF 0%, #3B82F6 100%);
     border: none;
 }
 
 .btn-outline-primary {
-    color: #54ACBF;
-    border-color: rgba(84, 172, 191,.55);
+    color: #3B82F6;
+    border-color: rgba(59,130,246,.55);
 }
 
     .btn-outline-primary:hover {
-        background: #54ACBF;
+        background: #3B82F6;
         color: white;
     }
 
 /* === جدول === */
 .table th {
-    background: #023859;
+    background: #FFFFFF;
     font-weight: bold;
 }
 
@@ -149,21 +149,21 @@ body {
 }
 
     .alert-msg.success {
-        background: rgba(84, 172, 191,.16);
-        color: #A7EBF2;
-        border: 1px solid rgba(84, 172, 191,.42);
+        background: rgba(59,130,246,.16);
+        color: #172554;
+        border: 1px solid rgba(59,130,246,.42);
     }
 
     .alert-msg.error {
-        background: rgba(255,107,129,.14);
-        color: #FFB3C0;
-        border: 1px solid rgba(255,107,129,.38);
+        background: rgba(191, 219, 254,.14);
+        color: #172554;
+        border: 1px solid rgba(23,37,84,.38);
     }
 
     .alert-msg.warning {
-        background: rgba(84, 172, 191,.16);
-        color: #F0B268;
-        border: 1px solid rgba(84, 172, 191,.4);
+        background: rgba(59,130,246,.16);
+        color: #3B82F6;
+        border: 1px solid rgba(59,130,246,.4);
     }
 
 @keyframes slideDown {
@@ -185,7 +185,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0,0,0,.5);
+    background: rgba(191, 219, 254,.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -194,11 +194,11 @@ body {
 
 /* === Badge === */
 .badge-active {
-    background: #54ACBF;
+    background: #3B82F6;
 }
 
 .badge-inactive {
-    background: #dc3545;
+    background: #EFF6FF;
 }
 
 /* === Responsive === */
@@ -226,9 +226,9 @@ body {
     overflow: hidden;
     border: none;
     border-radius: 16px;
-    background: linear-gradient(135deg, #26658C 0%, #023859 100%);
-    color: #fff;
-    box-shadow: 0 10px 30px rgba(84, 172, 191,.25);
+    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
+    color: #172554;
+    box-shadow: 0 10px 30px rgba(59,130,246,.25);
     transition: transform .25s;
 }
 
@@ -239,7 +239,7 @@ body {
     .session-card .session-bg {
         position: absolute;
         inset: 0;
-        background: radial-gradient(circle at 85% 15%, rgba(255,255,255,.18), transparent 60%);
+        background: radial-gradient(circle at 85% 15%, rgba(191, 219, 254,.18), transparent 60%);
         pointer-events: none;
     }
 
@@ -261,20 +261,20 @@ body {
 .session-progress {
     position: relative;
     height: 10px;
-    background: rgba(255,255,255,.25);
+    background: rgba(191, 219, 254,.25);
     border-radius: 999px;
     overflow: hidden;
 }
 
     .session-progress .bar {
         height: 100%;
-        background: linear-gradient(90deg, #54ACBF, #26658C);
+        background: linear-gradient(90deg, #3B82F6, #3B82F6);
         border-radius: 999px;
         transition: width .8s ease;
     }
 
     .session-progress.low .bar {
-        background: linear-gradient(90deg, #fc5c7d, #54ACBF);
+        background: linear-gradient(90deg, #EFF6FF, #3B82F6);
     }
 
 .session-stats {
@@ -290,7 +290,7 @@ body {
     align-items: center;
     gap: 6px;
     padding: 6px 14px;
-    background: rgba(255,255,255,.18);
+    background: rgba(191, 219, 254,.18);
     border-radius: 999px;
     font-size: .85rem;
     font-weight: 600;
@@ -303,7 +303,7 @@ body {
     border: none;
     border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 18px rgba(0,0,0,.06);
+    box-shadow: 0 4px 18px rgba(23,37,84,.06);
     transition: transform .2s;
 }
 
@@ -319,11 +319,11 @@ body {
         align-items: center;
         justify-content: center;
         font-size: 1.6rem;
-        color: #fff;
+        color: #172554;
     }
 
     .stat-card .stat-label {
-        color: #6c757d;
+        color: rgba(23,37,84, .62);
         font-size: .85rem;
         margin-bottom: 2px;
     }
@@ -331,23 +331,23 @@ body {
     .stat-card .stat-value {
         font-size: 1.25rem;
         font-weight: 700;
-        color: rgba(167, 235, 242, .16);
+        color: rgba(23, 37, 84, .62);
     }
 
 .bg-gradient-success {
-    background: linear-gradient(135deg, #26658C, #54ACBF);
+    background: linear-gradient(135deg, #3B82F6, #3B82F6);
 }
 
 .bg-gradient-info {
-    background: linear-gradient(135deg, #26658C, #54ACBF);
+    background: linear-gradient(135deg, #3B82F6, #3B82F6);
 }
 
 .bg-gradient-warning {
-    background: linear-gradient(135deg, #54ACBF, #54ACBF);
+    background: linear-gradient(135deg, #3B82F6, #3B82F6);
 }
 
 .bg-gradient-danger {
-    background: linear-gradient(135deg, #cb356b, #bd3f32);
+    background: linear-gradient(135deg, #EFF6FF, #172554);
 }
 
 /* --- جدول‌های گزارش --- */
@@ -357,8 +357,8 @@ body {
 }
 
     .report-table thead th {
-        background: linear-gradient(135deg, #26658C, #023859);
-        color: #fff;
+        background: linear-gradient(135deg, #3B82F6, #FFFFFF);
+        color: #172554;
         font-weight: 600;
         font-size: .9rem;
         border: none;
@@ -371,20 +371,20 @@ body {
     }
 
     .report-table tbody tr:hover {
-        background: rgba(167, 235, 242, .10);
+        background: rgba(191, 219, 254, .10);
     }
 
 .badge-credit {
-    background: #26658C;
-    color: #fff;
+    background: #3B82F6;
+    color: #172554;
     padding: 4px 10px;
     border-radius: 999px;
     font-size: .75rem;
 }
 
 .badge-debit {
-    background: #cb356b;
-    color: #fff;
+    background: #EFF6FF;
+    color: #172554;
     padding: 4px 10px;
     border-radius: 999px;
     font-size: .75rem;
@@ -399,28 +399,28 @@ body {
     .nav-tabs-custom .nav-link {
         border: none;
         border-radius: 10px;
-        color: #6c757d;
+        color: rgba(23,37,84, .62);
         font-weight: 600;
         padding: 10px 18px;
         transition: all .2s;
     }
 
         .nav-tabs-custom .nav-link.active {
-            background: linear-gradient(135deg, #26658C, #023859);
-            color: #fff;
-            box-shadow: 0 4px 12px rgba(2, 56, 89,.3);
+            background: linear-gradient(135deg, #3B82F6, #FFFFFF);
+            color: #172554;
+            box-shadow: 0 4px 12px rgba(255,255,255,.3);
         }
 
         .nav-tabs-custom .nav-link:not(.active):hover {
-            background: #023859;
-            color: #54ACBF;
+            background: #FFFFFF;
+            color: #3B82F6;
         }
 
 /* --- آیتم خالی --- */
 .empty-state {
     text-align: center;
     padding: 40px 20px;
-    color: #adb5bd;
+    color: #3B82F6;
 }
 
     .empty-state .empty-icon {
@@ -435,17 +435,17 @@ body {
     padding: 18px 10px;
     text-align: center;
     text-decoration: none;
-    color: rgba(167, 235, 242, .16);
-    background: rgba(2, 56, 89,.8);
-    box-shadow: 0 2px 10px rgba(0,0,0,.05);
+    color: rgba(23, 37, 84, .62);
+    background: rgba(255,255,255,.8);
+    box-shadow: 0 2px 10px rgba(23,37,84,.05);
     transition: all .2s;
     display: block;
 }
 
     .quick-link:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0,0,0,.1);
-        color: #54ACBF;
+        box-shadow: 0 8px 24px rgba(23,37,84,.1);
+        color: #3B82F6;
     }
 
     .quick-link .ql-icon {
@@ -467,8 +467,8 @@ body {
 }
 
     .cal-table th {
-        background: linear-gradient(135deg, #26658C, #023859);
-        color: #fff;
+        background: linear-gradient(135deg, #3B82F6, #FFFFFF);
+        color: #172554;
         padding: 10px 0;
         font-size: .85rem;
         font-weight: 600;
@@ -480,38 +480,38 @@ body {
         text-align: center;
         font-size: .95rem;
         font-weight: 600;
-        border: 1px solid rgba(167, 235, 242, .18);
+        border: 1px solid rgba(23,37,84, .18);
         transition: all .15s;
     }
 
 .cal-empty {
-    background: #023859;
+    background: #FFFFFF;
 }
 
 .cal-disabled {
-    color: #ccc;
-    background: #023859;
+    color: #3B82F6;
+    background: #FFFFFF;
     cursor: not-allowed;
     text-decoration: line-through;
 }
 
 .cal-active {
     cursor: pointer;
-    color: rgba(167, 235, 242, .16);
-    background: rgba(2, 56, 89,.8);
+    color: rgba(23, 37, 84, .62);
+    background: rgba(255,255,255,.8);
     border-radius: 0;
 }
 
     .cal-active:hover {
-        background: linear-gradient(135deg, #26658C, #023859);
-        color: #fff;
+        background: linear-gradient(135deg, #3B82F6, #FFFFFF);
+        color: #172554;
         transform: scale(1.1);
-        box-shadow: 0 4px 12px rgba(2, 56, 89,.4);
+        box-shadow: 0 4px 12px rgba(255,255,255,.4);
     }
 
 .cal-today {
-    background: #023859 !important;
-    color: #26658C !important;
+    background: #FFFFFF !important;
+    color: #3B82F6 !important;
     font-weight: 800;
 }
 
@@ -522,20 +522,20 @@ body {
     border: none;
     border-radius: 16px;
     overflow: hidden;
-    background: rgba(2, 56, 89,.8);
-    box-shadow: 0 4px 20px rgba(0,0,0,.07);
+    background: rgba(255,255,255,.8);
+    box-shadow: 0 4px 20px rgba(23,37,84,.07);
     transition: all .25s;
     margin-bottom: 16px;
 }
 
     .sanse-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 10px 30px rgba(2, 56, 89,.15);
+        box-shadow: 0 10px 30px rgba(255,255,255,.15);
     }
 
     .sanse-card .sanse-top {
-        background: linear-gradient(135deg, #26658C 0%, #023859 100%);
-        color: #fff;
+        background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
+        color: #172554;
         padding: 16px 18px;
         position: relative;
     }
@@ -547,7 +547,7 @@ body {
             left: -30px;
             width: 100px;
             height: 100px;
-            background: rgba(255,255,255,.08);
+            background: rgba(191, 219, 254,.08);
             border-radius: 50%;
         }
 
@@ -578,17 +578,17 @@ body {
         align-items: center;
         gap: 5px;
         padding: 5px 12px;
-        background: #023859;
+        background: #FFFFFF;
         border-radius: 999px;
         font-size: .8rem;
-        color: #9FC6D2;
+        color: rgba(23,37,84, .62);
         font-weight: 600;
     }
 
     .sanse-card .sanse-price {
         font-size: 1.15rem;
         font-weight: 800;
-        color: #54ACBF;
+        color: #3B82F6;
         margin-bottom: 14px;
     }
 
@@ -624,9 +624,9 @@ body {
 .purple-style {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, rgba(2, 56, 89,.7), rgba(1, 28, 64,.7)) !important;
+    background: linear-gradient(135deg, rgba(255,255,255,.7), rgba(239,246,255,.7)) !important;
     /* ✅ سایهٔ متن برای خوانایی بهتر روی پس‌زمینهٔ نیمه‌شفاف */
-    text-shadow: 0 1px 3px rgba(0,0,0,.5);
+    text-shadow: 0 1px 3px rgba(23,37,84,.5);
 }
 
     .purple-style::before {
@@ -636,7 +636,7 @@ body {
         right: -50px;
         width: 160px;
         height: 160px;
-        background: radial-gradient(circle, rgba(84, 172, 191,.25), transparent 70%);
+        background: radial-gradient(circle, rgba(59,130,246,.25), transparent 70%);
         pointer-events: none;
     }
 
@@ -651,7 +651,7 @@ body {
         left: -30px;
         width: 140px;
         height: 140px;
-        background: radial-gradient(circle, rgba(84, 172, 191,.25), transparent 70%);
+        background: radial-gradient(circle, rgba(59,130,246,.25), transparent 70%);
         pointer-events: none;
     }
 
@@ -665,9 +665,9 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.18);
-    color: #A7EBF2;
+    background: rgba(191, 219, 254,.08);
+    border: 1px solid rgba(23,37,84,.18);
+    color: #172554;
     border-radius: 999px;
     padding: 7px 18px;
     font-size: .82rem;
@@ -680,14 +680,14 @@ body {
 
     .coach-back-pill i,
     .btn-back-glass i {
-        color: #54ACBF;
+        color: #3B82F6;
         transition: transform .25s;
     }
 
     .coach-back-pill:hover,
     .btn-back-glass:hover {
-        background: rgba(255,255,255,.14);
-        color: #fff;
+        background: rgba(191, 219, 254,.14);
+        color: #172554;
     }
 
         .coach-back-pill:hover i,
@@ -698,9 +698,9 @@ body {
 /* ===== اینپوت جستجوی شیشه‌ای ===== */
 .glass-search {
     width: 100%;
-    background: rgba(255,255,255,.08);
-    border: 1px solid rgba(255,255,255,.18);
-    color: #fff;
+    background: rgba(191, 219, 254,.08);
+    border: 1px solid rgba(23,37,84,.18);
+    color: #172554;
     border-radius: 999px;
     padding: 10px 18px;
     font-size: .85rem;
@@ -708,30 +708,30 @@ body {
 
     .glass-search:focus {
         outline: none;
-        border-color: rgba(84, 172, 191,.5);
-        background: rgba(255,255,255,.12);
+        border-color: rgba(59,130,246,.5);
+        background: rgba(191, 219, 254,.12);
     }
 
 /* ===== مودال تقویم شمسی ===== */
 #datePickerModal .modal-content {
-    background: linear-gradient(135deg, rgb(52,58,112), rgb(74,52,108)) !important;
-    border: 1px solid rgba(255,255,255,.18) !important;
+    background: linear-gradient(135deg, rgb(23,37,84), rgb(23,37,84)) !important;
+    border: 1px solid rgba(23,37,84,.18) !important;
     border-radius: 20px;
-    color: #fff;
+    color: #172554;
     -webkit-backdrop-filter: blur(14px);
     backdrop-filter: blur(14px);
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,.55);
+    box-shadow: 0 20px 60px rgba(23,37,84,.55);
 }
 
 #datePickerModal .modal-header {
-    background: linear-gradient(135deg, #26658C 0%, #023859 100%) !important;
+    background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%) !important;
     border: none !important;
-    color: #fff;
+    color: #172554;
 }
 
 #datePickerModal .modal-title {
-    color: #fff;
+    color: #172554;
     font-weight: 800;
     font-size: .95rem;
 }
@@ -742,20 +742,20 @@ body {
 
 #datePickerModal .modal-body {
     background: transparent !important;
-    color: #fff;
+    color: #172554;
 }
 
 #datePickerModal #currentMonthLabel {
-    color: #fff;
+    color: #172554;
     font-weight: 800;
     font-size: 1rem;
 }
 
 #datePickerModal #prevMonth,
 #datePickerModal #nextMonth {
-    background: rgba(255,255,255,.14) !important;
-    border: 1px solid rgba(255,255,255,.25) !important;
-    color: #fff !important;
+    background: rgba(191, 219, 254,.14) !important;
+    border: 1px solid rgba(23,37,84,.25) !important;
+    color: #172554 !important;
     border-radius: 10px;
     width: 36px;
     height: 36px;
@@ -763,7 +763,7 @@ body {
 
     #datePickerModal #prevMonth:hover,
     #datePickerModal #nextMonth:hover {
-        background: rgba(84, 172, 191,.25) !important;
+        background: rgba(59,130,246,.25) !important;
     }
 
 #datePickerModal .cal-table {
@@ -773,8 +773,8 @@ body {
 }
 
     #datePickerModal .cal-table th {
-        background: linear-gradient(135deg, #26658C, #023859) !important;
-        color: #fff !important;
+        background: linear-gradient(135deg, #3B82F6, #FFFFFF) !important;
+        color: #172554 !important;
         border: none !important;
         border-radius: 8px;
         padding: 8px 2px;
@@ -784,9 +784,9 @@ body {
     }
 
     #datePickerModal .cal-table td {
-        background: rgba(255,255,255,.07) !important;
-        color: rgba(167, 235, 242, .18) !important;
-        border: 1px solid rgba(255,255,255,.10) !important;
+        background: rgba(191, 219, 254,.07) !important;
+        color: rgba(23, 37, 84, .62) !important;
+        border: 1px solid rgba(23,37,84,.10) !important;
         border-radius: 10px;
         padding: 10px 2px;
         text-align: center;
@@ -796,8 +796,8 @@ body {
     }
 
         #datePickerModal .cal-table td:hover {
-            background: rgba(84, 172, 191,.30) !important;
-            color: #fff !important;
+            background: rgba(59,130,246,.30) !important;
+            color: #172554 !important;
         }
 
         #datePickerModal .cal-table td:empty {
@@ -809,9 +809,9 @@ body {
         #datePickerModal .cal-table td[style*="line-through"],
         #datePickerModal .cal-table td.disabled,
         #datePickerModal .cal-table td.cal-disabled {
-            background: rgba(255,107,129,.10) !important;
-            border-color: rgba(255,107,129,.30) !important;
-            color: #ff8fa3 !important;
+            background: rgba(191, 219, 254,.10) !important;
+            border-color: rgba(23,37,84,.30) !important;
+            color: #172554 !important;
             text-decoration: line-through !important;
             cursor: not-allowed;
         }
@@ -842,22 +842,22 @@ body {
 
 /* ============================================================
    TANDIS — NAVY GLASS THEME (2026)
-   پالت: #011C40 · #023859 · #26658C · #54ACBF
-   لهجهٔ نارنجی: #54ACBF (خیلی کم — فقط متن‌های بولد و المان‌های کلیدی)
+   پالت: #EFF6FF · #FFFFFF · #3B82F6 · #3B82F6
+   لهجهٔ نارنجی: #3B82F6 (خیلی کم — فقط متن‌های بولد و المان‌های کلیدی)
    قاعدهٔ شیشه: ۸۰٪ تیره / ۲۰٪ شفاف + بلور
    این لایه در هر سه پنل (مدیر، مربی، عضو) و صفحهٔ ورود مشترک است.
    ============================================================ */
 :root {
-    --tn-deep: #011C40;
-    --tn-navy: #023859;
-    --tn-slate: #26658C;
-    --tn-sky: #54ACBF;
-    --tn-amber: #54ACBF;
-    --tn-glass: rgba(2, 56, 89, .8);
-    --tn-glass-deep: rgba(1, 28, 64, .8);
-    --tn-border: rgba(84, 172, 191, .2);
-    --tn-text: #EAF7FA;
-    --tn-muted: #A7EBF2;
+    --tn-deep: #EFF6FF;
+    --tn-navy: #FFFFFF;
+    --tn-slate: #3B82F6;
+    --tn-sky: #3B82F6;
+    --tn-amber: #3B82F6;
+    --tn-glass: rgba(255,255,255, .8);
+    --tn-glass-deep: rgba(239,246,255, .8);
+    --tn-border: rgba(59,130,246, .2);
+    --tn-text: #EFF6FF;
+    --tn-muted: #172554;
 }
 
 /* ---------- ۱) پوستهٔ صفحه: بدون عکس، هالهٔ نور سرمه‌ای ---------- */
@@ -867,10 +867,10 @@ body.member-ui,
 body.coach-glass-body {
     background-color: var(--tn-deep) !important;
     background-image:
-        radial-gradient(circle at 14% 4%, rgba(84, 172, 191, .5), transparent 34rem),
-        radial-gradient(circle at 86% 14%, rgba(84, 172, 191, .12), transparent 30rem),
-        radial-gradient(circle at 50% 106%, rgba(84, 172, 191, .05), transparent 28rem),
-        linear-gradient(160deg, #011C40 0%, #011C40 55%, #011C40 100%) !important;
+        radial-gradient(circle at 14% 4%, rgba(59,130,246, .5), transparent 34rem),
+        radial-gradient(circle at 86% 14%, rgba(59,130,246, .12), transparent 30rem),
+        radial-gradient(circle at 50% 106%, rgba(59,130,246, .05), transparent 28rem),
+        linear-gradient(160deg, #EFF6FF 0%, #EFF6FF 55%, #EFF6FF 100%) !important;
     background-attachment: fixed;
     color: var(--tn-text);
 }
@@ -923,7 +923,7 @@ body.admin-glass-body .menu-card,
 .stu-panel,
 .mp-info,
 .pd-info {
-    background: linear-gradient(150deg, rgba(2, 56, 89, .84), rgba(1, 28, 64, .8)) !important;
+    background: linear-gradient(150deg, rgba(255,255,255, .84), rgba(239,246,255, .8)) !important;
     border: 1px solid var(--tn-border) !important;
     -webkit-backdrop-filter: blur(16px) saturate(120%);
     backdrop-filter: blur(16px) saturate(120%);
@@ -939,9 +939,9 @@ body.admin-glass-body .menu-card,
 .cm-box-head,
 .stu-head,
 .sanse-card .sanse-top {
-    background: linear-gradient(135deg, #023859 0%, #26658C 100%) !important;
-    color: #ffffff !important;
-    border-bottom: 1px solid rgba(84, 172, 191, .28) !important;
+    background: linear-gradient(135deg, #FFFFFF 0%, #3B82F6 100%) !important;
+    color: #172554 !important;
+    border-bottom: 1px solid rgba(59,130,246, .28) !important;
 }
 
 .navbar,
@@ -953,10 +953,10 @@ body.admin-glass-body .navbar,
 body.member-ui #bottomNav,
 .admin-bottom-nav,
 .coach-bottom-nav {
-    background: rgba(1, 28, 64, .8) !important;
+    background: rgba(239,246,255, .8) !important;
     -webkit-backdrop-filter: blur(16px) saturate(120%);
     backdrop-filter: blur(16px) saturate(120%);
-    border-color: rgba(255, 255, 255, .08) !important;
+    border-color: rgba(23,37,84, .08) !important;
 }
 
 /* ---------- ۴) مودال‌ها، منوها و پنل‌های کشویی ---------- */
@@ -966,10 +966,10 @@ body.member-ui #bottomNav,
 .allmenu-header,
 .stu-panel,
 .pe-modal {
-    background: rgba(1, 28, 64, .8) !important;
+    background: rgba(239,246,255, .8) !important;
     -webkit-backdrop-filter: blur(18px) saturate(120%);
     backdrop-filter: blur(18px) saturate(120%);
-    border: 1px solid rgba(84, 172, 191, .18) !important;
+    border: 1px solid rgba(59,130,246, .18) !important;
     color: var(--tn-text) !important;
 }
 
@@ -982,8 +982,8 @@ body .form-select,
 .ch-input,
 .rep-input,
 .stu-search {
-    background: rgba(1, 28, 64, .55) !important;
-    border: 1px solid rgba(84, 172, 191, .22) !important;
+    background: rgba(239,246,255, .55) !important;
+    border: 1px solid rgba(59,130,246, .22) !important;
     color: var(--tn-text) !important;
 }
 
@@ -996,9 +996,9 @@ body .form-select:focus,
 .rep-input:focus,
 .stu-search:focus {
     border-color: var(--tn-sky) !important;
-    box-shadow: 0 0 0 .22rem rgba(84, 172, 191, .16) !important;
-    background: rgba(1, 28, 64, .72) !important;
-    color: #ffffff !important;
+    box-shadow: 0 0 0 .22rem rgba(59,130,246, .16) !important;
+    background: rgba(239,246,255, .72) !important;
+    color: #172554 !important;
 }
 
 body .form-control::placeholder,
@@ -1008,7 +1008,7 @@ body .form-control::placeholder,
 .ch-input::placeholder,
 .rep-input::placeholder,
 .stu-search::placeholder {
-    color: rgba(214, 231, 245, .45) !important;
+    color: rgba(23, 37, 84, .62) !important;
 }
 
 /* ---------- ۶) دکمه‌های اصلی: اسلیت ← آبی روشن ---------- */
@@ -1024,12 +1024,12 @@ body .form-control::placeholder,
 .cm-apply,
 .pd-edit-btn,
 .sanse-btn {
-    background: linear-gradient(225deg, #CFF4F9 0%, #54ACBF 100%) !important;
-    background-color: #26658C !important;
+    background: linear-gradient(225deg, #EFF6FF 0%, #3B82F6 100%) !important;
+    background-color: #3B82F6 !important;
     border: none !important;
-    color: #011C40 !important;
+    color: #172554 !important;
     font-weight: 800;
-    box-shadow: 0 10px 24px rgba(84, 172, 191, .18) !important;
+    box-shadow: 0 10px 24px rgba(59,130,246, .18) !important;
 }
 
     .btn-primary:hover,
@@ -1044,8 +1044,8 @@ body .form-control::placeholder,
     .cm-apply:hover,
     .pd-edit-btn:hover,
     .sanse-btn:hover {
-        background: linear-gradient(225deg, #A7EBF2 0%, #7EC6D8 100%) !important;
-        color: #011C40 !important;
+        background: linear-gradient(225deg, #EFF6FF 0%, #3B82F6 100%) !important;
+        color: #172554 !important;
         transform: translateY(-1px);
     }
 
@@ -1073,9 +1073,9 @@ body .form-control::placeholder,
 .table thead th,
 .dark-table thead th,
 .report-table thead th {
-    background: rgba(1, 28, 64, .9) !important;
+    background: rgba(239,246,255, .9) !important;
     color: var(--tn-text) !important;
-    border-bottom: 1px solid rgba(84, 172, 191, .26) !important;
+    border-bottom: 1px solid rgba(59,130,246, .26) !important;
 }
 
 .table tbody td,
@@ -1086,26 +1086,26 @@ body .form-control::placeholder,
 .table-hover tbody tr:hover,
 .dark-table tbody tr:hover,
 .report-table tbody tr:hover {
-    background: rgba(84, 172, 191, .08) !important;
+    background: rgba(59,130,246, .08) !important;
 }
 
 /* ---------- ۹) لهجهٔ نارنجی — خیلی کم ---------- */
 .cal-today {
-    background: rgba(84, 172, 191, .18) !important;
-    color: #A7EBF2 !important;
-    box-shadow: inset 0 0 0 1px rgba(84, 172, 191, .4);
+    background: rgba(59,130,246, .18) !important;
+    color: #172554 !important;
+    box-shadow: inset 0 0 0 1px rgba(59,130,246, .4);
     font-weight: 800;
 }
 
 .bn-glow,
 .abn-glow,
 .cbn-glow {
-    background: linear-gradient(90deg, #54ACBF, #54ACBF) !important;
-    box-shadow: 0 0 14px rgba(84, 172, 191, .55) !important;
+    background: linear-gradient(90deg, #3B82F6, #3B82F6) !important;
+    box-shadow: 0 0 14px rgba(59,130,246, .55) !important;
 }
 
 .session-progress .bar {
-    background: linear-gradient(90deg, #54ACBF, #54ACBF) !important;
+    background: linear-gradient(90deg, #3B82F6, #3B82F6) !important;
 }
 
 /* ---------- ۱۰) اسکرول‌بار همرنگ پالت ---------- */
@@ -1115,16 +1115,16 @@ body .form-control::placeholder,
 }
 
 ::-webkit-scrollbar-track {
-    background: rgba(1, 28, 64, .6);
+    background: rgba(239,246,255, .6);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(84, 172, 191, .95);
+    background: rgba(59,130,246, .95);
     border-radius: 999px;
 }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: rgba(84, 172, 191, .7);
+        background: rgba(59,130,246, .7);
     }
 
 /* ---------- ۱۱) بک‌گراند روشن‌تر پالت (برای دیده‌شدن شیشه) ---------- */
@@ -1132,23 +1132,23 @@ body,
 body.admin-glass-body,
 body.coach-glass-body {
     background:
-        radial-gradient(circle at 14% 0%, rgba(84, 172, 191, .16), transparent 42rem),
-        radial-gradient(circle at 86% 12%, rgba(167, 235, 242, .09), transparent 34rem),
-        linear-gradient(160deg, #023859 0%, #26658C 52%, #023859 100%) !important;
+        radial-gradient(circle at 14% 0%, rgba(59,130,246, .16), transparent 42rem),
+        radial-gradient(circle at 86% 12%, rgba(191, 219, 254, .09), transparent 34rem),
+        linear-gradient(160deg, #FFFFFF 0%, #3B82F6 52%, #FFFFFF 100%) !important;
     background-attachment: fixed !important;
     overflow-x: clip;
 }
-/* ---------- ۱۲) بک‌گراند نهایی پالت LUNA (#A7EBF2 #54ACBF #26658C #023859 #011C40) ---------- */
+/* ---------- ۱۲) بک‌گراند نهایی پالت LUNA (#172554 #3B82F6 #3B82F6 #FFFFFF #EFF6FF) ---------- */
 body,
 body.admin-glass-body,
 body.coach-glass-body {
     background:
-        radial-gradient(circle at 50% -12%, rgba(167, 235, 242, .16), transparent 46rem),
-        radial-gradient(circle at 86% 6%, rgba(84, 172, 191, .20), transparent 34rem),
-        radial-gradient(rgba(167, 235, 242, .075) 1px, transparent 1px) 0 0 / 26px 26px,
-        linear-gradient(160deg, #023859 0%, #26658C 55%, #011C40 100%) !important;
+        radial-gradient(circle at 50% -12%, rgba(191, 219, 254, .16), transparent 46rem),
+        radial-gradient(circle at 86% 6%, rgba(59,130,246, .20), transparent 34rem),
+        radial-gradient(rgba(23,37,84, .075) 1px, transparent 1px) 0 0 / 26px 26px,
+        linear-gradient(160deg, #FFFFFF 0%, #3B82F6 55%, #EFF6FF 100%) !important;
     background-attachment: fixed !important;
-    color: #EAF7FA;
+    color: #172554;
 }
 
 /* ---------- ۱۳) بک‌گراند با کنتراست نسبت به کارت‌ها ---------- */
@@ -1156,8 +1156,8 @@ body,
 body.admin-glass-body,
 body.coach-glass-body {
     background:
-        radial-gradient(circle at 50% -16%, rgba(167, 235, 242, .22), transparent 44rem),
-        radial-gradient(rgba(167, 235, 242, .10) 1px, transparent 1px) 0 0 / 26px 26px,
-        linear-gradient(160deg, #54ACBF 0%, #26658C 48%, #011C40 100%) !important;
+        radial-gradient(circle at 50% -16%, rgba(191, 219, 254, .22), transparent 44rem),
+        radial-gradient(rgba(23,37,84, .10) 1px, transparent 1px) 0 0 / 26px 26px,
+        linear-gradient(160deg, #3B82F6 0%, #3B82F6 48%, #EFF6FF 100%) !important;
     background-attachment: fixed !important;
 }

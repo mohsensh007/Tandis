@@ -1,18 +1,18 @@
 /* ============================================================
-   LUNA GLASS THEME  —  #011C40 #023859 #26658C #54ACBF #A7EBF2
+   LUNA GLASS THEME  —  #EFF6FF #FFFFFF #3B82F6 #3B82F6 #172554
    بک‌گراند: روشن‌ترین رنگ پالت
    همهٔ باکس‌ها/کارت‌ها: تیره‌ترین رنگ پالت با حالت شیشه‌ای براق
    ============================================================ */
 
 :root {
-    --lu-darkest: #011C40;
-    --lu-dark: #023859;
-    --lu-primary: #26658C;
-    --lu-sky: #54ACBF;
-    --lu-light: #A7EBF2;
-    --lu-glass-text: #EAF7FA;
-    --lu-glass-border: rgba(167, 235, 242, .22);
-    --lu-glass-shadow: 0 18px 42px rgba(84, 172, 191, .32);
+    --lu-darkest: #EFF6FF;
+    --lu-dark: #FFFFFF;
+    --lu-primary: #3B82F6;
+    --lu-sky: #3B82F6;
+    --lu-light: #172554;
+    --lu-glass-text: #EFF6FF;
+    --lu-glass-border: rgba(23,37,84, .22);
+    --lu-glass-shadow: 0 18px 42px rgba(59,130,246, .32);
 }
 
 /* ---------- ۱) بک‌گراند روشن‌ترین رنگ عکس ---------- */
@@ -23,10 +23,10 @@ body.login-body,
 body.login-glass-body,
 body.member-body {
     background:
-        radial-gradient(1100px 620px at 8% -12%, #ffffff 0%, rgba(255, 255, 255, 0) 58%),
-        radial-gradient(900px 560px at 96% 4%, rgba(84, 172, 191, .34) 0%, rgba(84, 172, 191, 0) 62%),
-        radial-gradient(1000px 700px at 50% 116%, rgba(84, 172, 191, .28) 0%, rgba(84, 172, 191, 0) 64%),
-        linear-gradient(168deg, #EAF7FA 0%, #A7EBF2 34%, #26658C 68%, #023859 100%) !important;
+        radial-gradient(1100px 620px at 8% -12%, #EFF6FF 0%, rgba(191, 219, 254, 0) 58%),
+        radial-gradient(900px 560px at 96% 4%, rgba(59,130,246, .34) 0%, rgba(59,130,246, 0) 62%),
+        radial-gradient(1000px 700px at 50% 116%, rgba(59,130,246, .28) 0%, rgba(59,130,246, 0) 64%),
+        linear-gradient(168deg, #EFF6FF 0%, #EFF6FF 34%, #3B82F6 68%, #FFFFFF 100%) !important;
     background-attachment: fixed !important;
     color: var(--lu-darkest) !important;
 }
@@ -81,14 +81,14 @@ body > .container h4, body > .container h5, body > .container h6,
 .panel,
 .tile {
     background:
-        radial-gradient(130% 96% at 16% -26%, rgba(167, 235, 242, .34), rgba(167, 235, 242, 0) 48%),
-        radial-gradient(90% 70% at 88% 108%, rgba(84, 172, 191, .38), rgba(84, 172, 191, 0) 60%),
-        linear-gradient(158deg, #54ACBF 0%, #3D8CA8 45%, #26658C 100%) !important;
+        radial-gradient(130% 96% at 16% -26%, rgba(191, 219, 254, .34), rgba(23,37,84, 0) 48%),
+        radial-gradient(90% 70% at 88% 108%, rgba(59,130,246, .38), rgba(59,130,246, 0) 60%),
+        linear-gradient(158deg, #3B82F6 0%, #3B82F6 45%, #3B82F6 100%) !important;
     border: 1px solid var(--lu-glass-border) !important;
     color: var(--lu-glass-text) !important;
     box-shadow: var(--lu-glass-shadow),
-        inset 0 1px 0 rgba(255, 255, 255, .38),
-        inset 0 -26px 48px rgba(84, 172, 191, .40) !important;
+        inset 0 1px 0 rgba(23,37,84, .38),
+        inset 0 -26px 48px rgba(59,130,246, .40) !important;
     -webkit-backdrop-filter: blur(16px) saturate(140%);
     backdrop-filter: blur(16px) saturate(140%);
 }
@@ -118,11 +118,11 @@ body > .container h4, body > .container h5, body > .container h6,
 .grad-header,
 .card-head-purple,
 .modal-header {
-    background: linear-gradient(135deg, #54ACBF 0%, #3D8CA8 55%, #26658C 100%) !important;
+    background: linear-gradient(135deg, #3B82F6 0%, #3B82F6 55%, #3B82F6 100%) !important;
     border-bottom: 1px solid var(--lu-glass-border) !important;
-    color: #EAF7FA !important;
+    color: #172554 !important;
     border-radius: 20px 20px 0 0 !important;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .42);
+    box-shadow: inset 0 1px 0 rgba(23,37,84, .42);
 }
 
 /* باکس‌های خاص صفحات برنامه تمرینی / تحلیل بدن / گزارش‌ها */
@@ -137,22 +137,22 @@ body > .container h4, body > .container h5, body > .container h6,
 .report-card,
 .pe-item-card {
     background:
-        radial-gradient(130% 96% at 16% -26%, rgba(167, 235, 242, .32), rgba(167, 235, 242, 0) 48%),
-        radial-gradient(90% 70% at 88% 108%, rgba(84, 172, 191, .36), rgba(84, 172, 191, 0) 60%),
-        linear-gradient(158deg, #54ACBF 0%, #3D8CA8 45%, #26658C 100%) !important;
+        radial-gradient(130% 96% at 16% -26%, rgba(191, 219, 254, .32), rgba(23,37,84, 0) 48%),
+        radial-gradient(90% 70% at 88% 108%, rgba(59,130,246, .36), rgba(59,130,246, 0) 60%),
+        linear-gradient(158deg, #3B82F6 0%, #3B82F6 45%, #3B82F6 100%) !important;
     border: 1px solid var(--lu-glass-border) !important;
     color: var(--lu-glass-text) !important;
     border-radius: 18px !important;
-    box-shadow: var(--lu-glass-shadow), inset 0 1px 0 rgba(255, 255, 255, .34) !important;
+    box-shadow: var(--lu-glass-shadow), inset 0 1px 0 rgba(23,37,84, .34) !important;
 }
 
 /* ---------- ۳.۵) لاگین: بک‌گراند روشن پالت + شبکهٔ نقطه‌های تیره ---------- */
 .login-background {
     background:
-        radial-gradient(circle at 16% 6%, #ffffff 0%, rgba(255, 255, 255, 0) 46rem),
-        radial-gradient(circle at 84% 14%, rgba(84, 172, 191, .28), transparent 32rem),
-        radial-gradient(circle at 50% 108%, rgba(84, 172, 191, .22), transparent 30rem),
-        linear-gradient(155deg, #EAF7FA 0%, #A7EBF2 46%, #26658C 100%) !important;
+        radial-gradient(circle at 16% 6%, #EFF6FF 0%, rgba(191, 219, 254, 0) 46rem),
+        radial-gradient(circle at 84% 14%, rgba(59,130,246, .28), transparent 32rem),
+        radial-gradient(circle at 50% 108%, rgba(59,130,246, .22), transparent 30rem),
+        linear-gradient(155deg, #EFF6FF 0%, #EFF6FF 46%, #3B82F6 100%) !important;
 }
 
 .bg-overlay {
@@ -190,7 +190,7 @@ body > .container h4, body > .container h5, body > .container h6,
         .glass-card .table > :not(caption) > * > *,
         .modal-content .table > :not(caption) > * > * {
             color: var(--lu-glass-text) !important;
-            border-color: rgba(167, 235, 242, .14) !important;
+            border-color: rgba(23,37,84, .14) !important;
             background-color: transparent !important;
         }
 
@@ -199,7 +199,7 @@ body > .container h4, body > .container h5, body > .container h6,
     .modal-content .text-muted,
     .card .text-white-50,
     .glass-card .text-white-50 {
-        color: rgba(234, 247, 250, .70) !important;
+        color: rgba(23, 37, 84, .70) !important;
     }
 
     .card .form-control,
@@ -210,24 +210,24 @@ body > .container h4, body > .container h5, body > .container h6,
     .modal-content .form-select,
     .purple-style .form-control,
     .purple-style .form-select {
-        background: rgba(167, 235, 242, .12) !important;
-        border: 1px solid rgba(167, 235, 242, .30) !important;
-        color: #EAF7FA !important;
+        background: rgba(191, 219, 254, .12) !important;
+        border: 1px solid rgba(23,37,84, .30) !important;
+        color: #172554 !important;
         border-radius: 14px !important;
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14);
+        box-shadow: inset 0 1px 0 rgba(23,37,84, .14);
     }
 
         .card .form-control::placeholder,
         .glass-card .form-control::placeholder,
         .modal-content .form-control::placeholder {
-            color: rgba(234, 247, 250, .55) !important;
+            color: rgba(23, 37, 84, .55) !important;
         }
 
     .card .form-control:focus,
     .glass-card .form-control:focus,
     .modal-content .form-control:focus {
-        border-color: rgba(167, 235, 242, .70) !important;
-        box-shadow: 0 0 0 .2rem rgba(84, 172, 191, .35) !important;
+        border-color: rgba(23,37,84, .70) !important;
+        box-shadow: 0 0 0 .2rem rgba(59,130,246, .35) !important;
     }
 
 /* لیست‌های داخل کارت */
@@ -240,11 +240,11 @@ body > .container h4, body > .container h5, body > .container h6,
 .btn-success,
 .btn-warning,
 .btn-info {
-    background: linear-gradient(135deg, #54ACBF 0%, #3D8CA8 55%, #26658C 100%) !important;
-    border: 1px solid rgba(167, 235, 242, .30) !important;
-    color: #fff !important;
+    background: linear-gradient(135deg, #3B82F6 0%, #3B82F6 55%, #3B82F6 100%) !important;
+    border: 1px solid rgba(23,37,84, .30) !important;
+    color: #172554 !important;
     border-radius: 14px !important;
-    box-shadow: 0 10px 24px rgba(84, 172, 191, .32), inset 0 1px 0 rgba(255, 255, 255, .35) !important;
+    box-shadow: 0 10px 24px rgba(59,130,246, .32), inset 0 1px 0 rgba(23,37,84, .35) !important;
 }
 
     .btn-primary:hover,
@@ -256,8 +256,8 @@ body > .container h4, body > .container h5, body > .container h6,
 
 .btn-outline-light,
 .btn-back-glass {
-    background: rgba(84, 172, 191, .12) !important;
-    border: 1px solid rgba(1, 28, 64, .25) !important;
+    background: rgba(59,130,246, .12) !important;
+    border: 1px solid rgba(239,246,255, .25) !important;
     color: var(--lu-darkest) !important;
     border-radius: 14px !important;
 }
@@ -265,24 +265,24 @@ body > .container h4, body > .container h5, body > .container h6,
 .card .btn-outline-light,
 .glass-card .btn-outline-light,
 .modal-content .btn-outline-light {
-    background: rgba(167, 235, 242, .12) !important;
-    border-color: rgba(167, 235, 242, .35) !important;
+    background: rgba(191, 219, 254, .12) !important;
+    border-color: rgba(23,37,84, .35) !important;
     color: var(--lu-glass-text) !important;
 }
 
 .badge-glass,
 .badge.bg-primary,
 .badge.bg-info {
-    background: linear-gradient(135deg, #54ACBF, #26658C) !important;
-    color: #fff !important;
+    background: linear-gradient(135deg, #3B82F6, #3B82F6) !important;
+    color: #172554 !important;
 }
 
 /* ---------- ۶) نوارهای پایین (شیشهٔ تیره روی بک‌گراند روشن) ---------- */
 .bottom-nav,
 .admin-bottom-nav {
-    background: rgba(84, 172, 191, .94) !important;
-    border: 1px solid rgba(167, 235, 242, .22) !important;
-    box-shadow: 0 16px 38px rgba(84, 172, 191, .42), inset 0 1px 0 rgba(255, 255, 255, .22) !important;
+    background: rgba(59,130,246, .94) !important;
+    border: 1px solid rgba(23,37,84, .22) !important;
+    box-shadow: 0 16px 38px rgba(59,130,246, .42), inset 0 1px 0 rgba(23,37,84, .22) !important;
     -webkit-backdrop-filter: blur(18px) saturate(140%);
     backdrop-filter: blur(18px) saturate(140%);
 }
@@ -290,10 +290,10 @@ body > .container h4, body > .container h5, body > .container h6,
 /* ---------- ۷) هدر پنل عضو ---------- */
 .mh2 {
     background:
-        radial-gradient(120% 150% at 12% -40%, rgba(167, 235, 242, .30), rgba(167, 235, 242, 0) 55%),
-        linear-gradient(140deg, #54ACBF 0%, #2b6efb 48%, #26658C 100%) !important;
-    border-bottom: 1px solid rgba(167, 235, 242, .22) !important;
-    box-shadow: 0 12px 30px rgba(84, 172, 191, .30), inset 0 1px 0 rgba(255, 255, 255, .30) !important;
+        radial-gradient(120% 150% at 12% -40%, rgba(191, 219, 254, .30), rgba(23,37,84, 0) 55%),
+        linear-gradient(140deg, #3B82F6 0%, #EFF6FF 48%, #3B82F6 100%) !important;
+    border-bottom: 1px solid rgba(23,37,84, .22) !important;
+    box-shadow: 0 12px 30px rgba(59,130,246, .30), inset 0 1px 0 rgba(23,37,84, .30) !important;
 }
 
     .mh2 .mh2-title,
@@ -302,18 +302,18 @@ body > .container h4, body > .container h5, body > .container h6,
     .mh2 .mh2-time,
     .mh2 .mh2-date,
     .mh2 .mh2-lbl {
-        color: #EAF7FA !important;
+        color: #172554 !important;
     }
 
 /* ---------- ۸) لاگین ---------- */
 .login-card,
 #authCard {
     background:
-        radial-gradient(130% 96% at 16% -26%, rgba(167, 235, 242, .34), rgba(167, 235, 242, 0) 48%),
-        linear-gradient(158deg, #54ACBF 0%, #3D8CA8 45%, #26658C 100%) !important;
+        radial-gradient(130% 96% at 16% -26%, rgba(191, 219, 254, .34), rgba(23,37,84, 0) 48%),
+        linear-gradient(158deg, #3B82F6 0%, #3B82F6 45%, #3B82F6 100%) !important;
     border: 1px solid var(--lu-glass-border) !important;
     color: var(--lu-glass-text) !important;
-    box-shadow: 0 26px 60px rgba(84, 172, 191, .42), inset 0 1px 0 rgba(255, 255, 255, .38) !important;
+    box-shadow: 0 26px 60px rgba(59,130,246, .42), inset 0 1px 0 rgba(23,37,84, .38) !important;
 }
 
     .login-card .form-label,
@@ -321,20 +321,20 @@ body > .container h4, body > .container h5, body > .container h6,
     .login-card h4, .login-card h5, .login-card h6,
     .login-card p, .login-card small,
     #authCard .form-label {
-        color: #EAF7FA !important;
+        color: #172554 !important;
     }
 
 /* ---------- ۹) اسکرول‌بار ---------- */
 ::-webkit-scrollbar-track {
-    background: rgba(167, 235, 242, .55);
+    background: rgba(191, 219, 254, .55);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, #54ACBF, #26658C);
+    background: linear-gradient(180deg, #3B82F6, #3B82F6);
 }
 
     ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #54ACBF, #26658C);
+        background: linear-gradient(180deg, #3B82F6, #3B82F6);
     }
 
 /* ============================================================
@@ -368,7 +368,7 @@ body > .container h4, body > .container h5, body > .container h6,
         display: block;
         object-fit: contain;
         object-position: center;
-        filter: drop-shadow(0 6px 14px rgba(84, 172, 191, .32));
+        filter: drop-shadow(0 6px 14px rgba(59,130,246, .32));
     }
 
     .desk-brand > div {
@@ -378,7 +378,7 @@ body > .container h4, body > .container h5, body > .container h6,
     .desk-brand b {
         display: block;
         font-size: 1.05rem;
-        color: #EAF7FA;
+        color: #172554;
         font-weight: 800;
         white-space: nowrap;
         overflow: hidden;
@@ -387,7 +387,7 @@ body > .container h4, body > .container h5, body > .container h6,
 
     .desk-brand span {
         font-size: .74rem;
-        color: #A7EBF2;
+        color: #172554;
         font-weight: 700;
     }
 
@@ -395,13 +395,13 @@ body > .container h4, body > .container h5, body > .container h6,
     display: flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #54ACBF, #26658C);
-    color: #EAF7FA;
+    background: linear-gradient(135deg, #3B82F6, #3B82F6);
+    color: #172554;
     border-radius: 999px;
     padding: 8px 16px;
     font-size: .8rem;
     font-weight: 700;
-    box-shadow: 0 10px 24px rgba(84, 172, 191, .30), inset 0 1px 0 rgba(255, 255, 255, .28);
+    box-shadow: 0 10px 24px rgba(59,130,246, .30), inset 0 1px 0 rgba(23,37,84, .28);
 }
 
 .desk-grid {
@@ -422,14 +422,14 @@ body > .container h4, body > .container h5, body > .container h6,
     gap: 12px;
     cursor: pointer;
     text-align: right;
-    border: 1px solid rgba(167, 235, 242, .26);
-    color: #EAF7FA;
+    border: 1px solid rgba(23,37,84, .26);
+    color: #172554;
     background:
-        radial-gradient(130% 96% at 18% -28%, rgba(167, 235, 242, .40), rgba(167, 235, 242, 0) 50%),
-        radial-gradient(90% 70% at 90% 112%, rgba(84, 172, 191, .40), rgba(84, 172, 191, 0) 62%),
-        linear-gradient(158deg, #54ACBF 0%, #3D8CA8 45%, #26658C 100%);
-    box-shadow: 0 20px 44px rgba(84, 172, 191, .42), inset 0 1px 0 rgba(255, 255, 255, .42),
-        inset 0 -30px 52px rgba(84, 172, 191, .40);
+        radial-gradient(130% 96% at 18% -28%, rgba(191, 219, 254, .40), rgba(23,37,84, 0) 50%),
+        radial-gradient(90% 70% at 90% 112%, rgba(59,130,246, .40), rgba(59,130,246, 0) 62%),
+        linear-gradient(158deg, #3B82F6 0%, #3B82F6 45%, #3B82F6 100%);
+    box-shadow: 0 20px 44px rgba(59,130,246, .42), inset 0 1px 0 rgba(23,37,84, .42),
+        inset 0 -30px 52px rgba(59,130,246, .40);
     transition: transform .22s ease, box-shadow .22s ease;
 }
 
@@ -438,15 +438,15 @@ body > .container h4, body > .container h5, body > .container h6,
         position: absolute;
         inset: 0 0 auto 0;
         height: 46%;
-        background: linear-gradient(180deg, rgba(255, 255, 255, .26), rgba(255, 255, 255, 0));
+        background: linear-gradient(180deg, rgba(191, 219, 254, .26), rgba(23,37,84, 0));
         pointer-events: none;
         border-radius: 26px 26px 60% 60% / 26px 26px 30px 30px;
     }
 
     .desk-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 26px 56px rgba(84, 172, 191, .40), inset 0 1px 0 rgba(255, 255, 255, .48),
-            inset 0 -30px 52px rgba(84, 172, 191, .40);
+        box-shadow: 0 26px 56px rgba(59,130,246, .40), inset 0 1px 0 rgba(23,37,84, .48),
+            inset 0 -30px 52px rgba(59,130,246, .40);
     }
 
     .desk-card:active {
@@ -460,10 +460,10 @@ body > .container h4, body > .container h5, body > .container h6,
         place-items: center;
         border-radius: 16px;
         font-size: 1.45rem;
-        color: #fff;
-        background: linear-gradient(140deg, rgba(167, 235, 242, .34), rgba(167, 235, 242, .10));
-        border: 1px solid rgba(167, 235, 242, .40);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .55);
+        color: #172554;
+        background: linear-gradient(140deg, rgba(191, 219, 254, .34), rgba(23,37,84, .10));
+        border: 1px solid rgba(23,37,84, .40);
+        box-shadow: inset 0 1px 0 rgba(23,37,84, .55);
     }
 
     .desk-card .dc-title {
@@ -475,7 +475,7 @@ body > .container h4, body > .container h5, body > .container h6,
     .desk-card .dc-sub {
         font-size: .74rem;
         line-height: 1.75;
-        color: rgba(234, 247, 250, .78);
+        color: rgba(23, 37, 84, .78);
     }
 
     .desk-card .dc-go {
@@ -485,9 +485,9 @@ body > .container h4, body > .container h5, body > .container h6,
         gap: 6px;
         font-size: .74rem;
         font-weight: 800;
-        color: #fff;
-        background: rgba(84, 172, 191, .42);
-        border: 1px solid rgba(167, 235, 242, .30);
+        color: #172554;
+        background: rgba(59,130,246, .42);
+        border: 1px solid rgba(23,37,84, .30);
         border-radius: 999px;
         padding: 6px 14px;
     }
@@ -534,15 +534,15 @@ body > .container h4, body > .container h5, body > .container h6,
     text-align: right;
     padding: 12px 14px;
     border-radius: 16px;
-    border: 1px solid rgba(167, 235, 242, .26);
-    background: rgba(167, 235, 242, .10);
-    color: #EAF7FA;
+    border: 1px solid rgba(23,37,84, .26);
+    background: rgba(191, 219, 254, .10);
+    color: #172554;
     font-size: .84rem;
     transition: background .18s ease, transform .18s ease;
 }
 
     .desk-item:hover {
-        background: rgba(167, 235, 242, .20);
+        background: rgba(191, 219, 254, .20);
         transform: translateY(-1px);
     }
 
@@ -552,7 +552,7 @@ body > .container h4, body > .container h5, body > .container h6,
 
     .desk-item small {
         display: block;
-        color: rgba(234, 247, 250, .70);
+        color: rgba(23, 37, 84, .70);
         font-size: .72rem;
     }
 
@@ -568,17 +568,17 @@ body > .container h4, body > .container h5, body > .container h6,
     min-width: 92px;
     padding: 10px 8px;
     border-radius: 14px;
-    border: 1px solid rgba(167, 235, 242, .30);
-    background: rgba(167, 235, 242, .10);
-    color: #EAF7FA;
+    border: 1px solid rgba(23,37,84, .30);
+    background: rgba(191, 219, 254, .10);
+    color: #172554;
     font-size: .8rem;
     font-weight: 700;
 }
 
     .desk-chip button.on {
-        background: linear-gradient(135deg, #54ACBF, #26658C);
-        border-color: rgba(255, 255, 255, .55);
-        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45);
+        background: linear-gradient(135deg, #3B82F6, #3B82F6);
+        border-color: rgba(23,37,84, .55);
+        box-shadow: inset 0 1px 0 rgba(23,37,84, .45);
     }
 
 .desk-amount {
@@ -591,9 +591,9 @@ body > .container h4, body > .container h5, body > .container h6,
     .desk-amount button {
         padding: 8px 12px;
         border-radius: 12px;
-        border: 1px solid rgba(167, 235, 242, .28);
-        background: rgba(167, 235, 242, .08);
-        color: #EAF7FA;
+        border: 1px solid rgba(23,37,84, .28);
+        background: rgba(191, 219, 254, .08);
+        color: #172554;
         font-size: .75rem;
         font-weight: 700;
     }
@@ -605,8 +605,8 @@ body > .container h4, body > .container h5, body > .container h6,
     gap: 10px;
     padding: 12px 14px;
     border-radius: 16px;
-    background: rgba(84, 172, 191, .42);
-    border: 1px solid rgba(167, 235, 242, .24);
+    background: rgba(59,130,246, .42);
+    border: 1px solid rgba(23,37,84, .24);
     margin-bottom: 12px;
     font-size: .84rem;
 }
@@ -617,43 +617,43 @@ body > .container h4, body > .container h5, body > .container h6,
 
 /* ============================================================
    ۱۱) LUNA — لایهٔ نهایی تم (جایگزین لایه‌های قبلی)
-   پالت: #A7EBF2  #54ACBF  #26658C  #023859  #011C40
+   پالت: #172554  #3B82F6  #3B82F6  #FFFFFF  #EFF6FF
    قانون نور: هایلایت از گوشهٔ بالا-راست، سایه به پایین-چپ
    کارت داخل باکس: همیشه یک پله تیره‌تر از باکس والد
    ============================================================ */
 
 :root {
-    --lu-cyan: #A7EBF2;
-    --lu-teal: #54ACBF;
-    --lu-steel: #26658C;
-    --lu-deep: #023859;
-    --lu-navy: #011C40;
-    --lu-text: #EAF7FA;
-    --lu-muted: rgba(167, 235, 242, .74);
-    --lu-line: rgba(167, 235, 242, .22);
+    --lu-cyan: #172554;
+    --lu-teal: #3B82F6;
+    --lu-steel: #3B82F6;
+    --lu-deep: #FFFFFF;
+    --lu-navy: #EFF6FF;
+    --lu-text: #EFF6FF;
+    --lu-muted: rgba(23,37,84, .74);
+    --lu-line: rgba(23,37,84, .22);
     --lu-radius: 20px;
-    --lu-shadow-out: -10px 14px 32px rgba(1, 28, 64, .55), 12px -6px 22px rgba(84, 172, 191, .10);
-    --lu-shadow-in: inset -1px 1px 0 rgba(167, 235, 242, .50), inset 1px -1px 0 rgba(1, 28, 64, .45);
-    --lu-bg-box: radial-gradient(110% 90% at 100% 0%, rgba(167, 235, 242, .12), rgba(167, 235, 242, 0) 55%), linear-gradient(225deg, rgba(38, 101, 140, .50) 0%, rgba(2, 56, 89, .88) 100%);
-    --lu-bg-card: radial-gradient(110% 90% at 100% 0%, rgba(167, 235, 242, .14), rgba(167, 235, 242, 0) 55%), linear-gradient(225deg, rgba(38, 101, 140, .55) 0%, rgba(2, 56, 89, .86) 46%, rgba(1, 28, 64, .96) 100%);
-    --lu-bg-card-dark: radial-gradient(120% 100% at 100% 0%, rgba(167, 235, 242, .18), rgba(167, 235, 242, 0) 56%), linear-gradient(225deg, rgba(38, 101, 140, .72) 0%, rgba(2, 56, 89, .92) 55%, rgba(1, 28, 64, .96) 100%);
+    --lu-shadow-out: -10px 14px 32px rgba(239,246,255, .55), 12px -6px 22px rgba(59,130,246, .10);
+    --lu-shadow-in: inset -1px 1px 0 rgba(23,37,84, .50), inset 1px -1px 0 rgba(239,246,255, .45);
+    --lu-bg-box: radial-gradient(110% 90% at 100% 0%, rgba(23,37,84, .12), rgba(23,37,84, 0) 55%), linear-gradient(225deg, rgba(59,130,246, .50) 0%, rgba(255,255,255, .88) 100%);
+    --lu-bg-card: radial-gradient(110% 90% at 100% 0%, rgba(23,37,84, .14), rgba(23,37,84, 0) 55%), linear-gradient(225deg, rgba(59,130,246, .55) 0%, rgba(255,255,255, .86) 46%, rgba(239,246,255, .96) 100%);
+    --lu-bg-card-dark: radial-gradient(120% 100% at 100% 0%, rgba(23,37,84, .18), rgba(23,37,84, 0) 56%), linear-gradient(225deg, rgba(59,130,246, .72) 0%, rgba(255,255,255, .92) 55%, rgba(239,246,255, .96) 100%);
 }
 
 /* ---------- بک‌گراند کل برنامه ---------- */
 html body:not(#lu) {
     background:
-        radial-gradient(1100px 620px at 88% -6%, rgba(84, 172, 191, .38), transparent 62%),
-        radial-gradient(900px 520px at 6% 8%, rgba(38, 101, 140, .34), transparent 60%),
-        radial-gradient(1000px 700px at 45% 118%, rgba(2, 56, 89, .55), transparent 65%),
-        linear-gradient(200deg, #011C40 0%, #023859 46%, #011C40 100%) !important;
+        radial-gradient(1100px 620px at 88% -6%, rgba(59,130,246, .38), transparent 62%),
+        radial-gradient(900px 520px at 6% 8%, rgba(59,130,246, .34), transparent 60%),
+        radial-gradient(1000px 700px at 45% 118%, rgba(255,255,255, .55), transparent 65%),
+        linear-gradient(200deg, #EFF6FF 0%, #FFFFFF 46%, #EFF6FF 100%) !important;
     background-attachment: fixed !important;
     color: var(--lu-text) !important;
-    --bs-body-color: #EAF7FA;
+    --bs-body-color: #172554;
     --bs-body-bg: transparent;
-    --bs-secondary-color: rgba(167, 235, 242, .74);
-    --bs-emphasis-color: #ffffff;
-    --bs-heading-color: #ffffff;
-    --bs-border-color: rgba(167, 235, 242, .22);
+    --bs-secondary-color: rgba(23,37,84, .74);
+    --bs-emphasis-color: #172554;
+    --bs-heading-color: #172554;
+    --bs-border-color: rgba(23,37,84, .22);
 }
 
 /* ---------- همهٔ کارت‌ها: شیشهٔ LUNA ---------- */
@@ -743,10 +743,10 @@ html body:not(#lu) :is(
     .coach-card-head, .sd-box-head, .cm-box-head, .stu-head,
     .ch-main-head, .rc-head, .admin-report-all-header, .panel-head
 ) {
-    background: linear-gradient(225deg, rgba(84, 172, 191, .52) 0%, rgba(2, 56, 89, .78) 100%) !important;
+    background: linear-gradient(225deg, rgba(59,130,246, .52) 0%, rgba(255,255,255, .78) 100%) !important;
     border-bottom: 1px solid var(--lu-line) !important;
     border-radius: 19px 19px 0 0 !important;
-    color: #ffffff !important;
+    color: #172554 !important;
 }
 
 /* حرکت ملایم و نور بیشتر هنگام هاور */
@@ -767,14 +767,14 @@ html body:not(#lu) :is(
         .ch-side-card, .cc-card, .cs-card, .ms-card, .cstat-card,
         .sd-card, .cm-card, .pd-info
     ):hover {
-        border-color: rgba(167, 235, 242, .55) !important;
-        box-shadow: -14px 18px 40px rgba(1, 28, 64, .60), inset -1px 1px 0 rgba(167, 235, 242, .72) !important;
+        border-color: rgba(23,37,84, .55) !important;
+        box-shadow: -14px 18px 40px rgba(239,246,255, .60), inset -1px 1px 0 rgba(23,37,84, .72) !important;
         transform: translateY(-2px);
     }
 
 /* ---------- متن‌ها ---------- */
 html body:not(#lu) :is(h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6) {
-    color: #ffffff !important;
+    color: #172554 !important;
 }
 
 html body:not(#lu) :is(.text-muted, .text-secondary, small, .text-white-50, .subtitle, .rc-desc, .asc-desc, .mp-entry-sub, .ch-main-sub, .ch-help p, .ch-side-nums small, .ch-side-foot, .ch-legend, .ch-range.prev, .ch-delta small) {
@@ -798,7 +798,7 @@ html body:not(#lu) a:not(.btn):not(.nav-link):not(.dropdown-item):not(.page-link
 }
 
 ::placeholder {
-    color: rgba(167, 235, 242, .55) !important;
+    color: rgba(23,37,84, .55) !important;
 }
 
 /* ---------- پیل‌ها، چیپ‌ها، بج‌ها ---------- */
@@ -809,32 +809,32 @@ html body:not(#lu) :is(
     .status-badge, .stt, .cm-rev, .cm-new, .badge, .ff-chip, .filter-pill,
     .desk-chip button, .desk-amount button, .btn-all-reports
 ) {
-    background: rgba(167, 235, 242, .14) !important;
-    border: 1px solid rgba(167, 235, 242, .34) !important;
+    background: rgba(191, 219, 254, .14) !important;
+    border: 1px solid rgba(23,37,84, .34) !important;
     color: var(--lu-text) !important;
-    box-shadow: inset -1px 1px 0 rgba(167, 235, 242, .22) !important;
+    box-shadow: inset -1px 1px 0 rgba(23,37,84, .22) !important;
 }
 
 html body:not(#lu) :is(
     .ch-pill.active, .mpf-chip.mpf-on, .mp-badge.mp-on, .desk-chip button.on,
     .pill-active, .active-pill, .nav-pill.active, .mp-pill.on
 ) {
-    background: linear-gradient(225deg, #DCF7FB 0%, var(--lu-cyan) 55%, #7EC6D8 100%) !important;
-    border-color: rgba(167, 235, 242, .85) !important;
+    background: linear-gradient(225deg, #EFF6FF 0%, var(--lu-cyan) 55%, #3B82F6 100%) !important;
+    border-color: rgba(23,37,84, .85) !important;
     color: var(--lu-navy) !important;
-    box-shadow: -4px 6px 16px rgba(1, 28, 64, .40), inset -1px 1px 0 rgba(255, 255, 255, .80) !important;
+    box-shadow: -4px 6px 16px rgba(239,246,255, .40), inset -1px 1px 0 rgba(23,37,84, .80) !important;
 }
 
 html body:not(#lu) :is(.rc-icon, .asc-icon) {
-    background: rgba(167, 235, 242, .18) !important;
-    border: 1px solid rgba(167, 235, 242, .40) !important;
+    background: rgba(191, 219, 254, .18) !important;
+    border: 1px solid rgba(23,37,84, .40) !important;
     border-radius: 14px !important;
     color: var(--lu-cyan) !important;
-    box-shadow: inset -1px 1px 0 rgba(167, 235, 242, .45) !important;
+    box-shadow: inset -1px 1px 0 rgba(23,37,84, .45) !important;
 }
 
 html body:not(#lu) :is(.admin-report-dot) {
-    background: rgba(167, 235, 242, .38) !important;
+    background: rgba(191, 219, 254, .38) !important;
 }
 
     html body:not(#lu) :is(.admin-report-dot.is-active) {
@@ -842,23 +842,23 @@ html body:not(#lu) :is(.admin-report-dot) {
     }
 
 html body:not(#lu) .admin-report-slide.is-active {
-    border-color: rgba(167, 235, 242, .80) !important;
-    box-shadow: -12px 16px 36px rgba(1, 28, 64, .60), inset 0 0 0 2px rgba(167, 235, 242, .55) !important;
+    border-color: rgba(23,37,84, .80) !important;
+    box-shadow: -12px 16px 36px rgba(239,246,255, .60), inset 0 0 0 2px rgba(23,37,84, .55) !important;
 }
 
 html body:not(#lu) .admin-report-all-close {
-    background: rgba(167, 235, 242, .16) !important;
-    border-color: rgba(167, 235, 242, .40) !important;
-    color: #ffffff !important;
+    background: rgba(191, 219, 254, .16) !important;
+    border-color: rgba(23,37,84, .40) !important;
+    color: #172554 !important;
 }
 
 /* دکمه‌های پیل‌شکل روشن */
 html body:not(#lu) .btn-back-glass {
-    background: linear-gradient(225deg, #DCF7FB 0%, var(--lu-cyan) 100%) !important;
-    border: 1px solid rgba(167, 235, 242, .70) !important;
+    background: linear-gradient(225deg, #EFF6FF 0%, var(--lu-cyan) 100%) !important;
+    border: 1px solid rgba(23,37,84, .70) !important;
     border-radius: 999px !important;
     color: var(--lu-navy) !important;
-    box-shadow: -6px 8px 20px rgba(1, 28, 64, .45) !important;
+    box-shadow: -6px 8px 20px rgba(239,246,255, .45) !important;
 }
 
     html body:not(#lu) .btn-back-glass i {
@@ -867,7 +867,7 @@ html body:not(#lu) .btn-back-glass {
 
 /* ---------- نمودارها ---------- */
 html body:not(#lu) .ch-chart-wrap {
-    background: rgba(1, 28, 64, .55) !important;
+    background: rgba(239,246,255, .55) !important;
     border: 1px solid var(--lu-line) !important;
     border-radius: 18px !important;
 }
@@ -877,11 +877,11 @@ html body:not(#lu) .ch-axlabel {
 }
 
 html body:not(#lu) .ch-gridline {
-    stroke: rgba(167, 235, 242, .20) !important;
+    stroke: rgba(23,37,84, .20) !important;
 }
 
 html body:not(#lu) .ch-gridline-main {
-    stroke: rgba(167, 235, 242, .38) !important;
+    stroke: rgba(23,37,84, .38) !important;
 }
 
 html body:not(#lu) #chLine {
@@ -889,15 +889,15 @@ html body:not(#lu) #chLine {
 }
 
 html body:not(#lu) #chLinePrev {
-    stroke: rgba(167, 235, 242, .55) !important;
+    stroke: rgba(23,37,84, .55) !important;
 }
 
 html body:not(#lu) #chArea {
-    fill: rgba(167, 235, 242, .22) !important;
+    fill: rgba(23,37,84, .22) !important;
 }
 
 html body:not(#lu) #chAreaPrev {
-    fill: rgba(167, 235, 242, .06) !important;
+    fill: rgba(23,37,84, .06) !important;
 }
 
 html body:not(#lu) #chDot,
@@ -907,18 +907,18 @@ html body:not(#lu) #chDotPrev {
 }
 
 html body:not(#lu) #chCursor {
-    stroke: rgba(167, 235, 242, .70) !important;
+    stroke: rgba(23,37,84, .70) !important;
 }
 
 html body:not(#lu) .ch-donut-center {
-    fill: #ffffff !important;
+    fill: #3B82F6 !important;
 }
 
 html body:not(#lu) .ch-tooltip {
-    background: rgba(1, 28, 64, .96) !important;
-    border: 1px solid rgba(167, 235, 242, .40) !important;
+    background: rgba(239,246,255, .96) !important;
+    border: 1px solid rgba(23,37,84, .40) !important;
     color: var(--lu-text) !important;
-    box-shadow: -8px 10px 26px rgba(1, 28, 64, .55) !important;
+    box-shadow: -8px 10px 26px rgba(239,246,255, .55) !important;
 }
 
 html body:not(#lu) .ch-legend span:first-child i {
@@ -926,7 +926,7 @@ html body:not(#lu) .ch-legend span:first-child i {
 }
 
 html body:not(#lu) .ch-legend span:last-child i {
-    background: rgba(167, 235, 242, .50) !important;
+    background: rgba(191, 219, 254, .50) !important;
 }
 
 /* ---------- جزئیات برنامهٔ تمرینی (عضو) ---------- */
@@ -935,52 +935,52 @@ html body:not(#lu) :is(.mp-day-head) {
 }
 
 html body:not(#lu) :is(.mp-ex, .desk-item, .ath-stat-row, .msg-item, .mpf-bar) {
-    background: rgba(1, 28, 64, .38) !important;
-    border: 1px solid rgba(167, 235, 242, .20) !important;
+    background: rgba(239,246,255, .38) !important;
+    border: 1px solid rgba(23,37,84, .20) !important;
     border-radius: 14px !important;
 }
 
 html body:not(#lu) :is(.mp-combo) {
-    background: rgba(1, 28, 64, .30) !important;
-    border: 1px dashed rgba(167, 235, 242, .40) !important;
+    background: rgba(239,246,255, .30) !important;
+    border: 1px dashed rgba(23,37,84, .40) !important;
     border-radius: 14px !important;
 }
 
 html body:not(#lu) :is(.mp-tech, .mp-note, .mp-tech-drop) {
-    background: rgba(1, 28, 64, .42) !important;
-    border: 1px solid rgba(167, 235, 242, .22) !important;
+    background: rgba(239,246,255, .42) !important;
+    border: 1px solid rgba(23,37,84, .22) !important;
     border-radius: 14px !important;
 }
 
 html body:not(#lu) :is(.mp-entry-count) {
     background: var(--lu-cyan) !important;
     color: var(--lu-navy) !important;
-    border: 1px solid rgba(167, 235, 242, .70) !important;
+    border: 1px solid rgba(23,37,84, .70) !important;
 }
 
 /* ---------- فرم‌ها ---------- */
 html body:not(#lu) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), select, textarea, .form-control, .form-select) {
-    background: rgba(1, 28, 64, .55) !important;
-    border: 1px solid rgba(167, 235, 242, .26) !important;
+    background: rgba(239,246,255, .55) !important;
+    border: 1px solid rgba(23,37,84, .26) !important;
     color: var(--lu-text) !important;
     border-radius: 14px !important;
-    box-shadow: inset -1px 1px 0 rgba(167, 235, 242, .16) !important;
+    box-shadow: inset -1px 1px 0 rgba(23,37,84, .16) !important;
 }
 
     html body:not(#lu) :is(input, select, textarea, .form-control, .form-select):focus {
         border-color: var(--lu-teal) !important;
-        box-shadow: 0 0 0 3px rgba(84, 172, 191, .28), inset -1px 1px 0 rgba(167, 235, 242, .22) !important;
+        box-shadow: 0 0 0 3px rgba(59,130,246, .28), inset -1px 1px 0 rgba(23,37,84, .22) !important;
         outline: none !important;
     }
 
 html body:not(#lu) select option {
-    background: #011C40 !important;
-    color: #EAF7FA !important;
+    background: #EFF6FF !important;
+    color: #172554 !important;
 }
 
 html body:not(#lu) .form-check-input {
-    background-color: rgba(1, 28, 64, .55) !important;
-    border-color: rgba(167, 235, 242, .35) !important;
+    background-color: rgba(239,246,255, .55) !important;
+    border-color: rgba(23,37,84, .35) !important;
 }
 
     html body:not(#lu) .form-check-input:checked {
@@ -990,68 +990,68 @@ html body:not(#lu) .form-check-input {
 
 /* ---------- دکمه‌ها ---------- */
 html body:not(#lu) :is(.btn-primary, .btn-purple, .btn-gradient, .pe-save-btn, .pg-edit-btn, .pg-new-btn, .cm-apply, .combo-add-btn, .pe-add-btn) {
-    background: linear-gradient(225deg, #E8FAFC 0%, var(--lu-cyan) 55%, var(--lu-teal) 100%) !important;
-    border: 1px solid rgba(167, 235, 242, .55) !important;
+    background: linear-gradient(225deg, #EFF6FF 0%, var(--lu-cyan) 55%, var(--lu-teal) 100%) !important;
+    border: 1px solid rgba(23,37,84, .55) !important;
     color: var(--lu-navy) !important;
     border-radius: 14px !important;
-    box-shadow: -6px 8px 20px rgba(1, 28, 64, .45), inset -1px 1px 0 rgba(255, 255, 255, .60) !important;
+    box-shadow: -6px 8px 20px rgba(239,246,255, .45), inset -1px 1px 0 rgba(23,37,84, .60) !important;
     font-weight: 800;
 }
 
     html body:not(#lu) :is(.btn-primary, .btn-purple, .btn-gradient, .pe-save-btn, .pg-edit-btn, .pg-new-btn, .cm-apply, .combo-add-btn, .pe-add-btn):hover {
-        background: linear-gradient(225deg, #D9F6FA 0%, var(--lu-cyan) 70%, var(--lu-teal) 100%) !important;
+        background: linear-gradient(225deg, #BFDBFE 0%, var(--lu-cyan) 70%, var(--lu-teal) 100%) !important;
         color: var(--lu-navy) !important;
     }
 
 html body:not(#lu) :is(.btn-secondary, .btn-outline-light, .btn-glass, .btn-logout-glass, .cm-back-pill, .coach-back-pill, .pg-view-btn, .pg-del-btn, .class-btn, .cm-month) {
-    background: rgba(167, 235, 242, .16) !important;
-    border: 1px solid rgba(167, 235, 242, .38) !important;
+    background: rgba(191, 219, 254, .16) !important;
+    border: 1px solid rgba(23,37,84, .38) !important;
     color: var(--lu-text) !important;
     border-radius: 14px !important;
-    box-shadow: inset -1px 1px 0 rgba(167, 235, 242, .28) !important;
+    box-shadow: inset -1px 1px 0 rgba(23,37,84, .28) !important;
 }
 
 html body:not(#lu) :is(.btn-danger, .pg-del-btn.danger) {
-    background: linear-gradient(225deg, #ff9bad 0%, #e5484d 100%) !important;
-    border-color: rgba(255, 155, 173, .55) !important;
-    color: #2b0710 !important;
+    background: linear-gradient(225deg, #EFF6FF 0%, #172554 100%) !important;
+    border-color: rgba(23,37,84, .55) !important;
+    color: #172554 !important;
 }
 
 /* ---------- جدول‌ها ---------- */
 html body:not(#lu) .table {
-    --bs-table-color: #EAF7FA;
+    --bs-table-color: #172554;
     --bs-table-bg: transparent;
-    --bs-table-border-color: rgba(167, 235, 242, .16);
-    --bs-table-striped-bg: rgba(167, 235, 242, .05);
-    --bs-table-striped-color: #EAF7FA;
-    --bs-table-hover-bg: rgba(167, 235, 242, .10);
-    --bs-table-hover-color: #ffffff;
-    color: #EAF7FA !important;
+    --bs-table-border-color: rgba(23,37,84, .16);
+    --bs-table-striped-bg: rgba(23,37,84, .05);
+    --bs-table-striped-color: #172554;
+    --bs-table-hover-bg: rgba(23,37,84, .10);
+    --bs-table-hover-color: #172554;
+    color: #172554 !important;
 }
 
     html body:not(#lu) .table > thead th {
-        background: rgba(2, 56, 89, .78) !important;
-        color: #ffffff !important;
-        border-color: rgba(167, 235, 242, .22) !important;
+        background: rgba(255,255,255, .78) !important;
+        color: #172554 !important;
+        border-color: rgba(23,37,84, .22) !important;
     }
 
     html body:not(#lu) .table > tbody > tr > td,
     html body:not(#lu) .table > tbody > tr > th {
-        border-color: rgba(167, 235, 242, .14) !important;
+        border-color: rgba(23,37,84, .14) !important;
     }
 
 /* ---------- مودال، دراپ‌دان، الرت، پیجینیشن ---------- */
 html body:not(#lu) .modal-backdrop.show {
     opacity: .72;
-    background: #011C40;
+    background: #EFF6FF;
 }
 
 html body:not(#lu) :is(.dropdown-menu, .select2-container .select2-dropdown) {
-    background: rgba(2, 56, 89, .98) !important;
+    background: rgba(255,255,255, .98) !important;
     border: 1px solid var(--lu-line) !important;
     border-radius: 16px !important;
     color: var(--lu-text) !important;
-    box-shadow: -10px 14px 32px rgba(1, 28, 64, .55) !important;
+    box-shadow: -10px 14px 32px rgba(239,246,255, .55) !important;
 }
 
 html body:not(#lu) .dropdown-item {
@@ -1060,20 +1060,20 @@ html body:not(#lu) .dropdown-item {
 
     html body:not(#lu) .dropdown-item:hover,
     html body:not(#lu) .dropdown-item:focus {
-        background: rgba(84, 172, 191, .22) !important;
-        color: #ffffff !important;
+        background: rgba(59,130,246, .22) !important;
+        color: #172554 !important;
     }
 
 html body:not(#lu) .alert {
-    background: rgba(38, 101, 140, .38) !important;
+    background: rgba(59,130,246, .38) !important;
     border: 1px solid var(--lu-line) !important;
     color: var(--lu-text) !important;
     border-radius: 16px !important;
 }
 
 html body:not(#lu) .page-link {
-    background: rgba(167, 235, 242, .12) !important;
-    border: 1px solid rgba(167, 235, 242, .28) !important;
+    background: rgba(191, 219, 254, .12) !important;
+    border: 1px solid rgba(23,37,84, .28) !important;
     color: var(--lu-text) !important;
 }
 
@@ -1084,7 +1084,7 @@ html body:not(#lu) .page-item.active .page-link {
 }
 
 html body:not(#lu) .progress {
-    background: rgba(1, 28, 64, .60) !important;
+    background: rgba(239,246,255, .60) !important;
     border-radius: 999px !important;
 }
 
@@ -1094,10 +1094,10 @@ html body:not(#lu) .progress-bar {
 
 /* ---------- هدرها و ناوبری ---------- */
 html body:not(#lu) :is(.mh2, .coach-top-nav, .admin-topbar, .topbar, .app-header) {
-    background: linear-gradient(200deg, rgba(2, 56, 89, .94) 0%, rgba(1, 28, 64, .96) 100%) !important;
+    background: linear-gradient(200deg, rgba(255,255,255, .94) 0%, rgba(239,246,255, .96) 100%) !important;
     border-color: var(--lu-line) !important;
-    box-shadow: 0 12px 30px rgba(1, 28, 64, .50) !important;
-    color: #ffffff !important;
+    box-shadow: 0 12px 30px rgba(239,246,255, .50) !important;
+    color: #172554 !important;
 }
 
 html body:not(#lu) :is(.mh2, .coach-top-nav) :is(.nav-link, a, span, strong, i) {
@@ -1105,26 +1105,26 @@ html body:not(#lu) :is(.mh2, .coach-top-nav) :is(.nav-link, a, span, strong, i) 
 }
 
 html body:not(#lu) :is(.bottom-nav, .admin-bottom-nav, .coach-bottom-nav) {
-    background: linear-gradient(225deg, rgba(84, 172, 191, .52) 0%, rgba(2, 56, 89, .94) 100%) !important;
+    background: linear-gradient(225deg, rgba(59,130,246, .52) 0%, rgba(255,255,255, .94) 100%) !important;
     border: 1px solid var(--lu-line) !important;
-    box-shadow: -8px 12px 30px rgba(1, 28, 64, .55) !important;
+    box-shadow: -8px 12px 30px rgba(239,246,255, .55) !important;
 }
 
 html body:not(#lu) :is(.bottom-nav, .admin-bottom-nav, .coach-bottom-nav) .active {
-    color: #ffffff !important;
-    background: rgba(167, 235, 242, .18) !important;
+    color: #172554 !important;
+    background: rgba(191, 219, 254, .18) !important;
 }
 
 /* ---------- میز خدمت / ورود ---------- */
 html body:not(#lu) :is(.desk-chip button, .desk-amount button, .desk-summary) {
-    background: rgba(167, 235, 242, .12) !important;
-    border: 1px solid rgba(167, 235, 242, .30) !important;
+    background: rgba(191, 219, 254, .12) !important;
+    border: 1px solid rgba(23,37,84, .30) !important;
     color: var(--lu-text) !important;
 }
 
 html body:not(#lu) .desk-head .desk-user {
-    background: rgba(167, 235, 242, .16) !important;
-    border: 1px solid rgba(167, 235, 242, .34) !important;
+    background: rgba(191, 219, 254, .16) !important;
+    border: 1px solid rgba(23,37,84, .34) !important;
     color: var(--lu-text) !important;
 }
 
@@ -1138,29 +1138,29 @@ html body:not(#lu) :is(
     .done-info-box, .face-status-box, .renew-info-box,
     .sent-table-wrap, .inside-table-wrap
 ) {
-    background: rgba(1, 28, 64, .45) !important;
-    border: 1px solid rgba(167, 235, 242, .20) !important;
+    background: rgba(239,246,255, .45) !important;
+    border: 1px solid rgba(23,37,84, .20) !important;
     border-radius: 16px !important;
-    box-shadow: inset -1px 1px 0 rgba(167, 235, 242, .18) !important;
+    box-shadow: inset -1px 1px 0 rgba(23,37,84, .18) !important;
 }
 
 /* ---------- متن‌های کم‌رنگ داخل کارت‌ها: خوانا ---------- */
 html body:not(#lu) :is(.recipient-button-label, .form-text, .text-muted) {
-    color: #CBE9EF !important;
+    color: #172554 !important;
 }
 
 /* ---------- جدول تحلیل بدن: متن خوانا ---------- */
 html body:not(#lu) .ba-table th {
-    background: rgba(1, 28, 64, .55) !important;
-    color: #CFF4F9 !important;
+    background: rgba(239,246,255, .55) !important;
+    color: #172554 !important;
 }
 
 html body:not(#lu) .ba-table td {
-    color: #CBE9EF !important;
+    color: #172554 !important;
 }
 
 html body:not(#lu) .ba-table caption {
-    color: #A7EBF2 !important;
+    color: #172554 !important;
 }
 
 /* ---------- تأیید هویت کمد (رمز/اثر انگشت) ---------- */
@@ -1172,7 +1172,7 @@ html body:not(#lu) .ba-table caption {
     align-items: center;
     justify-content: center;
     padding: 16px;
-    background: rgba(1, 28, 64, .58);
+    background: rgba(239,246,255, .58);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
 }
@@ -1184,10 +1184,10 @@ html body:not(#lu) .ba-table caption {
         max-width: 400px;
         padding: 20px;
         border-radius: 24px;
-        background: linear-gradient(225deg, #0B3D5C 0%, #011C40 62%);
-        border: 1px solid rgba(167, 235, 242, .30);
-        box-shadow: -10px 14px 32px rgba(1, 28, 64, .55), inset -1px 1px 0 rgba(167, 235, 242, .45);
-        color: #EAF7FA;
+        background: linear-gradient(225deg, #EFF6FF 0%, #EFF6FF 62%);
+        border: 1px solid rgba(23,37,84, .30);
+        box-shadow: -10px 14px 32px rgba(239,246,255, .55), inset -1px 1px 0 rgba(23,37,84, .45);
+        color: #172554;
     }
 
     .ath-lock-title {
@@ -1196,33 +1196,33 @@ html body:not(#lu) .ba-table caption {
         gap: 8px;
         font-weight: 800;
         font-size: .98rem;
-        color: #EAF7FA;
+        color: #172554;
         margin-bottom: 6px;
     }
 
-        .ath-lock-title i { color: #A7EBF2; }
+        .ath-lock-title i { color: #172554; }
 
     .ath-lock-sub {
         font-size: .76rem;
         line-height: 1.85;
-        color: #A7EBF2;
+        color: #172554;
         margin-bottom: 12px;
     }
 
     .ath-lock-box .form-control {
-        background: rgba(167, 235, 242, .12);
-        border: 1px solid rgba(167, 235, 242, .30);
-        color: #EAF7FA;
+        background: rgba(191, 219, 254, .12);
+        border: 1px solid rgba(23,37,84, .30);
+        color: #172554;
         border-radius: 14px;
         padding: 11px 13px;
     }
 
-        .ath-lock-box .form-control::placeholder { color: rgba(234, 247, 250, .48); }
+        .ath-lock-box .form-control::placeholder { color: rgba(23, 37, 84, .62); }
 
 .ath-locker-note {
     margin-top: 8px;
     font-size: .72rem;
-    color: #A7EBF2;
+    color: #172554;
     display: flex;
     align-items: center;
     gap: 6px;
@@ -1230,9 +1230,9 @@ html body:not(#lu) .ba-table caption {
 }
 
 .ath-btn-ghost {
-    background: rgba(167, 235, 242, .12) !important;
-    color: #EAF7FA !important;
-    border: 1px solid rgba(167, 235, 242, .30) !important;
+    background: rgba(191, 219, 254, .12) !important;
+    color: #172554 !important;
+    border: 1px solid rgba(23,37,84, .30) !important;
     box-shadow: none !important;
 }
 
@@ -1240,8 +1240,8 @@ html body:not(#lu) .ba-table caption {
 @media print {
     html body:not(#lu),
     html body:not(#lu) * {
-        background: #ffffff !important;
-        color: #000000 !important;
+        background: #EFF6FF !important;
+        color: #172554 !important;
         box-shadow: none !important;
         text-shadow: none !important;
         -webkit-backdrop-filter: none !important;
@@ -1259,9 +1259,9 @@ html body:not(#lu) .ba-table caption {
     max-width: min(42vw, 19rem);
     padding: 6px 12px;
     border-radius: 999px;
-    background: rgba(167, 235, 242, .12);
-    border: 1px solid rgba(167, 235, 242, .26);
-    color: #CFF4F9;
+    background: rgba(191, 219, 254, .12);
+    border: 1px solid rgba(23,37,84, .26);
+    color: #172554;
     font-size: .78rem;
     font-weight: 800;
     white-space: nowrap;

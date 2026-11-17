@@ -16,7 +16,7 @@
     </div>
 </div>
 
-<p class="small mb-3" style="color:#A7EBF2">
+<p class="small mb-3" style="color:#172554">
     <i class="bi bi-info-circle me-1"></i>
     در این بخش پیام‌هایی که مدیریت برای شما فرستاده نمایش داده می‌شود. برای خواندن متن کامل روی پیام بزنید.
 </p>
@@ -56,7 +56,7 @@
 
 <style>
     .hd-icon {
-        color: #54ACBF;
+        color: #3B82F6;
         margin-left: 6px;
     }
 
@@ -64,9 +64,9 @@
         display: inline-flex;
         align-items: center;
         gap: 8px;
-        background: rgba(255,255,255,.08);
-        border: 1px solid rgba(255,255,255,.18);
-        color: #A7EBF2;
+        background: rgba(191, 219, 254,.08);
+        border: 1px solid rgba(23,37,84,.18);
+        color: #172554;
         border-radius: 999px;
         padding: 7px 18px;
         font-size: .82rem;
@@ -78,29 +78,29 @@
     }
 
         .coach-back-pill i {
-            color: #54ACBF;
+            color: #3B82F6;
         }
 
         .coach-back-pill:hover {
-            background: rgba(255,255,255,.14);
-            color: #fff;
+            background: rgba(191, 219, 254,.14);
+            color: #172554;
         }
 
     .ms-empty {
-        background: linear-gradient(160deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
-        border: 1px solid rgba(255,255,255,.14);
+        background: linear-gradient(160deg, rgba(191, 219, 254,.08), rgba(23,37,84,.03));
+        border: 1px solid rgba(23,37,84,.14);
         border-radius: 20px;
         text-align: center;
         padding: 44px 16px;
-        color: #A7EBF2;
+        color: #172554;
         font-size: .9rem;
     }
 
     .ms-card {
         position: relative;
         overflow: hidden;
-        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
-        border: 1px solid rgba(255,255,255,.14);
+        background: linear-gradient(160deg, rgba(191, 219, 254,.10), rgba(23,37,84,.04));
+        border: 1px solid rgba(23,37,84,.14);
         border-radius: 18px;
         padding: 16px;
         cursor: pointer;
@@ -115,13 +115,13 @@
             left: -40px;
             width: 130px;
             height: 130px;
-            background: radial-gradient(circle, rgba(46,134,222,.25), transparent 70%);
+            background: radial-gradient(circle, rgba(191, 219, 254,.25), transparent 70%);
             pointer-events: none;
         }
 
     .ms-card-unread {
-        border-color: rgba(84, 172, 191,.45);
-        box-shadow: 0 6px 18px rgba(46,134,222,.18);
+        border-color: rgba(59,130,246,.45);
+        box-shadow: 0 6px 18px rgba(23,37,84,.18);
     }
 
     .ms-avatar {
@@ -133,20 +133,20 @@
         align-items: center;
         justify-content: center;
         font-size: 1.3rem;
-        color: #fff;
-        background: linear-gradient(135deg, #26658C, #023859);
-        box-shadow: 0 5px 14px rgba(84, 172, 191,.4);
+        color: #172554;
+        background: linear-gradient(135deg, #3B82F6, #FFFFFF);
+        box-shadow: 0 5px 14px rgba(59,130,246,.4);
     }
 
     /* آواتار پیام‌های ارسالی — آبی تا از دریافتی متمایز شود */
     .ms-avatar-out {
-        background: linear-gradient(135deg, #2196f3, #2172d6);
-        box-shadow: 0 5px 14px rgba(33,114,214,.4);
+        background: linear-gradient(135deg, #EFF6FF, #172554);
+        box-shadow: 0 5px 14px rgba(59,130,246,.4);
     }
 
     .ms-name {
         font-weight: 800;
-        color: #fff;
+        color: #172554;
         font-size: .95rem;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -154,13 +154,13 @@
 
     .ms-unread {
         flex: 0 0 auto;
-        background: #ff6b81;
-        color: #fff;
+        background: #EFF6FF;
+        color: #172554;
         border-radius: 999px;
         padding: 3px 9px;
         font-size: .68rem;
         font-weight: 800;
-        box-shadow: 0 2px 8px rgba(255,107,129,.5);
+        box-shadow: 0 2px 8px rgba(23,37,84,.5);
         white-space: nowrap;
     }
 
@@ -173,9 +173,9 @@
     /* چیپ «ارسالی» برای پیام‌های خروجی */
     .ms-chip-out {
         flex: 0 0 auto;
-        background: rgba(33,146,246,.25);
-        border: 1px solid rgba(33,146,246,.45);
-        color: #A7EBF2;
+        background: rgba(59,130,246,.25);
+        border: 1px solid rgba(59,130,246,.45);
+        color: #172554;
         border-radius: 999px;
         padding: 3px 9px;
         font-size: .68rem;
@@ -185,7 +185,7 @@
 
     .ms-arrow {
         flex: 0 0 auto;
-        color: #54ACBF;
+        color: #3B82F6;
         transition: transform .25s;
         margin-top: 4px;
     }
@@ -196,11 +196,11 @@
 
     .ms-preview {
         margin-top: 12px;
-        background: rgba(255,255,255,.05);
-        border: 1px solid rgba(255,255,255,.10);
+        background: rgba(191, 219, 254,.05);
+        border: 1px solid rgba(23,37,84,.10);
         border-radius: 12px;
         padding: 9px 12px;
-        color: #9FC6D2;
+        color: rgba(23,37,84, .62);
         font-size: .8rem;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -213,11 +213,11 @@
 
     .ms-full {
         margin-top: 12px;
-        background: rgba(255,255,255,.05);
-        border: 1px solid rgba(255,255,255,.10);
+        background: rgba(191, 219, 254,.05);
+        border: 1px solid rgba(23,37,84,.10);
         border-radius: 12px;
         padding: 11px 13px;
-        color: rgba(167, 235, 242, .18);
+        color: rgba(23, 37, 84, .62);
         font-size: .85rem;
         line-height: 1.9;
         white-space: pre-wrap;
@@ -226,7 +226,7 @@
 
     .ms-date {
         font-size: .68rem;
-        color: #9FC6D2;
+        color: rgba(23,37,84, .62);
         margin-top: 6px;
     }
 </style>

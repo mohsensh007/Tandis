@@ -17,13 +17,24 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#011C40" />
+    <meta name="theme-color" content="#EFF6FF" />
     <title>@title | میز خدمت @clubName</title>
+    <script>
+        (function () {
+            try {
+                var t = localStorage.getItem('tandis-theme');
+                if (!t) t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                document.documentElement.setAttribute('data-theme', t);
+            } catch (e) { document.documentElement.setAttribute('data-theme', 'light'); }
+        })();
+    </script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/member-commerce.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme-arctic.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme-glass.css" asp-append-version="true" />
     <style>
         body { min-height: 100vh; font-family: inherit; }
         .dk-commerce-head {
@@ -34,74 +45,64 @@
             display: inline-flex; align-items: center; gap: 6px; text-decoration: none;
             white-space: nowrap; line-height: 1.5; flex: 0 0 auto;
             padding: 9px 16px; border-radius: 999px; font-size: .82rem; font-weight: 700;
-            color: #EAF7FA; background: rgba(167, 235, 242, .14);
-            border: 1px solid rgba(167, 235, 242, .32);
         }
-        .dk-back:hover { color: #fff; background: rgba(167, 235, 242, .22); }
         .dk-commerce-title {
             display: inline-flex; align-items: center; gap: 8px;
-            font-size: 1.05rem; font-weight: 800; color: #EAF7FA;
+            font-size: 1.05rem; font-weight: 800;
         }
-        .dk-member-bar {
+        .dk-open-strip {
             max-width: 1240px; margin: 10px auto 0; padding: 0 12px;
         }
+        .dk-open-inner {
+            display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+            padding: 11px 16px; border-radius: 18px; font-size: .8rem; line-height: 1.9;
+        }
+        .dk-open-inner b { font-size: .85rem; }
         .dk-member-inner {
             display: flex; align-items: center; justify-content: space-between; gap: 12px;
             flex-wrap: wrap; padding: 12px 16px; border-radius: 18px;
-            background: rgba(1, 28, 64, .38); border: 1px solid rgba(167, 235, 242, .26);
         }
-        .dk-member-inner b { font-size: .95rem; color: #EAF7FA; }
-        .dk-member-inner span { font-size: .74rem; color: #CBE9EF; display: block; }
+        .dk-member-inner b { font-size: .95rem; }
+        .dk-member-inner span { font-size: .74rem; display: block; }
         .dk-credits { display: flex; gap: 8px; flex-wrap: wrap; }
         .dk-credits em {
             font-style: normal; font-size: .7rem; padding: 4px 10px; border-radius: 999px;
-            background: rgba(167, 235, 242, .12); border: 1px solid rgba(167, 235, 242, .22);
-            color: #EAF7FA;
         }
-        .dk-picker {
-            max-width: 560px; margin: 40px auto; padding: 22px; border-radius: 26px;
-            background: rgba(1, 28, 64, .42); border: 1px solid rgba(167, 235, 242, .28);
-        }
-        .dk-picker h1 { font-size: 1.05rem; font-weight: 800; color: #EAF7FA; margin-bottom: 6px; }
-        .dk-picker p { font-size: .78rem; color: #CBE9EF; margin-bottom: 16px; line-height: 1.9; }
-        .dk-picker .form-control {
-            background: rgba(1, 28, 64, .55); border: 1px solid rgba(167, 235, 242, .30);
-            color: #EAF7FA; border-radius: 14px; padding: 12px 14px; font-size: .92rem;
-            text-align: center; letter-spacing: 1px;
-        }
-        .dk-picker .form-control::placeholder { color: rgba(234, 247, 250, .55); }
         .dk-pay-modal {
             position: fixed; inset: 0; z-index: 1080; display: none;
             align-items: center; justify-content: center; padding: 16px;
-            background: rgba(1, 28, 64, .45);
         }
         .dk-pay-modal.open { display: flex; }
         .dk-pay-box {
-            width: 100%; max-width: 420px; padding: 20px; border-radius: 24px;
-            background: linear-gradient(160deg, rgba(38, 101, 140, .96), rgba(1, 28, 64, .98));
-            border: 1px solid rgba(167, 235, 242, .28); color: #EAF7FA;
+            width: 100%; max-width: 430px; padding: 22px; border-radius: 24px;
+            max-height: 94vh; overflow-y: auto;
         }
-        .dk-pay-box h2 { font-size: .95rem; font-weight: 800; margin-bottom: 4px; }
-        .dk-pay-amount { font-size: 1.5rem; font-weight: 800; color: #A7EBF2; margin: 6px 0 14px; }
+        .dk-pay-box h2 { font-size: .98rem; font-weight: 800; margin-bottom: 4px; }
+        .dk-pay-amount { font-size: 1.45rem; font-weight: 800; margin: 6px 0 6px; }
+        .dk-pay-help { font-size: .74rem; line-height: 1.9; margin-bottom: 14px; }
+        .dk-field { margin-bottom: 10px; }
+        .dk-field label { display: block; font-size: .74rem; font-weight: 700; margin-bottom: 5px; }
+        .dk-field .form-control {
+            width: 100%; border-radius: 12px; padding: 11px 13px; font-size: .9rem;
+        }
+        .dk-field-row { display: flex; gap: 8px; }
+        .dk-field-row .dk-field { flex: 1 1 0; min-width: 0; }
         .dk-pay-btn {
             width: 100%; padding: 13px; border-radius: 16px; margin-top: 8px;
-            font-size: .9rem; font-weight: 800; color: #fff; border: 1px solid rgba(255, 255, 255, .3);
-            background: linear-gradient(135deg, #54ACBF 0%, #26658C 60%, #023859 100%);
+            font-size: .9rem; font-weight: 800; cursor: pointer;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         }
-        .dk-pay-btn.ghost { background: rgba(167, 235, 242, .14); color: #EAF7FA; }
-        .dk-pay-btn:disabled { opacity: .55; }
-        .dk-pay-note { font-size: .74rem; color: #CBE9EF; margin-top: 10px; line-height: 1.9; }
+        .dk-pay-btn:disabled { opacity: .55; cursor: default; }
+        .dk-pay-note { font-size: .74rem; margin-top: 10px; line-height: 1.9; min-height: 18px; }
         .dk-toast {
             position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%);
             z-index: 1200; max-width: 92vw; padding: 12px 20px; border-radius: 16px;
-            font-size: .82rem; font-weight: 700; color: #fff; display: none;
-            background: linear-gradient(135deg, #26658C, #011C40);
-            box-shadow: 0 16px 36px rgba(1, 28, 64, .4);
+            font-size: .82rem; font-weight: 700; display: none;
         }
-        .dk-toast.err { background: linear-gradient(135deg, #d13b4a, #7c1020); }
         .dk-toast.show { display: block; }
         @@media (max-width: 720px) {
-            .dk-picker { margin: 18px 12px; padding: 18px; }
+            .dk-commerce-head { padding: 12px 10px 0; }
+            .dk-field-row { flex-direction: column; }
         }
     </style>
 </head>
@@ -111,28 +112,19 @@
             <i class="bi @icon"></i>
             <span>@title — میز خدمت</span>
         </div>
-        <div style="display:flex;align-items:center;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <button type="button" class="theme-toggle" data-theme-toggle aria-label="تغییر حالت روشن و تاریک">
+                <i class="bi bi-sun-fill" aria-hidden="true"></i>
+            </button>
             <span class="dk-credits"><em><i class="bi bi-person-badge"></i> @deskUser</em></span>
             <a class="dk-back" href="@backUrl"><i class="bi bi-arrow-right"></i> بازگشت به میز خدمت</a>
         </div>
     </div>
 
-    @if (member == null)
+    @if (member != null)
     {
-        <div class="dk-picker">
-            <h1>انتخاب عضو برای @title</h1>
-            <p>کد ملی یا شماره موبایل عضو را وارد کنید تا محصولات و اعتبارهای همان عضو نمایش داده شود.</p>
-            <input type="text" id="dkFindInput" class="form-control" inputmode="numeric"
-                   placeholder="کد ملی ۱۰ رقمی یا موبایل ۱۱ رقمی" autocomplete="off" />
-            <button type="button" class="dk-pay-btn" id="dkFindBtn" style="margin-top:14px;">
-                <i class="bi bi-search"></i> جستجوی عضو
-            </button>
-        </div>
-    }
-    else
-    {
-        <div class="dk-member-bar">
-            <div class="dk-member-inner">
+        <div class="dk-open-strip">
+            <div class="dk-member-inner glass-surface">
                 <div>
                     <b>@member.FullName</b>
                     <span>کد ملی @member.NationalCode</span>
@@ -147,32 +139,64 @@
                 </a>
             </div>
         </div>
-
-        @if (isService)
-        {
-            @await Html.PartialAsync("~/Views/Service/Index.cshtml")
-        }
-        else if (isBuffet)
-        {
-            @await Html.PartialAsync("~/Views/Shop/Buffet.cshtml")
-        }
-        else
-        {
-            @await Html.PartialAsync("~/Views/Shop/Index.cshtml")
-        }
+    }
+    else
+    {
+        <div class="dk-open-strip">
+            <div class="dk-open-inner glass-surface">
+                <i class="bi bi-unlock-fill"></i>
+                <span>
+                    خرید برای همه باز است. اگر عضو باشگاه هستید، در پنجرهٔ پرداخت دکمهٔ «پرداخت از اعتبار» را بزنید و
+                    <b>کد ملی و رمز خود</b> را وارد کنید؛ در غیر این صورت با دکمهٔ «پرداخت با کارت‌خوان» خرید به‌نام
+                    <b>مهمان</b> ثبت می‌شود.
+                </span>
+            </div>
+        </div>
     }
 
-    <div class="dk-pay-modal" id="dkPayModal">
-        <div class="dk-pay-box">
+    @if (isService)
+    {
+        @await Html.PartialAsync("~/Views/Service/Index.cshtml")
+    }
+    else if (isBuffet)
+    {
+        @await Html.PartialAsync("~/Views/Shop/Buffet.cshtml")
+    }
+    else
+    {
+        @await Html.PartialAsync("~/Views/Shop/Index.cshtml")
+    }
+
+    <div class="dk-pay-modal dk-glass-backdrop" id="dkPayModal">
+        <div class="dk-pay-box glass-strong">
             <h2 id="dkPayTitle">پرداخت</h2>
             <div class="dk-pay-amount" id="dkPayAmount">0 ریال</div>
-            <button type="button" class="dk-pay-btn" id="dkPayCredit">
+            <div class="dk-pay-help">
+                برای کسر از اعتبار، کد ملی و رمز عضو را وارد کنید. برای پرداخت با کارت‌خوان نیازی به این اطلاعات
+                نیست و خرید به‌عنوان مهمان ثبت می‌شود (نام مهمان اختیاری است).
+            </div>
+
+            <div class="dk-field">
+                <label for="dkPayNational">کد ملی عضو <span style="opacity:.65">(برای پرداخت از اعتبار)</span></label>
+                <input type="text" id="dkPayNational" class="form-control" inputmode="numeric" maxlength="10"
+                       placeholder="مثلاً 0012345678" autocomplete="off" dir="ltr" />
+            </div>
+            <div class="dk-field">
+                <label for="dkPayPassword">رمز عضو</label>
+                <input type="password" id="dkPayPassword" class="form-control" placeholder="رمز عبور عضو" autocomplete="off" dir="ltr" />
+            </div>
+            <div class="dk-field">
+                <label for="dkPayGuest">نام مهمان <span style="opacity:.65">(اختیاری)</span></label>
+                <input type="text" id="dkPayGuest" class="form-control" maxlength="50" placeholder="نام و نام خانوادگی مهمان" />
+            </div>
+
+            <button type="button" class="dk-pay-btn btn-primary" id="dkPayCredit">
                 <i class="bi bi-wallet2"></i> پرداخت از اعتبار عضو
             </button>
-            <button type="button" class="dk-pay-btn ghost" id="dkPayPos">
-                <i class="bi bi-credit-card-2-front"></i> پرداخت با کارت‌خوان
+            <button type="button" class="dk-pay-btn btn-glass" id="dkPayPos">
+                <i class="bi bi-credit-card-2-front"></i> پرداخت با کارت‌خوان (مهمان)
             </button>
-            <button type="button" class="dk-pay-btn ghost" id="dkPayCancel">انصراف</button>
+            <button type="button" class="dk-pay-btn btn-glass" id="dkPayCancel">انصراف</button>
             <div class="dk-pay-note" id="dkPayNote"></div>
         </div>
     </div>
@@ -188,5 +212,6 @@
         };
     </script>
     <script src="~/js/desk-commerce.js" asp-append-version="true"></script>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
 </body>
 </html>

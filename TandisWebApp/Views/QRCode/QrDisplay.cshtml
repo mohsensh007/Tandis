@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#011C40" />
+    <meta name="theme-color" content="#EFF6FF" />
     <title>QR باشگاه شما</title>
     <style>
         * { box-sizing: border-box; }
@@ -20,8 +20,8 @@
             align-items: center;
             justify-content: center;
             padding: calc(16px + env(safe-area-inset-top)) 14px calc(16px + env(safe-area-inset-bottom));
-            background: radial-gradient(circle at 50% 0%, #023859 0%, #011C40 62%);
-            color: #EAF7FA;
+            background: radial-gradient(circle at 50% 0%, #FFFFFF 0%, #EFF6FF 62%);
+            color: #172554;
             font-family: 'Sahel', Tahoma, Arial, sans-serif;
         }
 
@@ -31,9 +31,9 @@
             text-align: center;
             padding: 26px 20px 22px;
             border-radius: 26px;
-            background: rgba(2, 56, 89,.8);
-            border: 1px solid rgba(84, 172, 191,.35);
-            box-shadow: 0 22px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.07);
+            background: rgba(255,255,255,.8);
+            border: 1px solid rgba(59,130,246,.35);
+            box-shadow: 0 22px 60px rgba(23,37,84,.45), inset 0 1px 0 rgba(23,37,84,.07);
             -webkit-backdrop-filter: blur(16px);
             backdrop-filter: blur(16px);
         }
@@ -46,7 +46,7 @@
 
         .qr-sub {
             font-size: .78rem;
-            color: #9FCBD8;
+            color: #172554;
             margin: 0 0 18px;
         }
 
@@ -54,8 +54,8 @@
             display: inline-block;
             padding: 14px;
             border-radius: 20px;
-            background: #fff;
-            box-shadow: 0 10px 30px rgba(0,0,0,.35);
+            background: #EFF6FF;
+            box-shadow: 0 10px 30px rgba(23,37,84,.35);
         }
 
             .qr-box img {
@@ -66,12 +66,12 @@
 
         .qr-note {
             font-size: .8rem;
-            color: #CDE9EF;
+            color: #172554;
             line-height: 1.9;
             margin: 18px 0 0;
         }
 
-            .qr-note b { color: #54ACBF; }
+            .qr-note b { color: #3B82F6; }
 
         .qr-actions {
             display: flex;
@@ -90,23 +90,23 @@
             font-size: .85rem;
             font-weight: 700;
             text-decoration: none;
-            border: 1px solid rgba(84, 172, 191,.55);
-            color: #EAF7FA;
-            background: rgba(84, 172, 191,.55);
+            border: 1px solid rgba(59,130,246,.55);
+            color: #172554;
+            background: rgba(59,130,246,.55);
             cursor: pointer;
             font-family: inherit;
         }
 
             .qr-btn.primary {
-                background: #54ACBF;
-                border-color: #54ACBF;
-                color: #011C40;
+                background: #3B82F6;
+                border-color: #3B82F6;
+                color: #172554;
             }
 
         @@media print {
-            body { background: #fff; color: #000; }
-            .qr-card { box-shadow: none; border-color: #ccc; background: #fff; }
-            .qr-sub, .qr-note { color: #333; }
+            body { background: #EFF6FF; color: #172554; }
+            .qr-card { box-shadow: none; border-color: #BFDBFE; background: #EFF6FF; }
+            .qr-sub, .qr-note { color: #172554; }
             .qr-actions { display: none; }
         }
     </style>

@@ -256,5 +256,127 @@ namespace TandisWebApp.Services
                 return new SimpleResponse { Success = false, Message = "خطا در ثبت اطلاعات" };
             }
         }
+
+        /// <summary>
+        /// خرید «مهمان» از فروشگاه/بوفه — فقط با کارت‌خوان.
+        /// فاکتور بدون MemberID و با نام مهمان ثبت می‌شود و هیچ سندی روی اعتبار کسی زده نمی‌شود.
+        /// </summary>
+        public async Task<SimpleResponse> BuyGuestAsync(List<BasketItem>? items, bool isBuffet, string? guestName,
+                                                        long? posTxnId, short shiftID)
+        {
+            var name = (guestName ?? "").Trim();
+            if (name.Length < 3) name = "مهمان";
+            if (name.Length > 50) name = name.Substring(0, 50);
+
+            if (items == null || !items.Any())
+                return new SimpleResponse { Success = false, Message = "سبد خرید خالی است" };
+
+            if (items.Any(i => i.Count <= 0 || i.Count > 100))
+                return new SimpleResponse { Success = false, Message = "تعداد کالا نامعتبر است" };
+
+            var ids = items.Select(i => i.StuffID).Distinct().ToList();
+            var stuffs = await _db.Gen_Stuffs.AsNoTracking()
+                .Where(s => ids.Contains(s.StuffID) && s.ShiftID == shiftID)
+                .ToListAsync();
+
+            if (stuffs.Count != ids.Count)
+                return new SimpleResponse { Success = false, Message = "برخی کالاها یافت نشدند" };
+
+            var map = stuffs.ToDictionary(s => s.StuffID);
+            long total = 0;
+            var lines = new List<(Gen_Stuff Stuff, int Count)>();
+
+            foreach (var item in items)
+            {
+                var stuff = map[item.StuffID];
+                if (stuff.StuffAmount == null || stuff.StuffAmount <= 0)
+                    return new SimpleResponse { Success = false, Message = $"قیمت کالا «{stuff.StuffDesc}» نامعتبر است" };
+
+                if (stuff.IsBuffet != isBuffet)
+                {
+                    var type = isBuffet ? "بوفه" : "فروشگاه";
+                    return new SimpleResponse { Success = false, Message = $"کالا «{stuff.StuffDesc}» متعلق به {type} نیست" };
+                }
+
+                total += stuff.StuffAmount.Value * item.Count;
+                lines.Add((stuff, item.Count));
+            }
+
+            if (total <= 0)
+                return new SimpleResponse { Success = false, Message = "مبلغ خرید نامعتبر است" };
+
+            // مرحلهٔ ۱: ارسال مبلغ به کارت‌خوان
+            if (posTxnId == null)
+            {
+                var intent = await _pos.CreateIntentAsync(0, total, PosPaymentService.REF_SHOP);
+                if (!intent.Success)
+                    return new SimpleResponse { Success = false, Message = intent.Message };
+
+                return new SimpleResponse
+                {
+                    Success = true,
+                    PaymentPending = true,
+                    PosTxnId = intent.Data,
+                    PosAmount = total,
+                    PosAmountDisplay = _helper.SetSeprator(total) + " ریال",
+                    Message = "مبلغ روی دستگاه POS ارسال شد"
+                };
+            }
+
+            // مرحلهٔ ۲: بعد از تأیید پرداخت، فاکتور مهمان ثبت می‌شود
+            using var tx = await _db.Database.BeginTransactionAsync();
+            try
+            {
+                var claimed = await _pos.ClaimAsync(posTxnId.Value, 0, total, PosPaymentService.REF_SHOP);
+                if (!claimed)
+                    return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
+
+                var factor = new Acc_BuffetFactor
+                {
+                    MemberID = null,
+                    BuffetFactorTotalAmount = total,
+                    DiscountAmount = 0,
+                    PersonName = name,
+                    IsReceipt = false,
+                    IsPosReceipt = true,
+                    IsClose = true,
+                    ShiftID = shiftID,
+                    UserID = WEB_USER_ID,
+                    CreationDate = _helper.GetToday(),
+                    CreationTime = _helper.GetThisTime()
+                };
+                _db.Acc_BuffetFactors.Add(factor);
+                await _db.SaveChangesAsync();
+
+                foreach (var (stuff, count) in lines)
+                {
+                    _db.Acc_BuffetFactorDetails.Add(new Acc_BuffetFactorDetail
+                    {
+                        BuffetFactorID = factor.BuffetFactorID,
+                        StuffID = stuff.StuffID,
+                        Amount = stuff.StuffAmount!.Value,
+                        SCount = count,
+                        CreationDate = _helper.GetToday(),
+                        CreationTime = _helper.GetThisTime()
+                    });
+                }
+                await _db.SaveChangesAsync();
+
+                await _pos.SettleRefAsync(posTxnId.Value, factor.BuffetFactorID);
+                await tx.CommitAsync();
+
+                return new SimpleResponse
+                {
+                    Success = true,
+                    Message = $"خرید مهمان برای {name} ثبت شد — {_helper.SetSeprator(total)} ریال"
+                };
+            }
+            catch (Exception ex)
+            {
+                await tx.RollbackAsync();
+                _logger.LogError(ex, "خطا در ثبت خرید مهمان (فروشگاه/بوفه)");
+                return new SimpleResponse { Success = false, Message = "خطا در ثبت اطلاعات" };
+            }
+        }
     }
 }

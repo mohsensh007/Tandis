@@ -47,27 +47,27 @@
             <title id="chChartTitle">نمودار فعالیت باشگاه</title>
             <defs>
                 <linearGradient id="chAreaGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="rgba(84, 172, 191,.35)"/>
-                    <stop offset="100%" stop-color="rgba(84, 172, 191,0)"/>
+                    <stop offset="0%" stop-color="rgba(59,130,246,.35)"/>
+                    <stop offset="100%" stop-color="rgba(59,130,246,0)"/>
                 </linearGradient>
             </defs>
             <g id="chGrid"></g>
             <g id="chAxisY"></g>
             <g id="chAxisX"></g>
-            <path id="chAreaPrev" fill="none" stroke="rgba(159,179,200,.55)" stroke-width="1.8" stroke-dasharray="5 5"/>
-            <path id="chLinePrev" fill="none" stroke="rgba(159,179,200,.75)" stroke-width="1.6" pathLength="1"/>
+            <path id="chAreaPrev" fill="none" stroke="rgba(23,37,84,.55)" stroke-width="1.8" stroke-dasharray="5 5"/>
+            <path id="chLinePrev" fill="none" stroke="rgba(23,37,84,.75)" stroke-width="1.6" pathLength="1"/>
             <path id="chArea" fill="url(#chAreaGrad)" stroke="none"/>
-            <path id="chLine" fill="none" stroke="#54ACBF" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" pathLength="1"/>
-            <line id="chCursor" x1="0" y1="0" x2="0" y2="320" stroke="rgba(255,255,255,.55)" stroke-width="1.2" style="display:none"/>
-            <circle id="chDot" r="4.5" fill="#54ACBF" stroke="#0e1a30" stroke-width="2" style="display:none"/>
-            <circle id="chDotPrev" r="3.5" fill="rgba(159,179,200,.9)" stroke="#0e1a30" stroke-width="1.6" style="display:none"/>
+            <path id="chLine" fill="none" stroke="#3B82F6" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" pathLength="1"/>
+            <line id="chCursor" x1="0" y1="0" x2="0" y2="320" stroke="rgba(23,37,84,.55)" stroke-width="1.2" style="display:none"/>
+            <circle id="chDot" r="4.5" fill="#3B82F6" stroke="#172554" stroke-width="2" style="display:none"/>
+            <circle id="chDotPrev" r="3.5" fill="rgba(23,37,84,.9)" stroke="#172554" stroke-width="1.6" style="display:none"/>
         </svg>
         <div class="ch-tooltip" id="chTooltip" role="tooltip" style="display:none"></div>
     </div>
 
     <div class="ch-legend">
-        <span><i style="background:#54ACBF"></i> دوره جاری</span>
-        <span><i style="background:#A7EBF2"></i> دوره قبل</span>
+        <span><i style="background:#3B82F6"></i> دوره جاری</span>
+        <span><i style="background:#EFF6FF"></i> دوره قبل</span>
     </div>
 </div>
 
@@ -129,7 +129,7 @@
                 <div><b id="chTrafficTotal">-</b><small>ورود</small></div>
                 <div><b id="chTrafficPrev">-</b><small>دوره قبل</small></div>
             </div>
-            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#54ACBF" stroke-width="2"/></svg></div>
+            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#3B82F6" stroke-width="2"/></svg></div>
             <div class="ch-side-foot"><i class="bi bi-people-fill"></i> ورود اعضا و مهمان‌ها</div>
         </div>
     </div>
@@ -140,7 +140,7 @@
                 <div><b id="chRegisterTotal">-</b><small>نفر</small></div>
                 <div><b id="chRegisterPrev">-</b><small>دوره قبل</small></div>
             </div>
-            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#54ACBF" stroke-width="2"/></svg></div>
+            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#3B82F6" stroke-width="2"/></svg></div>
             <div class="ch-side-foot"><i class="bi bi-person-plus-fill"></i> عضویت‌های جدید و تمدید دوره</div>
         </div>
     </div>
@@ -151,7 +151,7 @@
                 <div><b id="chTicketTotal">-</b><small>بلیط</small></div>
                 <div><b id="chTicketPrev">-</b><small>دوره قبل</small></div>
             </div>
-            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#54ACBF" stroke-width="2"/></svg></div>
+            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#3B82F6" stroke-width="2"/></svg></div>
             <div class="ch-side-foot"><i class="bi bi-ticket-perforated-fill"></i> بلیط‌های تک‌جلسه فروخته‌شده</div>
         </div>
     </div>
@@ -162,7 +162,7 @@
                 <div><b id="chServiceTotal">-</b><small>سرویس</small></div>
                 <div><b id="chServicePrev">-</b><small>دوره قبل</small></div>
             </div>
-            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#54ACBF" stroke-width="2"/></svg></div>
+            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#3B82F6" stroke-width="2"/></svg></div>
             <div class="ch-side-foot"><i class="bi bi-gift-fill"></i> خدمات ارائه‌شده (ماساژ، مربی و…)</div>
         </div>
     </div>
@@ -173,7 +173,7 @@
                 <div><b id="chFinanceTotal">-</b><small>ریال</small></div>
                 <div><b id="chFinancePrev">-</b><small>دوره قبل</small></div>
             </div>
-            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#54ACBF" stroke-width="2"/></svg></div>
+            <div class="ch-spark"><svg viewBox="0 0 220 56" preserveAspectRatio="none"><path class="ch-spark-area" fill="url(#chAreaGrad)"/><path class="ch-spark-line" fill="none" stroke="#3B82F6" stroke-width="2"/></svg></div>
             <div class="ch-side-foot"><i class="bi bi-cash-coin"></i> جمع اسناد دریافت</div>
         </div>
     </div>
@@ -192,8 +192,8 @@
 <style>
     /* ===== کارت اصلی نمودار ===== */
     .ch-main-card {
-        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
-        border: 1px solid rgba(255,255,255,.14);
+        background: linear-gradient(160deg, rgba(191, 219, 254,.10), rgba(23,37,84,.04));
+        border: 1px solid rgba(23,37,84,.14);
         border-radius: 20px;
         padding: 18px;
         overflow: hidden;
@@ -209,13 +209,13 @@
 
     .ch-main-title {
         font-weight: 800;
-        color: #fff;
+        color: #172554;
         font-size: 1rem;
     }
 
     .ch-main-sub {
         font-size: .75rem;
-        color: #A7EBF2;
+        color: #172554;
         margin-top: 2px;
     }
 
@@ -226,9 +226,9 @@
     }
 
     .ch-pill {
-        background: rgba(255,255,255,.06);
-        border: 1px solid rgba(255,255,255,.14);
-        color: #A7EBF2;
+        background: rgba(191, 219, 254,.06);
+        border: 1px solid rgba(23,37,84,.14);
+        color: #172554;
         border-radius: 999px;
         padding: 7px 16px;
         font-size: .78rem;
@@ -239,15 +239,15 @@
     }
 
         .ch-pill:hover {
-            color: #fff;
-            background: rgba(255,255,255,.10);
+            color: #172554;
+            background: rgba(191, 219, 254,.10);
         }
 
         .ch-pill.active {
-            background: linear-gradient(135deg, #26658C, #26658C);
+            background: linear-gradient(135deg, #3B82F6, #3B82F6);
             border-color: transparent;
-            color: #fff;
-            box-shadow: 0 6px 16px rgba(84, 172, 191,.35);
+            color: #172554;
+            box-shadow: 0 6px 16px rgba(59,130,246,.35);
         }
 
     /* ===== نوار ابزار: دلتا + دوره ===== */
@@ -266,16 +266,16 @@
         gap: 7px;
         font-weight: 800;
         font-size: 1.35rem;
-        color: #fff;
+        color: #172554;
         direction: ltr;
     }
 
-        .ch-delta .up { color: #54ACBF; }
-        .ch-delta .down { color: #ff6b81; }
+        .ch-delta .up { color: #3B82F6; }
+        .ch-delta .down { color: #172554; }
         .ch-delta small {
             font-size: .68rem;
             font-weight: 700;
-            color: #A7EBF2;
+            color: #172554;
             direction: rtl;
         }
 
@@ -292,9 +292,9 @@
         width: 38px;
         height: 38px;
         border-radius: 12px;
-        background: rgba(255,255,255,.07);
-        border: 1px solid rgba(255,255,255,.16);
-        color: #A7EBF2;
+        background: rgba(191, 219, 254,.07);
+        border: 1px solid rgba(23,37,84,.16);
+        color: #172554;
         font-size: 1rem;
         display: flex;
         align-items: center;
@@ -303,9 +303,9 @@
     }
 
         .ch-navbtn:hover:not(:disabled) {
-            background: rgba(84, 172, 191,.16);
-            color: #fff;
-            border-color: rgba(84, 172, 191,.45);
+            background: rgba(59,130,246,.16);
+            color: #172554;
+            border-color: rgba(59,130,246,.45);
         }
 
         .ch-navbtn:disabled {
@@ -333,11 +333,11 @@
     }
 
         .ch-range.cur {
-            color: #fff;
+            color: #172554;
         }
 
         .ch-range.prev {
-            color: #A7EBF2;
+            color: #172554;
             font-size: .68rem;
         }
 
@@ -349,12 +349,12 @@
     }
 
     .ch-range.cur .ch-range-dot {
-        background: #54ACBF;
-        box-shadow: 0 0 8px rgba(84, 172, 191,.9);
+        background: #3B82F6;
+        box-shadow: 0 0 8px rgba(59,130,246,.9);
     }
 
     .ch-range.prev .ch-range-dot {
-        background: #A7EBF2;
+        background: #EFF6FF;
     }
 
     /* ===== نمودار ===== */
@@ -412,17 +412,17 @@
     }
 
     .ch-gridline {
-        stroke: rgba(255,255,255,.07);
+        stroke: rgba(23,37,84,.07);
         stroke-width: 1;
     }
 
     .ch-gridline-main {
-        stroke: rgba(255,255,255,.14);
+        stroke: rgba(23,37,84,.14);
         stroke-width: 1;
     }
 
     .ch-axlabel {
-        fill: #A7EBF2;
+        fill: #172554;
         font-size: 11px;
         font-family: 'Sahel', Tahoma, sans-serif;
         font-weight: 600;
@@ -431,26 +431,26 @@
     .ch-tooltip {
         position: absolute;
         pointer-events: none;
-        background: rgba(10,15,30,.94);
-        border: 1px solid rgba(84, 172, 191,.35);
+        background: rgba(191, 219, 254,.94);
+        border: 1px solid rgba(59,130,246,.35);
         border-radius: 10px;
         padding: 7px 11px;
         font-size: .74rem;
-        color: #fff;
+        color: #172554;
         white-space: nowrap;
         z-index: 5;
-        box-shadow: 0 8px 22px rgba(0,0,0,.45);
+        box-shadow: 0 8px 22px rgba(23,37,84,.45);
         transform: translate(14px,-110%);
     }
 
         .ch-tooltip .tt-date {
-            color: #54ACBF;
+            color: #3B82F6;
             font-weight: 800;
             margin-bottom: 2px;
         }
 
         .ch-tooltip .tt-prev {
-            color: #A7EBF2;
+            color: #172554;
         }
 
     .ch-legend {
@@ -459,7 +459,7 @@
         gap: 22px;
         margin-top: 10px;
         font-size: .78rem;
-        color: #A7EBF2;
+        color: #172554;
     }
 
         .ch-legend i {
@@ -473,8 +473,8 @@
     /* ===== کارت‌های کناری ===== */
     .ch-side-card {
         position: relative;
-        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
-        border: 1px solid rgba(255,255,255,.14);
+        background: linear-gradient(160deg, rgba(191, 219, 254,.10), rgba(23,37,84,.04));
+        border: 1px solid rgba(23,37,84,.14);
         border-radius: 20px;
         padding: 16px;
         overflow: hidden;
@@ -485,13 +485,13 @@
 
         .ch-side-card:hover {
             transform: translateY(-3px);
-            border-color: rgba(84, 172, 191,.45);
-            box-shadow: 0 10px 28px rgba(84, 172, 191,.18);
+            border-color: rgba(59,130,246,.45);
+            box-shadow: 0 10px 28px rgba(59,130,246,.18);
         }
 
         .ch-side-card.serie-on {
-            border-color: rgba(84, 172, 191,.65);
-            box-shadow: 0 10px 28px rgba(84, 172, 191,.25);
+            border-color: rgba(59,130,246,.65);
+            box-shadow: 0 10px 28px rgba(59,130,246,.25);
         }
 
             .ch-side-card.serie-on::after {
@@ -499,7 +499,7 @@
                 position: absolute;
                 inset: 0 0 auto 0;
                 height: 3px;
-                background: linear-gradient(90deg, #26658C, #26658C);
+                background: linear-gradient(90deg, #3B82F6, #3B82F6);
             }
 
     .ch-side-head {
@@ -507,12 +507,12 @@
         justify-content: space-between;
         align-items: center;
         font-weight: 800;
-        color: #fff;
+        color: #172554;
         font-size: .9rem;
     }
 
         .ch-side-head i {
-            color: #54ACBF;
+            color: #3B82F6;
             font-size: .9rem;
         }
 
@@ -526,13 +526,13 @@
             display: block;
             font-size: 1.35rem;
             font-weight: 800;
-            color: #fff;
+            color: #172554;
             line-height: 1.2;
         }
 
         .ch-side-nums small {
             font-size: .68rem;
-            color: #A7EBF2;
+            color: #172554;
             font-weight: 600;
         }
 
@@ -550,19 +550,19 @@
     .ch-side-foot {
         margin-top: 10px;
         font-size: .72rem;
-        color: #A7EBF2;
+        color: #172554;
         display: flex;
         align-items: center;
         gap: 6px;
     }
 
         .ch-side-foot i {
-            color: #26658C;
+            color: #3B82F6;
         }
 
     .ch-help p {
         font-size: .76rem;
-        color: #A7EBF2;
+        color: #172554;
         margin-bottom: 8px;
         display: flex;
         gap: 7px;
@@ -570,7 +570,7 @@
     }
 
         .ch-help p i {
-            color: #54ACBF;
+            color: #3B82F6;
             flex: 0 0 auto;
         }
 
@@ -584,8 +584,8 @@
 
     /* ===== نمودار دایره‌ای سهم سانس‌ها ===== */
     .ch-share-card {
-        background: linear-gradient(160deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
-        border: 1px solid rgba(255,255,255,.14);
+        background: linear-gradient(160deg, rgba(191, 219, 254,.10), rgba(23,37,84,.04));
+        border: 1px solid rgba(23,37,84,.14);
         border-radius: 20px;
         padding: 16px;
         height: 100%;
@@ -593,7 +593,7 @@
 
     .ch-share-title {
         font-weight: 800;
-        color: #fff;
+        color: #172554;
         font-size: .9rem;
         margin-bottom: 12px;
     }
@@ -616,7 +616,7 @@
     }
 
     .ch-donut-center {
-        fill: #fff;
+        fill: #3B82F6;
         font-size: 7px;
         font-weight: 800;
     }
@@ -628,7 +628,7 @@
         flex-direction: column;
         gap: 5px;
         font-size: .72rem;
-        color: #9FC6D2;
+        color: rgba(23,37,84, .62);
     }
 
     .ch-lg-row {
@@ -655,18 +655,18 @@
         .ch-lg-row .ch-lg-pct {
             flex: 0 0 auto;
             font-weight: 800;
-            color: #fff;
+            color: #172554;
         }
 
     .ch-lg-others {
-        color: #A7EBF2;
+        color: #172554;
         font-size: .68rem;
     }
 
     .ch-share-empty {
         width: 100%;
         text-align: center;
-        color: #A7EBF2;
+        color: #172554;
         font-size: .78rem;
         padding: 20px 0;
     }
@@ -894,7 +894,7 @@
         }
 
         // ===== نمودار دایره‌ای سهم سانس‌ها =====
-        var chDonutColors = ['#54ACBF', '#54ACBF', '#54ACBF', '#9FC6D2', '#ff6b81', '#54ACBF', '#54ACBF', '#54ACBF'];
+        var chDonutColors = ['#3B82F6', '#3B82F6', '#3B82F6', 'rgba(23,37,84, .62)', '#172554', '#3B82F6', '#3B82F6', '#3B82F6'];
         function chDonut(key, share, isMoney) {
             var $body = $('.ch-share-body[data-share="' + key + '"]');
             if (!$body.length) return;
@@ -933,7 +933,7 @@
             });
             if (share && Number(share.othersValue) > 0) {
                 $legend.append(
-                    '<div class="ch-lg-row ch-lg-others"><i style="background:rgba(255,255,255,.25)"></i>' +
+                    '<div class="ch-lg-row ch-lg-others"><i style="background:rgba(191, 219, 254,.25)"></i>' +
                     '<span class="ch-lg-name">سایر سانس‌ها</span>' +
                     '<span class="ch-lg-pct">' + chEsc(share.othersPercentDisplay || '۰٪') + '</span></div>'
                 );

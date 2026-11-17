@@ -5,21 +5,24 @@
 }
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
+    <script>(function(){try{var t=localStorage.getItem("tandis-theme");if(!t)t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#011C40" />
+    <meta name="theme-color" content="#EFF6FF" />
     <title>میز خدمت | @clubName</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/luna.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme-arctic.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme-glass.css" asp-append-version="true" />
     <style>
         body { min-height: 100vh; font-family: inherit; }
         .dk-modal {
             position: fixed; inset: 0; z-index: 1080; display: none;
             align-items: center; justify-content: center; padding: 16px;
-            background: rgba(1, 28, 64, .38);
+            background: rgba(239,246,255, .38);
             -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
         }
         .dk-modal.open { display: flex; }
@@ -28,45 +31,45 @@
             padding: 18px; border-radius: 26px;
         }
         .dk-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
-        .dk-head b { font-size: 1rem; color: #EAF7FA; }
+        .dk-head b { font-size: 1rem; color: #172554; }
         .dk-x {
-            width: 34px; height: 34px; border-radius: 12px; border: 1px solid rgba(167, 235, 242,.35);
-            background: rgba(167, 235, 242,.14); color: #fff; font-size: 1.1rem; line-height: 1;
+            width: 34px; height: 34px; border-radius: 12px; border: 1px solid rgba(23,37,84,.35);
+            background: rgba(191, 219, 254,.14); color: #172554; font-size: 1.1rem; line-height: 1;
         }
-        .dk-box label { display: block; font-size: .76rem; margin-bottom: 5px; color: rgba(234, 247, 250,.82); }
+        .dk-box label { display: block; font-size: .76rem; margin-bottom: 5px; color: rgba(23, 37, 84,.82); }
         .dk-box .form-control {
-            background: rgba(167, 235, 242,.12); border: 1px solid rgba(167, 235, 242,.30);
-            color: #EAF7FA; border-radius: 14px; padding: 11px 13px; font-size: .88rem;
+            background: rgba(191, 219, 254,.12); border: 1px solid rgba(23,37,84,.30);
+            color: #172554; border-radius: 14px; padding: 11px 13px; font-size: .88rem;
         }
-        .dk-box .form-control::placeholder { color: rgba(234, 247, 250,.50); }
+        .dk-box .form-control::placeholder { color: rgba(23, 37, 84, .62); }
         .dk-btn {
-            width: 100%; padding: 13px; border-radius: 16px; border: 1px solid rgba(255,255,255,.35);
-            font-size: .9rem; font-weight: 800; color: #fff;
-            background: linear-gradient(135deg, #54ACBF 0%, #26658C 55%, #023859 100%);
-            box-shadow: 0 12px 26px rgba(1, 28, 64,.32), inset 0 1px 0 rgba(255,255,255,.40);
+            width: 100%; padding: 13px; border-radius: 16px; border: 1px solid rgba(23,37,84,.35);
+            font-size: .9rem; font-weight: 800; color: #172554;
+            background: linear-gradient(135deg, #3B82F6 0%, #3B82F6 55%, #FFFFFF 100%);
+            box-shadow: 0 12px 26px rgba(239,246,255,.32), inset 0 1px 0 rgba(23,37,84,.40);
         }
-        .dk-btn.ghost { background: rgba(167, 235, 242,.12); box-shadow: none; }
+        .dk-btn.ghost { background: rgba(191, 219, 254,.12); box-shadow: none; }
         .dk-btn:disabled { opacity: .55; }
         .dk-note {
-            font-size: .74rem; line-height: 1.8; color: rgba(234, 247, 250,.75);
-            background: rgba(1, 28, 64,.34); border: 1px solid rgba(167, 235, 242,.22);
+            font-size: .74rem; line-height: 1.8; color: rgba(23, 37, 84,.75);
+            background: rgba(239,246,255,.34); border: 1px solid rgba(23,37,84,.22);
             border-radius: 14px; padding: 10px 12px; margin-bottom: 12px;
         }
         .dk-member {
             display: flex; align-items: center; justify-content: space-between; gap: 10px;
             padding: 12px 14px; border-radius: 16px; margin-bottom: 12px;
-            background: rgba(167, 235, 242,.13); border: 1px solid rgba(167, 235, 242,.26);
+            background: rgba(191, 219, 254,.13); border: 1px solid rgba(23,37,84,.26);
         }
         .dk-member b { font-size: .92rem; }
-        .dk-member span { font-size: .72rem; color: rgba(234, 247, 250,.72); display: block; }
+        .dk-member span { font-size: .72rem; color: rgba(23, 37, 84,.72); display: block; }
         .dk-credits { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
         .dk-credits em {
             font-style: normal; font-size: .68rem; padding: 3px 8px; border-radius: 999px;
-            background: rgba(1, 28, 64,.35); border: 1px solid rgba(167, 235, 242,.20);
+            background: rgba(239,246,255,.35); border: 1px solid rgba(23,37,84,.20);
         }
         .dk-spin {
             width: 42px; height: 42px; margin: 6px auto 14px; border-radius: 50%;
-            border: 3px solid rgba(167, 235, 242,.30); border-top-color: #A7EBF2;
+            border: 3px solid rgba(23,37,84,.30); border-top-color: #172554;
             animation: dkspin .9s linear infinite;
         }
         @@keyframes dkspin { to { transform: rotate(360deg); } }
@@ -74,17 +77,17 @@
         .dk-toast {
             position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%);
             z-index: 1200; max-width: 92vw; padding: 12px 20px; border-radius: 16px;
-            font-size: .82rem; font-weight: 700; color: #fff; display: none;
-            background: linear-gradient(135deg, #26658C, #011C40);
-            box-shadow: 0 16px 36px rgba(1, 28, 64,.4);
+            font-size: .82rem; font-weight: 700; color: #172554; display: none;
+            background: linear-gradient(135deg, #3B82F6, #EFF6FF);
+            box-shadow: 0 16px 36px rgba(239,246,255,.4);
         }
-        .dk-toast.err { background: linear-gradient(135deg, #d13b4a, #7c1020); }
+        .dk-toast.err { background: linear-gradient(135deg, #EFF6FF, #172554); }
         .dk-toast.show { display: block; }
         .dk-chosen {
             display: flex; align-items: center; justify-content: space-between; gap: 8px;
             padding: 12px 14px; border-radius: 16px; margin-bottom: 12px;
-            background: linear-gradient(135deg, rgba(84, 172, 191,.34), rgba(1, 28, 64,.28));
-            border: 1px solid rgba(167, 235, 242,.30); font-size: .84rem;
+            background: linear-gradient(135deg, rgba(59,130,246,.34), rgba(239,246,255,.28));
+            border: 1px solid rgba(23,37,84,.30); font-size: .84rem;
         }
     </style>
 </head>
@@ -103,12 +106,12 @@
                 <div class="desk-user" title="@clubName"><i class="bi bi-building"></i> @clubName</div>
                 <div class="desk-user"><i class="bi bi-person-badge"></i> @deskUser</div>
                 <button type="button" id="btnDeskBio" class="desk-user" data-bio-enroll="password"
-                        style="border:1px solid rgba(167, 235, 242,.35);cursor:pointer;"
+                        style="border:1px solid rgba(23,37,84,.35);cursor:pointer;"
                         title="ثبت/ورود با اثر انگشت یا چهره">
                     <i class="bi bi-fingerprint"></i>
                 </button>
                 <button type="button" id="btnDeskLogout" class="desk-user"
-                        style="border:1px solid rgba(167, 235, 242,.45);cursor:pointer;">
+                        style="border:1px solid rgba(23,37,84,.45);cursor:pointer;">
                     <i class="bi bi-box-arrow-right"></i> خروج
                 </button>
             </div>
@@ -282,7 +285,7 @@
                 openModal(titleEl.textContent, '');
                 body.innerHTML =
                     '<div class="dk-center" style="padding:6px 0 2px">' +
-                    '<i class="bi bi-x-octagon" style="font-size:2rem;color:#ffd0d6"></i>' +
+                    '<i class="bi bi-x-octagon" style="font-size:2rem;color:#3B82F6"></i>' +
                     '<div style="margin:10px 0 14px;font-size:.85rem;line-height:1.9">' + (msg || 'خطا') + '</div>' +
                     '<button type="button" class="dk-btn ghost" id="dkBack">بستن</button></div>';
                 document.getElementById('dkBack').addEventListener('click', function () { closeModal(false); });
@@ -295,7 +298,7 @@
                 openModal(titleEl.textContent, '');
                 body.innerHTML =
                     '<div class="dk-center" style="padding:8px 0 2px">' +
-                    '<i class="bi bi-check2-circle" style="font-size:2.3rem;color:#bdf7c9"></i>' +
+                    '<i class="bi bi-check2-circle" style="font-size:2.3rem;color:#3B82F6"></i>' +
                     '<div style="margin:10px 0 16px;font-size:.88rem;line-height:1.9">' + (msg || 'انجام شد') + '</div>' +
                     '<button type="button" class="dk-btn" id="dkDone">پایان</button></div>';
                 document.getElementById('dkDone').addEventListener('click', function () { closeModal(false); });
@@ -640,5 +643,6 @@
         })();
     </script>
     <script src="~/js/biometric.js" asp-append-version="true"></script>
+    <script src="~/js/theme.js" asp-append-version="true"></script>
 </body>
 </html>

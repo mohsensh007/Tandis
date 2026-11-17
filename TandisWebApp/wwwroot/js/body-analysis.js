@@ -402,11 +402,11 @@
         // پس‌زمینه گرادیان مسیر
         svg.push('<defs>' +
             '<linearGradient id="baLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">' +
-            '<stop offset="0%" stop-color="#3781fc"/><stop offset="100%" stop-color="#b9d3ff"/>' +
+            '<stop offset="0%" stop-color="#3B82F6"/><stop offset="100%" stop-color="#BFDBFE"/>' +
             '</linearGradient>' +
             '<linearGradient id="baAreaGrad" x1="0%" y1="0%" x2="0%" y2="100%">' +
-            '<stop offset="0%" stop-color="#3781fc" stop-opacity="0.34"/>' +
-            '<stop offset="100%" stop-color="#3781fc" stop-opacity="0"/>' +
+            '<stop offset="0%" stop-color="#3B82F6" stop-opacity="0.34"/>' +
+            '<stop offset="100%" stop-color="#3B82F6" stop-opacity="0"/>' +
             '</linearGradient>' +
             '</defs>');
 
@@ -416,15 +416,15 @@
             var vv = min + ((max - min) * t / ticks);
             var yy = yAt(vv);
             svg.push('<line class="ba-grid-line" x1="' + padL + '" y1="' + yy + '" x2="' + (W - padR) + '" y2="' + yy +
-                '" stroke="rgba(255,255,255,.08)" stroke-width="1"/>');
-            svg.push('<text x="' + (padL - 9) + '" y="' + (yy + 4) + '" text-anchor="end" direction="ltr" fill="#b9c2d4" font-size="12" font-family="Sahel,Tahoma">' +
+                '" stroke="rgba(191,219,254,.25)" stroke-width="1"/>');
+            svg.push('<text x="' + (padL - 9) + '" y="' + (yy + 4) + '" text-anchor="end" direction="ltr" fill="rgba(23,37,84,.62)" font-size="12" font-family="Sahel,Tahoma">' +
                 fa(num(vv, 1)) + '</text>');
         }
 
         // خط میانگین (بنفش‌کم‌رنگ)
         var avgY = yAt(avg);
         svg.push('<line class="ba-average-line" x1="' + padL + '" y1="' + avgY + '" x2="' + (W - padR) + '" y2="' + avgY +
-            '" stroke="#b9d3ff" stroke-width="1.4" stroke-dasharray="5 6" opacity="0.75"/>');
+            '" stroke="#BFDBFE" stroke-width="1.4" stroke-dasharray="5 6" opacity="0.75"/>');
 
         // مسیر خط + ناحیه
         var pts = records.map(function (r, i) { return { x: xAt(i), y: yAt(Number(r[chartKey])), d: r.recordDate, v: Number(r[chartKey]) }; });
@@ -442,13 +442,13 @@
         pts.forEach(function (p, i) {
             var last = i === pts.length - 1;
             var delayIndex = pts.length > 1 ? Math.round(i * 8 / (pts.length - 1)) : 0;
-            svg.push('<circle class="ba-chart-point' + (last ? ' ba-chart-point-last' : '') + '" style="--ba-point-index:' + delayIndex + ';animation-delay:' + (0.42 + delayIndex * .07).toFixed(2) + 's" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + (last ? 6 : 4) + '" fill="' + (last ? '#3781fc' : '#03195b') + '" stroke="' + (last ? '#d9fbff' : '#3781fc') + '" stroke-width="2"><title>' + esc(fa(p.d) + ' — ' + fa(num(p.v, 1)) + ' ' + chartUnit) + '</title></circle>');
+            svg.push('<circle class="ba-chart-point' + (last ? ' ba-chart-point-last' : '') + '" style="--ba-point-index:' + delayIndex + ';animation-delay:' + (0.42 + delayIndex * .07).toFixed(2) + 's" cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="' + (last ? 6 : 4) + '" fill="' + (last ? '#3B82F6' : '#172554') + '" stroke="' + (last ? '#BFDBFE' : '#3B82F6') + '" stroke-width="2"><title>' + esc(fa(p.d) + ' — ' + fa(num(p.v, 1)) + ' ' + chartUnit) + '</title></circle>');
             var labelLimit = W < 480 ? 3 : 6;
             var showLbl = pts.length <= labelLimit || i === 0 || last || (i % Math.ceil((pts.length - 1) / (labelLimit - 1)) === 0 && i < pts.length - 2);
             if (showLbl) {
-                svg.push('<text class="ba-chart-label" x="' + p.x.toFixed(1) + '" y="' + (p.y - 14).toFixed(1) + '" text-anchor="middle" direction="ltr" fill="#e7f4ff" font-size="13" font-weight="700" font-family="Sahel,Tahoma">' +
+                svg.push('<text class="ba-chart-label" x="' + p.x.toFixed(1) + '" y="' + (p.y - 14).toFixed(1) + '" text-anchor="middle" direction="ltr" fill="#EFF6FF" font-size="13" font-weight="700" font-family="Sahel,Tahoma">' +
                     fa(num(p.v, 1)) + '</text>');
-                svg.push('<text x="' + p.x.toFixed(1) + '" y="' + (H - 10) + '" text-anchor="middle" fill="#b9c2d4" font-size="12" font-family="Sahel,Tahoma" direction="ltr">' +
+                svg.push('<text x="' + p.x.toFixed(1) + '" y="' + (H - 10) + '" text-anchor="middle" fill="rgba(23,37,84,.62)" font-size="12" font-family="Sahel,Tahoma" direction="ltr">' +
                     esc(fa(shortDate(p.d))) + '</text>');
             }
         });
@@ -471,7 +471,7 @@
             if (stat) {
                 var diff = vals[vals.length - 1] - vals[0];
                 stat.innerHTML = 'تعداد: ' + fa(vals.length) + ' • میانگین: ' + fa(num(avg, 1)) + ' ' + esc(chartUnit) +
-                    (vals.length > 1 ? ' • تغییر: <b style="color:' + (diff < 0 ? '#b9d3ff' : (diff > 0 ? '#3781fc' : '#b9c2d4')) + ';">' +
+                    (vals.length > 1 ? ' • تغییر: <b style="color:' + (diff < 0 ? '#172554' : (diff > 0 ? '#3B82F6' : 'rgba(23,37,84,.62)')) + ';">' +
                         (diff > 0 ? '+' : '') + fa(num(diff, 1)) + '</b>' : '');
             }
         }

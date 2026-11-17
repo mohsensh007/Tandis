@@ -45,7 +45,7 @@
 
 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
     <div>
-        <h4 class="mb-0" style="color:#fff; font-weight:800;">🏋️ شروع تمرین</h4>
+        <h4 class="mb-0" style="color:#172554; font-weight:800;">🏋️ شروع تمرین</h4>
     </div>
     <a href="/Home" class="btn-back-glass"><i class="bi bi-arrow-right"></i> داشبورد</a>
 </div>
@@ -68,14 +68,14 @@
             <div class="ath-checkin-ok">
                 <div>
                     <div class="fw-bold">@(Model.IsInside ? "✅ داخل باشگاه هستید" : "✅ امروز وارد شده‌اید (خروج زده‌اید)")</div>
-                    <div class="ath-sub">ساعت ورود (دستگاه تردد): <b style="color:#A7EBF2;">@Model.TodayVisit.EnterTime</b></div>
+                    <div class="ath-sub">ساعت ورود (دستگاه تردد): <b style="color:#172554;">@Model.TodayVisit.EnterTime</b></div>
                     @if (!string.IsNullOrWhiteSpace(Model.TodayVisit.SessionName))
                     {
-                        <div class="ath-sub">سانس: <b style="color:#A7EBF2;">@Model.TodayVisit.SessionName</b></div>
+                        <div class="ath-sub">سانس: <b style="color:#172554;">@Model.TodayVisit.SessionName</b></div>
                     }
                     @if (!string.IsNullOrWhiteSpace(Model.TodayVisit.ExitTime))
                     {
-                        <div class="ath-sub">ساعت خروج: <b style="color:#fca5a5;">@Model.TodayVisit.ExitTime</b></div>
+                        <div class="ath-sub">ساعت خروج: <b style="color:#3B82F6;">@Model.TodayVisit.ExitTime</b></div>
                     }
                 </div>
                 <div style="text-align:center;">
@@ -159,7 +159,7 @@
             <div class="col-12 col-md-3 d-none d-md-block text-center">
                 <div class="ath-sub mb-1">پیشرفت روز</div>
                 <div class="ath-progress" style="height:8px; margin-top:5px;"><div id="progressBarMini"></div></div>
-                <small id="progressTextMini" style="font-size:.7rem; color:#A7EBF2;">۰٪</small>
+                <small id="progressTextMini" style="font-size:.7rem; color:#172554;">۰٪</small>
             </div>
         </div>
 
@@ -223,8 +223,8 @@ else
                         <svg viewBox="0 0 120 120" class="sum-ring" role="img" aria-label="حلقه پیشرفت تمرین امروز" focusable="false">
                             <defs>
                                 <linearGradient id="sumGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                    <stop offset="0%" stop-color="#54ACBF" />
-                                    <stop offset="100%" stop-color="#023859" />
+                                    <stop offset="0%" stop-color="#3B82F6" />
+                                    <stop offset="100%" stop-color="#FFFFFF" />
                                 </linearGradient>
                             </defs>
                             <circle class="sum-ring-bg" cx="60" cy="60" r="52" fill="none" />

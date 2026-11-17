@@ -28,9 +28,9 @@
         white-space: nowrap; /* ✅ هیچ‌وقت ۲ خطی نمی‌شه */
         font-size: clamp(.6rem, 2.6vw, .72rem);
         font-weight: 700;
-        color: #A7EBF2;
-        background: rgba(255,255,255,.06);
-        border: 1px solid rgba(255,255,255,.12);
+        color: #172554;
+        background: rgba(191, 219, 254,.06);
+        border: 1px solid rgba(23,37,84,.12);
         border-radius: 999px;
         padding: 8px 6px;
         line-height: 1;
@@ -39,20 +39,20 @@
     }
 
         .reg-step.on {
-            background: linear-gradient(135deg, #26658C 0%, #023859 100%);
+            background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
             border-color: transparent;
-            color: #fff;
+            color: #172554;
         }
 
         .reg-step.done {
-            background: linear-gradient(135deg, #54ACBF 0%, #54ACBF 100%);
+            background: linear-gradient(135deg, #3B82F6 0%, #3B82F6 100%);
             border-color: transparent;
-            color: #fff;
+            color: #172554;
         }
 
     .rules-box {
-        background: rgba(255,255,255,.06);
-        border: 1px solid rgba(84, 172, 191,.30);
+        background: rgba(191, 219, 254,.06);
+        border: 1px solid rgba(59,130,246,.30);
         border-radius: 14px;
         padding: 14px;
         max-height: 260px;
@@ -62,7 +62,7 @@
         white-space: pre-wrap;
         font-size: .82rem;
         line-height: 1.9;
-        color: #A7EBF2;
+        color: #172554;
         margin-bottom: 14px;
     }
 
@@ -73,7 +73,7 @@
     .reg-title {
         font-weight: 800;
         font-size: .95rem;
-        color: #fff;
+        color: #172554;
         margin-bottom: 10px;
         display: flex;
         align-items: center;
@@ -81,12 +81,12 @@
     }
 
         .reg-title i {
-            color: #54ACBF;
+            color: #3B82F6;
         }
 
     .done-info-box {
-        background: rgba(84, 172, 191,.10);
-        border: 1px solid rgba(84, 172, 191,.30);
+        background: rgba(59,130,246,.10);
+        border: 1px solid rgba(59,130,246,.30);
         border-radius: 14px;
         padding: 12px;
         margin-bottom: 10px;
@@ -97,8 +97,8 @@
         justify-content: space-between;
         padding: 6px 0;
         font-size: .82rem;
-        color: #A7EBF2;
-        border-bottom: 1px solid rgba(255,255,255,.06);
+        color: #172554;
+        border-bottom: 1px solid rgba(23,37,84,.06);
     }
 
         .done-row:last-child {
@@ -107,15 +107,15 @@
 
         .done-row b {
             font-weight: 800;
-            color: #fff;
+            color: #172554;
         }
 
     .alert-warning-text {
         font-size: .74rem;
-        color: #54ACBF;
+        color: #3B82F6;
         padding: 8px;
-        background: rgba(84, 172, 191,.08);
-        border: 1px solid rgba(84, 172, 191,.25);
+        background: rgba(59,130,246,.08);
+        border: 1px solid rgba(59,130,246,.25);
         border-radius: 8px;
     }
 
@@ -134,8 +134,8 @@
         flex: 0 0 auto;
         width: 46px;
         border-radius: 10px;
-        border: 1px solid rgba(84, 172, 191,.35);
-        background: rgba(84, 172, 191,.12);
+        border: 1px solid rgba(59,130,246,.35);
+        background: rgba(59,130,246,.12);
         font-size: 1.15rem;
     }
 
@@ -144,7 +144,7 @@
         position: fixed;
         inset: 0;
         z-index: 1070;
-        background: rgba(1, 28, 64,.65);
+        background: rgba(239,246,255,.65);
         -webkit-backdrop-filter: blur(6px);
         backdrop-filter: blur(6px);
         display: none;
@@ -163,11 +163,11 @@
         transform: translate(-50%, -50%);
         z-index: 1075;
         width: min(92vw, 380px);
-        background: rgba(1, 28, 64,.98);
-        border: 1px solid rgba(84, 172, 191,.35);
+        background: rgba(239,246,255,.98);
+        border: 1px solid rgba(59,130,246,.35);
         border-radius: 16px;
         padding: 14px 10px 12px;
-        box-shadow: 0 18px 50px rgba(0,0,0,.55);
+        box-shadow: 0 18px 50px rgba(23,37,84,.55);
         animation: bdPanelIn .25s cubic-bezier(.22,.9,.35,1.15);
     }
     /* ✅ کارت باید relative باشه تا فلش گوشه‌ش بشینه */
@@ -186,13 +186,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #fff;
+        color: #172554;
         font-size: 1.15rem;
         text-decoration: none;
         border-radius: 12px;
-        background: linear-gradient(135deg, #26658C 0%, #023859 100%);
-        border: 1px solid rgba(255,255,255,.25);
-        box-shadow: 0 4px 14px rgba(84, 172, 191,.45);
+        background: linear-gradient(135deg, #3B82F6 0%, #FFFFFF 100%);
+        border: 1px solid rgba(23,37,84,.25);
+        box-shadow: 0 4px 14px rgba(59,130,246,.45);
         transition: all .2s;
     }
 
@@ -208,14 +208,14 @@
     /* ✅ فلش بین مراحل */
     .reg-arrow {
         flex: 0 0 auto;
-        color: rgba(255,255,255,.20);
+        color: rgba(23, 37, 84, .62);
         font-size: .8rem;
         transition: all .3s;
     }
 
         .reg-arrow.lit {
-            color: #54ACBF;
-            text-shadow: 0 0 10px rgba(84, 172, 191,.7);
+            color: #3B82F6;
+            text-shadow: 0 0 10px rgba(59,130,246,.7);
         }
 
     @@keyframes bdPanelIn {
@@ -237,8 +237,8 @@
 
     .bd-tile {
         flex: 1;
-        background: rgba(255,255,255,.07);
-        border: 1px solid rgba(255,255,255,.14);
+        background: rgba(191, 219, 254,.07);
+        border: 1px solid rgba(23,37,84,.14);
         border-radius: 14px;
         padding: 12px 6px;
         text-align: center;
@@ -250,20 +250,20 @@
         }
 
         .bd-tile:hover {
-            border-color: rgba(84, 172, 191,.5);
+            border-color: rgba(59,130,246,.5);
         }
 
     .bd-tile-val {
         display: block;
         font-size: 1.15rem;
         font-weight: 800;
-        color: #fff;
+        color: #172554;
     }
 
     .bd-tile-lbl {
         display: block;
         font-size: .68rem;
-        color: #A7EBF2;
+        color: #172554;
         font-weight: 700;
         margin-top: 3px;
     }
@@ -273,7 +273,7 @@
         margin-top: 10px;
         font-size: .82rem;
         font-weight: 800;
-        color: #54ACBF;
+        color: #3B82F6;
         direction: ltr;
     }
 
@@ -285,8 +285,8 @@
 
     .bd-ok {
         flex: 1;
-        background: linear-gradient(135deg,#26658C,#023859);
-        color: #fff;
+        background: linear-gradient(135deg,#3B82F6,#FFFFFF);
+        color: #172554;
         border: none;
         border-radius: 10px;
         padding: 9px;
@@ -295,9 +295,9 @@
 
     .bd-cancel {
         flex: 1;
-        background: rgba(255,255,255,.08);
-        border: 1px solid rgba(255,255,255,.18);
-        color: #A7EBF2;
+        background: rgba(191, 219, 254,.08);
+        border: 1px solid rgba(23,37,84,.18);
+        color: #172554;
         border-radius: 10px;
         padding: 9px;
         font-weight: 700;
@@ -311,7 +311,7 @@
         display: none;
         flex-direction: column;
         overflow: hidden;
-        background: rgba(1, 28, 64,.80);
+        background: rgba(239,246,255,.80);
         -webkit-backdrop-filter: blur(30px) saturate(.8);
         backdrop-filter: blur(30px) saturate(.8);
         --arcR: min(350px, 46vh);
@@ -402,9 +402,9 @@
     }
 
         .bd-fs-head .bd-back, .bd-fs-head .bd-done {
-            background: rgba(255,255,255,.10);
-            border: 1px solid rgba(255,255,255,.22);
-            color: #fff;
+            background: rgba(191, 219, 254,.10);
+            border: 1px solid rgba(23,37,84,.22);
+            color: #172554;
             padding: 10px 18px;
             font-size: .88rem;
             font-weight: 700;
@@ -413,7 +413,7 @@
 
         .bd-fs-head .bd-s2-title {
             font-weight: 800;
-            color: #54ACBF;
+            color: #3B82F6;
             font-size: 1.05rem;
         }
 
@@ -459,7 +459,7 @@
     .bd-fs .bd-hint {
         text-align: center;
         font-size: .72rem;
-        color: #9FC6D2;
+        color: rgba(23,37,84, .62);
         padding-bottom: calc(14px + env(safe-area-inset-bottom));
     }
 
@@ -501,15 +501,15 @@
             display: block;
             font-size: .95rem;
             font-weight: 700;
-            color: #9FC6D2;
+            color: rgba(23,37,84, .62);
             transition: color .15s, font-size .15s;
         }
 
         .arc-it.on b {
-            color: #fff;
+            color: #172554;
             font-size: 1.6rem;
             font-weight: 800;
-            text-shadow: 0 0 18px rgba(84, 172, 191,.65);
+            text-shadow: 0 0 18px rgba(59,130,246,.65);
         }
 
     .arc-marker {
@@ -520,8 +520,8 @@
         height: 4px;
         margin-left: -30px;
         border-radius: 2px;
-        background: linear-gradient(90deg, #54ACBF, #26658C);
-        box-shadow: 0 0 12px rgba(84, 172, 191,.7);
+        background: linear-gradient(90deg, #3B82F6, #3B82F6);
+        box-shadow: 0 0 12px rgba(59,130,246,.7);
         pointer-events: none;
         z-index: 5;
     }
@@ -529,14 +529,14 @@
     .bd-hint {
         text-align: center;
         font-size: .66rem;
-        color: #6d82a0;
+        color: rgba(23,37,84, .62);
         margin-top: 2px;
     }
 
     /* ===== باکس وضعیت چهره ===== */
     .face-status-box {
-        background: rgba(84, 172, 191,.08);
-        border: 1px solid rgba(84, 172, 191,.30);
+        background: rgba(59,130,246,.08);
+        border: 1px solid rgba(59,130,246,.30);
         border-radius: 14px;
         padding: 16px;
         margin: 14px 0 8px;
@@ -545,23 +545,23 @@
     }
 
         .face-status-box.done {
-            background: rgba(84, 172, 191,.10);
-            border-color: rgba(84, 172, 191,.35);
+            background: rgba(59,130,246,.10);
+            border-color: rgba(59,130,246,.35);
         }
 
         .face-status-box.existed {
-            background: rgba(84, 172, 191,.08);
-            border-color: rgba(84, 172, 191,.35);
+            background: rgba(59,130,246,.08);
+            border-color: rgba(59,130,246,.35);
         }
 
         .face-status-box.timeout {
-            background: rgba(255,107,129,.08);
-            border-color: rgba(255,107,129,.35);
+            background: rgba(191, 219, 254,.08);
+            border-color: rgba(23,37,84,.35);
         }
 
     .face-icon-pending {
         font-size: 2.5rem;
-        color: #54ACBF;
+        color: #3B82F6;
         margin-bottom: 8px;
         animation: pulse 1.6s ease-in-out infinite;
     }
@@ -571,51 +571,51 @@
     }
 
     .face-status-box.done .face-icon-pending {
-        color: #A7EBF2;
+        color: #172554;
     }
 
     .face-status-box.existed .face-icon-pending {
-        color: #54ACBF;
+        color: #3B82F6;
     }
 
     .face-status-box.timeout .face-icon-pending {
-        color: #ff6b81;
+        color: #172554;
     }
 
     .face-status-text {
         font-size: .88rem;
         font-weight: 700;
-        color: #54ACBF;
+        color: #3B82F6;
         margin-bottom: 4px;
     }
 
     .face-status-box.done .face-status-text {
-        color: #A7EBF2;
+        color: #172554;
     }
 
     .face-status-box.existed .face-status-text {
-        color: #54ACBF;
+        color: #3B82F6;
     }
 
     .face-status-box.timeout .face-status-text {
-        color: #ff6b81;
+        color: #172554;
     }
 
     .face-hint {
         font-size: .72rem;
-        color: #A7EBF2;
+        color: #172554;
         margin-bottom: 6px;
     }
 
     .face-device-info {
         font-size: .66rem;
-        color: #6d82a0;
+        color: rgba(23,37,84, .62);
         margin-top: 4px;
     }
 
     .face-timer {
         font-size: .68rem;
-        color: #54ACBF;
+        color: #3B82F6;
         margin-top: 4px;
         font-variant-numeric: tabular-nums;
     }
@@ -682,8 +682,8 @@
         <div class="mb-3">
             <label class="form-label">جنسیت <span class="text-danger">*</span></label>
             <div class="d-flex gap-3">
-                <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#A7EBF2;"><input type="radio" name="gender" value="true" checked /> <span>آقا</span></label>
-                <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#A7EBF2;"><input type="radio" name="gender" value="false" /> <span>خانم</span></label>
+                <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#172554;"><input type="radio" name="gender" value="true" checked /> <span>آقا</span></label>
+                <label class="d-flex align-items-center gap-2" style="cursor:pointer; color:#172554;"><input type="radio" name="gender" value="false" /> <span>خانم</span></label>
             </div>
         </div>
         <button id="btnNextStep" class="btn btn-primary w-100 py-2">مرحله بعد <i class="bi bi-arrow-left"></i></button>
@@ -725,13 +725,13 @@
 
     <!-- ========== مرحله ۳ ========== -->
     <div id="stepDone" style="display:none;" class="text-center py-3">
-        <div style="font-size:3rem; color:#A7EBF2;">✅</div>
+        <div style="font-size:3rem; color:#172554;">✅</div>
         <div class="fw-bold text-white mb-2" style="font-size:1.1rem;">ثبت‌نام با موفقیت انجام شد</div>
-        <div class="mb-3 small" style="color:#A7EBF2;">اطلاعات ورود شما:</div>
+        <div class="mb-3 small" style="color:#172554;">اطلاعات ورود شما:</div>
         <div class="done-info-box">
             <div class="done-row"><span>کد عضویت:</span><b id="doneMemberID">-</b></div>
             <div class="done-row"><span>نام کاربری:</span><b id="doneNationalCode">-</b></div>
-            <div class="done-row"><span>رمز عبور اولیه:</span><b id="donePassword" style="color:#54ACBF;">-</b></div>
+            <div class="done-row"><span>رمز عبور اولیه:</span><b id="donePassword" style="color:#3B82F6;">-</b></div>
         </div>
 
         <!-- ✅ دکمه ثبت چهره (دستی) -->
@@ -909,7 +909,7 @@
                 if (res.data) {
                     devInfo = 'دستگاه: ' + (res.data.deviceIp || '-') + ' | پورت: ' + (res.data.devicePort || '-');
                     if (res.data.deviceReachable === false)
-                        devInfo += '<br><span style="color:#54ACBF;">⚠️ دستگاه در شبکه پاسخ نمی‌دهد</span>';
+                        devInfo += '<br><span style="color:#3B82F6;">⚠️ دستگاه در شبکه پاسخ نمی‌دهد</span>';
                 }
                 setFaceBox('', 'bi-person-bounding-box', 'دستور ارسال شد — مقابل دستگاه بایستید', 'چهره شما به‌صورت خودکار ثبت می‌شود', devInfo);
                 startFaceTimer();

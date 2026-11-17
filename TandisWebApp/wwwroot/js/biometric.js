@@ -50,13 +50,13 @@
             el.id = 'bioToast';
             el.style.cssText = 'position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:1300;' +
                 'padding:12px 20px;border-radius:16px;font-size:.84rem;font-weight:700;color:#fff;display:none;' +
-                'max-width:92vw;text-align:center;box-shadow:0 14px 34px rgba(1,28,64,.45);';
+                'max-width:92vw;text-align:center;box-shadow:0 14px 34px rgba(239,246,255,.85);';
             document.body.appendChild(el);
         }
         el.textContent = msg || '';
         el.style.background = isErr
-            ? 'linear-gradient(135deg,#d13b4a,#7c1020)'
-            : 'linear-gradient(135deg,#26658C,#011C40)';
+            ? 'linear-gradient(135deg,#172554,#172554)'
+            : 'linear-gradient(135deg,#3B82F6,#EFF6FF)';
         el.style.display = 'block';
         clearTimeout(el._t);
         el._t = setTimeout(function () { el.style.display = 'none'; }, 4200);
@@ -67,22 +67,22 @@
         return new Promise(function (resolve, reject) {
             var wrap = document.createElement('div');
             wrap.style.cssText = 'position:fixed;inset:0;z-index:1400;display:flex;align-items:center;justify-content:center;' +
-                'background:rgba(1,28,64,.55);backdrop-filter:blur(6px);padding:16px;';
+                'background:rgba(239,246,255,.92);backdrop-filter:blur(6px);padding:16px;';
             wrap.innerHTML =
                 '<div style="width:100%;max-width:420px;border-radius:24px;padding:20px;' +
-                'background:linear-gradient(225deg,#0B3D5C,#011C40);border:1px solid rgba(167,235,242,.30);' +
-                'box-shadow:-10px 14px 32px rgba(1,28,64,.55);color:#EAF7FA;">' +
+                'background:linear-gradient(225deg,#172554,#EFF6FF);border:1px solid rgba(23,37,84,.62);' +
+                'box-shadow:-10px 14px 32px rgba(239,246,255,.92);color:#EFF6FF;">' +
                 '<div style="font-weight:800;font-size:1rem;margin-bottom:6px">' + (title || 'تأیید هویت') + '</div>' +
-                '<div style="font-size:.76rem;color:#A7EBF2;margin-bottom:12px;line-height:1.8">' +
+                '<div style="font-size:.76rem;color:#172554;margin-bottom:12px;line-height:1.8">' +
                 (hint || 'برای ثبت اثر انگشت، رمز عبور خود را وارد کنید.') + '</div>' +
                 '<input id="bioPw" type="password" inputmode="text" placeholder="رمز عبور" ' +
-                'style="width:100%;padding:11px 13px;border-radius:14px;border:1px solid rgba(167,235,242,.30);' +
-                'background:rgba(167,235,242,.12);color:#EAF7FA;font-size:.9rem;margin-bottom:12px" />' +
+                'style="width:100%;padding:11px 13px;border-radius:14px;border:1px solid rgba(23,37,84,.62);' +
+                'background:rgba(23,37,84,.25);color:#EFF6FF;font-size:.9rem;margin-bottom:12px" />' +
                 '<div style="display:flex;gap:8px">' +
                 '<button type="button" id="bioPwOk" style="flex:1;padding:11px;border-radius:14px;border:none;font-weight:800;' +
-                'color:#011C40;background:linear-gradient(135deg,#CFF4F9,#54ACBF);cursor:pointer">تأیید</button>' +
+                'color:#EFF6FF;background:linear-gradient(135deg,#EFF6FF,#3B82F6);cursor:pointer">تأیید</button>' +
                 '<button type="button" id="bioPwNo" style="flex:1;padding:11px;border-radius:14px;font-weight:700;' +
-                'background:rgba(167,235,242,.12);color:#EAF7FA;border:1px solid rgba(167,235,242,.28);cursor:pointer">انصراف</button>' +
+                'background:rgba(23,37,84,.25);color:#EFF6FF;border:1px solid rgba(23,37,84,.55);cursor:pointer">انصراف</button>' +
                 '</div></div>';
             document.body.appendChild(wrap);
 
