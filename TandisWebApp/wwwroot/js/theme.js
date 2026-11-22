@@ -2,7 +2,7 @@
    سوییچ تم روشن/تاریک — Arctic Blue  <->  Midnight Blue
    - ذخیره در localStorage
    - تشخیص حالت سیستم در اولین بازدید
-   - دکمهٔ خورشید/ماه در بالای سمت چپ همهٔ صفحه‌ها
+   - دکمهٔ خورشید/ماه فقط در صفحهٔ ورود (بالای سمت چپ)
    ============================================================ */
 (function () {
     'use strict';
@@ -55,10 +55,11 @@
         apply(next, true);
     }
 
-    /* دکمهٔ شناور برای صفحاتی که دکمهٔ آماده ندارند */
+    /* دکمهٔ شناور — فقط در صفحهٔ ورود (body[data-theme-switch="1"]) */
     function ensureButton() {
         var existing = document.querySelectorAll('[data-theme-toggle]');
         if (existing.length) return;
+        if (!document.body || document.body.getAttribute('data-theme-switch') !== '1') return;
 
         var btn = document.createElement('button');
         btn.type = 'button';

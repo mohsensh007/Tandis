@@ -101,7 +101,7 @@
         if (pollTimer) { clearTimeout(pollTimer); pollTimer = null; }
         setPayBusy(false);
         var posBtn = byId('dkPayPos');
-        if (posBtn) posBtn.innerHTML = '<i class="bi bi-credit-card-2-front"></i> پرداخت با کارت‌خوان (مهمان)';
+        if (posBtn) posBtn.innerHTML = '<i class="bi bi-credit-card-2-front"></i> پرداخت با کارت‌خوان';
     }
 
     function setPayBusy(busy, note) {
@@ -217,6 +217,68 @@
         setTimeout(function () { window.location.reload(); }, 1400);
     }
 
+    /* ------------------------------------------------------------
+       ورود عضو برای پرداخت با کارت‌خوان (مرحلهٔ جداگانه)
+       ------------------------------------------------------------ */
+    function posAuthModal() { return byId('dkPosAuth'); }
+
+    function openPosAuth() {
+        if (!posAuthModal()) { payWithPos(); return; }
+        var nc = byId('dkPosNational');
+        var pw = byId('dkPosPassword');
+        var note = byId('dkPosAuthNote');
+        if (nc) nc.value = '';
+        if (pw) pw.value = '';
+        if (note) note.textContent = '';
+        posAuthModal().classList.add('open');
+        if (nc) setTimeout(function () { nc.focus(); }, 120);
+    }
+
+    function closePosAuth() {
+        if (posAuthModal()) posAuthModal().classList.remove('open');
+    }
+
+    function posAuthSubmit(asGuest) {
+        var note = byId('dkPosAuthNote');
+        var ncEl = byId('dkPosNational');
+        var pwEl = byId('dkPosPassword');
+        var nc = (ncEl ? ncEl.value : '').replace(/\D/g, '');
+        var pw = pwEl ? pwEl.value : '';
+
+        if (asGuest) {
+            if (byId('dkPayNational')) byId('dkPayNational').value = '';
+            if (byId('dkPayPassword')) byId('dkPayPassword').value = '';
+            closePosAuth();
+            payWithPos();
+            return;
+        }
+
+        if (nc.length !== 10) {
+            if (note) note.textContent = 'کد ملی ۱۰ رقمی عضو را وارد کنید یا «ادامه به‌عنوان مهمان» را بزنید.';
+            if (ncEl) ncEl.focus();
+            return;
+        }
+        if (!pw) {
+            if (note) note.textContent = 'رمز عبور عضو را وارد کنید.';
+            if (pwEl) pwEl.focus();
+            return;
+        }
+
+        if (note) note.textContent = 'در حال تأیید هویت عضو…';
+        api('/api/Desk/Commerce/VerifyMember', { nationalCode: nc, password: pw }).then(function (res) {
+            if (!res || !res.success) {
+                if (note) note.textContent = (res && res.message) || 'کد ملی یا رمز صحیح نیست';
+                return;
+            }
+            if (byId('dkPayNational')) byId('dkPayNational').value = nc;
+            if (byId('dkPayPassword')) byId('dkPayPassword').value = pw;
+            closePosAuth();
+            payWithPos();
+        }).catch(function () {
+            if (note) note.textContent = 'اتصال به سرور برقرار نشد';
+        });
+    }
+
     function initPayModal() {
         if (!payModal()) return;
         byId('dkPayCredit').addEventListener('click', payWithCredit);
@@ -227,9 +289,31 @@
                 closePay();
                 return;
             }
-            payWithPos();
+            openPosAuth();
         });
         byId('dkPayCancel').addEventListener('click', closePay);
+
+        if (posAuthModal()) {
+            byId('dkPosAuthGo').addEventListener('click', function () { posAuthSubmit(false); });
+            byId('dkPosAuthGuest').addEventListener('click', function () { posAuthSubmit(true); });
+            byId('dkPosAuthCancel').addEventListener('click', closePosAuth);
+            posAuthModal().addEventListener('click', function (e) { if (e.target === posAuthModal()) closePosAuth(); });
+        }
+
+        // ✅ خروج خودکار از پروفایل عضو پس از ۱ دقیقه بی‌کاری
+        if (ctx.memberID) {
+            var lastAct = Date.now();
+            ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel', 'scroll'].forEach(function (ev) {
+                document.addEventListener(ev, function () { lastAct = Date.now(); }, { passive: true });
+            });
+            setInterval(function () {
+                if (payModal().classList.contains('open') || (posAuthModal() && posAuthModal().classList.contains('open'))) { lastAct = Date.now(); return; }
+                if (Date.now() - lastAct < 60000) return;
+                var url = new URL(window.location.href);
+                url.searchParams.delete('member');
+                window.location.replace(url.toString());
+            }, 5000);
+        }
     }
 
     /* ------------------------------------------------------------

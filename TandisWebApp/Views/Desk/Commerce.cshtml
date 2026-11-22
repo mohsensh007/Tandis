@@ -9,7 +9,7 @@
     var isService = kind == "services";
     var isBuffet = kind == "buffet";
     var title = isService ? "خدمات" : (isBuffet ? "بوفه" : "فروشگاه");
-    var icon = isService ? "bi-spa" : (isBuffet ? "bi-cup-hot" : "bi-bag-heart");
+    var icon = isService ? "bi-tools" : (isBuffet ? "bi-cup-hot" : "bi-bag-heart");
     var backUrl = "/Desk";
 }
 <!DOCTYPE html>
@@ -110,15 +110,11 @@
 <body class="member-ui">
     <div class="dk-commerce-head">
         <div class="dk-commerce-title">
-            <i class="bi @icon"></i>
-            <span>@title — میز خدمت</span>
+            <i class="bi @icon"></i>         
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <button type="button" class="theme-toggle" data-theme-toggle aria-label="تغییر حالت روشن و تاریک">
-                <i class="bi bi-sun-fill" aria-hidden="true"></i>
-            </button>
             <span class="dk-credits"><em><i class="bi bi-person-badge"></i> @deskUser</em></span>
-            <a class="dk-back" href="@backUrl"><i class="bi bi-arrow-right"></i> بازگشت به میز خدمت</a>
+            <a class="dk-back" href="@backUrl"><i class="bi bi-arrow-right"></i> بازگشت به میز خدمات</a>
         </div>
     </div>
 
@@ -195,10 +191,38 @@
                 <i class="bi bi-wallet2"></i> پرداخت از اعتبار عضو
             </button>
             <button type="button" class="dk-pay-btn btn-glass" id="dkPayPos">
-                <i class="bi bi-credit-card-2-front"></i> پرداخت با کارت‌خوان (مهمان)
+                <i class="bi bi-credit-card-2-front"></i> پرداخت با کارت‌خوان
             </button>
             <button type="button" class="dk-pay-btn btn-glass" id="dkPayCancel">انصراف</button>
             <div class="dk-pay-note" id="dkPayNote"></div>
+        </div>
+    </div>
+
+    <!-- ✅ مرحلهٔ احراز هویت برای پرداخت با کارت‌خوان -->
+    <div class="dk-pay-modal dk-glass-backdrop" id="dkPosAuth">
+        <div class="dk-pay-box glass-strong">
+            <h2>ورود با کارت‌خوان</h2>
+            <div class="dk-pay-help">
+                اگر این خرید برای یک عضو باشگاه است، کد ملی و رمز او را وارد کنید تا خرید به حساب همان عضو ثبت شود.
+                اگر عضو نیست، بدون وارد کردن اطلاعات روی «ادامه به‌عنوان مهمان» بزنید.
+            </div>
+            <div class="dk-field">
+                <label for="dkPosNational">کد ملی عضو</label>
+                <input type="text" id="dkPosNational" class="form-control" inputmode="numeric" maxlength="10"
+                       placeholder="۱۰ رقم" autocomplete="off" dir="ltr" />
+            </div>
+            <div class="dk-field">
+                <label for="dkPosPassword">رمز عضو</label>
+                <input type="password" id="dkPosPassword" class="form-control" placeholder="رمز عبور عضو" autocomplete="off" dir="ltr" />
+            </div>
+            <button type="button" class="dk-pay-btn btn-primary" id="dkPosAuthGo">
+                <i class="bi bi-check2-circle"></i> تأیید و ارسال به کارت‌خوان
+            </button>
+            <button type="button" class="dk-pay-btn btn-glass" id="dkPosAuthGuest">
+                <i class="bi bi-person-walking"></i> ادامه به‌عنوان مهمان
+            </button>
+            <button type="button" class="dk-pay-btn btn-glass" id="dkPosAuthCancel">انصراف</button>
+            <div class="dk-pay-note" id="dkPosAuthNote"></div>
         </div>
     </div>
 

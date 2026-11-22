@@ -90,6 +90,33 @@
             background: linear-gradient(135deg, color-mix(in srgb, var(--g-primary) 34%, transparent), color-mix(in srgb, var(--g-surface-solid) 28%, transparent));
             border: 1px solid color-mix(in srgb, var(--g-text) 30%, transparent); font-size: .84rem;
         }
+        /* ✅ کارت‌های میز خدمت: آیکون و عنوان وسط کارت (اندازهٔ کارت تغییر نمی‌کند) */
+        .desk-grid .desk-card {
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            gap: 12px;
+        }
+        .desk-grid .desk-card > span:not(.dc-icon):not(.dc-go) {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .desk-grid .desk-card .dc-icon {
+            align-self: center;
+            margin: 0 auto;
+            flex: 0 0 auto;
+        }
+        .desk-grid .desk-card .dc-title {
+            display: block;
+            text-align: center;
+            font-size: 1.02rem;
+            line-height: 1.5;
+        }
+        .desk-grid .desk-card .dc-go {
+            align-self: center;
+            margin-top: 2px;
+        }
     </style>
 </head>
 <body data-bio-type="desk">
@@ -123,7 +150,7 @@
                 <span class="dc-icon"><i class="bi bi-wallet2"></i></span>
                 <span>
                     <span class="dc-title">افزایش اعتبار</span>
-                    <span class="dc-sub">شارژ اعتبار ورزشی، فروشگاه یا خدمات با کارت‌خوان</span>
+                    
                 </span>
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
@@ -132,7 +159,7 @@
                 <span class="dc-icon"><i class="bi bi-ticket-perforated"></i></span>
                 <span>
                     <span class="dc-title">خرید بلیت</span>
-                    <span class="dc-sub">انتخاب تعرفه، پرداخت با کارت‌خوان و صدور بلیت</span>
+                    
                 </span>
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
@@ -141,7 +168,7 @@
                 <span class="dc-icon"><i class="bi bi-lightning-charge"></i></span>
                 <span>
                     <span class="dc-title">تک جلسه</span>
-                    <span class="dc-sub">سانس‌های تک‌جلسهٔ امروز — پرداخت و ثبت فوری</span>
+                    
                 </span>
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
@@ -150,7 +177,7 @@
                 <span class="dc-icon"><i class="bi bi-person-plus"></i></span>
                 <span>
                     <span class="dc-title">ثبت‌نام</span>
-                    <span class="dc-sub">ثبت‌نام عضو جدید، تایید قوانین و ثبت چهره</span>
+                    
                 </span>
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
@@ -159,7 +186,7 @@
                 <span class="dc-icon"><i class="bi bi-arrow-repeat"></i></span>
                 <span>
                     <span class="dc-title">تمدید دوره</span>
-                    <span class="dc-sub">تمدید دوره‌های ورزشی — از اعتبار یا کارت‌خوان</span>
+                    
                 </span>
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
@@ -168,7 +195,7 @@
                 <span class="dc-icon"><i class="bi bi-bag-heart"></i></span>
                 <span>
                     <span class="dc-title">فروشگاه</span>
-                    <span class="dc-sub">کالاهای فروشگاه برای عضو — اعتبار یا کارت‌خوان</span>
+                    
                 </span>
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
@@ -177,16 +204,16 @@
                 <span class="dc-icon"><i class="bi bi-cup-hot"></i></span>
                 <span>
                     <span class="dc-title">بوفه</span>
-                    <span class="dc-sub">خوراکی و نوشیدنی — ثبت خرید برای عضو</span>
+                    
                 </span>
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
 
             <button type="button" class="desk-card" data-act="services">
-                <span class="dc-icon"><i class="bi bi-spa"></i></span>
+                <span class="dc-icon"><i class="bi bi-tools"></i></span>
                 <span>
                     <span class="dc-title">خدمات</span>
-                    <span class="dc-sub">ماساژ، مربی شخصی و سایر خدمات باشگاه</span>
+                    
                 </span>
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
@@ -358,13 +385,11 @@
             // ============================================================
             //  ۱) افزایش اعتبار
             // ============================================================
-            // ✅ چهار گزینهٔ افزایش اعتبار: ورزشی / فروشگاه / بوفه / خدمات
-            // فروشگاه و بوفه هر دو روی اعتبار فروشگاهی (کد ۲) می‌نشینند؛ برچسب برای متن رسید است.
+            // ✅ سه گزینهٔ افزایش اعتبار: ورزشی / فروشگاه و بوفه (یک اعتبار مشترک) / خدمات
             function creditTypesHtml() {
                 return '<div class="desk-chip" id="dkTypes">' +
                     '<button type="button" data-t="11" data-l="ورزشی" class="on">ورزشی</button>' +
-                    '<button type="button" data-t="2" data-l="فروشگاه">فروشگاه</button>' +
-                    '<button type="button" data-t="2" data-l="بوفه">بوفه</button>' +
+                    '<button type="button" data-t="2" data-l="فروشگاه و بوفه">فروشگاه و بوفه</button>' +
                     '<button type="button" data-t="3" data-l="خدمات">خدمات</button>' +
                     '</div>';
             }
@@ -641,6 +666,22 @@
             }
 
             document.getElementById('btnDeskLogout').addEventListener('click', openLogout);
+
+            // ✅ خروج خودکار از پروفایل عضو: ۶۰ ثانیه بدون کلیک/لمس
+            (function () {
+                var last = Date.now();
+                ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'wheel', 'scroll'].forEach(function (ev) {
+                    document.addEventListener(ev, function () { last = Date.now(); }, { passive: true });
+                });
+                setInterval(function () {
+                    var profileOpen = modal.classList.contains('open') && body.querySelector('.dk-member');
+                    if (!profileOpen) { last = Date.now(); return; }
+                    if (Date.now() - last < 60000) return;
+                    closeModal(false);
+                    last = Date.now();
+                    toast('به دلیل ۱ دقیقه بی‌کاری از پروفایل عضو خارج شد');
+                }, 5000);
+            })();
         })();
     </script>
     <script src="~/js/biometric.js" asp-append-version="true"></script>
