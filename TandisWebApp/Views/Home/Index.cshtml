@@ -343,7 +343,8 @@
     .status-active {
         background: color-mix(in srgb, var(--g-nested-solid) 14%, transparent);
         border-color: color-mix(in srgb, var(--g-text) 35%, transparent);
-        color: var(--g-primary);
+        /* حداقل ۴.۵:۱ روی پس‌زمینهٔ چیپ (WCAG 1.4.3) */
+        color: color-mix(in srgb, var(--g-primary) 78%, var(--g-text));
     }
 
         .status-active i {

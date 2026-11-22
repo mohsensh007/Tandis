@@ -43,7 +43,9 @@ body.admin-glass-body .container-fluid {
 
 body.admin-glass-body .admin-shell {
     width: 100%;
-    overflow-x: hidden;
+    /* overflow-x:hidden باعث می‌شد overflow-y به‌طور خودکار auto شود و یک
+       اسکرول‌بار دوم کنار اسکرول‌بار صفحه ساخته شود؛ محافظت افقی در body است. */
+    overflow: visible;
     padding-inline: 0 !important;
 }
 

@@ -400,7 +400,8 @@
         .admin-shell {
             min-width: 0;
             max-width: 100%;
-            overflow-x: hidden;
+            /* overflow-x:hidden محور عمودی را auto می‌کرد و اسکرول‌بار دوم می‌ساخت */
+            overflow: visible;
             padding-inline: clamp(10px, 3vw, 24px);
         }
 

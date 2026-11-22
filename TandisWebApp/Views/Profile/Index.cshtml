@@ -72,7 +72,7 @@
             $('#txtBirthDate').val(d.birthDate || '');
             $('#txtMemberID').val(d.memberID);
             if (d.personImageBase64) {
-                $('#avatar').html('<img src="data:image/png;base64,' + d.personImageBase64 + '" class="rounded-circle" style="width:120px;height:120px;object-fit:cover" />');
+                $('#avatar').html('<img alt="تصویر پروفایل" src="data:image/png;base64,' + d.personImageBase64 + '" class="rounded-circle" style="width:120px;height:120px;object-fit:cover" />');
             }            
         });
     });

@@ -61,8 +61,8 @@ body {
 }
 
 .card-header {
-    background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--g-primary) 0%, color-mix(in srgb, var(--g-primary) 76%, var(--g-text)) 100%);
+    color: var(--g-on-primary, #FFFFFF);
     border-radius: 12px 12px 0 0 !important;
     font-weight: bold;
     font-size: 1.05rem;
@@ -93,16 +93,16 @@ body {
 
 /* === دکمه‌ها === */
 .btn-primary {
-    background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
+    background: linear-gradient(135deg, var(--g-primary) 0%, color-mix(in srgb, var(--g-primary) 76%, var(--g-text)) 100%);
     border: none;
 }
 
     .btn-primary:hover {
-        background: linear-gradient(135deg, var(--g-surface-solid) 0%, var(--g-primary) 100%);
+        background: linear-gradient(135deg, color-mix(in srgb, var(--g-primary) 86%, var(--g-text)) 0%, var(--g-primary) 100%);
     }
 
 .btn-success {
-    background: linear-gradient(225deg, var(--g-surface-solid) 0%, var(--g-primary) 100%);
+    background: linear-gradient(225deg, var(--g-primary) 0%, color-mix(in srgb, var(--g-primary) 80%, var(--g-text)) 100%);
     border: none;
 }
 
@@ -113,7 +113,7 @@ body {
 
     .btn-outline-primary:hover {
         background: var(--g-primary);
-        color: white;
+        color: var(--g-on-primary, #FFFFFF);
     }
 
 /* === جدول === */
@@ -226,7 +226,7 @@ body {
     overflow: hidden;
     border: none;
     border-radius: 16px;
-    background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
+    background: linear-gradient(135deg, var(--g-primary) 0%, color-mix(in srgb, var(--g-primary) 76%, var(--g-text)) 100%);
     color: var(--g-text);
     box-shadow: 0 10px 30px color-mix(in srgb, var(--g-primary) 25%, transparent);
     transition: transform .25s;
@@ -534,7 +534,7 @@ body {
     }
 
     .sanse-card .sanse-top {
-        background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
+        background: linear-gradient(135deg, var(--g-primary) 0%, color-mix(in srgb, var(--g-primary) 76%, var(--g-text)) 100%);
         color: var(--g-text);
         padding: 16px 18px;
         position: relative;
@@ -1160,4 +1160,54 @@ body.coach-glass-body {
         radial-gradient(color-mix(in srgb, var(--g-text) 10%, transparent) 1px, transparent 1px) 0 0 / 26px 26px,
         linear-gradient(160deg, var(--g-primary) 0%, var(--g-primary) 48%, var(--g-surface-solid) 100%) !important;
     background-attachment: fixed !important;
+}
+
+/* =====================================================================
+   پایهٔ دسترس‌پذیری و تعامل (UI/UX Pro Max — priority 1/2/5/7)
+   ---------------------------------------------------------------------
+   • حلقهٔ فوکوس قابل‌دیدن برای همهٔ عناصر تعاملی (WCAG 2.4.7)
+   • اندازهٔ لمسی ≥44px فقط روی دستگاه‌های لمسی (WCAG 2.5.5)
+   • احترام به prefers-reduced-motion (WCAG 2.3.3)
+   ===================================================================== */
+:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--g-primary) 78%, transparent) !important;
+    outline-offset: 2px !important;
+}
+
+:is(a, button, .btn, .nav-link, .dropdown-item, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--g-primary) 78%, transparent) !important;
+    outline-offset: 2px !important;
+    border-radius: 8px;
+}
+
+/* حلقهٔ فوکوس روی کارت‌های کلیک‌پذیر */
+:is(.dash-card, .desk-card, .commerce-product-card, .mp-entry, .stat-card):focus-visible {
+    outline: 3px solid var(--g-primary) !important;
+    outline-offset: 3px !important;
+}
+
+@media (pointer: coarse) {
+    :is(.rep-btn-icon, .theme-toggle, .btn-close, .mh2-bio, #btnMemberBio, #btnDeskBio, .dk-back,
+        button[data-bio-enroll], .icon-btn, .btn-icon, .admin-report-all-close) {
+        min-width: 44px;
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html:focus-within { scroll-behavior: auto; }
+
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* متن‌های ثانویه باید حداقل ۴.۵:۱ باشند، نه خاکستری محو */
+.text-muted, .text-secondary {
+    color: var(--g-muted) !important;
 }
