@@ -206,6 +206,46 @@ body.member-ui .commerce-product-card:hover {
     box-shadow: 0 13px 28px color-mix(in srgb, var(--g-text) 22%, transparent);
 }
 
+/* موجودی انبار */
+body.member-ui .commerce-stock {
+    display: block;
+    margin-top: 3px;
+    font-size: .7rem;
+    font-weight: 700;
+    opacity: .78;
+}
+
+/* کالای ناموجود: ظاهر خاموش و غیرقابل کلیک */
+body.member-ui .commerce-product-card.is-out {
+    opacity: .55;
+    filter: grayscale(.55);
+}
+
+body.member-ui .commerce-product-card.is-out:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: color-mix(in srgb, var(--g-text) 12%, transparent);
+}
+
+body.member-ui .commerce-product-card.is-out .commerce-stock {
+    opacity: 1;
+    font-weight: 800;
+}
+
+body.member-ui .commerce-add:disabled,
+body.member-ui .commerce-checkout:disabled,
+body.member-ui .commerce-buy:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    filter: none;
+    transform: none;
+}
+
+body.member-ui .commerce-quantity:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
 body.member-ui .commerce-card-top,
 body.member-ui .commerce-product-top {
     display: flex;

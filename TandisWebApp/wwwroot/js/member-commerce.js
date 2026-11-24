@@ -182,24 +182,35 @@
             var id = integer(item.stuffID);
             var price = numberValue(item.stuffAmount);
             state.products[id] = item;
-            html += '<article class="commerce-product-card">' +
+            var left = stockLeft(id);
+            var out = !!item.trackStock && left <= 0;
+            html += '<article class="commerce-product-card' + (out ? ' is-out' : '') + '">' +
                 '<div class="commerce-product-top">' +
                     '<div class="commerce-product-icon"><i class="bi ' + (state.isBuffet ? 'bi-cup-hot' : 'bi-bag-heart') + '" aria-hidden="true"></i></div>' +
                     '<div class="commerce-product-body">' +
                         '<h3 class="commerce-product-title">' + escapeHtml(item.stuffDesc || '-') + '</h3>' +
                         '<strong class="commerce-price">' + escapeHtml(item.amountDisplay || money(price)) + '</strong>' +
+                        (item.stockDisplay ? '<span class="commerce-stock">' + escapeHtml(item.stockDisplay) + '</span>' : '') +
                     '</div>' +
                 '</div>' +
                 '<div class="commerce-product-action">' +
                     '<label class="commerce-visually-hidden" for="commerce-count-' + id + '">تعداد ' + escapeHtml(item.stuffDesc || 'کالا') + '</label>' +
-                    '<input id="commerce-count-' + id + '" class="commerce-quantity" type="number" min="1" max="100" step="1" value="1" inputmode="numeric" data-commerce-count="' + id + '">' +
-                    '<button type="button" class="commerce-add" data-commerce-action="add-product" data-id="' + id + '">' +
-                        '<i class="bi bi-cart-plus" aria-hidden="true"></i> افزودن' +
+                    '<input id="commerce-count-' + id + '" class="commerce-quantity" type="number" min="1" max="' + Math.max(1, left) + '" step="1" value="1" inputmode="numeric" data-commerce-count="' + id + '"' + (out ? ' disabled' : '') + '>' +
+                    '<button type="button" class="commerce-add" data-commerce-action="add-product" data-id="' + id + '"' + (out ? ' disabled aria-disabled="true"' : '') + '>' +
+                        (out ? '<i class="bi bi-x-circle" aria-hidden="true"></i> ناموجود'
+                             : '<i class="bi bi-cart-plus" aria-hidden="true"></i> افزودن') +
                     '</button>' +
                 '</div>' +
             '</article>';
         });
         target.innerHTML = html;
+    }
+
+    // موجودی قابل خرید یک کالا (کالای بدون کنترل انبار: ۱۰۰)
+    function stockLeft(id) {
+        var product = state.products[id];
+        if (!product || !product.trackStock) return 100;
+        return Math.max(0, Math.min(100, integer(product.availableCount, 0)));
     }
 
     function loadProducts(categoryId) {
@@ -272,19 +283,25 @@
     function addProduct(id) {
         var product = state.products[id];
         if (!product) return;
+        var left = stockLeft(id);
+        if (left <= 0) {
+            showToast('این کالا موجود نیست', 'warning');
+            return;
+        }
         var input = document.querySelector('[data-commerce-count="' + id + '"]');
-        var count = Math.max(1, Math.min(100, integer(input && input.value, 1)));
+        var count = Math.max(1, Math.min(left, integer(input && input.value, 1)));
         var existing = basketLine(id);
-        if (existing) existing.count = Math.min(100, existing.count + count);
+        if (existing) existing.count = Math.min(left, existing.count + count);
         else state.basket.push({ stuffID: id, name: product.stuffDesc || '-', unitPrice: numberValue(product.stuffAmount), count: count });
         renderBasket();
-        showToast('کالا به سبد خرید اضافه شد', 'success');
+        if (left < 100 && existing && existing.count >= left) showToast('بیشتر از موجودی انبار نمی‌توانید اضافه کنید', 'warning');
+        else showToast('کالا به سبد خرید اضافه شد', 'success');
     }
 
     function changeBasket(id, delta) {
         var item = basketLine(id);
         if (!item) return;
-        item.count = Math.max(0, Math.min(100, item.count + delta));
+        item.count = Math.max(0, Math.min(stockLeft(id), item.count + delta));
         if (item.count === 0) state.basket = state.basket.filter(function (x) { return x.stuffID !== id; });
         renderBasket();
     }

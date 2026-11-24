@@ -1,0 +1,181 @@
+@{
+    ViewData["Title"] = "تنظیمات";
+    Layout = "_AdminLayout";
+}
+
+<div class="st-head">
+    <div>
+        <h5 class="st-title"><i class="bi bi-gear-fill"></i> تنظیمات</h5>
+        <div class="st-sub">یکی از بخش‌های تنظیمات را برای تغییر انتخاب کنید</div>
+    </div>
+    <a href="/Admin" class="st-back"><i class="bi bi-arrow-right"></i> بازگشت به داشبورد</a>
+</div>
+
+<div class="st-list">
+    <a href="/Admin/Rules" class="st-card">
+        <div class="st-icon"><i class="bi bi-shield-check"></i></div>
+        <div class="st-body">
+            <div class="st-card-title">شرایط و تعهدات باشگاه</div>
+            <div class="st-desc">متن نمایش‌داده‌شده در صفحه ثبت‌نام اعضا را تنظیم کنید</div>
+        </div>
+        <div class="st-arrow"><i class="bi bi-chevron-left"></i></div>
+    </a>
+
+    <a href="/Admin/PanelSettings" class="st-card">
+        <div class="st-icon"><i class="bi bi-sliders"></i></div>
+        <div class="st-body">
+            <div class="st-card-title">تنظیمات پنل</div>
+            <div class="st-desc">انتخاب کارت‌های قابل نمایش در میز خدمات و بخش‌های دارای چاپ فیش</div>
+        </div>
+        <div class="st-arrow"><i class="bi bi-chevron-left"></i></div>
+    </a>
+
+    <a href="/Admin/ClubQr" target="_blank" rel="noopener" class="st-card">
+        <div class="st-icon"><i class="bi bi-qr-code"></i></div>
+        <div class="st-body">
+            <div class="st-card-title">QR باشگاه شما</div>
+            <div class="st-desc">QR ثابت و بدون انقضا برای ورود اعضا — نمایش و چاپ</div>
+        </div>
+        <div class="st-arrow"><i class="bi bi-chevron-left"></i></div>
+    </a>
+</div>
+
+<style>
+    .st-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 16px;
+    }
+
+    .st-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem;
+        font-weight: 800;
+        margin: 0;
+        color: var(--g-text);
+    }
+
+        .st-title i {
+            color: var(--g-primary);
+        }
+
+    .st-sub {
+        font-size: .76rem;
+        opacity: .72;
+        margin-top: 3px;
+    }
+
+    .st-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: .76rem;
+        font-weight: 700;
+        padding: 8px 12px;
+        border-radius: 12px;
+        text-decoration: none;
+        color: var(--g-text);
+        background: color-mix(in srgb, var(--g-primary) 12%, transparent);
+        border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent);
+    }
+
+    /* دکمه‌ها به صورت افقی و تمام‌عرض، یکی زیر دیگری */
+    .st-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 100%;
+    }
+
+    .st-card {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        width: 100%;
+        min-width: 0;
+        padding: 14px 18px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, color-mix(in srgb, var(--g-surface-solid) 10%, transparent), color-mix(in srgb, var(--g-primary) 8%, transparent));
+        border: 1px solid color-mix(in srgb, var(--g-primary) 25%, transparent);
+        text-decoration: none;
+        color: inherit;
+        transition: all .25s ease;
+    }
+
+        .st-card:hover {
+            transform: translateY(-1px);
+            border-color: color-mix(in srgb, var(--g-primary) 55%, transparent);
+            box-shadow: 0 8px 24px color-mix(in srgb, var(--g-primary) 22%, transparent);
+            background: linear-gradient(135deg, color-mix(in srgb, var(--g-surface-solid) 18%, transparent), color-mix(in srgb, var(--g-primary) 14%, transparent));
+        }
+
+    .st-icon {
+        flex: 0 0 44px;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, var(--g-primary) 0%, var(--g-surface-solid) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--g-text);
+        font-size: 1.25rem;
+        box-shadow: 0 6px 14px color-mix(in srgb, var(--g-primary) 35%, transparent);
+    }
+
+    .st-body {
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .st-card-title {
+        font-weight: 800;
+        font-size: .92rem;
+        color: var(--g-text);
+        margin-bottom: 3px;
+    }
+
+    .st-desc {
+        font-size: .74rem;
+        color: var(--g-text);
+        line-height: 1.5;
+    }
+
+    .st-arrow {
+        flex: 0 0 auto;
+        color: var(--g-primary);
+        font-size: 1.1rem;
+        transition: transform .2s;
+    }
+
+    .st-card:hover .st-arrow {
+        transform: translateX(-3px);
+    }
+
+    @@media (max-width: 576px) {
+        .st-card {
+            padding: 12px 14px;
+            gap: 10px;
+        }
+
+        .st-icon {
+            flex-basis: 40px;
+            width: 40px;
+            height: 40px;
+            font-size: 1.15rem;
+        }
+
+        .st-card-title {
+            font-size: .85rem;
+        }
+
+        .st-desc {
+            font-size: .69rem;
+        }
+    }
+</style>

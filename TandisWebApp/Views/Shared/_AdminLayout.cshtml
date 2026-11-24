@@ -542,8 +542,8 @@
                        href="/Admin/Charts"><i class="bi bi-activity me-1"></i>نمودارها</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link @(currentPath.StartsWith("/admin/panelsettings") ? "nav-active" : "")"
-                       href="/Admin/PanelSettings"><i class="bi bi-sliders me-1"></i>تنظیمات پنل</a>
+                    <a class="nav-link @((currentPath.StartsWith("/admin/settings") || currentPath.StartsWith("/admin/panelsettings") || currentPath.StartsWith("/admin/rules") || currentPath.StartsWith("/admin/clubqr")) ? "nav-active" : "")"
+                       href="/Admin/Settings"><i class="bi bi-gear-fill me-1"></i>تنظیمات</a>
                 </li>
             </ul>
 
@@ -608,7 +608,7 @@
             <i class="bi bi-chat-dots-fill"></i>
             <span>پیام‌ها</span>
         </a>
-        <a href="/Admin/PanelSettings" class="abn-item" data-key="settings">
+        <a href="/Admin/Settings" class="abn-item" data-key="settings">
             <i class="bi bi-sliders"></i>
             <span>تنظیمات</span>
         </a>
@@ -841,6 +841,11 @@
                 currentKey = 'charts';
             } else if (path.indexOf('/admin/messages') === 0) {
                 currentKey = 'messages';
+            } else if (path.indexOf('/admin/settings') === 0 ||
+                       path.indexOf('/admin/panelsettings') === 0 ||
+                       path.indexOf('/admin/rules') === 0 ||
+                       path.indexOf('/admin/clubqr') === 0) {
+                currentKey = 'settings';
             }
 
             function findItem(key) {

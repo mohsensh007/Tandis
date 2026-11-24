@@ -59,6 +59,15 @@ namespace TandisWebApp.Controllers
         // ============================================================
         //  تنظیمات پنل: نمایش کارت‌ها و بخش‌های چاپ فیش در میز خدمات
         // ============================================================
+        // ✅ «تنظیمات»: صفحهٔ فهرست تنظیمات — از اینجا به هر بخش تنظیمات می‌رود
+        [AdminAuthorize]
+        [HttpGet]
+        public IActionResult Settings()
+        {
+            ViewData["Title"] = "تنظیمات";
+            return View();
+        }
+
         [AdminAuthorize]
         [HttpGet]
         public IActionResult PanelSettings()

@@ -118,7 +118,18 @@ namespace TandisWebApp.DTOs
         public string AmountDisplay { get; set; } = string.Empty;
         public string? PicAddress { get; set; }
         public int? StuffCategoryID { get; set; }
+
+        /// <summary>موجودی انبار؛ اگر کالا رکورد انباری نداشته باشد ‎-1‎ است.</summary>
         public int AvailableCount { get; set; }
+
+        /// <summary>آیا موجودی این کالا از جدول Acc_BuffetStore کنترل می‌شود؟</summary>
+        public bool TrackStock { get; set; }
+
+        /// <summary>موجودی صفر است و نباید فروخته شود</summary>
+        public bool SoldOut { get; set; }
+
+        /// <summary>متن موجودی برای نمایش در کارت کالا</summary>
+        public string StockDisplay { get; set; } = string.Empty;
     }
 
     public class StuffCategoryDto

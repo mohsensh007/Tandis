@@ -51,6 +51,7 @@ namespace TandisWebApp.Data
         public DbSet<ACC_MemberService> ACC_MemberServices { get; set; } = null!;
         public DbSet<Acc_BuffetFactor> Acc_BuffetFactors { get; set; } = null!;
         public DbSet<Acc_BuffetFactorDetail> Acc_BuffetFactorDetails { get; set; } = null!;
+        public DbSet<Acc_BuffetStore> Acc_BuffetStores { get; set; } = null!;
         public DbSet<ACC_PosTransaction> ACC_PosTransactions { get; set; } = null!;
         public DbSet<ACC_Freez> ACC_Freezs { get; set; } = null!;
         public DbSet<Acc_ArticleDoc> Acc_ArticleDocs { get; set; } = null!;

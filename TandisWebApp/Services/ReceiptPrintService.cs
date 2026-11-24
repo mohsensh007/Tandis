@@ -72,7 +72,8 @@ namespace TandisWebApp.Services
     /// چاپ فیش روی پرینتر حرارتی POS.
     /// اگر روی سیستم سرور یکی از درایورهای POS-80 / POS-80C / POS-58 / POS-58C نصب باشد،
     /// فیش مستقیماً (بدون دیالوگ چاپ) روی همان پرینتر چاپ می‌شود.
-    /// چیدمان بر اساس قالب‌های Telerik موجود در پروژهٔ کیوسک (Report/*.trdp) بازسازی شده است.
+    /// چیدمان تصویر، دقیقاً همان فیشی است که در پنل میز خدمت روی صفحه نمایش داده می‌شود
+    /// (جدول کالا/فی/تعداد/مبلغ، کادر مبلغ کل، پاورقی).
     /// </summary>
     public class ReceiptPrintService
     {
@@ -202,139 +203,294 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
-        //  ساخت تصویر فیش
+        //  ساخت تصویر فیش (مطابق فیش روی صفحه)
         // ============================================================
-        private sealed record El(string Text, float Size, bool Bold, int Align, float GapAfter);
-
         private Bitmap Render(ReceiptDoc doc, int width)
         {
-            var els = new List<El>();
+            // همهٔ اندازه‌ها نسبت به عرض مرجع ۵۷۶ دات مقیاس می‌شوند تا روی ۵۸ میلی‌متری هم یکسان بماند
+            float s = width / 576f;
+            int pad = Math.Max(10, (int)Math.Round(width * 0.035f));
 
-            void Center(string t, float size, bool bold, float gap = 4) => els.Add(new(t, size, bold, 0, gap));
-            void Row(string t, float size, bool bold, float gap = 4) => els.Add(new(t, size, bold, 1, gap));
-            void Small(string t) => els.Add(new(t, 15, false, 0, 2));
-
-            // --- هدر
-            Center(doc.ClubName.Length > 0 ? doc.ClubName : "باشگاه", 24, true, 2);
-            Center(doc.Title.Length > 0 ? doc.Title : "رسید", 26, true, 6);
-            Center("--------------------------------", 16, false, 6);
-
-            // --- تاریخ / ساعت
-            var dateLine = $"تاریخ: {doc.Date}    ساعت: {doc.Time}";
-            Row(dateLine, 19, false, 4);
-
-            if (!string.IsNullOrWhiteSpace(doc.Party))
-                Row("نام: " + doc.Party, 19, false, 2);
-            if (!string.IsNullOrWhiteSpace(doc.PartySub))
-                Row(doc.PartySub!, 17, false, 4);
-
-            if (doc.Rows.Count > 0)
+            var fonts = new List<Font>();
+            Font MakeFont(float px, bool bold)
             {
-                Center("--------------------------------", 16, false, 6);
-                foreach (var r in doc.Rows)
-                {
-                    var name = (r.Name ?? "").Trim();
-                    if (name.Length == 0) continue;
-
-                    if (r.Qty > 1)
-                        Row($"{name} × {r.Qty}", 19, false, 1);
-                    else
-                        Row(name, 19, false, 1);
-
-                    Row(FormatMoney(r.Amount * Math.Max(r.Qty, 1)) + " ریال", 18, false, 4);
-                }
+                var f = new Font("Tahoma", Math.Max(8f, px * s), bold ? FontStyle.Bold : FontStyle.Regular, GraphicsUnit.Pixel);
+                fonts.Add(f);
+                return f;
             }
 
-            Center("--------------------------------", 16, false, 6);
-
-            // --- مبلغ کل
-            var totalLabel = string.IsNullOrWhiteSpace(doc.TotalLabel) ? "مبلغ کل" : doc.TotalLabel!;
-            Center($"{totalLabel}: {FormatMoney(doc.Total)} ریال", 23, true, 6);
-
-            if (!string.IsNullOrWhiteSpace(doc.PaymentMethod))
-                Row("روش پرداخت: " + doc.PaymentMethod, 18, false, 3);
-            if (!string.IsNullOrWhiteSpace(doc.RefNo))
-                Row("کد سند: " + doc.RefNo, 18, false, 3);
-            if (!string.IsNullOrWhiteSpace(doc.Note))
-                Center(doc.Note!, 16, false, 4);
-
-            Center("--------------------------------", 16, false, 6);
-
-            // --- پاورقی (مطابق قالب‌های موجود)
-            Small("ایمن تردد تندیس مرکز تخصصی");
-            Small("هوشمندسازی اماکن ورزشی");
-            Small("www.ittandis.com");
-            Small("021-37549000");
-            els.Add(new El("با تشکر از شما", 17, true, 0, 6));
-
-            // --- اندازه‌گیری / شکستن خطوط
-            // ✅ حاشیهٔ امن: ۳٪ عرض (حدود ۲ میلی‌متر) تا هیچ متنی به لبهٔ سر چاپ نچسبد
-            int pad = Math.Max(14, (int)Math.Round(width * 0.03));
-            float avail = width - pad * 2f;
+            var fClub = MakeFont(20, true);
+            var fTitle = MakeFont(27, true);
+            var fMeta = MakeFont(21, true);
+            var fParty = MakeFont(20, true);
+            var fCell = MakeFont(19, false);
+            var fCellName = MakeFont(19, true);
+            var fHead = MakeFont(19, true);
+            var fSum = MakeFont(22, true);
+            var fNote = MakeFont(19, false);
+            var fFoot = MakeFont(17, false);
 
             using var probe = new Bitmap(1, 1);
             using var pg = Graphics.FromImage(probe);
             pg.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
 
-            var fmt = new StringFormat(StringFormat.GenericTypographic)
+            var rtl = new StringFormat(StringFormat.GenericTypographic) { FormatFlags = StringFormatFlags.DirectionRightToLeft };
+            var ltr = new StringFormat(StringFormat.GenericTypographic);
+
+            float LH(Font f) => f.GetHeight(pg) + 1f;
+            float MW(string t, Font f) => string.IsNullOrEmpty(t) ? 0f : pg.MeasureString(t, f, new PointF(0, 0), rtl).Width;
+
+            float thick = Math.Max(1.4f, 2f * s);
+            float x0 = pad, x1 = width - pad, tw = x1 - x0;
+
+            using var pen = new Pen(Color.Black, thick);
+            using var dotPen = new Pen(Color.Black, Math.Max(1f, thick * 0.8f)) { DashStyle = DashStyle.Dot };
+            using var dashPen = new Pen(Color.Black, Math.Max(1f, thick * 0.8f)) { DashStyle = DashStyle.Dash };
+            using var brush = new SolidBrush(Color.Black);
+
+            var blocks = new List<(float H, Action<Graphics, float> Draw)>();
+            void Add(float h, Action<Graphics, float> draw) => blocks.Add((h, draw));
+
+            Font Fit(string text, Font baseFont, float avail)
             {
-                FormatFlags = StringFormatFlags.DirectionRightToLeft
-            };
-
-            var fonts = new List<Font>();
-            var lines = new List<(string Text, Font Font, int Align, float Gap)>();
-
-            foreach (var el in els)
-            {
-                var baseFont = new Font("Tahoma", el.Size, el.Bold ? FontStyle.Bold : FontStyle.Regular, GraphicsUnit.Pixel);
-                fonts.Add(baseFont);
-
-                var parts = WrapText(pg, el.Text ?? "", baseFont, avail, fmt);
-                float gap = el.GapAfter / Math.Max(parts.Count, 1);
-
-                foreach (var part in parts)
+                if (MW(text, baseFont) <= avail) return baseFont;
+                for (float size = baseFont.Size - 0.5f; size >= 8f; size -= 0.5f)
                 {
-                    var font = baseFont;
-                    if (Measure(pg, part, font, fmt) > avail)
-                    {
-                        font = Shrink(pg, part, baseFont, avail, fmt);
-                        fonts.Add(font);
-                    }
-                    lines.Add((part, font, el.Align, gap));
+                    var f = new Font(baseFont.FontFamily, size, baseFont.Style, GraphicsUnit.Pixel);
+                    fonts.Add(f);
+                    if (MW(text, f) <= avail) return f;
+                }
+                return baseFont;
+            }
+
+            // در حالت RTL نقطهٔ شروعِ DrawString لبهٔ راست متن است
+            void DrawRtl(Graphics g, string text, Font f, float rightX, float y)
+                => g.DrawString(text, f, brush, rightX, y, rtl);
+
+            void DrawC(Graphics g, string text, Font f, float y)
+            {
+                float w = g.MeasureString(text, f, new PointF(0, 0), rtl).Width;
+                g.DrawString(text, f, brush, (width + w) / 2f, y, rtl);
+            }
+
+            void DrawInCell(Graphics g, string text, Font f, float left, float cellW, float y)
+            {
+                float w = g.MeasureString(text, f, new PointF(0, 0), rtl).Width;
+                g.DrawString(text, f, brush, left + (cellW + w) / 2f, y, rtl);
+            }
+
+            void DrawLeftRtl(Graphics g, string text, Font f, float left, float y)
+            {
+                float w = g.MeasureString(text, f, new PointF(0, 0), rtl).Width;
+                g.DrawString(text, f, brush, left + w, y, rtl);
+            }
+
+            void AddDash() =>
+                Add(16f * s, (g, y) => g.DrawLine(dashPen, x0, y + 8f * s, x1, y + 8f * s));
+
+            // ---------- سربرگ: نام باشگاه + عنوان فیش ----------
+            var club = (doc.ClubName ?? "").Trim();
+            if (club.Length > 0)
+            {
+                var cf = Fit(club, fClub, tw);
+                float h = LH(cf);
+                Add(h + 2 * s, (g, y) => DrawC(g, club, cf, y));
+            }
+
+            var title = string.IsNullOrWhiteSpace(doc.Title) ? "رسید" : doc.Title.Trim();
+            var tf = Fit(title, fTitle, tw);
+            float titleH = LH(tf);
+            Add(titleH + 5 * s, (g, y) => DrawC(g, title, tf, y));
+
+            AddDash();
+
+            // ---------- ساعت و تاریخ در یک خط (ساعت سمت راست، تاریخ سمت چپ) ----------
+            var timeLine = "ساعت: " + (doc.Time ?? "");
+            var dateLine = "تاریخ: " + (doc.Date ?? "");
+            var mfTime = Fit(timeLine, fMeta, tw * 0.46f);
+            var mfDate = Fit(dateLine, fMeta, tw * 0.46f);
+            float metaH = Math.Max(LH(mfTime), LH(mfDate)) + 2 * s;
+            Add(metaH, (g, y) =>
+            {
+                DrawRtl(g, timeLine, mfTime, x1, y);
+                DrawLeftRtl(g, dateLine, mfDate, x0, y);
+            });
+
+            // ---------- نام عضو ----------
+            if (!string.IsNullOrWhiteSpace(doc.Party) || !string.IsNullOrWhiteSpace(doc.PartySub))
+            {
+                AddDash();
+                if (!string.IsNullOrWhiteSpace(doc.Party))
+                {
+                    var line = "نام: " + doc.Party!.Trim();
+                    var pf = Fit(line, fParty, tw);
+                    float h = LH(pf);
+                    Add(h + 2 * s, (g, y) => DrawRtl(g, line, pf, x1, y));
+                }
+                if (!string.IsNullOrWhiteSpace(doc.PartySub))
+                {
+                    var line = doc.PartySub!.Trim();
+                    var pf = Fit(line, fCell, tw);
+                    float h = LH(pf);
+                    Add(h + 2 * s, (g, y) => DrawRtl(g, line, pf, x1, y));
                 }
             }
 
-            var rows = new List<(string Text, Font Font, int Align, float Gap, float Height)>();
-            float totalH = pad * 2;
-            foreach (var ln in lines)
+            // ---------- جدول کالا / فی / تعداد / مبلغ ----------
+            var items = (doc.Rows ?? new List<ReceiptRowDto>())
+                .Where(r => !string.IsNullOrWhiteSpace(r.Name))
+                .Select(r => new { Name = r.Name.Trim(), Qty = Math.Max(1, r.Qty), Unit = Math.Max(0, r.Amount) })
+                .ToList();
+
+            if (items.Count > 0)
             {
-                float lh = LineHeight(pg, ln.Font, fmt);
-                rows.Add((ln.Text, ln.Font, ln.Align, ln.Gap, lh));
-                totalH += lh + ln.Gap;
+                AddDash();
+
+                var cw = new[] { tw * 0.40f, tw * 0.21f, tw * 0.14f, tw * 0.25f };   // کالا، فی، تعداد، مبلغ (از راست)
+                var heads = new[] { "کالا", "فی", "تعداد", "مبلغ" };
+                float headH = LH(fHead) + 12 * s;
+                float cellPadX = 7 * s;
+
+                var rowLines = new List<List<string>>();
+                var rowHeights = new List<float>();
+                foreach (var it in items)
+                {
+                    var lines = WrapText(pg, it.Name, fCellName, cw[0] - cellPadX * 2, rtl);
+                    if (lines.Count == 0) lines.Add("");
+                    rowLines.Add(lines);
+                    rowHeights.Add(Math.Max(30 * s, lines.Count * LH(fCellName) + 12 * s));
+                }
+
+                float tableH = headH + rowHeights.Sum();
+
+                Add(tableH, (g, y) =>
+                {
+                    g.DrawRectangle(pen, x0, y, tw, tableH);
+                    g.DrawLine(pen, x0, y + headH, x1, y + headH);
+
+                    // سرستون‌ها از راست به چپ
+                    float cx = x1;
+                    for (int c = 0; c < heads.Length; c++)
+                    {
+                        DrawInCell(g, heads[c], fHead, cx - cw[c], cw[c], y + (headH - LH(fHead)) / 2f);
+                        cx -= cw[c];
+                    }
+
+                    float cy = y + headH;
+                    float numberY, colLeft;
+
+                    for (int r = 0; r < items.Count; r++)
+                    {
+                        var it = items[r];
+                        float rh = rowHeights[r];
+
+                        // ستون کالا (راست‌ترین) — با شکستن خط
+                        float nameY = cy + (rh - rowLines[r].Count * LH(fCellName)) / 2f;
+                        foreach (var ln in rowLines[r])
+                        {
+                            DrawRtl(g, ln, fCellName, x1 - cellPadX, nameY);
+                            nameY += LH(fCellName);
+                        }
+
+                        numberY = cy + (rh - LH(fCell)) / 2f;
+
+                        colLeft = x1 - cw[0];
+                        DrawInCell(g, FormatMoney(it.Unit), fCell, colLeft - cw[1], cw[1], numberY);
+
+                        colLeft -= cw[1];
+                        DrawInCell(g, it.Qty.ToString(CultureInfo.InvariantCulture), fCell, colLeft - cw[2], cw[2], numberY);
+
+                        DrawInCell(g, FormatMoney(it.Unit * it.Qty), fCell, x0, cw[3], numberY);
+
+                        if (r < items.Count - 1)
+                            g.DrawLine(dotPen, x0, cy + rh, x1, cy + rh);
+                        cy += rh;
+                    }
+                });
             }
 
-            var bmp = new Bitmap(width, Math.Max(120, (int)Math.Ceiling(totalH)));
+            // ---------- کادر مبلغ کل ----------
+            var sumRows = new List<(string Label, string Value)>
+            {
+                (string.IsNullOrWhiteSpace(doc.TotalLabel) ? "مبلغ کل" : doc.TotalLabel!.Trim(), FormatMoney(doc.Total) + " ریال")
+            };
+            if (!string.IsNullOrWhiteSpace(doc.RefNo))
+                sumRows.Add(("شماره فاکتور", doc.RefNo!.Trim()));
+            if (!string.IsNullOrWhiteSpace(doc.PaymentMethod))
+                sumRows.Add(("روش پرداخت", doc.PaymentMethod!.Trim()));
+
+            float sumRowH = LH(fSum) + 12 * s;
+            float boxPadY = 8 * s;
+            float boxPadX = 10 * s;
+            float sumH = sumRows.Count * sumRowH + boxPadY * 2;
+
+            Add(8 * s + sumH, (g, y) =>
+            {
+                float by = y + 8 * s;
+                RoundRect(g, pen, x0, by, tw, sumH, 7 * s);
+                float ry = by + boxPadY;
+                foreach (var row in sumRows)
+                {
+                    float labelW = MW(row.Label + ":", fSum);
+                    var vf = Fit(row.Value, fSum, tw - boxPadX * 2 - labelW - 12 * s);
+                    DrawRtl(g, row.Label + ":", fSum, x1 - boxPadX, ry + (sumRowH - LH(fSum)) / 2f);
+                    DrawLeftRtl(g, row.Value, vf, x0 + boxPadX, ry + (sumRowH - LH(vf)) / 2f);
+                    ry += sumRowH;
+                }
+            });
+
+            // ---------- توضیح ----------
+            if (!string.IsNullOrWhiteSpace(doc.Note))
+            {
+                var note = doc.Note!.Trim();
+                var nf = Fit(note, fNote, tw);
+                float nh = LH(nf);
+                Add(8 * s + nh + 6 * s, (g, y) => DrawC(g, note, nf, y + 8 * s));
+            }
+            else
+            {
+                AddDash();
+            }
+
+            // ---------- پاورقی ----------
+            var footLines = new[]
+            {
+                "ایمن تردد تندیس مرکز تخصصی",
+                "هوشمندسازی اماکن ورزشی",
+                "www.ittandis.com",
+                "۰۲۱-۳۷۵۴۹۰۰۰"
+            };
+            float footLineH = LH(fFoot) + 2 * s;
+            float footH = footLines.Length * footLineH + 14 * s;
+
+            Add(8 * s + footH, (g, y) =>
+            {
+                float by = y + 8 * s;
+                RoundRect(g, pen, x0, by, tw, footH, 7 * s);
+                float fy = by + 7 * s;
+                foreach (var line in footLines)
+                {
+                    DrawC(g, line, fFoot, fy);
+                    fy += footLineH;
+                }
+            });
+
+            // ---------- رسم ----------
+            float totalH = pad * 2;
+            foreach (var b in blocks) totalH += b.H;
+
+            var bmp = new Bitmap(width, Math.Max(140, (int)Math.Ceiling(totalH)));
             using (var g = Graphics.FromImage(bmp))
             {
                 g.Clear(Color.White);
                 g.TextRenderingHint = TextRenderingHint.AntiAliasGridFit;
-                g.SmoothingMode = SmoothingMode.HighQuality;
+                g.SmoothingMode = SmoothingMode.AntiAlias;
 
                 float y = pad;
-                using var brush = new SolidBrush(Color.Black);
-
-                foreach (var ln in rows)
+                foreach (var b in blocks)
                 {
-                    if (!string.IsNullOrEmpty(ln.Text))
-                    {
-                        float w = Measure(g, ln.Text, ln.Font, fmt);
-                        // در حالت RTL، مختصهٔ افقیِ DrawString لبهٔ راست متن است
-                        float rightEdge = ln.Align == 0 ? (width + w) / 2f : width - pad;
-                        if (rightEdge - w < pad) rightEdge = pad + w;     // متن از کادر بیرون نزند
-                        if (rightEdge > width - pad) rightEdge = width - pad;
-                        g.DrawString(ln.Text, ln.Font, brush, rightEdge, y, fmt);
-                    }
-                    y += ln.Height + ln.Gap;
+                    b.Draw(g, y);
+                    y += b.H;
                 }
             }
 
@@ -342,27 +498,22 @@ namespace TandisWebApp.Services
             return bmp;
         }
 
+        private static void RoundRect(Graphics g, Pen pen, float x, float y, float w, float h, float r)
+        {
+            r = Math.Max(0f, Math.Min(r, Math.Min(w, h) / 2f));
+            using var path = new GraphicsPath();
+            path.AddArc(x, y, r * 2, r * 2, 180, 90);
+            path.AddArc(x + w - r * 2, y, r * 2, r * 2, 270, 90);
+            path.AddArc(x + w - r * 2, y + h - r * 2, r * 2, r * 2, 0, 90);
+            path.AddArc(x, y + h - r * 2, r * 2, r * 2, 90, 90);
+            path.CloseFigure();
+            g.DrawPath(pen, path);
+        }
+
         private static string FormatMoney(long v) => v.ToString("N0", CultureInfo.InvariantCulture);
 
         private static float Measure(Graphics g, string text, Font font, StringFormat fmt)
             => string.IsNullOrEmpty(text) ? 0f : g.MeasureString(text, font, new PointF(0, 0), fmt).Width;
-
-        // ✅ ارتفاع خط با فاصلهٔ استاندارد فونت (MeasureString تایپوگرافیک فقط خودِ گلیف را می‌داد
-        //    و خطوط پاورقی روی هم می‌افتادند)
-        private static float LineHeight(Graphics g, Font font, StringFormat fmt)
-            => font.GetHeight(g) + 1f;
-
-        /// <summary>کوچک‌ترین فونت (حداقل ۹px) که متن در عرض فیش جا شود</summary>
-        private static Font Shrink(Graphics g, string text, Font baseFont, float avail, StringFormat fmt)
-        {
-            for (float size = baseFont.Size - 0.5f; size >= 9f; size -= 0.5f)
-            {
-                var f = new Font(baseFont.FontFamily, size, baseFont.Style, GraphicsUnit.Pixel);
-                if (Measure(g, text, f, fmt) <= avail) return f;
-                f.Dispose();
-            }
-            return new Font(baseFont.FontFamily, 9f, baseFont.Style, GraphicsUnit.Pixel);
-        }
 
         /// <summary>شکستن متن به خطوط متناسب با عرض فیش (کلمه‌ای، با شکستن کلمات بسیار بلند)</summary>
         private static List<string> WrapText(Graphics g, string text, Font font, float avail, StringFormat fmt)

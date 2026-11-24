@@ -210,6 +210,31 @@ namespace TandisWebApp.Models
     }
 
     /// <summary>
+    /// ورود کالا به انبار فروشگاه/بوفه (موجودی)
+    /// معادل جدول dbo.Acc_BuffetStore
+    /// موجودی هر کالا = مجموع Count این جدول منهای تعداد فروش‌رفته در Acc_BuffetFactorDetail
+    /// </summary>
+    [Table("Acc_BuffetStore")]
+    public class Acc_BuffetStore
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int StuffStoreID { get; set; }
+
+        public short? StuffID { get; set; }
+        public int? Count { get; set; }
+        public long? Fee { get; set; }
+        public long? Amount { get; set; }
+
+        [MaxLength(250)]
+        public string? VendorName { get; set; }
+
+        public int? UserID { get; set; }
+        public short? ShiftID { get; set; }
+        public DateTime? CreationTime { get; set; }
+    }
+
+    /// <summary>
     /// تراکنش POS (کارخوان)
     /// معادل جدول dbo.ACC_PosTransaction
     /// </summary>

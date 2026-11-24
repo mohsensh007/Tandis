@@ -62,9 +62,91 @@ namespace TandisWebApp.Services
                         StuffCategoryID = s.StuffCategoryID
                     };
             var list = await q.AsNoTracking().ToListAsync();
+            var stock = await GetStockMapAsync(list.Select(s => s.StuffID));
             foreach (var s in list)
+            {
                 s.AmountDisplay = _helper.SetSeprator(s.StuffAmount) + " ریال";
+
+                if (stock.TryGetValue(s.StuffID, out var left) && left.HasValue)
+                {
+                    s.TrackStock = true;
+                    s.AvailableCount = Math.Max(0, left.Value);
+                    s.SoldOut = s.AvailableCount <= 0;
+                    s.StockDisplay = s.SoldOut
+                        ? "ناموجود"
+                        : "موجودی: " + _helper.SetSeprator(s.AvailableCount) + " عدد";
+                }
+                else
+                {
+                    // کالایی که هیچ رکورد انباری ندارد: موجودی کنترل نمی‌شود
+                    s.TrackStock = false;
+                    s.AvailableCount = -1;
+                    s.StockDisplay = string.Empty;
+                }
+            }
             return list;
+        }
+
+        /// <summary>
+        /// موجودی انبار هر کالا = مجموع ورودی‌های Acc_BuffetStore منهای تعداد فروخته‌شده در فاکتورهای بسته‌شده.
+        /// کالایی که هیچ رکورد انباری ندارد در دیکشنری نمی‌آید (یعنی بدون محدودیت).
+        /// </summary>
+        private async Task<Dictionary<short, int?>> GetStockMapAsync(IEnumerable<short> stuffIds)
+        {
+            var ids = (stuffIds ?? Enumerable.Empty<short>()).Distinct().ToList();
+            var map = new Dictionary<short, int?>();
+            if (ids.Count == 0) return map;
+
+            var inRows = await _db.Acc_BuffetStores.AsNoTracking()
+                .Where(x => x.StuffID.HasValue && ids.Contains(x.StuffID.Value))
+                .Select(x => new { StuffID = x.StuffID!.Value, Count = x.Count ?? 0 })
+                .GroupBy(x => x.StuffID)
+                .Select(g => new { StuffID = g.Key, Count = g.Sum(x => (long)x.Count) })
+                .ToListAsync();
+
+            var soldRows = await (from d in _db.Acc_BuffetFactorDetails.AsNoTracking()
+                                  join f in _db.Acc_BuffetFactors.AsNoTracking()
+                                       on d.BuffetFactorID equals (long?)f.BuffetFactorID
+                                  where d.StuffID.HasValue && ids.Contains(d.StuffID.Value) && f.IsClose == true
+                                  group d by d.StuffID!.Value into g
+                                  select new { StuffID = g.Key, Count = g.Sum(x => (long?)x.SCount) ?? 0 })
+                                 .ToListAsync();
+
+            var sold = soldRows.ToDictionary(x => x.StuffID, x => x.Count);
+
+            foreach (var row in inRows)
+            {
+                long left = row.Count - (sold.TryGetValue(row.StuffID, out var s) ? s : 0);
+                map[row.StuffID] = (int)Math.Clamp(left, 0, int.MaxValue);
+            }
+
+            return map;
+        }
+
+        /// <summary>
+        /// کنترل موجودی در لحظهٔ خرید: کالای بدون رکورد انباری محدود نمی‌شود، ولی کالایی که
+        /// رکورد انبار دارد و موجودی‌اش صفر (یا کمتر از تعداد درخواستی) است قابل فروش نیست.
+        /// </summary>
+        private async Task<string?> CheckStockAsync(IEnumerable<(short StuffID, string? Name, int Count)> lines)
+        {
+            var wanted = lines.GroupBy(x => x.StuffID)
+                              .ToDictionary(g => g.Key, g => new { Count = g.Sum(x => x.Count), g.First().Name });
+            if (wanted.Count == 0) return null;
+
+            var stock = await GetStockMapAsync(wanted.Keys);
+
+            foreach (var kv in wanted)
+            {
+                if (!stock.TryGetValue(kv.Key, out var left) || !left.HasValue) continue;
+                if (kv.Value.Count <= left.Value) continue;
+
+                var name = string.IsNullOrWhiteSpace(kv.Value.Name) ? kv.Key.ToString() : kv.Value.Name;
+                return left.Value <= 0
+                    ? $"کالا «{name}» موجود نیست"
+                    : $"موجودی کالا «{name}» کافی نیست (موجودی فعلی: {_helper.SetSeprator(left.Value)} عدد)";
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -134,6 +216,11 @@ namespace TandisWebApp.Services
 
                 if (total <= 0)
                     return new SimpleResponse { Success = false, Message = "مبلغ خرید نامعتبر است" };
+
+                // ✅ کنترل موجودی انبار (Acc_BuffetStore) — بیش از موجودی فروخته نمی‌شود
+                var stockError = await CheckStockAsync(validatedItems.Select(x => (x.Stuff.StuffID, x.Stuff.StuffDesc, x.Count)));
+                if (stockError != null)
+                    return new SimpleResponse { Success = false, Message = stockError };
 
                 // ✅ ۴) روش پرداخت
                 if (mode == "credit")
@@ -304,6 +391,11 @@ namespace TandisWebApp.Services
 
             if (total <= 0)
                 return new SimpleResponse { Success = false, Message = "مبلغ خرید نامعتبر است" };
+
+            // ✅ کنترل موجودی انبار (Acc_BuffetStore) — بیش از موجودی فروخته نمی‌شود
+            var stockError = await CheckStockAsync(lines.Select(x => (x.Stuff.StuffID, x.Stuff.StuffDesc, x.Count)));
+            if (stockError != null)
+                return new SimpleResponse { Success = false, Message = stockError };
 
             // مرحلهٔ ۱: ارسال مبلغ به کارت‌خوان
             if (posTxnId == null)
