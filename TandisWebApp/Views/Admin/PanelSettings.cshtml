@@ -1,0 +1,272 @@
+@{
+    ViewData["Title"] = "تنظیمات پنل";
+    Layout = "_AdminLayout";
+}
+
+<style>
+    .ps-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+
+    .ps-title {
+        font-size: 1.05rem;
+        font-weight: 800;
+        margin: 0;
+        color: var(--g-text);
+    }
+
+    .ps-sub {
+        font-size: .76rem;
+        opacity: .72;
+        margin-top: 2px;
+    }
+
+    .ps-table {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .ps-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 110px 110px;
+        align-items: center;
+        gap: 10px;
+        padding: 11px 13px;
+        border-radius: 14px;
+        background: color-mix(in srgb, var(--g-nested-solid) 70%, transparent);
+        border: 1px solid color-mix(in srgb, var(--g-text) 9%, transparent);
+    }
+
+    .ps-row.ps-head-row {
+        background: transparent;
+        border: 0;
+        padding-bottom: 0;
+        font-size: .72rem;
+        font-weight: 800;
+        opacity: .75;
+    }
+
+    .ps-name {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: .86rem;
+        font-weight: 700;
+        min-width: 0;
+    }
+
+    .ps-name i {
+        color: var(--g-primary);
+        font-size: 1.05rem;
+    }
+
+    .ps-cell {
+        display: flex;
+        justify-content: center;
+    }
+
+    .ps-switch {
+        position: relative;
+        display: inline-block;
+        width: 46px;
+        height: 26px;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .ps-switch input {
+        position: absolute;
+        opacity: 0;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        cursor: pointer;
+    }
+
+    .ps-switch span {
+        position: absolute;
+        inset: 0;
+        border-radius: 999px;
+        background: color-mix(in srgb, var(--g-text) 18%, transparent);
+        border: 1px solid color-mix(in srgb, var(--g-text) 22%, transparent);
+        transition: background .2s;
+        pointer-events: none;
+    }
+
+    .ps-switch span::after {
+        content: '';
+        position: absolute;
+        top: 3px;
+        right: 3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .35);
+        transition: transform .2s;
+    }
+
+    .ps-switch input:checked + span {
+        background: var(--g-primary);
+        border-color: var(--g-primary);
+    }
+
+    .ps-switch input:checked + span::after {
+        transform: translateX(-20px);
+    }
+
+    .ps-note {
+        font-size: .75rem;
+        line-height: 1.9;
+        padding: 10px 12px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        background: color-mix(in srgb, var(--g-primary) 9%, transparent);
+        border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent);
+        color: var(--g-text);
+    }
+
+    .ps-actions {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+    }
+
+    @@media (max-width: 575.98px) {
+        .ps-row {
+            grid-template-columns: minmax(0, 1fr) 80px 80px;
+            gap: 6px;
+            padding: 10px;
+        }
+        .ps-row.ps-head-row {
+            font-size: .65rem;
+        }
+        .ps-name {
+            font-size: .8rem;
+        }
+    }
+</style>
+
+<div class="card">
+    <div class="ps-head px-1">
+        <div>
+            <h5 class="ps-title"><i class="bi bi-sliders me-1"></i> تنظیمات پنل</h5>
+            <div class="ps-sub">انتخاب کنید کدام کارت‌ها در «میز خدمات» نمایش داده شوند و کدام بخش‌ها فیش چاپ کنند.</div>
+        </div>
+        <a href="/Admin" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-right"></i> بازگشت</a>
+    </div>
+
+    <div class="purple-style card-body">
+        <div class="ps-note">
+            <i class="bi bi-info-circle me-1"></i>
+            تغییرات پس از «ذخیره» و با بازکردن دوبارهٔ پنل میز خدمات اعمال می‌شود. خاموش‌کردن «چاپ فیش» فقط چاپ را
+            متوقف می‌کند؛ فیش همچنان روی صفحه نمایش داده می‌شود.
+        </div>
+
+        <div class="ps-table" id="psList">
+            <div class="ps-row ps-head-row">
+                <div>آیتم</div>
+                <div class="ps-cell">نمایش در میز خدمات</div>
+                <div class="ps-cell">چاپ فیش</div>
+            </div>
+            <div class="text-center py-3"><div class="spinner-border spinner-border-sm"></div> در حال بارگذاری…</div>
+        </div>
+
+        <div class="ps-actions">
+            <button type="button" class="btn btn-primary px-4" id="psSave">
+                <i class="bi bi-save"></i> ذخیره تنظیمات
+            </button>
+            <button type="button" class="btn btn-outline-secondary" id="psAllOn">فعال‌کردن همه</button>
+            <button type="button" class="btn btn-outline-secondary" id="psAllOff">خاموش‌کردن همه</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var items = [];
+            var state = { cards: [], print: [] };
+
+            function esc(v) {
+                return String(v == null ? '' : v)
+                    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            }
+
+            function render() {
+                var list = document.getElementById('psList');
+                var html = '<div class="ps-row ps-head-row">' +
+                    '<div>آیتم</div><div class="ps-cell">نمایش در میز خدمات</div><div class="ps-cell">چاپ فیش</div></div>';
+
+                items.forEach(function (it) {
+                    var key = String(it.key || '');
+                    var inCards = state.cards.indexOf(key) >= 0;
+                    var inPrint = state.print.indexOf(key) >= 0;
+                    html += '<div class="ps-row">' +
+                        '<div class="ps-name"><i class="bi bi-' + esc(it.icon) + '"></i> ' + esc(it.title) + '</div>' +
+                        '<div class="ps-cell"><label class="ps-switch">' +
+                        '<input type="checkbox" data-kind="cards" value="' + esc(key) + '"' + (inCards ? ' checked' : '') + ' />' +
+                        '<span></span></label></div>' +
+                        '<div class="ps-cell"><label class="ps-switch">' +
+                        '<input type="checkbox" data-kind="print" value="' + esc(key) + '"' + (inPrint ? ' checked' : '') + ' />' +
+                        '<span></span></label></div>' +
+                        '</div>';
+                });
+
+                list.innerHTML = html;
+            }
+
+            function readState() {
+                state.cards = [];
+                state.print = [];
+                document.querySelectorAll('#psList input[type="checkbox"]').forEach(function (cb) {
+                    var kind = cb.getAttribute('data-kind');
+                    var key = cb.value;
+                    if (cb.checked) (kind === 'cards' ? state.cards : state.print).push(key);
+                });
+            }
+
+            function load() {
+                apiCall('/api/Admin/PanelSettings', 'GET', null, function (res) {
+                    if (!res || !res.success) {
+                        document.getElementById('psList').innerHTML =
+                            '<div class="text-center py-3">دریافت تنظیمات ناموفق بود</div>';
+                        return;
+                    }
+                    items = res.items || [];
+                    state.cards = (res.data && res.data.deskCards) || [];
+                    state.print = (res.data && res.data.deskPrint) || [];
+                    render();
+                });
+            }
+
+            document.getElementById('psSave').addEventListener('click', function () {
+                readState();
+                var btn = this;
+                btn.disabled = true;
+                apiCall('/api/Admin/PanelSettings', 'POST', { deskCards: state.cards, deskPrint: state.print }, function (res) {
+                    btn.disabled = false;
+                    showToast((res && res.message) || 'ذخیره شد', (res && res.success) ? 'success' : 'error');
+                });
+            });
+
+            document.getElementById('psAllOn').addEventListener('click', function () {
+                document.querySelectorAll('#psList input[type="checkbox"]').forEach(function (cb) { cb.checked = true; });
+            });
+
+            document.getElementById('psAllOff').addEventListener('click', function () {
+                document.querySelectorAll('#psList input[type="checkbox"]').forEach(function (cb) { cb.checked = false; });
+            });
+
+            load();
+        })();
+    </script>
+}

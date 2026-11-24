@@ -7,9 +7,9 @@ namespace TandisWebApp.Controllers
 {
     /// <summary>
     /// احراز هویت بیومتریک (اثر انگشت / چهره) برای چهار پنل:
-    /// عضو، مربی، مدیر و میز خدمت.
+    /// عضو، مربی، مدیر و میز خدمات.
     /// • هر کاربرِ لاگین‌شده می‌تواند دستگاه خودش را ثبت کند.
-    /// • در میز خدمت، برای «ثبت» هر بار رمز عبور لازم است.
+    /// • در میز خدمات، برای «ثبت» هر بار رمز عبور لازم است.
     /// • نتیجهٔ تأیید = بلیت کوتاه‌عمر که جای رمز عبور به اکشن‌های حساس داده می‌شود.
     /// </summary>
     [Authorize]
@@ -82,9 +82,9 @@ namespace TandisWebApp.Controllers
             var (type, id, name) = CurrentUser();
             if (id <= 0) return Ok(new { success = false, message = "کاربر شناسایی نشد" });
 
-            // ✅ میز خدمت: ثبت بیومتریک فقط با رمز عبور
+            // ✅ میز خدمات: ثبت بیومتریک فقط با رمز عبور
             if (type == "desk")
-                return Ok(new { success = false, message = "برای ثبت اثر انگشت در میز خدمت، رمز عبور لازم است", needPassword = true });
+                return Ok(new { success = false, message = "برای ثبت اثر انگشت در میز خدمات، رمز عبور لازم است", needPassword = true });
 
             var (ok, msg, data) = await _bio.EnrollBeginAsync(type, id, name, RpId, Origin);
             return Ok(new { success = ok, message = msg, data });
@@ -97,7 +97,7 @@ namespace TandisWebApp.Controllers
             if (id <= 0) return Ok(new { success = false, message = "کاربر شناسایی نشد" });
 
             if (type != "desk")
-                return Ok(new { success = false, message = "این مسیر فقط برای کاربران میز خدمت است" });
+                return Ok(new { success = false, message = "این مسیر فقط برای کاربران میز خدمات است" });
 
             var (okPw, msgPw, _) = await _desk.VerifyDeskPasswordAsync((short)id, body?.Password);
             if (!okPw) return Ok(new { success = false, message = msgPw });

@@ -38,7 +38,7 @@ namespace TandisWebApp.Attributes
     }
 
     /// <summary>
-    /// فقط کاربران «میز خدمت» (Sec_Users با IsAdmin = false) اجازه دسترسی دارند.
+    /// فقط کاربران «میز خدمات» (Sec_Users با IsAdmin = false) اجازه دسترسی دارند.
     /// Claim «DeskAccess» باید «true» باشد.
     /// </summary>
     public class DeskAuthorizeAttribute : AuthorizeAttribute, IAuthorizationFilter

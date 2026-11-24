@@ -503,7 +503,7 @@ body:not(#lu):not(#mt-theme) .commerce-status {
     color: var(--g-muted) !important;
 }
 
-/* ---------- ۱۰) فروشگاه/میز خدمت ---------- */
+/* ---------- ۱۰) فروشگاه/میز خدمات ---------- */
 body:not(#lu):not(#mt-theme) .commerce-product-card,
 body:not(#lu):not(#mt-theme) .commerce-card,
 body:not(#lu):not(#mt-theme) .product-card,
@@ -982,7 +982,7 @@ html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .purple-style * {
     color: var(--g-text) !important;
 }
 
-/* ---------- ۲۱) شیشهٔ تاریک برای فروشگاه/خدمات میز خدمت ---------- */
+/* ---------- ۲۱) شیشهٔ تاریک برای فروشگاه/خدمات میز خدمات ---------- */
 html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-card,
 html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-product-card,
 html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .commerce-category-button,
@@ -1255,7 +1255,7 @@ html:not([data-theme="dark"]) body:not(#lu):not(#mt-theme):not(#app) .btn.btn-pr
     box-shadow: none !important;
 }
 
-/* ---------- ۳۰) کارت‌های پنل میز خدمت در حالت شب ---------- */
+/* ---------- ۳۰) کارت‌های پنل میز خدمات در حالت شب ---------- */
 html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .desk-card,
 html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .dc-card,
 html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .desk-user,

@@ -14,6 +14,7 @@ namespace TandisWebApp.Controllers
         private readonly MessageService _messages;
         private readonly ProfileService _profile;
         private readonly ClubRuleService _rules;
+        private readonly PanelSettingsService _panel;
 
         private short? CurrentAdminUserID
         {
@@ -25,13 +26,15 @@ namespace TandisWebApp.Controllers
             }
         }
 
-        public AdminController(AdminAuthService auth, AdminReportService reports, MessageService message, ProfileService profile, ClubRuleService rules)
+        public AdminController(AdminAuthService auth, AdminReportService reports, MessageService message, ProfileService profile,
+                               ClubRuleService rules, PanelSettingsService panel)
         {
             _auth = auth;
             _reports = reports;
             _messages = message;
             _profile = profile;
             _rules = rules;
+            _panel = panel;
         }
 
         private short AdminShiftID => User.GetAdminShiftID();
@@ -51,6 +54,43 @@ namespace TandisWebApp.Controllers
         {
             ViewData["Title"] = "QR باشگاه شما";
             return View("~/Views/QRCode/QrDisplay.cshtml");
+        }
+
+        // ============================================================
+        //  تنظیمات پنل: نمایش کارت‌ها و بخش‌های چاپ فیش در میز خدمات
+        // ============================================================
+        [AdminAuthorize]
+        [HttpGet]
+        public IActionResult PanelSettings()
+        {
+            ViewData["Title"] = "تنظیمات پنل";
+            return View();
+        }
+
+        [AdminAuthorize]
+        [HttpGet]
+        [Route("api/Admin/PanelSettings")]
+        public IActionResult PanelSettingsApi()
+        {
+            var settings = _panel.Get();
+            return Ok(new
+            {
+                success = true,
+                data = settings,
+                items = PanelSettingsService.Items.Select(i => new { i.Key, i.Title, i.Icon })
+            });
+        }
+
+        [AdminAuthorize]
+        [HttpPost]
+        [Route("api/Admin/PanelSettings")]
+        public IActionResult SavePanelSettings([FromBody] PanelSettings? req)
+        {
+            if (req == null)
+                return Ok(new { success = false, message = "درخواست نامعتبر است" });
+
+            _panel.Save(req);
+            return Ok(new { success = true, message = "تنظیمات پنل ذخیره شد" });
         }
 
         [AdminAuthorize]

@@ -338,7 +338,7 @@ body > .container h4, body > .container h5, body > .container h6,
     }
 
 /* ============================================================
-   ۱۰) پنل میز خدمت (۵ کارت)
+   ۱۰) پنل میز خدمات (۵ کارت)
    ============================================================ */
 .desk-wrap {
     max-width: 1180px;
@@ -508,7 +508,7 @@ body > .container h4, body > .container h5, body > .container h6,
     .desk-grid { grid-template-columns: 1fr; }
 }
 
-/* مودال‌های میز خدمت */
+/* مودال‌های میز خدمات */
 .desk-step {
     display: none;
 }
@@ -1115,7 +1115,7 @@ html body:not(#lu) :is(.bottom-nav, .admin-bottom-nav, .coach-bottom-nav) .activ
     background: color-mix(in srgb, var(--g-nested-solid) 18%, transparent) !important;
 }
 
-/* ---------- میز خدمت / ورود ---------- */
+/* ---------- میز خدمات / ورود ---------- */
 html body:not(#lu) :is(.desk-chip button, .desk-amount button, .desk-summary) {
     background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent) !important;
     border: 1px solid color-mix(in srgb, var(--g-text) 30%, transparent) !important;

@@ -89,7 +89,7 @@ namespace TandisWebApp.Services
                         };
                     }
                 }
-                else
+                else if (amount > 0)
                 {
                     balanceBefore = await _helper.GetServiceCreditAmountAsync(memberID);
 
@@ -217,10 +217,9 @@ namespace TandisWebApp.Services
                 return new SimpleResponse { Success = false, Message = "سرویس یافت نشد" };
 
             long amount = service.Amount ?? 0;
-            if (amount <= 0)
-                return new SimpleResponse { Success = false, Message = "مبلغ این سرویس نامعتبر است" };
 
-            if (posTxnId == null)
+            // ✅ مبلغ صفر → به دستگاه POS ارسال نمی‌شود؛ فقط ثبت می‌شود
+            if (amount > 0 && posTxnId == null)
             {
                 var intent = await _pos.CreateIntentAsync(0, amount, PosPaymentService.REF_SERVICE);
                 if (!intent.Success)
@@ -240,9 +239,12 @@ namespace TandisWebApp.Services
             using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
-                var claimed = await _pos.ClaimAsync(posTxnId.Value, 0, amount, PosPaymentService.REF_SERVICE);
-                if (!claimed)
-                    return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
+                if (amount > 0)
+                {
+                    var claimed = await _pos.ClaimAsync(posTxnId ?? 0, 0, amount, PosPaymentService.REF_SERVICE);
+                    if (!claimed)
+                        return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
+                }
 
                 var now = DateTime.Now;
                 var traffic = new ACC_Traffic
@@ -285,7 +287,8 @@ namespace TandisWebApp.Services
                 _db.ACC_MemberServices.Add(ms);
                 await _db.SaveChangesAsync();
 
-                await _pos.SettleRefAsync(posTxnId.Value, traffic.TrafficID);
+                if (amount > 0 && posTxnId != null)
+                    await _pos.SettleRefAsync(posTxnId.Value, traffic.TrafficID);
                 await tx.CommitAsync();
 
                 return new SimpleResponse

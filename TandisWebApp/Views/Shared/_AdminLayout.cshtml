@@ -541,6 +541,10 @@
                     <a class="nav-link @(currentPath.StartsWith("/admin/charts") ? "nav-active" : "")"
                        href="/Admin/Charts"><i class="bi bi-activity me-1"></i>نمودارها</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link @(currentPath.StartsWith("/admin/panelsettings") ? "nav-active" : "")"
+                       href="/Admin/PanelSettings"><i class="bi bi-sliders me-1"></i>تنظیمات پنل</a>
+                </li>
             </ul>
 
             <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-end admin-top-actions">
@@ -603,6 +607,10 @@
         <a href="/Admin/Messages" class="abn-item" data-key="messages">
             <i class="bi bi-chat-dots-fill"></i>
             <span>پیام‌ها</span>
+        </a>
+        <a href="/Admin/PanelSettings" class="abn-item" data-key="settings">
+            <i class="bi bi-sliders"></i>
+            <span>تنظیمات</span>
         </a>
         <a href="/Admin/Logout" class="abn-item js-logout" data-key="exit">
             <i class="bi bi-box-arrow-left"></i>

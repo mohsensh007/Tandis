@@ -1,0 +1,22 @@
+{
+  "DeskCards": [
+    "charge",
+    "ticket",
+    "single",
+    "register",
+    "renew",
+    "shop",
+    "buffet",
+    "services"
+  ],
+  "DeskPrint": [
+    "charge",
+    "ticket",
+    "single",
+    "register",
+    "renew",
+    "shop",
+    "buffet",
+    "services"
+  ]
+}

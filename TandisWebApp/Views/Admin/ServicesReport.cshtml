@@ -63,7 +63,7 @@
         var lastRows = [];
         var lastSummary = null;
         var csvColumns = [
-            { t: 'خدمت', g: function (r) { return r.serviceName || ''; } },
+            { t: 'خدمات', g: function (r) { return r.serviceName || ''; } },
             { t: 'شرح', g: function (r) { return r.serviceDesc || ''; } },
             { t: 'نام شخص', g: function (r) { return r.personName || ''; } },
             { t: 'کد عضویت', g: function (r) { return r.memberCode || ''; } },
@@ -114,7 +114,7 @@
                         '<button type="button" class="rep-toggle"><i class="bi bi-chevron-left"></i></button>' +
                     '</div>' +
                     '<div class="rep-details">' +
-                        '<div class="rep-drow"><span>شرح خدمت</span><b>' + esc(r.serviceDesc || '-') + '</b></div>' +
+                        '<div class="rep-drow"><span>شرح خدمات</span><b>' + esc(r.serviceDesc || '-') + '</b></div>' +
                         '<div class="rep-drow"><span>کد عضویت</span><b>' + esc(r.memberCode || '-') + '</b></div>' +
                         '<div class="rep-drow"><span>تاریخ</span><b>' + esc(r.creationDate || '-') + '</b></div>' +
                         '<div class="rep-drow"><span>ساعت</span><b>' + esc(r.creationTime || '-') + '</b></div>' +

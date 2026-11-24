@@ -18,7 +18,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#DCE5F0" />
-    <title>@title | میز خدمت @clubName</title>
+    <title>@title | میز خدمات @clubName</title>
     <script>
         (function () {
             try {
@@ -176,7 +176,7 @@
             <div class="dk-field">
                 <label for="dkPayNational">کد ملی عضو <span style="opacity:.65">(برای پرداخت از اعتبار)</span></label>
                 <input type="text" id="dkPayNational" class="form-control" inputmode="numeric" maxlength="10"
-                       placeholder="مثلاً 0012345678" autocomplete="off" dir="ltr" />
+                       placeholder="مثلاً 0012345678" autocomplete="off" dir="ltr" readonly onfocus="this.removeAttribute('readonly')" />
             </div>
             <div class="dk-field">
                 <label for="dkPayPassword">رمز عضو</label>
@@ -209,7 +209,7 @@
             <div class="dk-field">
                 <label for="dkPosNational">کد ملی عضو</label>
                 <input type="text" id="dkPosNational" class="form-control" inputmode="numeric" maxlength="10"
-                       placeholder="۱۰ رقم" autocomplete="off" dir="ltr" />
+                       placeholder="۱۰ رقم" autocomplete="off" dir="ltr" readonly onfocus="this.removeAttribute('readonly')" />
             </div>
             <div class="dk-field">
                 <label for="dkPosPassword">رمز عضو</label>
@@ -233,9 +233,11 @@
             kind: '@kind',
             isBuffet: @(isBuffet ? "true" : "false"),
             isService: @(isService ? "true" : "false"),
-            memberID: @(member?.MemberID ?? 0)
+            memberID: @(member?.MemberID ?? 0),
+            club: '@clubName'
         };
     </script>
+    <script src="~/js/desk-receipt.js" asp-append-version="true"></script>
     <script src="~/js/desk-commerce.js" asp-append-version="true"></script>
     <script src="~/js/theme.js" asp-append-version="true"></script>
 </body>

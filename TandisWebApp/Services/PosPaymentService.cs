@@ -26,7 +26,7 @@ namespace TandisWebApp.Services
         public const string REF_SERVICE = "WEB_SERVICE";
         public const string REF_REGISTER = "WEB_REGISTER";
 
-        // ✅ افزایش اعتبار از «میز خدمت» (کاربران Sec_Users غیرادمین)
+        // ✅ افزایش اعتبار از «میز خدمات» (کاربران Sec_Users غیرادمین)
         public const string REF_CHARGE = "WEB_CHARGE";
 
         private readonly FullSportDbContext _db;
@@ -183,7 +183,7 @@ namespace TandisWebApp.Services
         }
 
         // ============================================================
-        //  وضعیت تراکنش برای میز خدمت (بدون قید مالکیت عضو)
+        //  وضعیت تراکنش برای میز خدمات (بدون قید مالکیت عضو)
         //  فقط برای کاربران احراز‌هویت‌شدهٔ Desk استفاده می‌شود.
         // ============================================================
         public async Task<PosPaymentStatusDto> GetStatusAnyAsync(long txnId)
@@ -197,12 +197,12 @@ namespace TandisWebApp.Services
             return await GetStatusAsync(txnId, txn.MemberID ?? 0);
         }
 
-        // انصراف تراکنش در انتظار بدون قید مالکیت (برای میز خدمت)
+        // انصراف تراکنش در انتظار بدون قید مالکیت (برای میز خدمات)
         public async Task CancelAnyAsync(long txnId)
         {
             await _db.Database.ExecuteSqlInterpolatedAsync($@"
                 UPDATE dbo.ACC_PosTransaction
-                SET ResponseCode = 'CANCELED', Message = 'انصراف میز خدمت از پرداخت'
+                SET ResponseCode = 'CANCELED', Message = 'انصراف میز خدمات از پرداخت'
                 WHERE PcPosTransactionID = {txnId}
                   AND RefType LIKE 'WEB[_]%'
                   AND ResponseCode IS NULL");

@@ -85,7 +85,7 @@
                 // ===== مسیر ورود مدیر =====
                 apiCall('/api/Admin/Login', 'POST', { username: lower, password: pw }, function (res) {
                     // ✅ کاربران Sec_Users:
-                    //    IsAdmin=false + فعال → /Desk (میز خدمت)
+                    //    IsAdmin=false + فعال → /Desk (میز خدمات)
                     //    غیرفعال                → صفحه QR کیوسک
                     if (res.redirectTo) {
                         if (typeof hideLoading === 'function') { hideLoading(); }

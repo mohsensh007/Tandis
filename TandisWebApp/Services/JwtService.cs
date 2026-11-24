@@ -95,7 +95,7 @@ namespace TandisWebApp.Services
         }
 
         /// <summary>
-        /// توکن کاربر «میز خدمت» — کاربران Sec_Users با IsAdmin = false.
+        /// توکن کاربر «میز خدمات» — کاربران Sec_Users با IsAdmin = false.
         /// دسترسی محدود به /Desk (نه پنل مدیر).
         /// </summary>
         public string GenerateDeskToken(short userID, string username, short shiftID)
@@ -104,7 +104,7 @@ namespace TandisWebApp.Services
             var secretKey = ResolveSecretKey();
             var issuer = jwtSettings["Issuer"] ?? "TandisWebApp";
             var audience = jwtSettings["Audience"] ?? "TandisWebAppUsers";
-            // ✅ توکن میز خدمت ۲۴ ساعت معتبر است (هم‌خوان با عمر کوکی X-Admin-Token)
+            // ✅ توکن میز خدمات ۲۴ ساعت معتبر است (هم‌خوان با عمر کوکی X-Admin-Token)
             const int expiryMin = 24 * 60;
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey));

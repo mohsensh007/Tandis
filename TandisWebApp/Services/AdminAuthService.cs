@@ -117,7 +117,7 @@ namespace TandisWebApp.Services
                 }
 
                 // ✅ کاربران Sec_Users:
-                //    - IsAdmin = false و فعال  → ورود به «میز خدمت» (/Desk) با ۵ کارت
+                //    - IsAdmin = false و فعال  → ورود به «میز خدمات» (/Desk) با ۵ کارت
                 //    - غیرفعال                → صفحه QR کیوسک
                 //    - IsAdmin = true          → پنل مدیر (از همین‌جا ادامه می‌دهیم)
                 var uname = req.Username.Trim();

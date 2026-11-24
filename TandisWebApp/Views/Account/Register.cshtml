@@ -3,7 +3,15 @@
     Layout = "_LoginLayout";
     var deskMode = ViewData["DeskMode"] is bool b && b;
 }
-<script>window.DESK_MODE = @(deskMode ? "true" : "false");</script>
+<script>
+    window.DESK_MODE = @(deskMode ? "true" : "false");
+    // ✅ میز خدمات: کد ملی نفر قبلی (autofill مرورگر یا بازگشت از صفحه) هرگز نمایش داده نشود
+    window.addEventListener('pageshow', function () {
+        if (!window.DESK_MODE) return;
+        var el = document.getElementById('txtRegNationalCode');
+        if (el) el.value = '';
+    });
+</script>
 
 <style>
    
@@ -666,7 +674,7 @@
         </div>
         <div class="mb-2">
             <label class="form-label">کد ملی <span class="text-danger">*</span></label>
-            <input type="text" id="txtRegNationalCode" class="form-control" maxlength="10" placeholder="کد ملی ۱۰ رقم" inputmode="numeric" />
+            <input type="text" id="txtRegNationalCode" class="form-control" maxlength="10" placeholder="کد ملی ۱۰ رقم" inputmode="numeric" autocomplete="off" autocapitalize="off" spellcheck="false" dir="ltr" readonly onfocus="this.removeAttribute('readonly')" />
         </div>
         <div class="mb-2">
             <label class="form-label">تاریخ تولد (شمسی) <span class="text-danger">*</span></label>
@@ -750,13 +758,50 @@
 
         <div class="alert-warning-text mt-2">⚠️ در اولین ورود، <b>مجبور به تغییر رمز عبور</b> خواهید بود.</div>
 
-        <!-- ✅ دکمه ورود — فقط بعد از ثبت چهره -->
+        <!-- ✅ دکمه ورود — فقط بعد از ثبت چهره (در میز خدمات نمایش داده نمی‌شود) -->
         <a id="btnGoLogin" href="/Account/Login" class="btn btn-primary w-100 py-2 mt-3" style="display:none;">
             <i class="bi bi-box-arrow-in-right"></i> ورود به حساب
         </a>
+
+        <!-- ✅ میز خدمات: فقط ورود به پنل خدمات — بدون دکمهٔ ورود به پروفایل -->
+        <a id="btnDeskServices" href="/Desk" class="btn btn-primary w-100 py-2 mt-3" style="display:none;">
+            <i class="bi bi-grid-1x2"></i> ورود به پنل خدمات
+        </a>
+
+        <!-- ✅ میز خدمات: انتخاب رشته و سانس و ثبت‌نام در دوره بعد از ثبت‌نام عضو -->
+        <div id="deskCourseBox" style="display:none;text-align:right;margin-top:16px;">
+            <div class="alert-warning-text" style="text-align:right;">مرحلهٔ بعد (اختیاری): رشته و سانس مورد نظر را انتخاب کنید</div>
+            <div id="dkCatChips" class="dc-chips"></div>
+            <div id="dkSanseList" class="dc-list"></div>
+            <div id="dkCourseStatus" class="small mt-2" style="color:var(--g-text)"></div>
+        </div>
+
+        <style>
+            .dc-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+            .dc-chip {
+                border: 1px solid color-mix(in srgb, var(--g-text) 28%, transparent);
+                background: color-mix(in srgb, var(--g-nested-solid) 10%, transparent);
+                color: var(--g-text); border-radius: 999px; padding: 6px 14px; font-size: .78rem; font-weight: 700;
+            }
+            .dc-chip.on { background: color-mix(in srgb, var(--g-primary) 22%, transparent); border-color: var(--g-primary); }
+            .dc-sanse {
+                display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
+                text-align: right; padding: 11px 13px; margin-bottom: 8px; border-radius: 14px;
+                border: 1px solid color-mix(in srgb, var(--g-text) 22%, transparent);
+                background: color-mix(in srgb, var(--g-nested-solid) 9%, transparent); color: var(--g-text);
+            }
+            .dc-sanse small { display: block; font-size: .7rem; opacity: .78; }
+            .dc-confirm {
+                padding: 12px 14px; border-radius: 16px; text-align: right;
+                border: 1px solid color-mix(in srgb, var(--g-text) 22%, transparent);
+                background: color-mix(in srgb, var(--g-primary) 8%, transparent);
+            }
+            .dc-confirm span { display: block; font-size: .8rem; opacity: .85; }
+        </style>
     </div>
 </div> <!-- /authCard -->
 @section Scripts {
+    <script src="~/js/desk-receipt.js" asp-append-version="true"></script>
     <script>
         var faDigits = ['۰','۱','۲','۳','۴','۵','۶','۷','۸','۹'];
         function toFa(n) { return String(n).replace(/[0-9]/g, function (d) { return faDigits[d]; }); }
@@ -833,9 +878,16 @@
                         nationalCode: res.data.nationalCode,
                         password: res.data.defaultPassword
                     }));
-                    // ✅ ثبت‌نام از میز خدمت: بعد از اتمام کار به همان پنل ۵ کارتی برگردد (نه صفحهٔ ورود)
-                    if (window.DESK_MODE && !document.getElementById('btnBackToDesk')) {
-                        $('#stepDone').append('<a href="/Desk" id="btnBackToDesk" class="btn btn-primary w-100 mt-2">بازگشت به میز خدمت</a>');
+                    // ✅ ثبت‌نام از میز خدمات: بعد از اتمام کار به همان پنل ۵ کارتی برگردد (نه صفحهٔ ورود)
+                    if (window.DESK_MODE) {
+                        window.DESK_MEMBER_NAME = fn + ' ' + ln;
+                        if (!document.getElementById('btnBackToDesk')) {
+                            $('#stepDone').append('<a href="/Desk" id="btnBackToDesk" class="btn btn-primary w-100 mt-2">ورود به پنل خدمات</a>');
+                        }
+                        // ✅ انتخاب رشته و سانس و ثبت‌نام در دوره (با همان کد ملی/رمز ساخته‌شده)
+                        if (typeof deskCourseStart === 'function') {
+                            deskCourseStart(res.data.nationalCode, res.data.defaultPassword);
+                        }
                     }
                     showToast('ثبت‌نام با موفقیت انجام شد', 'success');
                 } else {
@@ -878,7 +930,13 @@
                 hadBefore ? 'چهره قبلاً ثبت شده بود' : 'چهره با موفقیت ثبت شد',
                 'اکنون می‌توانید وارد حساب خود شوید');
             $('#faceTimer').hide();
-            $('#btnGoLogin').show();
+            // ✅ در میز خدمات، ورود به پروفایل حذف می‌شود و فقط «ورود به پنل خدمات» می‌ماند
+            if (window.DESK_MODE) {
+                $('#btnGoLogin').hide();
+                $('#btnDeskServices').show();
+            } else {
+                $('#btnGoLogin').show();
+            }
             showToast('چهره با موفقیت ثبت شد', 'success');
         }
         function showSendFaceBtn() {
@@ -1136,5 +1194,158 @@
 
             refreshTiles();
         })();
+
+        // ========== ✅ میز خدمات: انتخاب رشته → دیدن سانس‌ها → ثبت‌نام/پرداخت ==========
+        var DC = { nc: '', pw: '', catId: 0, sessions: [], busy: false };
+
+        function dcEl(id) { return document.getElementById(id); }
+        function dcMoney(n) { return Number(n || 0).toLocaleString('en-US'); }
+
+        function deskCourseStart(nc, pw) {
+            if (!window.DESK_MODE) return;
+            DC.nc = nc || ''; DC.pw = pw || ''; DC.sessions = []; DC.busy = false;
+
+            var box = dcEl('deskCourseBox');
+            if (!box) return;
+            box.style.display = 'block';
+            dcEl('dkCourseStatus').textContent = 'در حال دریافت رشته‌ها…';
+
+            fetch('/api/Desk/SportCategories', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}'
+            }).then(function (r) { return r.json(); }).then(function (res) {
+                var cats = (res && res.success && res.data) ? res.data : [];
+                var chips = '<button type="button" class="dc-chip on" data-id="0">همه رشتهٔ‌ها</button>';
+                cats.forEach(function (c) {
+                    chips += '<button type="button" class="dc-chip" data-id="' + c.sportCatID + '">' + (c.sportName || '') + '</button>';
+                });
+                dcEl('dkCatChips').innerHTML = chips;
+                dcEl('dkCatChips').onclick = function (e) {
+                    var b = e.target.closest('button'); if (!b) return;
+                    [].forEach.call(this.querySelectorAll('button'), function (x) { x.classList.remove('on'); });
+                    b.classList.add('on');
+                    dcLoadSanses(Number(b.dataset.id));
+                };
+                dcLoadSanses(0);
+            }).catch(function () {
+                dcEl('dkCourseStatus').textContent = 'دریافت رشته‌ها ناموفق بود';
+            });
+        }
+
+        function dcLoadSanses(catId) {
+            dcEl('dkSanseList').innerHTML = '';
+            dcEl('dkCourseStatus').textContent = 'در حال دریافت سانس‌ها…';
+
+            fetch('/api/Desk/Periods', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nationalCode: DC.nc, password: DC.pw, sportCatID: catId || 0 })
+            }).then(function (r) { return r.json(); }).then(function (res) {
+                if (!res || !res.success) {
+                    dcEl('dkCourseStatus').textContent = (res && res.message) || 'دریافت سانس‌ها ناموفق بود';
+                    return;
+                }
+                DC.sessions = (res.data && res.data.periods) ? res.data.periods : [];
+                dcEl('dkCourseStatus').textContent = DC.sessions.length ? 'سانس مورد نظر را انتخاب کنید' : 'برای این رشته سانس فعالی وجود ندارد';
+
+                dcEl('dkSanseList').innerHTML = DC.sessions.map(function (p, i) {
+                    var active = p.hasActiveRegister === true;
+                    return '<button type="button" class="dc-sanse" data-i="' + i + '">' +
+                        '<span><b>' + (p.sportName || '') + ' — ' + (p.sanseName || '') + '</b>' +
+                        '<small>' + (p.periodDesc || '') + ' | ' + (p.sessionCountInPeriod || 0) + ' جلسه' +
+                        (active ? ' | فعال تا ' + (p.endDate || '') : '') + '</small></span>' +
+                        '<b>' + (p.totalAmountDisplay || '') + '</b></button>';
+                }).join('');
+
+                dcEl('dkSanseList').onclick = function (e) {
+                    var b = e.target.closest('.dc-sanse'); if (!b) return;
+                    var p = DC.sessions[Number(b.dataset.i)];
+                    if (p) dcAskPay(p);
+                };
+            }).catch(function () {
+                dcEl('dkCourseStatus').textContent = 'دریافت سانس‌ها ناموفق بود';
+            });
+        }
+
+        function dcAskPay(p) {
+            if (DC.busy) return;
+            dcEl('dkCourseStatus').textContent = '';
+            dcEl('dkSanseList').innerHTML =
+                '<div class="dc-confirm">' +
+                '<div><b>' + (p.sportName || '') + ' — ' + (p.sanseName || '') + '</b>' +
+                '<span>' + dcMoney(p.totalAmount) + ' ریال</span></div>' +
+                '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">' +
+                '<button type="button" class="btn btn-primary" id="dcPos">پرداخت با کارت‌خوان</button>' +
+                '<button type="button" class="btn btn-outline-primary" id="dcCredit">پرداخت از اعتبار</button>' +
+                '<button type="button" class="btn btn-link" id="dcBack">بازگشت</button></div></div>';
+
+            dcEl('dcBack').onclick = function () { dcLoadSanses(0); };
+            dcEl('dcCredit').onclick = function () { dcSubmit(p, 'credit'); };
+            dcEl('dcPos').onclick = function () { dcSubmit(p, 'pos'); };
+        }
+
+        function dcSubmit(p, method, txn) {
+            DC.busy = true;
+            dcEl('dkCourseStatus').textContent = (method === 'pos' && !txn)
+                ? 'در حال ارسال مبلغ به کارت‌خوان…'
+                : 'در حال ثبت…';
+
+            fetch('/api/Desk/RegisterCourse', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    nationalCode: DC.nc, password: DC.pw, sportSanseID: p.sportSanseID,
+                    method: method, posTxnId: txn || null
+                })
+            }).then(function (r) { return r.json(); }).then(function (res) {
+                if (!res || !res.success) {
+                    DC.busy = false;
+                    dcEl('dkCourseStatus').textContent = (res && res.message) || 'ثبت‌نام انجام نشد';
+                    return;
+                }
+                if (res.paymentPending && res.posTxnId) { dcWaitCard(p, res.posTxnId, res.posAmount); return; }
+                dcDone(p, res);
+            }).catch(function () {
+                DC.busy = false;
+                dcEl('dkCourseStatus').textContent = 'اتصال به سرور برقرار نشد';
+            });
+        }
+
+        function dcWaitCard(p, txn, amount) {
+            var tries = 0;
+            dcEl('dkCourseStatus').textContent = 'مبلغ ' + dcMoney(amount) + ' ریال روی کارت‌خوان است — منتظر کشیدن کارت…';
+
+            (function poll() {
+                fetch('/api/Desk/Status?txnId=' + txn).then(function (r) { return r.json(); }).then(function (res) {
+                    var d = res && res.data;
+                    if (!d || d.status === 'pending') {
+                        if (++tries > 120) {
+                            DC.busy = false;
+                            dcEl('dkCourseStatus').textContent = 'زمان پرداخت به پایان رسید';
+                            return;
+                        }
+                        setTimeout(poll, 2500);
+                        return;
+                    }
+                    if (d.status === 'success') { dcSubmit(p, 'pos', txn); return; }
+                    DC.busy = false;
+                    dcEl('dkCourseStatus').textContent = (d && d.message) || 'پرداخت انجام نشد';
+                }).catch(function () { setTimeout(poll, 2600); });
+            })();
+        }
+
+        function dcDone(p, res) {
+            DC.busy = false;
+            dcEl('dkCourseStatus').textContent = (res && res.message) || 'ثبت‌نام دوره انجام شد';
+
+            if (window.DeskReceipt) {
+                window.DeskReceipt.show({
+                    title: 'رسید ثبت‌نام دوره',
+                    party: window.DESK_MEMBER_NAME || '',
+                    rows: [{ name: (p.sportName || '') + ' — ' + (p.sanseName || ''), qty: 1, amount: p.totalAmount }],
+                    total: p.totalAmount,
+                    paymentMethod: 'ثبت از میز خدمات',
+                    section: 'register',
+                    refNo: (res && res.register && res.register.sportMemberID) ? res.register.sportMemberID : null
+                });
+            }
+        }
     </script>
 }

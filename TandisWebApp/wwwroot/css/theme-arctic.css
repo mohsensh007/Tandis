@@ -592,7 +592,7 @@ html body:not(#lu):not(#mt-theme) .login-page {
     background-image: none !important;
 }
 
-/* ---------- 15) فروشگاه و میز خدمت ---------- */
+/* ---------- 15) فروشگاه و میز خدمات ---------- */
 html body:not(#lu):not(#mt-theme) .commerce-card,
 html body:not(#lu):not(#mt-theme) .commerce-product-card,
 html body:not(#lu):not(#mt-theme) .product-card,
@@ -681,7 +681,7 @@ html body:not(#lu):not(#mt-theme) [class*="chip-"] {
     font-weight: 600;
 }
 
-/* ---------- 21) لینک‌های میز خدمت روی سطح آبی روشن ---------- */
+/* ---------- 21) لینک‌های میز خدمات روی سطح آبی روشن ---------- */
 html body:not(#lu):not(#mt-theme) .dk-back,
 html body:not(#lu):not(#mt-theme) .dk-top a,
 html body:not(#lu):not(#mt-theme) .dk-top span,

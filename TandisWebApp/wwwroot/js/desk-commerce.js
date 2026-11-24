@@ -81,13 +81,13 @@
     /* ------------------------------------------------------------
        پرداخت: اعتبار عضو یا کارت‌خوان
        ------------------------------------------------------------ */
-    var payState = { amount: 0, credit: null, pos: null, busy: false };
+    var payState = { amount: 0, credit: null, pos: null, busy: false, receipt: null };
     var pollTimer = null;
 
     function payModal() { return byId('dkPayModal'); }
 
-    function openPay(amount, onCredit, onPosPrepare, onPosConfirm, title) {
-        payState = { amount: amount, credit: onCredit, pos: onPosConfirm, posPrepare: onPosPrepare, busy: false };
+    function openPay(amount, onCredit, onPosPrepare, onPosConfirm, title, receipt) {
+        payState = { amount: amount, credit: onCredit, pos: onPosConfirm, posPrepare: onPosPrepare, busy: false, receipt: receipt || null };
         byId('dkPayTitle').textContent = title || 'پرداخت';
         byId('dkPayAmount').textContent = money(amount);
         byId('dkPayNote').textContent = '';
@@ -135,8 +135,7 @@
                 return;
             }
             closePay();
-            toast(res.message || 'خرید ثبت شد');
-            afterSuccess();
+            finish(res, 'اعتبار عضو');
         }).catch(function () {
             setPayBusy(false);
             toast('اتصال به سرور برقرار نشد', true);
@@ -158,9 +157,8 @@
                 return;
             }
             setPayBusy(false);
-            toast(res.message || 'خرید ثبت شد');
             closePay();
-            afterSuccess();
+            finish(res, 'کارتخوان');
         }).catch(function () {
             setPayBusy(false);
             toast('اتصال به سرور برقرار نشد', true);
@@ -187,8 +185,7 @@
                                 return;
                             }
                             closePay();
-                            toast(c.message || 'خرید ثبت شد');
-                            afterSuccess();
+                            finish(c, 'کارتخوان');
                         });
                         return;
                     }
@@ -214,7 +211,20 @@
     function afterSuccess() {
         if (state.basket) state.basket = [];
         clearPayCreds();
-        setTimeout(function () { window.location.reload(); }, 1400);
+        setTimeout(function () { window.location.reload(); }, 600);
+    }
+
+    // ✅ نمایش فیش تراکنش + چاپ خودکار روی پرینتر POS (بعد از بستن فیش، صفحه بازخوانی می‌شود)
+    function finish(res, method) {
+        var builder = payState.receipt;
+        if (builder && window.DeskReceipt) {
+            var rc = typeof builder === 'function' ? builder(method) : builder;
+            rc.message = (res && res.message) || 'خرید با موفقیت ثبت شد';
+            window.DeskReceipt.show(rc, afterSuccess);
+            return;
+        }
+        toast((res && res.message) || 'خرید ثبت شد');
+        afterSuccess();
     }
 
     /* ------------------------------------------------------------
@@ -473,11 +483,26 @@
             };
         }
 
+        function receiptFor(method) {
+            return {
+                title: state.isBuffet ? 'فاکتور بوفه' : 'فاکتور فروشگاه',
+                party: payCreds().name || null,
+                rows: state.basket.map(function (i) {
+                    return { name: i.name, qty: i.count, amount: i.unitPrice * i.count };
+                }),
+                total: total,
+                paymentMethod: method,
+                section: state.isBuffet ? 'buffet' : 'shop',
+                club: ctx.club || null
+            };
+        }
+
         openPay(total,
             function () { return api('/api/Desk/Commerce/Buy', body('credit')); },
             function () { return api('/api/Desk/Commerce/Buy', body('pos')); },
             function (txn) { return api('/api/Desk/Commerce/Buy', body('pos', txn)); },
-            state.isBuffet ? 'پرداخت بوفه' : 'پرداخت فروشگاه');
+            state.isBuffet ? 'پرداخت بوفه' : 'پرداخت فروشگاه',
+            receiptFor);
     }
 
     /* ------------------------------------------------------------
@@ -502,14 +527,26 @@
                         '<strong class="commerce-price">' + esc(item.amountDisplay || money(item.amount)) + '</strong>' +
                     '</div></div>' +
                     '<div class="commerce-card-action">' +
-                        '<button type="button" class="commerce-buy" data-commerce-action="buy-service" data-id="' + int(item.serviceID) + '" data-amount="' + num(item.amount) + '">' +
+                        '<button type="button" class="commerce-buy" data-commerce-action="buy-service" data-id="' + int(item.serviceID) + '" data-amount="' + num(item.amount) + '" data-name="' + esc(item.serviceDesc || '') + '">' +
                             '<i class="bi bi-wallet2" aria-hidden="true"></i> خرید</button>' +
                     '</div></article>';
             }).join('');
         }).catch(function () { setState(target, 'error', 'اتصال به سرور برقرار نشد'); });
     }
 
-    function buyService(id, amount) {
+    function buyService(id, amount, name) {
+        function receiptFor(method) {
+            return {
+                title: 'رسید دریافت خدمات',
+                party: payCreds().name || null,
+                rows: [{ name: name || 'خدمت', qty: 1, amount: amount }],
+                total: amount,
+                paymentMethod: method,
+                section: 'services',
+                club: ctx.club || null
+            };
+        }
+
         function body(method, posTxnId) {
             var creds = payCreds();
             return {
@@ -526,7 +563,8 @@
             function () { return api('/api/Desk/Commerce/BuyService', body('credit')); },
             function () { return api('/api/Desk/Commerce/BuyService', body('pos')); },
             function (txn) { return api('/api/Desk/Commerce/BuyService', body('pos', txn)); },
-            'پرداخت خدمات');
+            'پرداخت خدمات',
+            receiptFor);
     }
 
     /* ------------------------------------------------------------
@@ -549,7 +587,7 @@
         root.addEventListener('click', function (e) {
             var btn = actionOf(e.target);
             if (btn && btn.getAttribute('data-commerce-action') === 'buy-service') {
-                buyService(int(btn.getAttribute('data-id')), num(btn.getAttribute('data-amount')));
+                buyService(int(btn.getAttribute('data-id')), num(btn.getAttribute('data-amount')), btn.getAttribute('data-name') || '');
             }
         });
         return;

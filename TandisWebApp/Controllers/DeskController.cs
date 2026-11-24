@@ -7,7 +7,7 @@ using TandisWebApp.Services;
 namespace TandisWebApp.Controllers
 {
     /// <summary>
-    /// میز خدمت — کاربران Sec_Users با IsAdmin = false
+    /// میز خدمات — کاربران Sec_Users با IsAdmin = false
     /// ۵ کارت: افزایش اعتبار / خرید بلیت / تک جلسه / ثبت‌نام / تمدید دوره
     /// </summary>
     [DeskAuthorize]
@@ -19,9 +19,12 @@ namespace TandisWebApp.Controllers
         private readonly BiometricService _bio;
         private readonly ShopService _shop;
         private readonly ServicePurchaseService _service;
+        private readonly ReceiptPrintService _receipt;
+        private readonly PanelSettingsService _panel;
 
         public DeskController(DeskService desk, CommonHelperService helper, PosPaymentService pos, BiometricService bio,
-                              ShopService shop, ServicePurchaseService service)
+                              ShopService shop, ServicePurchaseService service, ReceiptPrintService receipt,
+                              PanelSettingsService panel)
         {
             _desk = desk;
             _helper = helper;
@@ -29,6 +32,8 @@ namespace TandisWebApp.Controllers
             _bio = bio;
             _shop = shop;
             _service = service;
+            _receipt = receipt;
+            _panel = panel;
         }
 
         private short DeskUserID => short.TryParse(User.FindFirstValue("UserID"), out var id) ? id : (short)1;
@@ -43,7 +48,17 @@ namespace TandisWebApp.Controllers
         {
             ViewData["DeskUser"] = DeskName;
             ViewData["ClubName"] = await _helper.GetClubNameAsync();
+            ViewData["DeskCards"] = _panel.Get().DeskCards;
             return View();
+        }
+
+        /// <summary>تنظیمات پنل (کارت‌های قابل نمایش و بخش‌های دارای چاپ فیش)</summary>
+        [HttpGet]
+        [Route("api/Desk/Panel")]
+        public IActionResult Panel()
+        {
+            var s = _panel.Get();
+            return Ok(new { success = true, data = new { cards = s.DeskCards, print = s.DeskPrint } });
         }
 
         /// <summary>
@@ -180,6 +195,8 @@ namespace TandisWebApp.Controllers
         public class TicketReq
         {
             public short TarefeID { get; set; }
+            /// <summary>تعداد بلیت (پیش‌فرض ۱)</summary>
+            public int Qty { get; set; } = 1;
             public long? PosTxnId { get; set; }
         }
 
@@ -187,7 +204,7 @@ namespace TandisWebApp.Controllers
         [Route("api/Desk/BuyTicket")]
         public async Task<IActionResult> BuyTicket([FromBody] TicketReq req)
         {
-            var result = await _desk.SellTicketAsync(DeskUserID, ShiftID, req.TarefeID, req.PosTxnId);
+            var result = await _desk.SellTicketAsync(DeskUserID, ShiftID, req.TarefeID, req.PosTxnId, req.Qty);
             return Ok(new
             {
                 result.Success,
@@ -267,6 +284,8 @@ namespace TandisWebApp.Controllers
         {
             public string? NationalCode { get; set; }
             public string? Password { get; set; }
+            /// <summary>فیلتر رشتهٔ ورزشی (۰ یا خالی = همهٔ رشته‌ها)</summary>
+            public int? SportCatID { get; set; }
         }
 
         [HttpPost]
@@ -277,7 +296,7 @@ namespace TandisWebApp.Controllers
             if (!ok || member == null)
                 return Ok(new { success = false, message = msg });
 
-            var list = await _desk.GetPeriodsAsync(member.MemberID, ShiftID);
+            var list = await _desk.GetPeriodsAsync(member.MemberID, ShiftID, req.SportCatID);
             return Ok(new
             {
                 success = true,
@@ -321,7 +340,7 @@ namespace TandisWebApp.Controllers
         }
 
         // ============================================================
-        //  ✅ ۶-۸) فروشگاه / بوفه / خدمات — همان UI پنل عضو برای میز خدمت
+        //  ✅ ۶-۸) فروشگاه / بوفه / خدمات — همان UI پنل عضو برای میز خدمات
         // ============================================================
         [HttpGet]
         public Task<IActionResult> Shop(int? member) => CommercePage("shop", member);
@@ -348,7 +367,7 @@ namespace TandisWebApp.Controllers
             public string? Query { get; set; }
         }
 
-        /// <summary>جستجوی عضو با کد ملی یا موبایل (بدون رمز — فقط برای میز خدمت)</summary>
+        /// <summary>جستجوی عضو با کد ملی یا موبایل (بدون رمز — فقط برای میز خدمات)</summary>
         [HttpPost]
         [Route("api/Desk/Commerce/FindMember")]
         public async Task<IActionResult> CommerceFindMember([FromBody] QuickFindReq req)
@@ -585,6 +604,127 @@ namespace TandisWebApp.Controllers
                 result.PosAmountDisplay,
                 isGuest = false
             });
+        }
+
+        // ============================================================
+        //  API — رشته‌ها و سانس‌ها (انتخاب رشته در ثبت‌نام/تمدید)
+        // ============================================================
+        [HttpPost]
+        [Route("api/Desk/SportCategories")]
+        public async Task<IActionResult> SportCategories()
+        {
+            var list = await _desk.GetSportCategoriesAsync(ShiftID);
+            return Ok(new { success = true, data = list });
+        }
+
+        public class RegisterCourseReq
+        {
+            public int MemberID { get; set; }
+            public int SportSanseID { get; set; }
+            public string Method { get; set; } = "credit";
+            public long? PosTxnId { get; set; }
+            public string? NationalCode { get; set; }
+            public string? Password { get; set; }
+        }
+
+        /// <summary>ثبت‌نام/تمدید دوره از میز خدمات — روی همان منطق تمدید عضو (اعتبار یا کارت‌خوان)</summary>
+        [HttpPost]
+        [Route("api/Desk/RegisterCourse")]
+        public async Task<IActionResult> RegisterCourse([FromBody] RegisterCourseReq req)
+        {
+            if (req == null || req.SportSanseID <= 0)
+                return Ok(new { success = false, message = "سانس را انتخاب کنید" });
+
+            int memberID = req.MemberID;
+
+            // اگر کد ملی و رمز داده شده، عضو از همان‌جا تشخیص داده می‌شود
+            if (memberID <= 0 && !string.IsNullOrWhiteSpace(req.NationalCode))
+            {
+                var (ok, msg, dto) = await _desk.FindMemberAsync(req.NationalCode, req.Password, true);
+                if (!ok || dto == null)
+                    return Ok(new { success = false, message = msg });
+                memberID = dto.MemberID;
+            }
+
+            if (memberID <= 0)
+                return Ok(new { success = false, message = "عضو مشخص نشده است" });
+
+            var result = await _desk.RegisterCourseAsync(memberID, req.SportSanseID, req.Method, req.PosTxnId, ShiftID);
+            return Ok(new
+            {
+                result.Success,
+                result.Message,
+                result.PaymentPending,
+                result.PosTxnId,
+                result.PosAmount,
+                result.PosAmountDisplay,
+                register = result.Data == null ? null : new
+                {
+                    result.Data.SportMemberID,
+                    result.Data.StartDate,
+                    result.Data.EndDate,
+                    result.Data.FinalPayment,
+                    result.Data.FinalPaymentDisplay
+                }
+            });
+        }
+
+        // ============================================================
+        //  API — چاپ فیش روی پرینتر حرارتی POS
+        // ============================================================
+        /// <summary>نام پرینتر POS نصب‌شده روی سیستم سرور (برای نمایش در UI)</summary>
+        [HttpGet]
+        [Route("api/Desk/Printer")]
+        public IActionResult Printer()
+        {
+            var name = _receipt.AvailablePrinterName();
+            return Ok(new { success = true, data = new { printer = name, available = name != null } });
+        }
+
+        /// <summary>چاپ فیش تراکنش — فقط وقتی پرینتر POS نصب باشد</summary>
+        [HttpPost]
+        [Route("api/Desk/PrintReceipt")]
+        public async Task<IActionResult> PrintReceipt([FromBody] ReceiptDoc? req)
+        {
+            if (req == null)
+                return Ok(new { success = false, printed = false, message = "محتوای فیش ارسال نشده است" });
+
+            if (_receipt.AvailablePrinterName() == null)
+                return Ok(new { success = false, printed = false, message = "پرینتر POS روی سیستم نصب نیست" });
+
+            var doc = new ReceiptDoc
+            {
+                ClubName = await _helper.GetClubNameAsync(),
+                Title = Clip(req.Title, 60, "رسید"),
+                Party = Clip(req.Party, 60),
+                PartySub = Clip(req.PartySub, 60),
+                Total = Math.Max(0, req.Total),
+                TotalLabel = Clip(req.TotalLabel, 30),
+                RefNo = Clip(req.RefNo, 30),
+                PaymentMethod = Clip(req.PaymentMethod, 30),
+                Note = Clip(req.Note, 120),
+                Date = _helper.GetToday(),
+                Time = _helper.GetThisTime(),
+                Rows = (req.Rows ?? new List<ReceiptRowDto>())
+                        .Take(40)
+                        .Select(r => new ReceiptRowDto
+                        {
+                            Name = Clip(r.Name, 70, "-"),
+                            Qty = Math.Clamp(r.Qty, 1, 999),
+                            Amount = Math.Max(0, r.Amount)
+                        })
+                        .ToList()
+            };
+
+            var (ok, message) = _receipt.Print(doc);
+            return Ok(new { success = ok, printed = ok, message });
+        }
+
+        private static string? Clip(string? value, int max, string? fallback = null)
+        {
+            if (string.IsNullOrWhiteSpace(value)) return fallback;
+            var v = value.Trim();
+            return v.Length <= max ? v : v.Substring(0, max);
         }
 
         // ============================================================

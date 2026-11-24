@@ -320,7 +320,8 @@ namespace TandisWebApp.Services
                 {
                     balanceBefore = await _helper.GetSportCreditAmountAsync(memberID);
 
-                    if (posPrepare)
+                    // ✅ مبلغ صفر (تخفیف ۱۰۰٪) → به دستگاه POS ارسال نمی‌شود؛ همان لحظه ثبت می‌شود
+                    if (posPrepare && finalPayment > 0)
                     {
                         var intent = await _pos.CreateIntentAsync(memberID, finalPayment, PosPaymentService.REF_REGISTER);
                         if (!intent.Success)
@@ -338,13 +339,16 @@ namespace TandisWebApp.Services
                         };
                     }
 
-                    bool claimed = await _pos.ClaimAsync(posTxnId, memberID, finalPayment, PosPaymentService.REF_REGISTER);
-                    if (!claimed)
-                        return new ApiResponse<RegisterResponse>
-                        {
-                            Success = false,
-                            Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است"
-                        };
+                    if (finalPayment > 0)
+                    {
+                        bool claimed = await _pos.ClaimAsync(posTxnId, memberID, finalPayment, PosPaymentService.REF_REGISTER);
+                        if (!claimed)
+                            return new ApiResponse<RegisterResponse>
+                            {
+                                Success = false,
+                                Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است"
+                            };
+                    }
                 }
 
                 // ✅ SecFix #17: تاریخ شروع همیشه از سرور
@@ -434,9 +438,10 @@ VALUES ({rec.MemberID}, {rec.SportSanseID}, {rec.MembershipTypeID}, {rec.Contrac
                 {
                     // ✅ فقط یک بستانکار POS معادل بدهیِ Trigger ثبت‌نام
                     // (pairIfZero حذف شد تا بدهی اضافه «پرداخت با POS» ساخته نشه)
-                    await _pos.AddPosCreditAsync(memberID, CommonHelperService.CR_PAY_SHAHRIE,
-                        finalPayment,
-                        "پرداخت با POS بابت " + (isRevival ? "تمدید" : "ثبت‌نام") + " دوره (وب‌اپ)");
+                    if (finalPayment > 0)
+                        await _pos.AddPosCreditAsync(memberID, CommonHelperService.CR_PAY_SHAHRIE,
+                            finalPayment,
+                            "پرداخت با POS بابت " + (isRevival ? "تمدید" : "ثبت‌نام") + " دوره (وب‌اپ)");
                     if (posConfirm)
                         await _pos.SettleRefAsync(posTxnId, insertedId);
                 }

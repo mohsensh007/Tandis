@@ -91,12 +91,12 @@ namespace TandisWebApp.Controllers
         }
         /// <summary>
         /// صفحه ثبت‌نام عضو جدید (ویزارد)
-        /// desk=1 → ثبت‌نام از «میز خدمت»؛ بعد از پایان به همان پنل ۵ کارتی برمی‌گردد (نه لاگین).
+        /// desk=1 → ثبت‌نام از «میز خدمات»؛ بعد از پایان به همان پنل ۵ کارتی برمی‌گردد (نه لاگین).
         /// </summary>
         [HttpGet]
         public IActionResult Register(string? desk = null)
         {
-            // ?desk=1 یعنی ثبت‌نام از میز خدمت → «بازگشت» باید به /Desk برود، نه صفحهٔ ورود
+            // ?desk=1 یعنی ثبت‌نام از میز خدمات → «بازگشت» باید به /Desk برود، نه صفحهٔ ورود
             var deskMode = !string.IsNullOrWhiteSpace(desk)
                 && (desk == "1" || string.Equals(desk, "true", StringComparison.OrdinalIgnoreCase));
             ViewData["DeskMode"] = deskMode;

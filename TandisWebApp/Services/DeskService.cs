@@ -6,7 +6,7 @@ using TandisWebApp.Models;
 
 namespace TandisWebApp.Services
 {
-    /// <summary>عضو پیدا‌شده در میز خدمت</summary>
+    /// <summary>عضو پیدا‌شده در میز خدمات</summary>
     public class DeskMemberDto
     {
         public int MemberID { get; set; }
@@ -19,7 +19,7 @@ namespace TandisWebApp.Services
     }
 
     /// <summary>
-    /// میز خدمت (کاربران Sec_Users با IsAdmin=false):
+    /// میز خدمات (کاربران Sec_Users با IsAdmin=false):
     ///  ۱) افزایش اعتبار  ۲) خرید بلیت  ۳) تک جلسه  ۴) ثبت‌نام  ۵) تمدید دوره
     /// همهٔ پرداخت‌ها با همان صف POS موجود (PosPaymentService) انجام می‌شود.
     /// </summary>
@@ -30,7 +30,7 @@ namespace TandisWebApp.Services
         private const short CREDIT_SHOP = CommonHelperService.CR_PAY_SHOP; // 2
         private const short CREDIT_SERVICE = CommonHelperService.CR_PAY_SERVICE; // 3
 
-        /// <summary>مالک تراکنش‌های POS میز خدمت (منفی، تا با اعضا قاطی نشود)</summary>
+        /// <summary>مالک تراکنش‌های POS میز خدمات (منفی، تا با اعضا قاطی نشود)</summary>
         public static int OwnerId(short deskUserID) => -(500000 + deskUserID);
 
         private readonly FullSportDbContext _db;
@@ -133,7 +133,7 @@ namespace TandisWebApp.Services
                     return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
 
                 await _pos.AddPosCreditAsync(memberID, (byte)creditTypeId, amount,
-                    $"افزایش اعتبار {typeName} از میز خدمت (کارشناس {deskUserID})");
+                    $"افزایش اعتبار {typeName} از میز خدمات (کارشناس {deskUserID})");
 
                 await _pos.SettleRefAsync(posTxnId.Value, memberID);
                 await tx.CommitAsync();
@@ -147,13 +147,13 @@ namespace TandisWebApp.Services
             catch (Exception ex)
             {
                 await tx.RollbackAsync();
-                _logger.LogError(ex, "خطا در افزایش اعتبار میز خدمت برای عضو {MemberID}", memberID);
+                _logger.LogError(ex, "خطا در افزایش اعتبار میز خدمات برای عضو {MemberID}", memberID);
                 return new SimpleResponse { Success = false, Message = "خطا در ثبت اعتبار" };
             }
         }
 
         // ============================================================
-        //  بررسی رمز عبور کاربر میز خدمت (برای خروج امن)
+        //  بررسی رمز عبور کاربر میز خدمات (برای خروج امن)
         // ============================================================
         public async Task<(bool ok, string message, string userName)> VerifyDeskPasswordAsync(short deskUserID, string? password)
         {
@@ -219,7 +219,7 @@ namespace TandisWebApp.Services
             long amount = sanse.SessionAmount.Value;
             int owner = OwnerId(deskUserID);
 
-            if (posTxnId == null)
+            if (amount > 0 && posTxnId == null)
             {
                 var intent = await _pos.CreateIntentAsync(owner, amount, PosPaymentService.REF_ONESESSION);
                 if (!intent.Success)
@@ -239,9 +239,12 @@ namespace TandisWebApp.Services
             using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
-                var claimed = await _pos.ClaimAsync(posTxnId.Value, owner, amount, PosPaymentService.REF_ONESESSION);
-                if (!claimed)
-                    return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
+                if (posTxnId != null)
+                {
+                    var claimed = await _pos.ClaimAsync(posTxnId.Value, owner, amount, PosPaymentService.REF_ONESESSION);
+                    if (!claimed)
+                        return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
+                }
 
                 var now = DateTime.Now;
                 var traffic = new ACC_Traffic
@@ -265,7 +268,8 @@ namespace TandisWebApp.Services
                 _db.ACC_Traffics.Add(traffic);
                 await _db.SaveChangesAsync();
 
-                await _pos.SettleRefAsync(posTxnId.Value, traffic.TrafficID);
+                if (posTxnId != null)
+                    await _pos.SettleRefAsync(posTxnId.Value, traffic.TrafficID);
                 await tx.CommitAsync();
 
                 return new SimpleResponse
@@ -277,7 +281,7 @@ namespace TandisWebApp.Services
             catch (Exception ex)
             {
                 await tx.RollbackAsync();
-                _logger.LogError(ex, "خطا در ثبت تک جلسه مهمان (میز خدمت)");
+                _logger.LogError(ex, "خطا در ثبت تک جلسه مهمان (میز خدمات)");
                 return new SimpleResponse { Success = false, Message = "خطا در ثبت تک جلسه مهمان" };
             }
         }
@@ -309,7 +313,7 @@ namespace TandisWebApp.Services
             return list;
         }
 
-        public async Task<SimpleResponse> SellTicketAsync(short deskUserID, short shiftID, short tarefeID, long? posTxnId)
+        public async Task<SimpleResponse> SellTicketAsync(short deskUserID, short shiftID, short tarefeID, long? posTxnId, int qty = 1)
         {
             var tarefe = await _db.Gen_Tarefes.AsNoTracking()
                 .FirstOrDefaultAsync(t => t.TarefeID == tarefeID && t.IsActive == true && t.ShiftID == shiftID);
@@ -317,10 +321,13 @@ namespace TandisWebApp.Services
             if (tarefe == null)
                 return new SimpleResponse { Success = false, Message = "تعرفه بلیت یافت نشد" };
 
-            long amount = tarefe.Amount ?? 0;
+            // ✅ تعداد بلیت: هر خرید می‌تواند چند بلیت باشد (۱ تا ۵۰)
+            qty = Math.Clamp(qty, 1, 50);
+            long unitAmount = tarefe.Amount ?? 0;
+            long amount = unitAmount * qty;
             int owner = OwnerId(deskUserID);
 
-            if (posTxnId == null)
+            if (amount > 0 && posTxnId == null)
             {
                 var intent = await _pos.CreateIntentAsync(owner, amount, PosPaymentService.REF_TICKET);
                 if (!intent.Success)
@@ -340,64 +347,80 @@ namespace TandisWebApp.Services
             using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
-                var claimed = await _pos.ClaimAsync(posTxnId.Value, owner, amount, PosPaymentService.REF_TICKET);
-                if (!claimed)
-                    return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
+                if (posTxnId != null)
+                {
+                    var claimed = await _pos.ClaimAsync(posTxnId.Value, owner, amount, PosPaymentService.REF_TICKET);
+                    if (!claimed)
+                        return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
+                }
 
                 int nextTicketNo = (await _db.ACC_Tickets.MaxAsync(x => (int?)x.TicketNo) ?? 0) + 1;
 
-                var ticket = new ACC_Ticket
+                // ✅ به تعداد خرید، بلیت جداگانه با شمارهٔ مستقل صادر می‌شود (هر بلیت یک ورود)
+                var tickets = new List<ACC_Ticket>();
+                for (int i = 0; i < qty; i++)
                 {
-                    TicketNo = nextTicketNo,
-                    SansID = tarefe.SansID,
-                    TarefeID = tarefe.TarefeID,
-                    PersonCount = 1,
-                    KidCount = 0,
-                    Amount = amount,
-                    CardTypeID = 1,
-                    CardCount = 0,
-                    UserID = deskUserID,
-                    FullName = "فروش بلیت (میز خدمت)",
-                    IsPos = true,
-                    PosID = _pos.ConfiguredPosId,
-                    TicketDesc = "خرید از میز خدمت",
-                    ShiftID = shiftID,
-                    CreationDate = _helper.GetToday(),
-                    CreationTime = DateTime.Now
-                };
-                _db.ACC_Tickets.Add(ticket);
+                    var ticket = new ACC_Ticket
+                    {
+                        TicketNo = nextTicketNo + i,
+                        SansID = tarefe.SansID,
+                        TarefeID = tarefe.TarefeID,
+                        PersonCount = 1,
+                        KidCount = 0,
+                        Amount = unitAmount,
+                        CardTypeID = 1,
+                        CardCount = 0,
+                        UserID = deskUserID,
+                        FullName = "فروش بلیت (میز خدمات)",
+                        IsPos = true,
+                        PosID = _pos.ConfiguredPosId,
+                        TicketDesc = qty > 1 ? $"خرید {qty} بلیت از میز خدمات" : "خرید از میز خدمات",
+                        ShiftID = shiftID,
+                        CreationDate = _helper.GetToday(),
+                        CreationTime = DateTime.Now
+                    };
+                    _db.ACC_Tickets.Add(ticket);
+                    tickets.Add(ticket);
+                }
                 await _db.SaveChangesAsync();
 
-                _db.ACC_Traffics.Add(new ACC_Traffic
+                foreach (var ticket in tickets)
                 {
-                    Amount = 0,
-                    FreeSportSansID = tarefe.SportSanseID,
-                    EntryDesc = "صدور بلیط از میز خدمت",
-                    TicketID = ticket.TicketID,
-                    IsGuest = true,
-                    TrafficStatus = 1,
-                    UserID = deskUserID,
-                    ShiftID = shiftID,
-                    EntryDate = _helper.GetToday(),
-                    EntryTime = DateTime.Now.TimeOfDay.ToString().Substring(0, 8),
-                    EntryDateTime = DateTime.Now,
-                    IsManual = true
-                });
+                    _db.ACC_Traffics.Add(new ACC_Traffic
+                    {
+                        Amount = 0,
+                        FreeSportSansID = tarefe.SportSanseID,
+                        EntryDesc = "صدور بلیط از میز خدمات",
+                        TicketID = ticket.TicketID,
+                        IsGuest = true,
+                        TrafficStatus = 1,
+                        UserID = deskUserID,
+                        ShiftID = shiftID,
+                        EntryDate = _helper.GetToday(),
+                        EntryTime = DateTime.Now.TimeOfDay.ToString().Substring(0, 8),
+                        EntryDateTime = DateTime.Now,
+                        IsManual = true
+                    });
+                }
                 await _db.SaveChangesAsync();
 
-                await _pos.SettleRefAsync(posTxnId.Value, ticket.TicketID);
+                if (posTxnId != null)
+                    await _pos.SettleRefAsync(posTxnId.Value, tickets[0].TicketID);
                 await tx.CommitAsync();
 
+                var first = tickets[0].TicketNo;
+                var last = tickets[tickets.Count - 1].TicketNo;
+                var label = qty > 1 ? $"{qty} بلیت (شماره {first} تا {last})" : $"بلیت شماره {first}";
                 return new SimpleResponse
                 {
                     Success = true,
-                    Message = $"بلیت شماره {ticket.TicketNo} صادر شد — مبلغ {_helper.SetSeprator(amount)} ریال"
+                    Message = $"{label} صادر شد — مبلغ {_helper.SetSeprator(amount)} ریال"
                 };
             }
             catch (Exception ex)
             {
                 await tx.RollbackAsync();
-                _logger.LogError(ex, "خطا در فروش بلیت میز خدمت");
+                _logger.LogError(ex, "خطا در فروش بلیت میز خدمات");
                 return new SimpleResponse { Success = false, Message = "خطا در ثبت بلیت" };
             }
         }
@@ -484,7 +507,7 @@ namespace TandisWebApp.Services
             string today = _helper.GetToday();
             int owner = OwnerId(deskUserID);
 
-            if (posTxnId == null)
+            if (amount > 0 && posTxnId == null)
             {
                 var intent = await _pos.CreateIntentAsync(owner, amount, PosPaymentService.REF_ONESESSION);
                 if (!intent.Success)
@@ -504,9 +527,12 @@ namespace TandisWebApp.Services
             using var tx = await _db.Database.BeginTransactionAsync();
             try
             {
-                var claimed = await _pos.ClaimAsync(posTxnId.Value, owner, amount, PosPaymentService.REF_ONESESSION);
-                if (!claimed)
-                    return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
+                if (posTxnId != null)
+                {
+                    var claimed = await _pos.ClaimAsync(posTxnId.Value, owner, amount, PosPaymentService.REF_ONESESSION);
+                    if (!claimed)
+                        return new SimpleResponse { Success = false, Message = "تراکنش پرداخت معتبر نیست یا قبلاً استفاده شده است" };
+                }
 
                 await _db.Database.ExecuteSqlInterpolatedAsync($@"
 INSERT INTO Acc_MemberSports (MemberID, SportSanseID, MembershipTypeID, ContractID, SessionCount,
@@ -515,19 +541,20 @@ CoachPercent, CoachAmount, CoachPercentForRevival, CoachRevivalAmount,
 PeriodID, StartDate, EndDate, IsActive, IsRevival, CommentText, UserID, CreationDate, CreationTime)
 VALUES ({member.MemberID}, {sanse.SportSanseID}, {sanse.MembershipTypeID}, 1, 1,
 {amount}, 0, 0, 0, 0, {amount}, {sanse.CoachMoneyPercent ?? 0}, 0, {sanse.CoachPercentForRevival ?? 0}, 0,
-1, {today}, {today}, 1, 0, {"تک جلسه از میز خدمت"}, {deskUserID}, {_helper.GetToday()}, {_helper.GetThisTime()})");
+1, {today}, {today}, 1, 0, {"تک جلسه از میز خدمات"}, {deskUserID}, {_helper.GetToday()}, {_helper.GetThisTime()})");
 
                 var insertedId = await _db.Acc_MemberSports.AsNoTracking()
-                    .Where(x => x.MemberID == member.MemberID && x.StartDate == today && x.CommentText == "تک جلسه از میز خدمت")
+                    .Where(x => x.MemberID == member.MemberID && x.StartDate == today && x.CommentText == "تک جلسه از میز خدمات")
                     .OrderByDescending(x => x.SportMemberID)
                     .Select(x => x.SportMemberID)
                     .FirstOrDefaultAsync();
 
                 // خنثی‌سازی بدهیِ Trigger با سند بستانکار POS (مثل کیوسک)
                 await _pos.AddPosCreditAsync(member.MemberID, (byte)CommonHelperService.CR_PAY_SHAHRIE, amount,
-                    "پرداخت POS بابت تک جلسه (میز خدمت)");
+                    "پرداخت POS بابت تک جلسه (میز خدمات)");
 
-                await _pos.SettleRefAsync(posTxnId.Value, insertedId);
+                if (posTxnId != null)
+                    await _pos.SettleRefAsync(posTxnId.Value, insertedId);
                 await tx.CommitAsync();
 
                 return new SimpleResponse
@@ -539,7 +566,7 @@ VALUES ({member.MemberID}, {sanse.SportSanseID}, {sanse.MembershipTypeID}, 1, 1,
             catch (Exception ex)
             {
                 await tx.RollbackAsync();
-                _logger.LogError(ex, "خطا در فروش تک جلسه میز خدمت");
+                _logger.LogError(ex, "خطا در فروش تک جلسه میز خدمات");
                 return new SimpleResponse { Success = false, Message = "خطا در ثبت تک جلسه" };
             }
         }
@@ -548,8 +575,25 @@ VALUES ({member.MemberID}, {sanse.SportSanseID}, {sanse.MembershipTypeID}, 1, 1,
         //  ۵) تمدید دوره
         // ============================================================
 
-        public Task<List<SportSanseDto>> GetPeriodsAsync(int memberID, short shiftID)
-            => _register.GetSansesForRenewAsync(memberID, shiftID, null);
+        /// <summary>رشته‌های ورزشی فعال شیفت (برای انتخاب رشته در ثبت‌نام/تمدید میز خدمات)</summary>
+        public Task<List<SportCategoryDto>> GetSportCategoriesAsync(short shiftID)
+            => _register.GetSportCategoriesAsync(shiftID);
+
+        public Task<List<SportSanseDto>> GetPeriodsAsync(int memberID, short shiftID, int? sportCatID = null)
+            => _register.GetSansesForRenewAsync(memberID, shiftID, sportCatID);
+
+        /// <summary>ثبت‌نام یا تمدید دوره از میز خدمات (با پرداخت اعتباری یا کارت‌خوان)</summary>
+        public Task<ApiResponse<RegisterResponse>> RegisterCourseAsync(int memberID, int sportSanseID, string method,
+                                                                      long? posTxnId, short shiftID)
+        {
+            var req = new RegisterRequest
+            {
+                SportSanseID = sportSanseID,
+                Method = string.IsNullOrWhiteSpace(method) ? "credit" : method,
+                PosTxnId = posTxnId
+            };
+            return _register.RenewRegisterAsync(memberID, req, shiftID);
+        }
 
         public Task<ApiResponse<RegisterResponse>> RenewAsync(int memberID, int sportSanseID, string method,
                                                               long? posTxnId, short shiftID)
@@ -591,7 +635,7 @@ VALUES ({member.MemberID}, {sanse.SportSanseID}, {sanse.MembershipTypeID}, 1, 1,
             return (true, "", await BuildMemberCardAsync(row.m, row.p));
         }
 
-        /// <summary>کارت عضو (نام + اعتبارها) برای صفحهٔ خرید میز خدمت</summary>
+        /// <summary>کارت عضو (نام + اعتبارها) برای صفحهٔ خرید میز خدمات</summary>
         public async Task<DeskMemberDto?> GetMemberCardAsync(int memberID)
         {
             if (memberID <= 0) return null;

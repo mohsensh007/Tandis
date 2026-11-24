@@ -150,8 +150,12 @@ builder.Services.AddScoped<MessageService>();
 builder.Services.AddScoped<CoachService>();
 builder.Services.AddScoped<ClubRuleService>();
 builder.Services.AddScoped<MemberRegistrationService>();
-// ✅ میز خدمت: کاربران Sec_Users با IsAdmin=false (۵ کارت خدمات)
+// ✅ میز خدمات: کاربران Sec_Users با IsAdmin=false (۵ کارت خدمات)
 builder.Services.AddScoped<DeskService>();
+// ✅ چاپ فیش تراکنش‌های میز خدمات روی پرینتر حرارتی POS (POS-80/80C/58/58C)
+builder.Services.AddScoped<ReceiptPrintService>();
+// ✅ تنظیمات پنل (نمایش کارت‌های میز خدمات و بخش‌های دارای چاپ فیش) — فایل JSON
+builder.Services.AddSingleton<PanelSettingsService>();
 builder.Services.AddScoped<FaceDeviceService>();
 // ✅ گوشه «ورزشکاران»: ثبت ورود/خروج، دفترچه تمرین و باز کردن کمد (ارتباط با کنترلر)
 builder.Services.AddScoped<AthleteService>();

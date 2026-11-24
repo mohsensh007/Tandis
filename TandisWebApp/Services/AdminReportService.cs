@@ -1322,7 +1322,7 @@ namespace TandisWebApp.Services
                 ticketBySanse[name] = ticketBySanse.GetValueOrDefault(name) + 1;
             }
 
-            // خدمات بر اساس نوع خدمت
+            // خدمات بر اساس نوع خدمات
             var serviceByType = new Dictionary<string, long>();
             foreach (var s in serviceRows)
             {

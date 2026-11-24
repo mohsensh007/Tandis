@@ -2,6 +2,10 @@
     Layout = null;
     var deskUser = ViewData["DeskUser"]?.ToString() ?? "کاربر";
     var clubName = ViewData["ClubName"]?.ToString() ?? "باشگاه";
+    // ✅ تنظیمات پنل: فقط کارت‌هایی که مدیر فعال کرده نمایش داده می‌شوند
+    var deskCards = ViewData["DeskCards"] as List<string>
+                    ?? new List<string> { "charge", "ticket", "single", "register", "renew", "shop", "buffet", "services" };
+    Func<string, bool> showCard = k => deskCards.Contains(k);
 }
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
@@ -10,7 +14,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#DCE5F0" />
-    <title>میز خدمت | @clubName</title>
+    <title>میز خدمات | @clubName</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.rtl.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap-icons/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
@@ -84,13 +88,24 @@
         }
         .dk-toast.err { background: linear-gradient(135deg, var(--g-surface-solid), var(--g-text)); }
         .dk-toast.show { display: block; }
+        .dk-qty { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 12px 0; }
+        .dk-qty button {
+            width: 46px; height: 46px; border-radius: 14px; font-size: 1.25rem; font-weight: 800; line-height: 1;
+            color: var(--g-text); border: 1px solid color-mix(in srgb, var(--g-text) 35%, transparent);
+            background: color-mix(in srgb, var(--g-nested-solid) 14%, transparent);
+        }
+        .dk-qty input {
+            width: 84px; height: 46px; text-align: center; font-size: 1.1rem; font-weight: 800;
+            color: var(--g-text); border-radius: 14px; border: 1px solid color-mix(in srgb, var(--g-text) 30%, transparent);
+            background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
+        }
         .dk-chosen {
             display: flex; align-items: center; justify-content: space-between; gap: 8px;
             padding: 12px 14px; border-radius: 16px; margin-bottom: 12px;
             background: linear-gradient(135deg, color-mix(in srgb, var(--g-primary) 34%, transparent), color-mix(in srgb, var(--g-surface-solid) 28%, transparent));
             border: 1px solid color-mix(in srgb, var(--g-text) 30%, transparent); font-size: .84rem;
         }
-        /* ✅ کارت‌های میز خدمت: آیکون و عنوان وسط کارت (اندازهٔ کارت تغییر نمی‌کند) */
+        /* ✅ کارت‌های میز خدمات: آیکون و عنوان وسط کارت (اندازهٔ کارت تغییر نمی‌کند) */
         .desk-grid .desk-card {
             align-items: center;
             justify-content: center;
@@ -146,7 +161,7 @@
         </div>
 
         <div class="desk-grid">
-            <button type="button" class="desk-card" data-act="charge">
+            <button type="button" class="desk-card" data-act="charge" style="@(showCard("charge") ? "" : "display:none")">
                 <span class="dc-icon"><i class="bi bi-wallet2"></i></span>
                 <span>
                     <span class="dc-title">افزایش اعتبار</span>
@@ -155,7 +170,7 @@
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
 
-            <button type="button" class="desk-card" data-act="ticket">
+            <button type="button" class="desk-card" data-act="ticket" style="@(showCard("ticket") ? "" : "display:none")">
                 <span class="dc-icon"><i class="bi bi-ticket-perforated"></i></span>
                 <span>
                     <span class="dc-title">خرید بلیت</span>
@@ -164,7 +179,7 @@
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
 
-            <button type="button" class="desk-card" data-act="single">
+            <button type="button" class="desk-card" data-act="single" style="@(showCard("single") ? "" : "display:none")">
                 <span class="dc-icon"><i class="bi bi-lightning-charge"></i></span>
                 <span>
                     <span class="dc-title">تک جلسه</span>
@@ -173,7 +188,7 @@
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
 
-            <button type="button" class="desk-card" data-act="register">
+            <button type="button" class="desk-card" data-act="register" style="@(showCard("register") ? "" : "display:none")">
                 <span class="dc-icon"><i class="bi bi-person-plus"></i></span>
                 <span>
                     <span class="dc-title">ثبت‌نام</span>
@@ -182,7 +197,7 @@
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
 
-            <button type="button" class="desk-card" data-act="renew">
+            <button type="button" class="desk-card" data-act="renew" style="@(showCard("renew") ? "" : "display:none")">
                 <span class="dc-icon"><i class="bi bi-arrow-repeat"></i></span>
                 <span>
                     <span class="dc-title">تمدید دوره</span>
@@ -191,7 +206,7 @@
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
 
-            <button type="button" class="desk-card" data-act="shop">
+            <button type="button" class="desk-card" data-act="shop" style="@(showCard("shop") ? "" : "display:none")">
                 <span class="dc-icon"><i class="bi bi-bag-heart"></i></span>
                 <span>
                     <span class="dc-title">فروشگاه</span>
@@ -200,7 +215,7 @@
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
 
-            <button type="button" class="desk-card" data-act="buffet">
+            <button type="button" class="desk-card" data-act="buffet" style="@(showCard("buffet") ? "" : "display:none")">
                 <span class="dc-icon"><i class="bi bi-cup-hot"></i></span>
                 <span>
                     <span class="dc-title">بوفه</span>
@@ -209,7 +224,7 @@
                 <span class="dc-go">شروع <i class="bi bi-arrow-left"></i></span>
             </button>
 
-            <button type="button" class="desk-card" data-act="services">
+            <button type="button" class="desk-card" data-act="services" style="@(showCard("services") ? "" : "display:none")">
                 <span class="dc-icon"><i class="bi bi-tools"></i></span>
                 <span>
                     <span class="dc-title">خدمات</span>
@@ -235,6 +250,7 @@
     <script>
         (function () {
             var DESK_RETURN = '/Desk';
+            var CLUB = '@clubName';
             var modal = document.getElementById('dkModal');
             var body = document.getElementById('dkBody');
             var titleEl = document.getElementById('dkTitle');
@@ -321,9 +337,18 @@
                 if (retry) { /* retry توسط دکمهٔ اختصاصی هر مرحله */ }
             }
 
-            function successScreen(msg) {
+            // ✅ اگر فیش داشته باشیم: نمایش فیش + چاپ خودکار روی پرینتر POS
+            function successScreen(msg, receipt) {
                 stopPoll();
                 openModal(titleEl.textContent, '');
+
+                if (receipt && window.DeskReceipt) {
+                    receipt.club = receipt.club || CLUB;
+                    receipt.message = msg || receipt.message;
+                    window.DeskReceipt.show(receipt, function () { closeModal(false); });
+                    return;
+                }
+
                 body.innerHTML =
                     '<div class="dk-center" style="padding:8px 0 2px">' +
                     '<i class="bi bi-check2-circle" style="font-size:2.3rem;color:var(--g-primary)"></i>' +
@@ -334,21 +359,22 @@
             }
 
             // ---- ارسال به POS و انتظار کارت ----
-            function startPos(prepare, confirm) {
+            // receiptOf(res) اختیاری است: فیش تراکنش را از پاسخ نهایی می‌سازد
+            function startPos(prepare, confirm, receiptOf) {
                 loading('در حال ارسال مبلغ به دستگاه...', 'کارت‌خوان را به مشتری بدهید');
                 prepare().then(function (r) {
                     if (!r) return errorScreen('خطا در ارتباط با سرور');
                     if (!r.success) return errorScreen(r.message);
                     if (!r.paymentPending) {
-                        // پرداخت از اعتبار یا انجام مستقیم
-                        return successScreen(r.message);
+                        // پرداخت از اعتبار یا انجام مستقیم (مبلغ صفر)
+                        return successScreen(r.message, receiptOf ? receiptOf(r) : null);
                     }
                     currentTxn = r.posTxnId;
-                    waitForCard(confirm, r.posAmount);
+                    waitForCard(confirm, r.posAmount, receiptOf);
                 });
             }
 
-            function waitForCard(confirm, amount) {
+            function waitForCard(confirm, amount, receiptOf) {
                 loading('مبلغ ' + money(amount) + ' ریال — منتظر کشیدن کارت...', 'پرداخت در صف دستگاه است');
                 var go = function () {
                     fetch('/api/Desk/Status?txnId=' + currentTxn).then(function (r) { return r.json(); }).then(function (res) {
@@ -370,7 +396,7 @@
                             stopPoll();
                             loading('پرداخت انجام شد — در حال ثبت...', null);
                             confirm(currentTxn).then(function (c) {
-                                if (c && c.success) successScreen(c.message);
+                                if (c && c.success) successScreen(c.message, receiptOf ? receiptOf(c) : null);
                                 else errorScreen((c && c.message) || 'ثبت نهایی انجام نشد');
                             });
                             return;
@@ -399,9 +425,9 @@
                 openModal('افزایش اعتبار', '' +
                     '<div class="dk-note">کد ملی و رمز عبور عضو را وارد کنید، سپس نوع اعتبار و مبلغ را انتخاب کنید.</div>' +
                     '<div style="margin-bottom:10px"><label>کد ملی</label>' +
-                    '<input class="form-control" id="dkNc" inputmode="numeric" maxlength="10" placeholder="۱۰ رقم" /></div>' +
+                    '<input class="form-control" id="dkNc" name="deskNationalCode" inputmode="numeric" maxlength="10" placeholder="۱۰ رقم" autocomplete="off" autocapitalize="off" spellcheck="false" dir="ltr" readonly onfocus="this.removeAttribute(\'readonly\')" /></div>' +
                     '<div style="margin-bottom:14px"><label>رمز عبور</label>' +
-                    '<input class="form-control" id="dkPw" type="password" placeholder="رمز عضو" /></div>' +
+                    '<input class="form-control" id="dkPw" type="password" placeholder="رمز عضو" autocomplete="new-password" dir="ltr" /></div>' +
                     '<button type="button" class="dk-btn" id="dkNext">ادامه</button>');
 
                 document.getElementById('dkNext').addEventListener('click', function () {
@@ -412,7 +438,7 @@
                     loading('در حال بررسی عضو...', null);
                     api('/api/Desk/FindMember', { nationalCode: nc, password: pw, requirePassword: true }).then(function (r) {
                         if (!r.success) return errorScreen(r.message);
-                        form.nc = nc; form.pw = pw;
+                        form.nc = nc; form.pw = pw; form.name = r.data.fullName; form.before = r.data;
                         openModal('افزایش اعتبار', '' +
                             '<div class="dk-member"><div><b>' + r.data.fullName + '</b>' +
                             '<span>' + r.data.nationalCode + '</span></div></div>' +
@@ -457,6 +483,17 @@
                                         nationalCode: form.nc, password: form.pw,
                                         amount: form.amount, creditType: form.creditType, label: form.creditLabel, posTxnId: txn
                                     });
+                                },
+                                function () {
+                                    return {
+                                        title: 'رسید دریافت وجه',
+                                        party: form.name,
+                                        rows: [{ name: 'افزایش اعتبار ' + (form.creditLabel || 'ورزشی'), qty: 1, amount: form.amount }],
+                                        total: form.amount,
+                                        paymentMethod: 'کارتخوان',
+                                        section: 'charge',
+                                        note: 'اعتبار به حساب عضو اضافه شد'
+                                    };
                                 });
                         });
                     });
@@ -475,7 +512,7 @@
 
                     var html = '<div class="dk-note">تعرفه را انتخاب کنید؛ مبلغ مستقیم روی کارت‌خوان ارسال می‌شود.</div><div class="desk-list">';
                     list.forEach(function (t) {
-                        html += '<button type="button" class="desk-item" data-id="' + t.tarefeID + '" data-amt="' + t.amount + '">' +
+                        html += '<button type="button" class="desk-item" data-id="' + t.tarefeID + '" data-amt="' + t.amount + '" data-name="' + (t.tarefe || 'بلیت') + '">' +
                             '<span><b>' + t.tarefe + '</b><small>' + (t.sans || '') + '</small></span>' +
                             '<b>' + t.amountDisplay + '</b></button>';
                     });
@@ -484,14 +521,55 @@
 
                     body.querySelector('.desk-list').addEventListener('click', function (e) {
                         var b = e.target.closest('.desk-item'); if (!b) return;
-                        var id = Number(b.dataset.id), amt = Number(b.dataset.amt);
-                        openModal('خرید بلیت', '<div class="dk-chosen"><span>مبلغ بلیت</span><b>' + money(amt) + ' ریال</b></div>' +
-                            '<div class="dk-note">پس از تأیید، مبلغ روی دستگاه ارسال می‌شود. بعد از کشیدن کارت، بلیت صادر و ثبت می‌شود.</div>' +
+                        var id = Number(b.dataset.id), amt = Number(b.dataset.amt), tname = b.dataset.name || 'بلیت';
+                        var qty = 1;
+
+                        openModal('خرید بلیت', '<div class="dk-chosen"><span>مبلغ هر بلیت</span><b>' + money(amt) + ' ریال</b></div>' +
+                            '<div class="dk-note">تعداد بلیت را مشخص کنید؛ برای هر بلیت یک شمارهٔ جداگانه صادر می‌شود.</div>' +
+                            '<div class="dk-qty">' +
+                            '<button type="button" id="dkQtyMinus" aria-label="کاهش تعداد">−</button>' +
+                            '<input id="dkQty" inputmode="numeric" maxlength="2" value="1" autocomplete="off" />' +
+                            '<button type="button" id="dkQtyPlus" aria-label="افزایش تعداد">+</button></div>' +
+                            '<div class="dk-chosen" style="margin-top:6px"><span>مبلغ قابل پرداخت</span><b id="dkLineTotal">' + money(amt) + ' ریال</b></div>' +
+                            '<div class="dk-note">پس از تأیید، مبلغ روی دستگاه ارسال می‌شود. بعد از کشیدن کارت، بلیت‌ها صادر و ثبت می‌شوند.</div>' +
                             '<button type="button" class="dk-btn" id="dkPay">ارسال به کارت‌خوان</button>');
+
+                        var qtyInput = document.getElementById('dkQty');
+                        var qtyTotal = document.getElementById('dkLineTotal');
+
+                        function readQty() {
+                            var n = parseInt((qtyInput.value || '').replace(/[^0-9]/g, ''), 10);
+                            if (!n || n < 1) n = 1;
+                            if (n > 50) n = 50;
+                            return n;
+                        }
+                        function setQty(n) {
+                            qty = Math.max(1, Math.min(50, n || 1));
+                            qtyInput.value = qty;
+                            qtyTotal.textContent = money(amt * qty) + ' ریال';
+                        }
+
+                        document.getElementById('dkQtyMinus').addEventListener('click', function () { setQty(qty - 1); });
+                        document.getElementById('dkQtyPlus').addEventListener('click', function () { setQty(qty + 1); });
+                        qtyInput.addEventListener('input', function () { setQty(readQty()); });
+                        qtyInput.addEventListener('blur', function () { setQty(readQty()); });
+
                         document.getElementById('dkPay').addEventListener('click', function () {
+                            setQty(readQty());
                             startPos(
-                                function () { return api('/api/Desk/BuyTicket', { tarefeID: id }); },
-                                function (txn) { return api('/api/Desk/BuyTicket', { tarefeID: id, posTxnId: txn }); });
+                                function () { return api('/api/Desk/BuyTicket', { tarefeID: id, qty: qty }); },
+                                function (txn) { return api('/api/Desk/BuyTicket', { tarefeID: id, qty: qty, posTxnId: txn }); },
+                                function () {
+                                    return {
+                                        title: 'فیش خرید بلیت',
+                                        partySub: qty > 1 ? ('تعداد: ' + money(qty) + ' عدد') : null,
+                                        rows: [{ name: tname, qty: qty, amount: amt }],
+                                        total: amt * qty,
+                                        paymentMethod: amt > 0 ? 'کارتخوان' : 'رایگان',
+                                        section: 'ticket',
+                                        note: 'این بلیت فقط برای همان سانس معتبر است'
+                                    };
+                                });
                         });
                     });
                 });
@@ -509,7 +587,7 @@
 
                     var html = '<div class="dk-note">سانس امروز را انتخاب کنید.</div><div class="desk-list">';
                     list.forEach(function (s) {
-                        html += '<button type="button" class="desk-item" data-id="' + s.sportSanseID + '" data-amt="' + s.sessionAmount + '">' +
+                        html += '<button type="button" class="desk-item" data-id="' + s.sportSanseID + '" data-amt="' + s.sessionAmount + '" data-name="' + ((s.sportName || '') + ' — ' + (s.sanseName || '')) + '">' +
                             '<span><b>' + (s.sportName || '') + ' — ' + (s.sanseName || '') + '</b>' +
                             '<small>' + (s.startTime || '') + ' تا ' + (s.endTime || '') + (s.coachName ? ' | ' + s.coachName : '') + '</small></span>' +
                             '<b>' + s.sessionAmountDisplay + '</b></button>';
@@ -519,7 +597,7 @@
 
                     body.querySelector('.desk-list').addEventListener('click', function (e) {
                         var b = e.target.closest('.desk-item'); if (!b) return;
-                        var id = Number(b.dataset.id), amt = Number(b.dataset.amt);
+                        var id = Number(b.dataset.id), amt = Number(b.dataset.amt), sname = b.dataset.name || 'تک جلسه';
                         // ✅ تک جلسهٔ مهمان: کد ملی لازم نیست — فقط نام و موبایل
                         openModal('تک جلسهٔ مهمان', '<div class="dk-chosen"><span>مبلغ تک جلسه</span><b>' + money(amt) + ' ریال</b></div>' +
                             '<div class="dk-note">کد ملی لازم نیست. نام و شمارهٔ موبایل مهمان را وارد کنید؛ پس از پرداخت موفق، تردد به نام «مهمان» در سوابق باشگاه ثبت می‌شود.</div>' +
@@ -535,24 +613,36 @@
                             if (!/^09\d{9}$/.test(gm)) return toast('شمارهٔ موبایل باید با 09 شروع و ۱۱ رقم باشد', true);
                             startPos(
                                 function () { return api('/api/Desk/BuySingleGuest', { sportSanseID: id, guestName: gn, guestMobile: gm }); },
-                                function (txn) { return api('/api/Desk/BuySingleGuest', { sportSanseID: id, guestName: gn, guestMobile: gm, posTxnId: txn }); });
+                                function (txn) { return api('/api/Desk/BuySingleGuest', { sportSanseID: id, guestName: gn, guestMobile: gm, posTxnId: txn }); },
+                                function () {
+                                    return {
+                                        title: 'فیش تک جلسه',
+                                        party: gn,
+                                        partySub: 'موبایل: ' + gm,
+                                        rows: [{ name: sname, qty: 1, amount: amt }],
+                                        total: amt,
+                                        paymentMethod: amt > 0 ? 'کارتخوان' : 'رایگان',
+                                        section: 'single',
+                                        note: 'این رسید فقط برای همین جلسه معتبر است'
+                                    };
+                                });
                         });
                     });
                 });
             }
 
             // ============================================================
-            //  ۵) تمدید دوره
+            //  ۵) ثبت‌نام / تمدید دوره — انتخاب رشته و سانس‌های همان رشته
             // ============================================================
             function openRenew() {
                 form = {};
-                openModal('تمدید دوره', '' +
-                    '<div class="dk-note">کد ملی و رمز عبور عضو را وارد کنید تا دوره‌های قابل تمدید نمایش داده شود.</div>' +
+                openModal('ثبت‌نام و تمدید دوره', '' +
+                    '<div class="dk-note">کد ملی و رمز عبور عضو را وارد کنید تا رشته‌ها و سانس‌های همان رشته نمایش داده شود.</div>' +
                     '<div style="margin-bottom:10px"><label>کد ملی</label>' +
-                    '<input class="form-control" id="dkNc" inputmode="numeric" maxlength="10" placeholder="۱۰ رقم" /></div>' +
+                    '<input class="form-control" id="dkNc" name="deskNationalCode" inputmode="numeric" maxlength="10" placeholder="۱۰ رقم" autocomplete="off" autocapitalize="off" spellcheck="false" dir="ltr" readonly onfocus="this.removeAttribute(\'readonly\')" /></div>' +
                     '<div style="margin-bottom:14px"><label>رمز عبور</label>' +
-                    '<input class="form-control" id="dkPw" type="password" placeholder="رمز عضو" /></div>' +
-                    '<button type="button" class="dk-btn" id="dkNext">مشاهدهٔ دوره‌ها</button>');
+                    '<input class="form-control" id="dkPw" type="password" placeholder="رمز عضو" autocomplete="new-password" dir="ltr" /></div>' +
+                    '<button type="button" class="dk-btn" id="dkNext">مشاهدهٔ رشته‌ها</button>');
 
                 document.getElementById('dkNext').addEventListener('click', function () {
                     var nc = (document.getElementById('dkNc').value || '').trim();
@@ -560,55 +650,139 @@
                     if (nc.length !== 10) return toast('کد ملی باید ۱۰ رقم باشد', true);
                     if (!pw) return toast('رمز عبور را وارد کنید', true);
                     form.nc = nc; form.pw = pw;
-                    loading('در حال دریافت دوره‌ها...', null);
-                    api('/api/Desk/Periods', { nationalCode: nc, password: pw }).then(function (r) {
+                    loading('در حال بررسی عضو...', null);
+                    api('/api/Desk/FindMember', { nationalCode: nc, password: pw, requirePassword: true }).then(function (r) {
                         if (!r.success) return errorScreen(r.message);
-                        var list = r.data.periods || [];
-                        if (!list.length) return errorScreen('دوره‌ای برای این شیفت تعریف نشده است');
-
-                        var html = '<div class="dk-member"><div><b>' + r.data.fullName + '</b>' +
-                            '<span>اعتبار ورزشی: ' + money(r.data.sportCredit) + ' ریال</span></div></div>' +
-                            '<div class="dk-note">دوره را انتخاب کنید.</div><div class="desk-list">';
-                        list.forEach(function (p) {
-                            html += '<button type="button" class="desk-item" data-id="' + p.sportSanseID + '" data-amt="' + p.totalAmount + '">' +
-                                '<span><b>' + (p.sportName || '') + ' — ' + (p.sanseName || '') + '</b>' +
-                                '<small>' + (p.periodDesc || '') + ' | ' + (p.sessionCountInPeriod || 0) + ' جلسه' +
-                                (p.hasActiveRegister ? ' | فعال تا ' + (p.endDate || '') : '') + '</small></span>' +
-                                '<b>' + p.totalAmountDisplay + '</b></button>';
-                        });
-                        html += '</div>';
-                        openModal('تمدید دوره', html);
-
-                        body.querySelector('.desk-list').addEventListener('click', function (e) {
-                            var b = e.target.closest('.desk-item'); if (!b) return;
-                            var id = Number(b.dataset.id), amt = Number(b.dataset.amt);
-                            form.sanse = id;
-
-                            openModal('تمدید دوره', '<div class="dk-chosen"><span>مبلغ تمدید</span><b>' + money(amt) + ' ریال</b></div>' +
-                                '<div class="dk-note">روش پرداخت را انتخاب کنید. تمدید پس از پرداخت ثبت می‌شود.</div>' +
-                                '<button type="button" class="dk-btn" id="dkPos" style="margin-bottom:10px">پرداخت با کارت‌خوان</button>' +
-                                '<button type="button" class="dk-btn ghost" id="dkCredit">پرداخت از اعتبار ورزشی</button>');
-
-                            document.getElementById('dkPos').addEventListener('click', function () {
-                                startPos(
-                                    function () {
-                                        return api('/api/Desk/Renew', { nationalCode: form.nc, password: form.pw, sportSanseID: form.sanse, method: 'pos' });
-                                    },
-                                    function (txn) {
-                                        return api('/api/Desk/Renew', { nationalCode: form.nc, password: form.pw, sportSanseID: form.sanse, method: 'pos', posTxnId: txn });
-                                    });
-                            });
-
-                            document.getElementById('dkCredit').addEventListener('click', function () {
-                                loading('در حال تمدید از اعتبار...', null);
-                                api('/api/Desk/Renew', { nationalCode: form.nc, password: form.pw, sportSanseID: form.sanse, method: 'credit' })
-                                    .then(function (rr) {
-                                        if (!rr.success) return errorScreen(rr.message);
-                                        successScreen(rr.message);
-                                    });
-                            });
-                        });
+                        form.name = r.data.fullName;
+                        form.credit = r.data.sportCredit;
+                        loadDeskCategories();
                     });
+                });
+            }
+
+            function loadDeskCategories() {
+                api('/api/Desk/SportCategories', {}).then(function (res) {
+                    var cats = (res && res.success && res.data) ? res.data : [];
+                    var chips = '<div class="desk-chip" id="dkCats" style="margin-bottom:10px">' +
+                        '<button type="button" data-id="0" class="on">همه رشته‌ها</button>';
+                    cats.forEach(function (c) {
+                        chips += '<button type="button" data-id="' + c.sportCatID + '">' + (c.sportName || '') + '</button>';
+                    });
+                    chips += '</div>';
+
+                    openModal('ثبت‌نام / تمدید دوره', '' +
+                        '<div class="dk-member"><div><b>' + form.name + '</b>' +
+                        '<span>اعتبار ورزشی: ' + money(form.credit) + ' ریال</span></div></div>' +
+                        '<div class="dk-note">اول رشته را انتخاب کنید؛ سپس سانس‌های همان رشته را می‌بینید. دورهٔ فعال «تمدید» و دورهٔ جدید «ثبت‌نام» دارد.</div>' +
+                        chips + '<div id="dkSanses"><div class="dk-center"><div class="dk-spin"></div></div></div>');
+
+                    document.getElementById('dkCats').addEventListener('click', function (e) {
+                        var b = e.target.closest('button'); if (!b) return;
+                        [].forEach.call(this.querySelectorAll('button'), function (x) { x.classList.remove('on'); });
+                        b.classList.add('on');
+                        loadDeskSanses(Number(b.dataset.id));
+                    });
+
+                    loadDeskSanses(0);
+                });
+            }
+
+            function loadDeskSanses(catId) {
+                var box = document.getElementById('dkSanses');
+                if (box) box.innerHTML = '<div class="dk-center"><div class="dk-spin"></div></div>';
+
+                api('/api/Desk/Periods', { nationalCode: form.nc, password: form.pw, sportCatID: catId || 0 }).then(function (r) {
+                    box = document.getElementById('dkSanses');
+                    if (!r.success) return errorScreen(r.message);
+
+                    var list = r.data.periods || [];
+                    form.periods = list;
+                    if (!box) return;
+
+                    if (!list.length) {
+                        box.innerHTML = '<div class="dk-note">برای این رشته سانس فعالی تعریف نشده است.</div>';
+                        return;
+                    }
+
+                    var html = '<div class="desk-list">';
+                    list.forEach(function (p, i) {
+                        var isRenew = p.hasActiveRegister === true;
+                        html += '<button type="button" class="desk-item" data-i="' + i + '">' +
+                            '<span><b>' + (p.sportName || '') + ' — ' + (p.sanseName || '') + '</b>' +
+                            '<small>' + (p.periodDesc || '') + ' | ' + (p.sessionCountInPeriod || 0) + ' جلسه' +
+                            (p.coachName ? ' | ' + p.coachName : '') +
+                            (isRenew ? ' | فعال تا ' + (p.endDate || '') : '') + '</small></span>' +
+                            '<b>' + (p.totalAmountDisplay || '') + '<br><small style="font-weight:600">' +
+                            (isRenew ? 'تمدید' : 'ثبت‌نام') + '</small></b></button>';
+                    });
+                    html += '</div>';
+                    box.innerHTML = html;
+
+                    box.querySelector('.desk-list').addEventListener('click', function (e) {
+                        var b = e.target.closest('.desk-item'); if (!b) return;
+                        var p = form.periods[Number(b.dataset.i)];
+                        if (p) openCoursePay(p, p.hasActiveRegister === true);
+                    });
+                });
+            }
+
+            function openCoursePay(p, isRenew) {
+                form.sanse = p.sportSanseID;
+                form.amount = p.totalAmount || 0;
+                form.sportName = (p.sportName || '') + ' — ' + (p.sanseName || '');
+
+                function receiptOf(res, method) {
+                    return {
+                        title: isRenew ? 'رسید تمدید دوره' : 'رسید ثبت‌نام دوره',
+                        party: form.name,
+                        rows: [{ name: form.sportName, qty: 1, amount: form.amount }],
+                        total: form.amount,
+                        paymentMethod: method,
+                        section: isRenew ? 'renew' : 'register',
+                        refNo: (res && res.register && res.register.sportMemberID) ? String(res.register.sportMemberID) : null,
+                        note: (res && res.register && res.register.endDate) ? ('اعتبار تا ' + res.register.endDate) : null
+                    };
+                }
+
+                var head = '<div class="dk-chosen"><span>' + form.sportName + '</span><b>' + money(form.amount) + ' ریال</b></div>';
+                var title = isRenew ? 'تمدید دوره' : 'ثبت‌نام دوره';
+
+                // ✅ مبلغ صفر → بدون ارسال به کارت‌خوان، همان لحظه ثبت می‌شود
+                if (form.amount <= 0) {
+                    openModal(title, head +
+                        '<div class="dk-note">مبلغ این دوره صفر است؛ به کارت‌خوان ارسال نمی‌شود و همان لحظه برای عضو ثبت می‌شود.</div>' +
+                        '<button type="button" class="dk-btn" id="dkFree">ثبت ' + (isRenew ? 'تمدید' : 'ثبت‌نام') + '</button>');
+
+                    document.getElementById('dkFree').addEventListener('click', function () {
+                        loading('در حال ثبت...', null);
+                        api('/api/Desk/RegisterCourse', { nationalCode: form.nc, password: form.pw, sportSanseID: form.sanse, method: 'credit' })
+                            .then(function (rr) {
+                                if (!rr.success) return errorScreen(rr.message);
+                                successScreen(rr.message, receiptOf(rr, 'رایگان'));
+                            });
+                    });
+                    return;
+                }
+
+                openModal(title, head +
+                    '<div class="dk-note">روش پرداخت را انتخاب کنید. ' + (isRenew ? 'تمدید' : 'ثبت‌نام') + ' بعد از پرداخت ثبت می‌شود.</div>' +
+                    '<button type="button" class="dk-btn" id="dkPos" style="margin-bottom:10px">پرداخت با کارت‌خوان</button>' +
+                    '<button type="button" class="dk-btn ghost" id="dkCredit">پرداخت از اعتبار ورزشی</button>');
+
+                document.getElementById('dkPos').addEventListener('click', function () {
+                    startPos(
+                        function () { return api('/api/Desk/RegisterCourse', { nationalCode: form.nc, password: form.pw, sportSanseID: form.sanse, method: 'pos' }); },
+                        function (txn) { return api('/api/Desk/RegisterCourse', { nationalCode: form.nc, password: form.pw, sportSanseID: form.sanse, method: 'pos', posTxnId: txn }); },
+                        function (res) { return receiptOf(res, 'کارت‌خوان'); });
+                });
+
+                document.getElementById('dkCredit').addEventListener('click', function () {
+                    loading('در حال ثبت از اعتبار...', null);
+                    api('/api/Desk/RegisterCourse', { nationalCode: form.nc, password: form.pw, sportSanseID: form.sanse, method: 'credit' })
+                        .then(function (rr) {
+                            if (!rr.success) return errorScreen(rr.message);
+                            successScreen(rr.message, receiptOf(rr, 'اعتبار ورزشی'));
+                        });
                 });
             }
 
@@ -684,6 +858,7 @@
             })();
         })();
     </script>
+    <script src="~/js/desk-receipt.js" asp-append-version="true"></script>
     <script src="~/js/biometric.js" asp-append-version="true"></script>
     <script src="~/js/theme.js" asp-append-version="true"></script>
 </body>

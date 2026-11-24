@@ -108,10 +108,10 @@
             <!-- ✅ فلش بازگشت به ورود (فقط توی صفحه ثبت‌نام) -->
             @if (ViewData["Title"]?.ToString() == "ثبت‌نام")
             {
-                @* ✅ مقصد فلش بازگشت: اگر ثبت‌نام از میز خدمت باز شده → /Desk، وگرنه → صفحهٔ ورود *@
+                @* ✅ مقصد فلش بازگشت: اگر ثبت‌نام از میز خدمات باز شده → /Desk، وگرنه → صفحهٔ ورود *@
                 var isDeskRegister = ViewData["DeskMode"] is bool dm && dm;
                 var backUrl = isDeskRegister ? "/Desk" : "/Account/Login";
-                var backTitle = isDeskRegister ? "بازگشت به میز خدمت" : "بازگشت به ورود";
+                var backTitle = isDeskRegister ? "بازگشت به میز خدمات" : "بازگشت به ورود";
                 <a href="javascript:void(0)" onclick="flipNavigate('@backUrl')" title="@backTitle" id="regBackArrow"
                    style="position:absolute; top:12px; right:12px; z-index:6;
                               color:var(--g-text); font-size:1.45rem; text-decoration:none;
