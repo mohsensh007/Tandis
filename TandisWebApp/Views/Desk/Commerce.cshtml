@@ -105,12 +105,351 @@
             .dk-commerce-head { padding: 12px 10px 0; }
             .dk-field-row { flex-direction: column; }
         }
+        /* ============================================================
+           هم‌ساخت‌سازی فروشگاه / بوفه / خدمات با پنل اصلی میز
+           ۳ لایه: پس‌زمینهٔ صفحه / باکس شیشه‌ای / کارت ۳بعدی + فاصلهٔ مطمئن
+           ============================================================ */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-page {
+            max-width: 1240px;
+            margin-inline: auto;
+            padding-inline: 12px;
+            padding-top: 2px;
+        }
+
+        /* هدر صفحه: نوار شیشه‌ای مثل هدر پنل میز */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-commerce-head {
+            max-width: 1240px;
+            margin: 14px auto 12px;
+            padding: 12px 16px;
+            border-radius: 22px;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 24%, transparent);
+            background-color: color-mix(in srgb, var(--g-card-solid) 60%, transparent);
+            background-image:
+                radial-gradient(120% 150% at 0% 0%, color-mix(in srgb, var(--g-surface-solid) 70%, transparent), transparent 60%),
+                linear-gradient(125deg, color-mix(in srgb, var(--g-primary) 20%, transparent), transparent 58%);
+            box-shadow:
+                0 20px 40px -28px color-mix(in srgb, var(--g-text) 66%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 86%, transparent);
+            -webkit-backdrop-filter: blur(16px) saturate(1.14);
+            backdrop-filter: blur(16px) saturate(1.14);
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-commerce-title {
+            color: var(--g-text);
+            gap: 9px;
+            font-size: 1rem;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-commerce-title > i {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 13px;
+            font-size: 1.04rem;
+            color: color-mix(in srgb, var(--g-primary) 88%, var(--g-text));
+            border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent);
+            background-image: linear-gradient(148deg, color-mix(in srgb, var(--g-surface-solid) 94%, transparent), color-mix(in srgb, var(--g-primary) 26%, transparent));
+            box-shadow:
+                0 9px 16px -10px color-mix(in srgb, var(--g-text) 66%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent);
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-commerce-name {
+            color: var(--g-text);
+            font-size: .98rem;
+            font-weight: 800;
+            line-height: 1.6;
+        }
+
+        /* دکمه‌های شیشه‌ای هدر */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-commerce-head .dk-back,
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-commerce-head .dk-credits em {
+            padding: 9px 15px;
+            border-radius: 999px;
+            font-size: .77rem;
+            font-weight: 750;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 26%, transparent);
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-surface-solid) 56%, transparent), transparent 82%);
+            border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent);
+            box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 78%, transparent);
+            transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-commerce-head .dk-back:hover {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--g-primary) 46%, transparent);
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 90%, transparent),
+                0 14px 24px -18px color-mix(in srgb, var(--g-primary) 70%, transparent);
+        }
+
+        /* نوار عضو / نوار مهمان: باکس شیشه‌ای لایهٔ دوم */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.dk-member-inner, .dk-open-inner) {
+            padding: 16px 18px !important;
+            border-radius: 24px !important;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 44%, transparent) !important;
+            background-image: radial-gradient(100% 120% at 0% 0%, color-mix(in srgb, var(--g-surface-solid) 62%, transparent), transparent 62%) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+            box-shadow:
+                0 20px 38px -26px color-mix(in srgb, var(--g-text) 62%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 90%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-open-strip {
+            margin-bottom: 16px;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.dk-member-inner, .dk-open-inner) b,
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.dk-member-inner, .dk-open-inner) span {
+            color: var(--g-text) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-member-inner span {
+            color: color-mix(in srgb, var(--g-text) 72%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-member-inner .dk-credits em {
+            padding: 5px 11px;
+            border-radius: 999px;
+            font-size: .7rem;
+            font-weight: 750;
+            color: var(--g-text) !important;
+            background: color-mix(in srgb, var(--g-primary) 16%, transparent);
+            border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent);
+            box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent);
+        }
+
+        /* لایهٔ دوم: باکس‌های شیشه‌ای فروشگاه/سبد و بنر بالا */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-panel, .commerce-cart-panel, .commerce-hero) {
+            position: relative;
+            padding: 20px !important;
+            border-radius: 30px !important;
+            background-color: color-mix(in srgb, var(--g-primary) 14%, transparent) !important;
+            background-image:
+                radial-gradient(120% 100% at 0% 0%, color-mix(in srgb, var(--g-surface-solid) 56%, transparent), transparent 62%),
+                linear-gradient(160deg, color-mix(in srgb, var(--g-nested-solid) 30%, transparent), transparent 78%) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+            box-shadow:
+                0 26px 54px -30px color-mix(in srgb, var(--g-text) 58%, transparent),
+                inset 0 2px 14px color-mix(in srgb, var(--g-text) 10%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 76%, transparent) !important;
+            -webkit-backdrop-filter: blur(14px) saturate(1.08) !important;
+            backdrop-filter: blur(14px) saturate(1.08) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-panel, .commerce-cart-panel) {
+            margin-bottom: 16px !important;
+        }
+
+        /* خط داخلی نازک: مرزِ قاب */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-panel, .commerce-cart-panel)::before {
+            content: "";
+            position: absolute;
+            inset: 9px;
+            border-radius: 22px;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 13%, transparent);
+            pointer-events: none;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-hero {
+            margin-bottom: 16px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-hero h1,
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-hero p,
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-kicker {
+            color: var(--g-text) !important;
+        }
+
+        /* فاصلهٔ مطمئن بین باکس‌ها و کارت‌ها */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-store-layout {
+            gap: 16px !important;
+            align-items: start;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-grid {
+            gap: 16px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-cart-list {
+            gap: 12px !important;
+        }
+
+        /* لایهٔ سوم: کارت شیشه‌ای براق با برجستگی ۳بعدی */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-product-card, .commerce-card) {
+            position: relative;
+            padding: 16px !important;
+            border-radius: 22px !important;
+            color: var(--g-text) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 46%, transparent) !important;
+            background-image:
+                radial-gradient(92% 72% at 20% -22%, color-mix(in srgb, var(--g-surface-solid) 86%, transparent), transparent 62%),
+                radial-gradient(120% 90% at 100% 118%, color-mix(in srgb, var(--g-primary) 30%, transparent), transparent 66%),
+                linear-gradient(158deg,
+                    color-mix(in srgb, var(--g-card-solid) 72%, transparent) 0%,
+                    color-mix(in srgb, var(--g-nested-solid) 60%, transparent) 58%,
+                    color-mix(in srgb, var(--g-primary) 20%, transparent) 100%) !important;
+            box-shadow:
+                0 22px 36px -20px color-mix(in srgb, var(--g-text) 58%, transparent),
+                0 8px 16px -10px color-mix(in srgb, var(--g-text) 40%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+                inset 0 -20px 32px -24px color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(1.3) !important;
+            backdrop-filter: blur(16px) saturate(1.3) !important;
+            transform: perspective(1000px) translateY(0) rotateX(0deg);
+            transition: transform .24s cubic-bezier(.2, .8, .3, 1), box-shadow .24s ease, border-color .24s ease, background-color .24s ease;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-product-card, .commerce-card):hover {
+            transform: perspective(1000px) translateY(-6px) rotateX(5deg) scale(1.01);
+            border-color: color-mix(in srgb, var(--g-primary) 56%, transparent) !important;
+            box-shadow:
+                0 36px 50px -22px color-mix(in srgb, var(--g-text) 58%, transparent),
+                0 12px 22px -12px color-mix(in srgb, var(--g-primary) 58%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent),
+                inset 0 -22px 34px -24px color-mix(in srgb, var(--g-primary) 86%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-product-card.is-out:hover {
+            transform: perspective(1000px) translateY(0) rotateX(0deg);
+            border-color: color-mix(in srgb, var(--g-primary) 20%, transparent) !important;
+        }
+
+        /* آیکون کارت‌ها: قاب شیشه‌ای برجسته */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-product-icon, .commerce-card-icon) {
+            border-radius: 16px;
+            color: color-mix(in srgb, var(--g-primary) 88%, var(--g-text)) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 34%, transparent);
+            background-image: linear-gradient(148deg, color-mix(in srgb, var(--g-surface-solid) 96%, transparent), color-mix(in srgb, var(--g-primary) 26%, transparent));
+            box-shadow:
+                0 10px 18px -10px color-mix(in srgb, var(--g-text) 66%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent),
+                inset 0 -8px 14px -10px color-mix(in srgb, var(--g-primary) 70%, transparent);
+        }
+
+        /* خوانایی نوشته روی شیشه */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-product-title, .commerce-card-title, .commerce-price, .commerce-cart-item-name, .commerce-panel-title, .commerce-cart-title) {
+            color: var(--g-text) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-product-subtitle, .commerce-stock) {
+            color: color-mix(in srgb, var(--g-text) 78%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-panel-title i,
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-cart-title i {
+            color: color-mix(in srgb, var(--g-primary) 84%, var(--g-text)) !important;
+        }
+
+        /* آیتم سبد: لایهٔ تودرتو با فاصله */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-cart-item {
+            padding: 12px !important;
+            border-radius: 16px !important;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 26%, transparent) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-surface-solid) 60%, transparent), transparent 84%) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent) !important;
+            box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 72%, transparent) !important;
+        }
+
+        /* دکمه‌های کارت: شیشه‌ای با عمق */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-add, .commerce-buy, .commerce-checkout, .commerce-remove) {
+            min-height: 44px;
+            border-radius: 14px !important;
+            font-weight: 800;
+            color: var(--g-text) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-primary) 30%, transparent), color-mix(in srgb, var(--g-surface-solid) 46%, transparent)) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 38%, transparent) !important;
+            box-shadow:
+                0 12px 22px -16px color-mix(in srgb, var(--g-primary) 66%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 84%, transparent) !important;
+            transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-add, .commerce-buy, .commerce-checkout, .commerce-remove):hover {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--g-primary) 56%, transparent) !important;
+            box-shadow:
+                0 16px 26px -16px color-mix(in srgb, var(--g-primary) 72%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 92%, transparent) !important;
+        }
+
+        /* فیلد تعداد و چیپ دسته‌بندی */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-quantity {
+            min-height: 44px;
+            border-radius: 14px !important;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 24%, transparent) !important;
+            border: 1px solid color-mix(in srgb, var(--g-text) 28%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-category-button {
+            min-height: 44px;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 40%, transparent) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-surface-solid) 54%, transparent), transparent 84%) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 24%, transparent) !important;
+            box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 74%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-category-button.active, .commerce-category-button:hover) {
+            color: var(--g-text) !important;
+            border-color: color-mix(in srgb, var(--g-primary) 52%, transparent) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-primary) 42%, transparent), color-mix(in srgb, var(--g-surface-solid) 38%, transparent)) !important;
+            box-shadow:
+                0 14px 24px -18px color-mix(in srgb, var(--g-primary) 70%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 86%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-notice {
+            padding: 12px 16px !important;
+            border-radius: 18px !important;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 26%, transparent) !important;
+            background-image: none !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent) !important;
+        }
+
+        @@media (prefers-reduced-motion: reduce) {
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-product-card, .commerce-card),
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-product-card, .commerce-card):hover {
+                transform: none;
+                transition: box-shadow .2s ease, border-color .2s ease;
+            }
+        }
+
+        @@media (max-width: 720px) {
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-panel, .commerce-cart-panel, .commerce-hero) {
+                padding: 14px !important;
+                border-radius: 24px !important;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-panel, .commerce-cart-panel)::before {
+                inset: 6px;
+                border-radius: 18px;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-product-card, .commerce-card) {
+                border-radius: 18px !important;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.commerce-product-card, .commerce-card):hover {
+                transform: perspective(1000px) translateY(-3px) rotateX(3deg);
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .commerce-grid {
+                gap: 12px !important;
+            }
+        }
+
     </style>
 </head>
 <body class="member-ui">
     <div class="dk-commerce-head">
         <div class="dk-commerce-title">
-            <i class="bi @icon"></i>         
+            <i class="bi @icon"></i>
+            <span class="dk-commerce-name">@title</span>
         </div>
         <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
             <span class="dk-credits"><em><i class="bi bi-person-badge"></i> @deskUser</em></span>

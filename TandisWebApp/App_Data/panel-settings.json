@@ -1,5 +1,8 @@
 {
   "DeskCards": [
+    "charge",
+    "ticket",
+    "single",
     "register",
     "renew",
     "shop",

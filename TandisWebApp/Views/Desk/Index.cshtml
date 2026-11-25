@@ -132,6 +132,720 @@
             align-self: center;
             margin-top: 2px;
         }
+
+        /* ============================================================
+           سه لایهٔ پنل: پس‌زمینهٔ صفحه / باکس کارت‌ها / خود کارت
+           ============================================================ */
+
+        /* ۲) باکسِ کارت‌ها: شیشهٔ فرورفته و رنگی‌تر از پس‌زمینهٔ صفحه + پدینگ */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid {
+            position: relative;
+            padding: 22px;
+            border-radius: 34px !important;
+            background-color: color-mix(in srgb, var(--g-primary) 16%, transparent) !important;
+            background-image:
+                radial-gradient(120% 100% at 0% 0%, color-mix(in srgb, var(--g-surface-solid) 62%, transparent), transparent 62%),
+                linear-gradient(160deg, color-mix(in srgb, var(--g-nested-solid) 34%, transparent), transparent 78%) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+            box-shadow:
+                0 26px 54px -30px color-mix(in srgb, var(--g-text) 60%, transparent),
+                inset 0 2px 14px color-mix(in srgb, var(--g-text) 12%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 78%, transparent) !important;
+            -webkit-backdrop-filter: blur(14px) saturate(1.08) !important;
+            backdrop-filter: blur(14px) saturate(1.08) !important;
+        }
+
+        /* خط داخلی نازک: مرزِ «قاب» کارت‌ها */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid::before {
+            content: "";
+            position: absolute;
+            inset: 9px;
+            border-radius: 26px;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 14%, transparent);
+            pointer-events: none;
+        }
+
+        /* ۳) کارت‌ها: شیشهٔ براق با رنگ تم، لبهٔ نور، سایهٔ رنگی و برجستگی ۳بعدی */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid .desk-card {
+            position: relative;
+            border-radius: 24px !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 46%, transparent) !important;
+            background-image:
+                radial-gradient(92% 72% at 20% -22%, color-mix(in srgb, var(--g-surface-solid) 88%, transparent), transparent 62%),
+                radial-gradient(120% 90% at 100% 118%, color-mix(in srgb, var(--g-primary) 34%, transparent), transparent 66%),
+                linear-gradient(158deg,
+                    color-mix(in srgb, var(--g-card-solid) 74%, transparent) 0%,
+                    color-mix(in srgb, var(--g-nested-solid) 62%, transparent) 58%,
+                    color-mix(in srgb, var(--g-primary) 22%, transparent) 100%) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(1.35) !important;
+            backdrop-filter: blur(16px) saturate(1.35) !important;
+            box-shadow:
+                0 24px 38px -20px color-mix(in srgb, var(--g-text) 62%, transparent),
+                0 8px 16px -10px color-mix(in srgb, var(--g-text) 44%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 96%, transparent),
+                inset 0 -22px 34px -24px color-mix(in srgb, var(--g-primary) 78%, transparent) !important;
+            transform: perspective(1000px) translateY(0) rotateX(0deg);
+            transition: transform .24s cubic-bezier(.2, .8, .3, 1), box-shadow .24s ease, border-color .24s ease, background-color .24s ease;
+            will-change: transform;
+        }
+
+        /* ✅ هر کارت فقط یک باکس است: لایهٔ براقِ داخلی (باکس دوم) حذف شد */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid .desk-card::after {
+            content: none !important;
+            display: none !important;
+            background: none !important;
+        }
+
+        /* ============================================================
+           هدر پنل: یک نوار شیشه‌ای یکپارچه با لوگو، نام باشگاه و کاربر
+           ============================================================ */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head {
+            position: relative;
+            padding: 13px 18px;
+            margin-bottom: 20px;
+            border-radius: 24px !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 24%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 62%, transparent) !important;
+            background-image:
+                radial-gradient(120% 150% at 0% 0%, color-mix(in srgb, var(--g-surface-solid) 72%, transparent), transparent 60%),
+                linear-gradient(125deg, color-mix(in srgb, var(--g-primary) 22%, transparent), transparent 58%),
+                linear-gradient(150deg, color-mix(in srgb, var(--g-nested-solid) 30%, transparent), transparent 78%) !important;
+            box-shadow:
+                0 22px 44px -28px color-mix(in srgb, var(--g-text) 68%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 88%, transparent),
+                inset 0 -18px 30px -26px color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+            -webkit-backdrop-filter: blur(16px) saturate(1.16) !important;
+            backdrop-filter: blur(16px) saturate(1.16) !important;
+        }
+
+        /* لوگو در قاب شیشه‌ای */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand {
+            gap: 12px;
+            min-width: 0;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand img {
+            width: 50px;
+            height: 50px;
+            padding: 7px;
+            border-radius: 16px;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent);
+            background-image: linear-gradient(150deg,
+                color-mix(in srgb, var(--g-surface-solid) 96%, transparent),
+                color-mix(in srgb, var(--g-primary) 30%, transparent));
+            box-shadow:
+                0 12px 22px -14px color-mix(in srgb, var(--g-text) 72%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent),
+                inset 0 -8px 14px -10px color-mix(in srgb, var(--g-primary) 70%, transparent);
+            filter: none;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand b {
+            font-size: 1.06rem;
+            font-weight: 800;
+            line-height: 1.5;
+            letter-spacing: -.01em;
+            color: var(--g-text) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand span {
+            display: block;
+            margin-top: 2px;
+            font-size: .71rem;
+            font-weight: 700;
+            line-height: 1.6;
+            color: color-mix(in srgb, var(--g-text) 62%, transparent) !important;
+        }
+
+        /* چیپ‌های باشگاه / کاربر / اثر انگشت / خروج */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-user {
+            gap: 7px;
+            padding: 9px 15px;
+            border-radius: 999px !important;
+            font-size: .79rem;
+            font-weight: 750;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 26%, transparent) !important;
+            background-image: linear-gradient(150deg,
+                color-mix(in srgb, var(--g-surface-solid) 58%, transparent),
+                transparent 82%) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent),
+                0 10px 20px -16px color-mix(in srgb, var(--g-text) 62%, transparent) !important;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-user i {
+            font-size: 1.02rem;
+            color: color-mix(in srgb, var(--g-primary) 88%, var(--g-text)) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-user .bi-fingerprint {
+            font-size: 1.2rem !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-user:hover {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--g-primary) 46%, transparent) !important;
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 90%, transparent),
+                0 14px 24px -16px color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head #btnDeskLogout {
+            background-image: linear-gradient(150deg,
+                color-mix(in srgb, var(--g-primary) 36%, transparent),
+                transparent 86%) !important;
+            border-color: color-mix(in srgb, var(--g-primary) 42%, transparent) !important;
+        }
+
+        @@media (max-width: 700px) {
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head {
+                padding: 11px 13px;
+                gap: 10px;
+                border-radius: 20px !important;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand img {
+                width: 42px;
+                height: 42px;
+                padding: 6px;
+                border-radius: 13px;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand b {
+                font-size: .94rem;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand span {
+                display: none;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head > div:last-child {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-user {
+                padding: 8px 12px;
+                font-size: .73rem;
+            }
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid .desk-card:hover {
+            transform: perspective(1000px) translateY(-7px) rotateX(6deg) scale(1.012);
+            border-color: color-mix(in srgb, var(--g-primary) 58%, transparent) !important;
+            box-shadow:
+                0 38px 54px -22px color-mix(in srgb, var(--g-text) 60%, transparent),
+                0 12px 22px -12px color-mix(in srgb, var(--g-primary) 60%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent),
+                inset 0 -24px 36px -24px color-mix(in srgb, var(--g-primary) 88%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid .desk-card:active {
+            transform: perspective(1000px) translateY(-1px) rotateX(2deg) scale(.998);
+        }
+
+        /* آیکون و برچسب‌ها: برجستگی و خوانایی روی شیشه */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid .desk-card .dc-icon {
+            border-radius: 18px;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 34%, transparent);
+            background-image: linear-gradient(148deg,
+                color-mix(in srgb, var(--g-surface-solid) 96%, transparent),
+                color-mix(in srgb, var(--g-primary) 26%, transparent));
+            box-shadow:
+                0 10px 18px -10px color-mix(in srgb, var(--g-text) 70%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent),
+                inset 0 -8px 14px -10px color-mix(in srgb, var(--g-primary) 70%, transparent);
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid .desk-card .dc-icon i {
+            color: color-mix(in srgb, var(--g-primary) 88%, var(--g-text)) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid .desk-card .dc-title {
+            color: var(--g-text) !important;
+            text-shadow: 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent);
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid .desk-card .dc-go {
+            background: color-mix(in srgb, var(--g-primary) 18%, transparent);
+            border: 1px solid color-mix(in srgb, var(--g-primary) 40%, transparent);
+            color: color-mix(in srgb, var(--g-primary) 92%, var(--g-text));
+            box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent);
+        }
+
+        /* کاهش حرکت برای کاربرانی که انیمیشن کمتر می‌خواهند */
+        @@media (prefers-reduced-motion: reduce) {
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid .desk-card,
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid .desk-card:hover {
+                transform: none;
+                transition: box-shadow .2s ease, border-color .2s ease;
+            }
+        }
+
+        @@media (max-width: 760px) {
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid {
+                padding: 14px;
+                border-radius: 26px !important;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid::before {
+                inset: 6px;
+                border-radius: 21px;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-grid .desk-card:hover {
+                transform: perspective(1000px) translateY(-3px) rotateX(3deg);
+            }
+        }
+        /* ============================================================
+           هدر: چیپ‌ها در همان سطرِ نام «ایمن تردد» (نه زیر آن) + حفظ زیرنویس
+           ============================================================ */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head {
+            flex-wrap: nowrap !important;
+            align-items: center;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand > div {
+            min-width: 0;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand span {
+            display: block !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head > div:last-child {
+            display: flex !important;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 7px;
+            flex: 0 0 auto;
+            width: auto !important;
+            flex-wrap: nowrap !important;
+        }
+
+        @@media (max-width: 700px) {
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head {
+                padding: 10px 11px;
+                gap: 8px;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand b {
+                font-size: .86rem;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-brand span {
+                display: block !important;
+                font-size: .6rem;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-user {
+                padding: 7px 10px;
+                font-size: .68rem;
+                max-width: 34vw;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-user:not(#btnDeskBio) i {
+                display: none;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head .desk-user .bi-fingerprint {
+                display: inline-flex !important;
+            }
+        }
+
+        /* ============================================================
+           مودال‌های پنل میز (کد ملی/رمز، تمدید، بلیت، اعتبار، خروج)
+           ۳ لایه: پس‌زمینهٔ تاریک‌شده / باکس شیشه‌ای / کارت‌های داخلی
+           ============================================================ */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-modal {
+            padding: 16px;
+            background:
+                radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--g-primary) 20%, transparent), transparent 62%),
+                color-mix(in srgb, var(--g-surface-solid) 58%, transparent) !important;
+            -webkit-backdrop-filter: blur(9px) saturate(1.06) !important;
+            backdrop-filter: blur(9px) saturate(1.06) !important;
+        }
+
+        /* باکس مودال: شیشهٔ براق سه‌لایه با لبهٔ نور و سایهٔ عمیق (همان «صفحه»ای که کد ملی/رمز می‌خواهد) */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box {
+            position: relative;
+            width: 100%;
+            max-width: 480px;
+            padding: 22px !important;
+            border-radius: 30px !important;
+            color: var(--g-text) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 80%, transparent) !important;
+            background-image:
+                radial-gradient(110% 90% at 12% -10%, color-mix(in srgb, var(--g-surface-solid) 84%, transparent), transparent 64%),
+                radial-gradient(120% 90% at 100% 112%, color-mix(in srgb, var(--g-primary) 28%, transparent), transparent 68%),
+                linear-gradient(160deg,
+                    color-mix(in srgb, var(--g-card-solid) 84%, transparent) 0%,
+                    color-mix(in srgb, var(--g-nested-solid) 72%, transparent) 100%) !important;
+            box-shadow:
+                0 34px 64px -28px color-mix(in srgb, var(--g-text) 68%, transparent),
+                0 12px 24px -14px color-mix(in srgb, var(--g-text) 46%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 96%, transparent),
+                inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 12%, transparent),
+                inset 0 -26px 44px -30px color-mix(in srgb, var(--g-primary) 72%, transparent) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+            backdrop-filter: blur(20px) saturate(1.2) !important;
+        }
+
+        /* سر مودال: نوار جدا با خط و فاصلهٔ مطمئن */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-head {
+            gap: 10px;
+            padding: 0 2px 12px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid color-mix(in srgb, var(--g-text) 16%, transparent);
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-head b {
+            color: var(--g-text) !important;
+            font-size: 1.04rem;
+            font-weight: 800;
+            line-height: 1.7;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-x {
+            width: 40px;
+            height: 40px;
+            flex: 0 0 auto;
+            border-radius: 14px !important;
+            color: var(--g-text) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 34%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 30%, transparent) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-surface-solid) 66%, transparent), transparent 84%) !important;
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 86%, transparent),
+                0 8px 16px -10px color-mix(in srgb, var(--g-text) 60%, transparent) !important;
+            transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-x:hover {
+            transform: translateY(-2px) rotate(90deg);
+            border-color: color-mix(in srgb, var(--g-primary) 58%, transparent) !important;
+        }
+
+        /* برچسب و فیلدها: فاصله، خوانایی و تضاد کافی روی شیشه */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: .77rem;
+            font-weight: 700;
+            line-height: 1.7;
+            color: color-mix(in srgb, var(--g-text) 86%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .form-control {
+            min-height: 46px;
+            padding: 11px 14px;
+            border-radius: 14px !important;
+            font-size: .9rem;
+            color: var(--g-text) !important;
+            -webkit-text-fill-color: var(--g-text);
+            background-color: color-mix(in srgb, var(--g-nested-solid) 28%, transparent) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-surface-solid) 40%, transparent), transparent 88%) !important;
+            border: 1px solid color-mix(in srgb, var(--g-text) 30%, transparent) !important;
+            box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .form-control::placeholder {
+            color: color-mix(in srgb, var(--g-text) 52%, transparent) !important;
+            -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 52%, transparent);
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .form-control:focus {
+            border-color: color-mix(in srgb, var(--g-primary) 66%, transparent) !important;
+            box-shadow:
+                0 0 0 3px color-mix(in srgb, var(--g-primary) 26%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent) !important;
+            outline: none;
+        }
+
+        /* باکس‌های داخلی: یادداشت، کارت عضو، خلاصهٔ مبلغ */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box :is(.dk-note, .dk-member, .dk-chosen) {
+            padding: 13px 15px !important;
+            margin-bottom: 12px !important;
+            border-radius: 18px !important;
+            font-size: .77rem;
+            line-height: 1.9;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 26%, transparent) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-surface-solid) 46%, transparent), transparent 86%) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent) !important;
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 76%, transparent),
+                0 10px 18px -16px color-mix(in srgb, var(--g-text) 58%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box :is(.dk-member, .dk-chosen) b {
+            color: var(--g-text) !important;
+            font-size: .93rem;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-member span {
+            color: color-mix(in srgb, var(--g-text) 74%, transparent) !important;
+        }
+
+        /* چیپ‌های اعتبار داخل مودال */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-credits {
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-credits em {
+            padding: 6px 12px !important;
+            border-radius: 999px !important;
+            font-size: .7rem;
+            font-weight: 750;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-primary) 15%, transparent) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-surface-solid) 44%, transparent), transparent 86%) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+            box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 74%, transparent) !important;
+        }
+
+        /* لیست تعرفه بلیت / سانس‌های تمدید: کارت‌های ۳بعدی با فاصلهٔ مطمئن */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .desk-list {
+            gap: 10px !important;
+            padding: 4px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .desk-item {
+            padding: 13px 15px !important;
+            border-radius: 18px !important;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 48%, transparent) !important;
+            background-image:
+                radial-gradient(100% 80% at 100% -20%, color-mix(in srgb, var(--g-surface-solid) 62%, transparent), transparent 62%),
+                linear-gradient(152deg, color-mix(in srgb, var(--g-card-solid) 66%, transparent), color-mix(in srgb, var(--g-nested-solid) 56%, transparent)) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+            box-shadow:
+                0 16px 26px -20px color-mix(in srgb, var(--g-text) 60%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 82%, transparent) !important;
+            transform: perspective(900px) translateY(0) rotateX(0deg);
+            transition: transform .22s cubic-bezier(.2, .8, .3, 1), box-shadow .22s ease, border-color .22s ease;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .desk-item:hover {
+            transform: perspective(900px) translateY(-3px) rotateX(2.5deg);
+            border-color: color-mix(in srgb, var(--g-primary) 54%, transparent) !important;
+            box-shadow:
+                0 26px 36px -20px color-mix(in srgb, var(--g-text) 58%, transparent),
+                0 8px 16px -12px color-mix(in srgb, var(--g-primary) 60%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .desk-item b {
+            color: var(--g-text) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .desk-item small {
+            color: color-mix(in srgb, var(--g-text) 76%, transparent) !important;
+        }
+
+        /* چیپ‌های انتخاب رشته/نوع اعتبار و مبالغ سریع */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box :is(.desk-chip, .desk-amount) {
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box :is(.desk-chip, .desk-amount) button {
+            min-height: 44px;
+            padding: 10px 12px;
+            border-radius: 14px !important;
+            font-size: .8rem;
+            font-weight: 750;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 44%, transparent) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-surface-solid) 48%, transparent), transparent 86%) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 24%, transparent) !important;
+            box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 78%, transparent) !important;
+            transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box :is(.desk-chip, .desk-amount) button:hover {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--g-primary) 48%, transparent) !important;
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 88%, transparent),
+                0 12px 20px -14px color-mix(in srgb, var(--g-text) 58%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .desk-chip button.on {
+            color: var(--g-text) !important;
+            border-color: color-mix(in srgb, var(--g-primary) 52%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-primary) 40%, transparent) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-primary) 52%, transparent), color-mix(in srgb, var(--g-surface-solid) 34%, transparent)) !important;
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 86%, transparent),
+                0 12px 22px -16px color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+        }
+
+        /* دکمه‌های اصلی مودال: ۳بعدی، با پدینگ و فاصلهٔ مطمئن */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-btn {
+            min-height: 48px;
+            padding: 13px 16px;
+            border-radius: 16px !important;
+            font-size: .9rem;
+            font-weight: 800;
+            color: var(--g-text) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 46%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-primary) 34%, transparent) !important;
+            background-image: linear-gradient(152deg, color-mix(in srgb, var(--g-surface-solid) 50%, transparent), color-mix(in srgb, var(--g-primary) 44%, transparent)) !important;
+            box-shadow:
+                0 16px 28px -18px color-mix(in srgb, var(--g-primary) 70%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 86%, transparent),
+                inset 0 -12px 20px -16px color-mix(in srgb, var(--g-primary) 80%, transparent) !important;
+            transition: transform .16s ease, box-shadow .16s ease, border-color .16s ease, filter .16s ease;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--g-primary) 62%, transparent) !important;
+            box-shadow:
+                0 22px 34px -18px color-mix(in srgb, var(--g-primary) 72%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-btn:active:not(:disabled) {
+            transform: translateY(1px) scale(.995);
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-btn:focus-visible {
+            outline: 2px solid color-mix(in srgb, var(--g-primary) 80%, transparent);
+            outline-offset: 2px;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-btn.ghost {
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 26%, transparent) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-surface-solid) 44%, transparent), transparent 86%) !important;
+            border-color: color-mix(in srgb, var(--g-primary) 28%, transparent) !important;
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 78%, transparent),
+                0 10px 20px -16px color-mix(in srgb, var(--g-text) 56%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-btn + .dk-btn {
+            margin-top: 10px;
+        }
+
+        /* تعداد بلیت */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-qty {
+            gap: 12px;
+            margin: 14px 0;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-qty button,
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-qty input {
+            min-height: 48px;
+            height: 48px;
+            border-radius: 15px !important;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 28%, transparent) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 28%, transparent) !important;
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 78%, transparent),
+                0 10px 18px -14px color-mix(in srgb, var(--g-text) 56%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-qty button:hover {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--g-primary) 50%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-qty button {
+            transition: transform .16s ease, border-color .16s ease;
+        }
+
+        /* ✅ دکمهٔ خروج هدر: همان شیشهٔ برجستهٔ ۳بعدی با تأکید رنگی */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head #btnDeskLogout {
+            color: var(--g-text) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 46%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-primary) 22%, transparent) !important;
+            background-image: linear-gradient(150deg,
+                color-mix(in srgb, var(--g-surface-solid) 64%, transparent),
+                color-mix(in srgb, var(--g-primary) 32%, transparent)) !important;
+            box-shadow:
+                0 12px 22px -14px color-mix(in srgb, var(--g-primary) 72%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 92%, transparent),
+                inset 0 -10px 16px -13px color-mix(in srgb, var(--g-primary) 82%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head #btnDeskLogout i {
+            color: color-mix(in srgb, var(--g-primary) 92%, var(--g-text)) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head #btnDeskLogout:hover {
+            transform: translateY(-2px) scale(1.015);
+            border-color: color-mix(in srgb, var(--g-primary) 66%, transparent) !important;
+            box-shadow:
+                0 18px 28px -14px color-mix(in srgb, var(--g-primary) 76%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head #btnDeskLogout:active {
+            transform: translateY(1px) scale(.99);
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head #btnDeskLogout:focus-visible {
+            outline: 2px solid color-mix(in srgb, var(--g-primary) 80%, transparent);
+            outline-offset: 2px;
+        }
+
+        /* پیام کوتاه: خوانا و بدون تداخل متن با پس‌زمینه */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-toast {
+            padding: 13px 20px;
+            border-radius: 18px !important;
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 86%, transparent) !important;
+            background-image: linear-gradient(150deg, color-mix(in srgb, var(--g-surface-solid) 62%, transparent), color-mix(in srgb, var(--g-primary) 26%, transparent)) !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 34%, transparent) !important;
+            box-shadow:
+                0 22px 38px -20px color-mix(in srgb, var(--g-text) 66%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 90%, transparent) !important;
+            -webkit-backdrop-filter: blur(14px) saturate(1.1);
+            backdrop-filter: blur(14px) saturate(1.1);
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-toast.err {
+            background-color: color-mix(in srgb, #b91c1c 18%, var(--g-card-solid)) !important;
+            border-color: color-mix(in srgb, #b91c1c 52%, transparent) !important;
+            color: var(--g-text) !important;
+        }
+
+        @@media (max-width: 620px) {
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-modal {
+                padding: 12px;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box {
+                padding: 16px !important;
+                border-radius: 24px !important;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .desk-item:hover,
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-btn:hover:not(:disabled) {
+                transform: none;
+            }
+        }
+
+        @@media (prefers-reduced-motion: reduce) {
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .desk-item:hover,
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-btn:hover:not(:disabled),
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .desk-head #btnDeskLogout:hover {
+                transform: none;
+                transition: box-shadow .2s ease, border-color .2s ease;
+            }
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .dk-box .dk-x:hover {
+                transform: none;
+            }
+        }
+
     </style>
 </head>
 <body data-bio-type="desk">
