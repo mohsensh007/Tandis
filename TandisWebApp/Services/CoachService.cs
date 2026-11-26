@@ -45,6 +45,7 @@ namespace TandisWebApp.Services
             model.ActiveStudents = mySanse.Count == 0 ? 0 : await _db.Acc_MemberSports
                 .AsNoTracking()
                 .Where(a => a.SportSanseID != null && mySanse.Contains(a.SportSanseID.Value) && a.IsActive == true)
+                .Where(a => a.EndDate != null && string.Compare(a.EndDate, todayStr) >= 0)
                 .Select(a => a.MemberID)
                 .Distinct()
                 .CountAsync();
@@ -358,9 +359,10 @@ namespace TandisWebApp.Services
 
             if (string.IsNullOrEmpty(fromDate))
             {
+                // پیش‌فرض: از اول ماه جاری شمسی تا امروز
                 var pc = new System.Globalization.PersianCalendar();
-                var d = DateTime.Now.AddDays(-30);
-                fromDate = $"{pc.GetYear(d):D4}/{pc.GetMonth(d):D2}/{pc.GetDayOfMonth(d):D2}";
+                var d = DateTime.Now;
+                fromDate = $"{pc.GetYear(d):D4}/{pc.GetMonth(d):D2}/01";
             }
             if (string.IsNullOrEmpty(toDate))
                 toDate = todayStr;

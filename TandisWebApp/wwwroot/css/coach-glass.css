@@ -1,0 +1,346 @@
+/* =====================================================
+   Coach panel — shared glass / 3D layer
+   همان زبان بصری پنل عضو و Desk: سطح مات شیشه‌ای، لبهٔ نرم،
+   بدون حاشیهٔ ۱ پیکسلی، متن با کنتراست کافی روی سطح.
+   پیشوند پراختلاف تا بر بلوک‌های <style> داخل Viewها غلبه کند.
+   ===================================================== */
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) {
+    --cg-surface: color-mix(in srgb, var(--g-card-solid) 96%, transparent);
+    --cg-surface-2: color-mix(in srgb, var(--g-nested-solid) 92%, transparent);
+    --cg-sheen: color-mix(in srgb, var(--g-surface-solid) 72%, transparent);
+    --cg-line: color-mix(in srgb, var(--g-primary) 18%, transparent);
+    --cg-shadow: 0 22px 36px -26px color-mix(in srgb, var(--g-text) 62%, transparent);
+    --cg-shadow-lift: 0 26px 44px -24px color-mix(in srgb, var(--g-text) 58%, transparent);
+    --cg-inset: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent);
+}
+
+/* متن‌ها هرگز سایه نداشته باشند (علت اصلی تداخل متن با پس‌زمینه) */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) *,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) *::before,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) *::after {
+    text-shadow: none !important;
+}
+
+/* ---------- ۱) کارت‌های اصلی ---------- */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.coach-banner, .cstat-card, .coach-card, .pg-card, .cc-card, .cs-card,
+        .sd-card, .pe-card, .ch-form-card, .cm-card, .cmr-card, .ms-card,
+        .cm-box, .cm-modal, .stu-panel, .modal-content, .cc-schedule) {
+    background-color: var(--cg-surface) !important;
+    background-image:
+        radial-gradient(120% 90% at 100% -10%, var(--cg-sheen), transparent 62%),
+        linear-gradient(158deg,
+            color-mix(in srgb, var(--g-card-solid) 97%, transparent),
+            color-mix(in srgb, var(--g-nested-solid) 90%, transparent)) !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    box-shadow: var(--cg-shadow), var(--cg-inset) !important;
+    color: var(--g-text) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    backdrop-filter: blur(16px) saturate(1.15);
+}
+
+/* کارت‌های کلیک‌شدنی: کمی برجسته‌تر */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .cstat-card,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .pg-card,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .ms-card {
+    transition: transform .22s ease, box-shadow .22s ease;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .cstat-clickable:hover,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .pg-card:hover,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .ms-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--cg-shadow-lift), var(--cg-inset) !important;
+}
+
+/* ---------- ۲) کارت‌های درونی ---------- */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.class-card, .sd-box, .ch-box, .cmr-drow, .stu-row, .pe-item-card,
+        .cc-schedule, .pg-dates) {
+    background-color: var(--cg-surface-2) !important;
+    background-image: linear-gradient(160deg,
+        color-mix(in srgb, var(--g-surface-solid) 26%, transparent),
+        transparent 92%) !important;
+    border: 0 !important;
+    border-radius: 16px !important;
+    box-shadow:
+        0 14px 24px -22px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+    color: var(--g-text) !important;
+}
+
+/* ---------- ۳) نوارهای عنوان ---------- */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.coach-card-head, .cs-head-bar, .cm-box-head, .cm-modal-head, .stu-head) {
+    background-image: linear-gradient(120deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-primary) 78%, var(--g-surface-solid)) 58%,
+        color-mix(in srgb, var(--g-primary) 58%, var(--g-surface-solid)) 100%) !important;
+    background-color: var(--g-primary) !important;
+    border: 0 !important;
+    color: var(--g-text) !important;
+    font-weight: 800 !important;
+    padding: 13px 18px !important;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 40%, transparent) !important;
+    text-shadow: none !important;
+}
+
+/* ---------- ۴) دکمه‌ها ---------- */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.class-btn, .pg-new-btn, .pg-edit-btn, .pg-view-btn, .pg-del-btn,
+        .cc-arrow, .ch-send, .cm-apply, .cm-new, .cm-nav-btn, .cm-cal-btn,
+        .pe-save-btn, .coach-back-pill, .combo-add-btn, .stu-close, .btn-logout-glass) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 42px;
+    padding: 9px 16px !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    background-color: var(--g-primary) !important;
+    background-image: linear-gradient(135deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-primary) 78%, var(--g-surface-solid)) 55%,
+        color-mix(in srgb, var(--g-primary) 62%, var(--g-surface-solid)) 100%) !important;
+    color: var(--g-text) !important;
+    font-weight: 800 !important;
+    font-size: .84rem !important;
+    box-shadow:
+        0 16px 26px -18px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 52%, transparent) !important;
+    text-shadow: none !important;
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.class-btn, .pg-new-btn, .pg-edit-btn, .pg-view-btn, .pg-del-btn,
+        .cc-arrow, .ch-send, .cm-apply, .cm-new, .cm-nav-btn, .cm-cal-btn,
+        .pe-save-btn, .coach-back-pill, .combo-add-btn, .stu-close, .btn-logout-glass):hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 22px 32px -18px color-mix(in srgb, var(--g-text) 58%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 60%, transparent) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .stu-close {
+    min-height: 34px;
+    padding: 6px 10px !important;
+    border-radius: 11px !important;
+}
+
+/* دکمه‌های کم‌اهمیت (حذف/انصراف) تون ملایم‌تر */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(.pg-del-btn, .cm-nav-btn) {
+    background-image: linear-gradient(135deg,
+        color-mix(in srgb, var(--g-nested-solid) 94%, transparent),
+        color-mix(in srgb, var(--g-primary) 22%, var(--g-nested-solid))) !important;
+    background-color: var(--cg-surface-2) !important;
+    box-shadow:
+        0 12px 20px -20px color-mix(in srgb, var(--g-text) 55%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 66%, transparent) !important;
+}
+
+/* ---------- ۵) چیپ‌ها / نشان‌ها ---------- */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.class-pill, .cb-chip, .pg-pill, .pg-badge, .sd-label, .cs-pill, .cc-pill,
+        .pd-pill-sm, .ms-unread, .status-badge) {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 0 !important;
+    border-radius: 999px !important;
+    padding: 5px 12px !important;
+    background-color: color-mix(in srgb, var(--g-primary) 14%, var(--cg-surface)) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    font-size: .74rem !important;
+    font-weight: 750 !important;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 20%, transparent) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .cb-sub,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .sd-label,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .sd-sub,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .cs-head-sub,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .ms-preview,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .cc-sub,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .pg-sub,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .class-time,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .cstat-hint,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .ch-time,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .stu-sub,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .cm-value,
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .sd-small {
+    color: color-mix(in srgb, var(--g-text) 74%, transparent) !important;
+    box-shadow: none !important;
+    background: none !important;
+    padding: 0 !important;
+    font-size: .78rem !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(.st-on, .stt-success) {
+    background-color: color-mix(in srgb, var(--g-primary) 22%, var(--cg-surface)) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(.st-soon, .stt-warning) {
+    background-color: color-mix(in srgb, var(--g-text) 12%, var(--cg-surface)) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(.st-done, .stt-secondary) {
+    background-color: color-mix(in srgb, var(--g-text) 8%, var(--cg-surface)) !important;
+    color: color-mix(in srgb, var(--g-text) 78%, transparent) !important;
+}
+
+/* ---------- ۶) فیلدهای فرم ---------- */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.pe-input, .inp, .stu-search, .cm-input, .ch-input, .glass-search,
+        input.form-control, select.form-select, textarea.form-control, .combo-slot) {
+    border: 0 !important;
+    border-radius: 13px !important;
+    min-height: 44px;
+    padding: 10px 14px !important;
+    background-color: color-mix(in srgb, var(--g-nested-solid) 88%, transparent) !important;
+    background-image: linear-gradient(160deg,
+        color-mix(in srgb, var(--g-surface-solid) 30%, transparent),
+        transparent 88%) !important;
+    color: var(--g-text) !important;
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 22%, transparent),
+        inset 0 2px 6px -4px color-mix(in srgb, var(--g-text) 45%, transparent) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.pe-input, .inp, .stu-search, .cm-input, .ch-input, .glass-search,
+        input.form-control, select.form-select, textarea.form-control):focus {
+    outline: none !important;
+    box-shadow:
+        inset 0 0 0 2px color-mix(in srgb, var(--g-primary) 55%, transparent),
+        inset 0 2px 6px -4px color-mix(in srgb, var(--g-text) 40%, transparent) !important;
+}
+
+/* ---------- ۷) آیکون‌های رنگی ---------- */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.cstat-icon, .cb-icon, .hd-icon, .cs-head-icon, .cs-avatar, .ms-avatar,
+        .sd-icon, .pg-avatar, .cc-icon) {
+    border: 0 !important;
+    border-radius: 14px !important;
+    background-color: var(--g-primary) !important;
+    background-image: linear-gradient(140deg,
+        color-mix(in srgb, var(--g-primary) 92%, var(--g-surface-solid)) 0%,
+        var(--g-primary) 58%,
+        color-mix(in srgb, var(--g-primary) 70%, var(--g-text)) 100%) !important;
+    color: color-mix(in srgb, var(--g-surface-solid) 92%, transparent) !important;
+    box-shadow:
+        0 12px 20px -14px color-mix(in srgb, var(--g-primary) 70%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 45%, transparent) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.grad-green, .grad-orange, .grad-turquoise, .grad-blue, .grad-pink,
+        .grad-purple) {
+    background-image: linear-gradient(140deg,
+        color-mix(in srgb, var(--g-primary) 92%, var(--g-surface-solid)) 0%,
+        var(--g-primary) 58%,
+        color-mix(in srgb, var(--g-primary) 70%, var(--g-text)) 100%) !important;
+    background-color: var(--g-primary) !important;
+}
+
+/* ---------- ۸) تیترها / متن‌ها ---------- */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.cb-title, .class-title, .cc-title, .cs-name, .cs-head-title, .sd-value,
+        .pg-name, .pg-title, .ch-title, .cm-label, .cm-lbl, .cmr-name,
+        .ms-name, .cstat-value, .stu-name, .pe-lbl) {
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(.cb-title, .class-title, .cc-title,
+    .cs-head-title, .pg-name, .sd-value) {
+    font-weight: 800 !important;
+    letter-spacing: -.1px;
+}
+
+/* ---------- ۹) فاصله‌ها و ریتم ---------- */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .coach-banner {
+    padding: 14px 16px !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .cstat-card {
+    padding: 16px 14px !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .class-card {
+    padding: 15px !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .coach-main {
+    padding-bottom: 8px;
+}
+
+@media (max-width: 575.98px) {
+    html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(.coach-banner, .cstat-card) {
+        border-radius: 18px !important;
+    }
+
+    html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .cstat-value {
+        font-size: 1.4rem !important;
+    }
+}
+
+/* ---------- ۱۰) پیام‌ها، فیلترها و حالت‌های خالی ---------- */
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .ch-bubble {
+    background-color: var(--cg-surface-2) !important;
+    background-image: linear-gradient(160deg,
+        color-mix(in srgb, var(--g-surface-solid) 26%, transparent), transparent 92%) !important;
+    border: 0 !important;
+    border-radius: 18px !important;
+    color: var(--g-text) !important;
+    box-shadow:
+        0 14px 24px -22px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .ch-mine .ch-bubble {
+    background-color: var(--g-primary) !important;
+    background-image: linear-gradient(135deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-primary) 78%, var(--g-surface-solid)) 60%,
+        color-mix(in srgb, var(--g-primary) 64%, var(--g-surface-solid)) 100%) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.cm-filter, .cmr-total, .ms-full, .sd-att) {
+    background-color: var(--cg-surface-2) !important;
+    background-image: linear-gradient(160deg,
+        color-mix(in srgb, var(--g-surface-solid) 24%, transparent), transparent 94%) !important;
+    border: 0 !important;
+    border-radius: 16px !important;
+    color: var(--g-text) !important;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 68%, transparent) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(.cm-month, .cm-rev, .cm-back-pill) {
+    border: 0 !important;
+    border-radius: 13px !important;
+    background-color: color-mix(in srgb, var(--g-primary) 14%, var(--cg-surface)) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 20%, transparent) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.cc-empty, .cs-empty, .ms-empty, .pg-empty, .cm-empty, .coach-empty) {
+    border: 0 !important;
+    color: color-mix(in srgb, var(--g-text) 74%, transparent) !important;
+}
+
+html[data-theme] body.coach-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .coach-bottom-nav {
+    border: 0 !important;
+    box-shadow:
+        0 -18px 34px -26px color-mix(in srgb, var(--g-text) 62%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+}

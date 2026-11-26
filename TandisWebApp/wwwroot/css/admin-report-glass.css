@@ -1,0 +1,480 @@
+/* =====================================================
+   صفحات گزارش پنل ادمین — لایهٔ بصری یکدست
+   (ثبت‌نام، صندوق، تردد، خدمات، بلیت، هزینه، مهمان + صفحهٔ گزارش‌ها)
+   ===================================================== */
+
+/* ---------- حذف سرریز افقی/خط جابه‌جا شوندهٔ زیر کارت‌ها ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) {
+    overflow-x: clip !important;
+    overflow-anchor: none;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-filter,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-summary,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-list-head,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) #repList,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rp-nav {
+    max-width: 100%;
+    min-width: 0;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-card,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-head,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-mid {
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* تاریخ فیلتر: کامل دیده شود و دکمهٔ × روی عدد تاریخ نیفتد */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-field {
+    position: static;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-field .rep-input {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    padding: 9px 12px !important;
+    font-size: .84rem !important;
+    letter-spacing: 0 !important;
+    font-variant-numeric: tabular-nums;
+    text-overflow: clip;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-field .rep-clear {
+    position: static !important;
+    transform: none !important;
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background-color: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
+    color: var(--g-text) !important;
+    font-size: .68rem;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-text) 14%, transparent);
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-field .rep-clear:hover {
+    background-color: color-mix(in srgb, var(--g-primary) 25%, transparent);
+}
+
+/* ---------- پنل فیلتر ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-filter {
+    background-color: var(--ag-surface) !important;
+    background-image: linear-gradient(158deg, color-mix(in srgb, var(--g-card-solid) 97%, transparent), color-mix(in srgb, var(--g-nested-solid) 92%, transparent)) !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    padding: 16px !important;
+    overflow: clip !important;
+    box-shadow: var(--ag-shadow), var(--ag-inset) !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-filter::before,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-filter::after {
+    display: none !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-label {
+    color: color-mix(in srgb, var(--g-text) 72%, transparent) !important;
+    font-size: .72rem !important;
+    font-weight: 750 !important;
+    margin-bottom: 6px;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-input-group { gap: 8px; }
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-btn-icon {
+    flex: 0 0 auto;
+    width: 44px !important;
+    height: 44px !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    border: 0 !important;
+    border-radius: 13px !important;
+    background-color: var(--ag-surface-2) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 24%, transparent), inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 60%, transparent) !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-mode-group {
+    display: flex;
+    width: 100%;
+    min-width: 0;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 15px;
+    background-color: var(--ag-surface-2);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 16%, transparent);
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-mode {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 36px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 7px 0 !important;
+    border: 0 !important;
+    border-radius: 11px !important;
+    background: transparent !important;
+    color: color-mix(in srgb, var(--g-text) 74%, transparent) !important;
+    font-size: .8rem !important;
+    font-weight: 750 !important;
+    cursor: pointer;
+    transition: background-color .18s ease, color .18s ease;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .btn-check:checked + .rep-mode {
+    background-color: var(--g-primary) !important;
+    background-image: linear-gradient(135deg, var(--g-primary) 0%, color-mix(in srgb, var(--g-primary) 76%, var(--g-surface-solid)) 100%) !important;
+    color: var(--g-text) !important;
+    box-shadow: 0 10px 18px -14px color-mix(in srgb, var(--g-text) 65%, transparent), inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 45%, transparent);
+}
+
+/* ---------- کارت‌های خلاصه ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-summary {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+    gap: 10px;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-chip {
+    flex: none;
+    min-width: 0;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: center;
+    gap: 2px;
+    padding: 13px 15px !important;
+    overflow: clip !important;
+    border: 0 !important;
+    border-radius: 18px !important;
+    text-align: start;
+    background-color: var(--ag-surface) !important;
+    background-image: radial-gradient(130% 110% at 100% 0%, color-mix(in srgb, var(--g-surface-solid) 60%, transparent), transparent 68%), linear-gradient(158deg, color-mix(in srgb, var(--g-card-solid) 97%, transparent), color-mix(in srgb, var(--g-nested-solid) 92%, transparent)) !important;
+    box-shadow: var(--ag-shadow), var(--ag-inset) !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-chip b {
+    display: block;
+    padding: 0 !important;
+    color: var(--g-text) !important;
+    max-width: 100%;
+    font-size: clamp(.86rem, 2.1vw, 1.1rem) !important;
+    font-weight: 800 !important;
+    line-height: 1.7 !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-variant-numeric: tabular-nums;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-chip span {
+    display: block;
+    margin-top: 2px;
+    color: color-mix(in srgb, var(--g-text) 68%, transparent) !important;
+    font-size: .72rem !important;
+    font-weight: 650;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-chip.hl {
+    background-image: radial-gradient(130% 110% at 100% 0%, color-mix(in srgb, var(--g-primary) 34%, transparent), transparent 72%), linear-gradient(158deg, color-mix(in srgb, var(--g-primary) 16%, var(--g-card-solid)), color-mix(in srgb, var(--g-nested-solid) 94%, transparent)) !important;
+    box-shadow: var(--ag-shadow), inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 26%, transparent), var(--ag-inset) !important;
+}
+
+/* ---------- نوار ابزار لیست ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-list-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin: 0 0 12px !important;
+    padding: 10px 12px;
+    border-radius: 18px;
+    background-color: var(--ag-surface);
+    box-shadow: var(--ag-shadow), var(--ag-inset);
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-count {
+    padding: 5px 12px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background-color: color-mix(in srgb, var(--g-primary) 16%, transparent) !important;
+    color: var(--g-text) !important;
+    font-size: .74rem !important;
+    font-weight: 800 !important;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 22%, transparent);
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-list-head .rep-search {
+    min-height: 38px !important;
+    padding: 6px 14px !important;
+}
+
+/* ---------- کارت‌های رکورد ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) #repList {
+    display: grid;
+    gap: 10px;
+    overflow-anchor: none;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) #repList > .text-center {
+    padding: 26px 16px !important;
+    border-radius: 18px;
+    background-color: var(--ag-surface);
+    box-shadow: var(--ag-shadow);
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-card {
+    margin: 0 !important;
+    overflow: hidden;
+    border: 0 !important;
+    border-radius: 18px !important;
+    background-color: var(--ag-surface) !important;
+    background-image: linear-gradient(158deg, color-mix(in srgb, var(--g-card-solid) 97%, transparent), color-mix(in srgb, var(--g-nested-solid) 93%, transparent)) !important;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 66%, transparent);
+    transition: box-shadow .18s ease;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-card.open {
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 22%, transparent), inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent);
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    color: var(--g-text) !important;
+    font-weight: 400 !important;
+    margin: 0 !important;
+    cursor: pointer;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-num {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background-color: color-mix(in srgb, var(--g-primary) 16%, transparent) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    font-size: .82rem !important;
+    font-weight: 800;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 26%, transparent), inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 55%, transparent) !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-mid {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: grid;
+    gap: 5px;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: .82rem !important;
+    line-height: 1.6;
+    color: color-mix(in srgb, var(--g-text) 74%, transparent) !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-line:first-child {
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: .95rem !important;
+    color: var(--g-text) !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-line b {
+    color: var(--g-text) !important;
+    font-weight: 800 !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-line .amt {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    border-radius: 9px;
+    background-color: color-mix(in srgb, var(--g-primary) 15%, transparent);
+    color: var(--g-text) !important;
+    font-size: .82rem !important;
+    font-weight: 800 !important;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-badge {
+    padding: 2px 9px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background-color: color-mix(in srgb, var(--g-primary) 16%, transparent) !important;
+    color: var(--g-text) !important;
+    font-size: .68rem !important;
+    font-weight: 800 !important;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 24%, transparent);
+}
+
+/* ---------- دکمهٔ برچسب‌دار «جزئیات» ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-toggle {
+    flex: 0 0 auto;
+    width: auto !important;
+    min-width: 74px;
+    height: 34px !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0 12px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background-color: color-mix(in srgb, var(--g-primary) 12%, transparent) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    font-size: .72rem !important;
+    font-weight: 800 !important;
+    transform: none !important;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 22%, transparent);
+    transition: background-color .18s ease, color .18s ease;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-toggle::before { content: 'جزئیات'; }
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-toggle i {
+    font-size: .7rem !important;
+    transform: rotate(0deg);
+    transition: transform .2s ease;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-card.open .rep-toggle {
+    background-color: var(--g-primary) !important;
+    background-image: linear-gradient(135deg, color-mix(in srgb, var(--g-primary) 92%, var(--g-text)) 0%, var(--g-primary) 100%) !important;
+    color: color-mix(in srgb, var(--g-surface-solid) 96%, transparent) !important;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 35%, transparent);
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-card.open .rep-toggle::before { content: 'بستن'; }
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-card.open .rep-toggle i { transform: rotate(-90deg); }
+
+/* ---------- جزئیات رکورد ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-details {
+    display: none;
+    padding: 0 16px 16px;
+    background: transparent !important;
+    border: 0 !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-card.open .rep-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+    gap: 8px;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-drow {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: 10px 12px;
+    border: 0 !important;
+    border-radius: 13px;
+    background-color: var(--ag-surface-2);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 14%, transparent);
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-drow span {
+    color: color-mix(in srgb, var(--g-text) 66%, transparent) !important;
+    font-size: .68rem !important;
+    font-weight: 650;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-drow b {
+    color: var(--g-text) !important;
+    font-size: .8rem !important;
+    font-weight: 800 !important;
+    text-align: start !important;
+    word-break: break-word;
+}
+
+/* ---------- صفحه‌بندی ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rp-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 12px 0 4px;
+    padding: 0;
+    border: 0 !important;
+    border-radius: 0;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rp-btn {
+    min-height: 36px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 13px !important;
+    border: 0 !important;
+    border-radius: 11px !important;
+    background-color: var(--ag-surface-2) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    font-size: .78rem !important;
+    font-weight: 750 !important;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 16%, transparent) !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rp-btn.rp-active {
+    background-color: var(--g-primary) !important;
+    background-image: linear-gradient(135deg, var(--g-primary) 0%, color-mix(in srgb, var(--g-primary) 74%, var(--g-surface-solid)) 100%) !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rp-btn:disabled { opacity: .4; cursor: not-allowed; }
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rp-info {
+    width: 100%;
+    text-align: center;
+    color: color-mix(in srgb, var(--g-text) 68%, transparent) !important;
+    font-size: .72rem !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rp-gap { color: color-mix(in srgb, var(--g-text) 60%, transparent); }
+
+/* ---------- کارت‌های انتخاب گزارش ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .report-card {
+    padding: 22px 18px !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    background-color: var(--ag-surface) !important;
+    background-image: radial-gradient(120% 90% at 100% -10%, var(--ag-sheen), transparent 62%), linear-gradient(158deg, color-mix(in srgb, var(--g-card-solid) 97%, transparent), color-mix(in srgb, var(--g-nested-solid) 90%, transparent)) !important;
+    box-shadow: var(--ag-shadow), var(--ag-inset) !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .report-card::before { display: none; }
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .report-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--ag-shadow-lift), var(--ag-inset) !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rc-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 14px;
+    border-radius: 15px;
+    font-size: 1.45rem;
+    color: color-mix(in srgb, var(--g-surface-solid) 92%, transparent) !important;
+    background-color: var(--g-primary) !important;
+    background-image: linear-gradient(140deg, color-mix(in srgb, var(--g-primary) 92%, var(--g-surface-solid)) 0%, var(--g-primary) 58%, color-mix(in srgb, var(--g-primary) 70%, var(--g-text)) 100%) !important;
+    box-shadow: 0 14px 22px -16px color-mix(in srgb, var(--g-primary) 70%, transparent), inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 45%, transparent) !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rc-desc {
+    color: color-mix(in srgb, var(--g-text) 72%, transparent) !important;
+    font-size: .82rem !important;
+}
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .admin-report-all-trigger .btn-all-reports {
+    padding: 10px 18px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background-color: var(--g-primary) !important;
+    background-image: linear-gradient(135deg, var(--g-primary) 0%, color-mix(in srgb, var(--g-primary) 76%, var(--g-surface-solid)) 100%) !important;
+    color: var(--g-text) !important;
+    font-weight: 800 !important;
+    box-shadow: 0 16px 26px -18px color-mix(in srgb, var(--g-text) 60%, transparent) !important;
+}
+
+@media (max-width: 575.98px) {
+    html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-filter .row > .col-6 { flex: 0 0 100%; width: 100%; max-width: 100%; }
+    html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-field .rep-input { font-size: .88rem !important; }
+    html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-card.open .rep-details { grid-template-columns: minmax(0, 1fr); }
+    html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-head { padding: 13px 14px; }
+    html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .rep-toggle { min-width: 62px; padding: 0 10px !important; font-size: .68rem !important; }
+}

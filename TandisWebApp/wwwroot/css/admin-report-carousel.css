@@ -20,6 +20,13 @@
         perspective: 900px;
         overflow: hidden;
         touch-action: pan-y;
+        overflow-anchor: none;
+    }
+
+    .admin-report-carousel,
+    .admin-report-stage {
+        max-width: 100%;
+        min-width: 0;
     }
 
     .admin-report-slide {
@@ -43,14 +50,15 @@
         text-shadow: 0 1px 3px color-mix(in srgb, var(--g-text) 55%, transparent);
         transition: transform .55s cubic-bezier(.22,.9,.35,1.1), opacity .45s;
         transform-style: preserve-3d;
-        box-shadow: 0 10px 30px color-mix(in srgb, var(--g-text) 35%, transparent);
+        /* بدون سایهٔ بیرونی: سایه در کادر بریده می‌شد و خط زیر کارت می‌ساخت */
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 55%, transparent);
         overflow: hidden;
     }
 
     .admin-report-slide.is-active {
         background: linear-gradient(145deg, color-mix(in srgb, var(--g-primary) 72%, transparent), color-mix(in srgb, var(--g-primary) 68%, transparent));
         border-color: color-mix(in srgb, var(--g-text) 35%, transparent);
-        box-shadow: 0 16px 40px color-mix(in srgb, var(--g-primary) 35%, transparent);
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 55%, transparent), inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 60%, transparent);
     }
 
     .admin-report-icon {
@@ -222,6 +230,20 @@
 
     body.admin-report-modal-open {
         overflow: hidden;
+    }
+}
+
+/* خنثی‌کردن سایهٔ بیرونی تم روی اسلایدها (سایه در کادر بریده می‌شد و خط زیر کارت می‌ساخت) */
+@media (max-width: 767.98px) {
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .admin-report-carousel .admin-report-slide,
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .admin-report-carousel .admin-report-slide:hover,
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .admin-report-carousel .admin-report-slide:focus-visible {
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 55%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .admin-report-carousel .admin-report-slide.is-active,
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .admin-report-carousel .admin-report-slide.is-active:hover {
+        box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 55%, transparent), inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 60%, transparent) !important;
     }
 }
 

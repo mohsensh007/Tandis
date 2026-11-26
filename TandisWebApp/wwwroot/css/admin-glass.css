@@ -1,0 +1,284 @@
+/* =====================================================
+   Admin panel — shared glass / 3D layer
+   همان زبان بصری پنل عضو، Desk و مربی:
+   سطح مات شیشه‌ای، لبهٔ نرم بدون خط ۱ پیکسلی،
+   کنتراست کافی متن روی سطح، ریتم یکدست فاصله‌ها.
+   پیشوند ۵-ID تا بر قواعد theme-cool-mist و استایل داخل Viewها غلبه کند.
+   ===================================================== */
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) {
+    --ag-surface: color-mix(in srgb, var(--g-card-solid) 96%, transparent);
+    --ag-surface-2: color-mix(in srgb, var(--g-nested-solid) 92%, transparent);
+    --ag-sheen: color-mix(in srgb, var(--g-surface-solid) 70%, transparent);
+    --ag-shadow: 0 22px 36px -26px color-mix(in srgb, var(--g-text) 62%, transparent);
+    --ag-shadow-lift: 0 26px 44px -24px color-mix(in srgb, var(--g-text) 58%, transparent);
+    --ag-inset: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent);
+}
+
+/* متن‌ها بدون سایه — علت اصلی تداخل متن با پس‌زمینه */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) *,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) *::before,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) *::after {
+    text-shadow: none !important;
+}
+
+/* ---------- ۱) سطح‌های اصلی ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.card, .dash-card, .report-card, .nav-card, .st-card, .msg-card,
+        .ch-main-card, .ch-side-card, .ch-info-card, .ch-share-card, .ps-table,
+        .glass-modal, .modal-content, .rec-modal, .inbox-filters, .admin-reports-page .card) {
+    background-color: var(--ag-surface) !important;
+    background-image:
+        radial-gradient(120% 90% at 100% -10%, var(--ag-sheen), transparent 62%),
+        linear-gradient(158deg,
+            color-mix(in srgb, var(--g-card-solid) 97%, transparent),
+            color-mix(in srgb, var(--g-nested-solid) 90%, transparent)) !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    box-shadow: var(--ag-shadow), var(--ag-inset) !important;
+    color: var(--g-text) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+    backdrop-filter: blur(16px) saturate(1.15);
+    overflow: hidden;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.nav-card, .st-card, .msg-card):hover {
+    transform: translateY(-3px);
+    box-shadow: var(--ag-shadow-lift), var(--ag-inset) !important;
+}
+
+/* ---------- ۲) سطح‌های درونی ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.money-cell, .inside-row, .left-preview, .inside-preview,
+        .rec-item, .ps-row, .ch-lg-row, .donut-wrap) {
+    background-color: var(--ag-surface-2) !important;
+    background-image: linear-gradient(160deg,
+        color-mix(in srgb, var(--g-surface-solid) 26%, transparent),
+        transparent 92%) !important;
+    border: 0 !important;
+    border-radius: 16px !important;
+    box-shadow:
+        0 14px 24px -22px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+    color: var(--g-text) !important;
+}
+
+/* ---------- ۳) نوارهای عنوان ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.dash-head, .grad-header, .ps-head, .ch-main-head) {
+    background-color: var(--g-primary) !important;
+    background-image: linear-gradient(120deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-primary) 78%, var(--g-surface-solid)) 58%,
+        color-mix(in srgb, var(--g-primary) 58%, var(--g-surface-solid)) 100%) !important;
+    border: 0 !important;
+    color: var(--g-text) !important;
+    font-weight: 800 !important;
+    padding: 13px 18px !important;
+    border-radius: 18px !important;
+    margin-bottom: 12px;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 40%, transparent) !important;
+}
+
+/* ---------- ۴) دکمه‌ها ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.btn-glass, .btn-glass-icon, .btn-back-glass, .rep-btn-main,
+        .rep-btn-excel, .rp-btn, .ch-navbtn, .rec-tab,
+        .rec-more, .ps-actions button) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 42px;
+    padding: 9px 16px !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    background-color: var(--g-primary) !important;
+    background-image: linear-gradient(135deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-primary) 78%, var(--g-surface-solid)) 55%,
+        color-mix(in srgb, var(--g-primary) 62%, var(--g-surface-solid)) 100%) !important;
+    color: var(--g-text) !important;
+    font-weight: 800 !important;
+    font-size: .84rem !important;
+    box-shadow:
+        0 16px 26px -18px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 52%, transparent) !important;
+    text-shadow: none !important;
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.btn-glass, .btn-glass-icon, .btn-back-glass, .rep-btn-main, .rep-btn-excel,
+        .rp-btn, .ch-navbtn, .rec-tab, .rec-more):hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 22px 32px -18px color-mix(in srgb, var(--g-text) 58%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 60%, transparent) !important;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.btn-glass-icon, .rp-nav) {
+    min-height: 40px;
+    padding: 8px 12px !important;
+    border-radius: 12px !important;
+}
+
+/* دکمه‌های ثانویه (انصراف/پاک‌کردن) ملایم‌تر */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.rp-nav) {
+    background-color: var(--ag-surface-2) !important;
+    background-image: linear-gradient(135deg,
+        color-mix(in srgb, var(--g-nested-solid) 94%, transparent),
+        color-mix(in srgb, var(--g-primary) 20%, var(--g-nested-solid))) !important;
+    box-shadow:
+        0 12px 20px -20px color-mix(in srgb, var(--g-text) 55%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 66%, transparent) !important;
+}
+
+/* ---------- ۵) چیپ‌ها / نشان‌ها ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.delta-badge, .rep-chip, .rec-badge, .rec-counter, .ch-pill, .rsb-chip,
+        .sent-badge, .inbox-unread, .badge, .donut-label) {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 0 !important;
+    border-radius: 999px !important;
+    padding: 5px 12px !important;
+    background-color: color-mix(in srgb, var(--g-primary) 14%, var(--ag-surface)) !important;
+    background-image: none !important;
+    color: var(--g-text) !important;
+    font-size: .74rem !important;
+    font-weight: 750 !important;
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 20%, transparent) !important;
+}
+
+/* ---------- ۶) فیلدهای فرم ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.form-control, .form-select, .rep-input, .rep-search, input.form-control,
+        select.form-select, textarea.form-control) {
+    border: 0 !important;
+    border-radius: 13px !important;
+    min-height: 44px;
+    padding: 10px 14px !important;
+    background-color: color-mix(in srgb, var(--g-nested-solid) 88%, transparent) !important;
+    background-image: linear-gradient(160deg,
+        color-mix(in srgb, var(--g-surface-solid) 30%, transparent),
+        transparent 88%) !important;
+    color: var(--g-text) !important;
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 22%, transparent),
+        inset 0 2px 6px -4px color-mix(in srgb, var(--g-text) 45%, transparent) !important;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.form-control, .form-select, .rep-input, .rep-search):focus {
+    outline: none !important;
+    box-shadow:
+        inset 0 0 0 2px color-mix(in srgb, var(--g-primary) 55%, transparent),
+        inset 0 2px 6px -4px color-mix(in srgb, var(--g-text) 40%, transparent) !important;
+}
+
+/* ---------- ۷) جدول‌ها ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .table {
+    color: var(--g-text) !important;
+    margin-bottom: 0;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .table > :not(caption) > * > * {
+    border-bottom: 1px solid color-mix(in srgb, var(--g-text) 8%, transparent) !important;
+    color: var(--g-text) !important;
+    padding: 11px 12px !important;
+    background: transparent !important;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .table thead th {
+    background-color: color-mix(in srgb, var(--g-primary) 12%, transparent) !important;
+    font-weight: 800 !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .table-hover tbody tr:hover > * {
+    background-color: color-mix(in srgb, var(--g-primary) 8%, transparent) !important;
+}
+
+/* ---------- ۸) آیکون‌ها ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.rc-icon, .st-icon, .ch-icon) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0 !important;
+    border-radius: 13px !important;
+    background-color: var(--g-primary) !important;
+    background-image: linear-gradient(140deg,
+        color-mix(in srgb, var(--g-primary) 92%, var(--g-surface-solid)) 0%,
+        var(--g-primary) 58%,
+        color-mix(in srgb, var(--g-primary) 70%, var(--g-text)) 100%) !important;
+    color: color-mix(in srgb, var(--g-surface-solid) 92%, transparent) !important;
+    box-shadow:
+        0 12px 20px -14px color-mix(in srgb, var(--g-primary) 70%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 45%, transparent) !important;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .nav-icon {
+    color: var(--g-primary) !important;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .dash-head .hd-icon,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .grad-header .hd-icon {
+    color: color-mix(in srgb, var(--g-surface-solid) 90%, transparent) !important;
+}
+
+/* ---------- ۹) متن‌ها ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.dash-card, .card, .nav-card, .st-card, .msg-card, .rep-card, .ch-main-card, .ch-side-card) h1,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.dash-card, .card, .nav-card, .st-card, .msg-card, .rep-card) h2,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.dash-card, .card, .nav-card, .st-card, .msg-card, .rep-card) h3,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.card-title, .nav-title, .st-title, .rec-title, .rc-title, .ch-main-title,
+        .ps-title, .ps-name, .inside-count, .mc-amount, .dash-title) {
+    color: var(--g-text) !important;
+    font-weight: 800 !important;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.text-muted, .mc-sub, .st-sub, .st-desc, .ch-main-sub, .rec-sub, .ps-sub,
+        .rc-desc, .dash-sub, .donut-label, .traffic-pager-label) {
+    color: color-mix(in srgb, var(--g-text) 74%, transparent) !important;
+    box-shadow: none !important;
+    background: none !important;
+    padding: 0 !important;
+}
+
+/* ---------- ۱۰) فاصله‌ها ---------- */
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .dash-card,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .nav-card,
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .st-card {
+    padding: 16px !important;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .money-grid {
+    gap: 12px !important;
+}
+
+html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .money-cell {
+    padding: 14px 16px !important;
+}
+
+@media (max-width: 575.98px) {
+    html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .dash-card,
+    html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) .nav-card {
+        padding: 14px !important;
+    }
+
+    html[data-theme] body.admin-glass-body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+        :is(.dash-head, .grad-header) {
+        font-size: .9rem !important;
+        padding: 12px 14px !important;
+    }
+}

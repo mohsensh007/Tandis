@@ -195,9 +195,12 @@
         }
 
         $(document).on('click', '.rep-head', function () {
-            var $c = $(this).closest('.rep-card');
-            $c.toggleClass('open');
-            $c.find('.rep-details').slideToggle(200);
+            $(this).closest('.rep-card').toggleClass('open');
+        });
+
+        $(document).on('click', '.rep-toggle', function (e) {
+            e.stopPropagation();
+            $(this).closest('.rep-card').toggleClass('open');
         });
 
         $('#searchInput').on('input', function () {

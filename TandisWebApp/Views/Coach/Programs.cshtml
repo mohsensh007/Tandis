@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = "برنامه‌های تمرینی";
     var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
+    var activePrograms = Model.Where(p => p.IsActive).ToList();
+    var inactivePrograms = Model.Where(p => !p.IsActive).ToList();
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
@@ -21,8 +23,15 @@
 }
 else
 {
-    <div class="row g-3">
-        @foreach (var p in Model)
+    @if (activePrograms.Count == 0)
+    {
+        <div class="pg-empty mb-3">
+            <div style="font-size:2.4rem" class="mb-2">📋</div>
+            در حال حاضر برنامهٔ فعالی ندارید
+        </div>
+    }
+    <div class="row g-3" id="pgActiveGrid">
+        @foreach (var p in activePrograms)
         {
             <div class="col-md-6 col-lg-4">
                 <div class="purple-style pg-card h-100">
@@ -53,6 +62,42 @@ else
             </div>
         }
     </div>
+
+    @if (inactivePrograms.Count > 0)
+    {
+        <button type="button" class="pg-more-btn" id="btnInactivePrograms" aria-expanded="false" aria-controls="pgInactiveBox">
+            <i class="bi bi-archive-fill"></i>
+            <span>نمایش برنامه‌های غیرفعال (@inactivePrograms.Count.ToString(fa) برنامه)</span>
+            <i class="bi bi-chevron-down pg-more-chev"></i>
+        </button>
+        <div id="pgInactiveBox" class="pg-inactive-box" hidden>
+            <div class="row g-3">
+                @foreach (var p in inactivePrograms)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="purple-style pg-card h-100">
+                            <div class="d-flex align-items-start gap-3">
+                                <div class="pg-avatar"><i class="bi bi-clipboard2-pulse-fill"></i></div>
+                                <div class="flex-grow-1" style="min-width:0">
+                                    <div class="pg-name">@p.StudentName</div>
+                                    <div class="pg-dates"><i class="bi bi-calendar-range"></i> @p.StartDateShamsi تا @p.EndDateShamsi</div>
+                                </div>
+                                <span class="pg-badge pg-off">پایان‌یافته</span>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <span class="pg-pill"><i class="bi bi-list-ul"></i> @p.ItemCount.ToString(fa) حرکت</span>
+                            </div>
+                            <div class="d-flex gap-2 mt-3 flex-wrap">
+                                <a href="/Coach/ProgramDetails/@p.PrgID" class="pg-view-btn"><i class="bi bi-eye-fill"></i> مشاهده</a>
+                                <a href="/Coach/ProgramEdit?id=@p.PrgID" class="pg-edit-btn"><i class="bi bi-pencil-fill"></i> ویرایش</a>
+                                <button type="button" class="pg-del-btn" data-prg="@p.PrgID"><i class="bi bi-trash3"></i> حذف</button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
 }
 
 <style>
@@ -257,6 +302,47 @@ else
             border-color: color-mix(in srgb, var(--g-primary) 50%, transparent);
             background: color-mix(in srgb, var(--g-nested-solid) 12%, transparent);
         }
+
+    /* ===== دکمهٔ نمایش برنامه‌های غیرفعال ===== */
+    .pg-more-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 14px;
+        padding: 11px 16px;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent);
+        border-radius: 14px;
+        background: color-mix(in srgb, var(--g-primary) 10%, transparent);
+        color: var(--g-text);
+        font-size: .84rem;
+        font-weight: 750;
+        cursor: pointer;
+        transition: background .2s ease, border-color .2s ease;
+    }
+
+        .pg-more-btn:hover {
+            background: color-mix(in srgb, var(--g-primary) 18%, transparent);
+            border-color: color-mix(in srgb, var(--g-primary) 45%, transparent);
+        }
+
+        .pg-more-btn i {
+            color: var(--g-primary);
+        }
+
+    .pg-more-chev {
+        transition: transform .25s ease;
+    }
+
+        .pg-more-btn[aria-expanded="true"] .pg-more-chev {
+            transform: rotate(180deg);
+        }
+
+    .pg-inactive-box {
+        margin-top: 14px;
+        overflow-anchor: none;
+    }
 </style>
 
 @section Scripts {
@@ -275,6 +361,13 @@ else
                 var txt = $(this).text().toLowerCase();
                 $(this).closest('div[class*="col-"]').toggle(txt.indexOf(q) > -1);
             });
+        });
+
+        $('#btnInactivePrograms').on('click', function () {
+            var $box = $('#pgInactiveBox');
+            var willOpen = $box.prop('hidden');
+            $box.prop('hidden', !willOpen);
+            $(this).attr('aria-expanded', willOpen ? 'true' : 'false');
         });
     </script>
 }

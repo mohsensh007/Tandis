@@ -2,6 +2,8 @@
 @{
     ViewData["Title"] = ViewBag.ClassName;
     var fa = System.Globalization.CultureInfo.GetCultureInfo("fa-IR");
+    var activeStudents = Model.Where(s => s.StatusClass == "success").ToList();
+    var inactiveStudents = Model.Where(s => s.StatusClass != "success").ToList();
 }
 
 <!-- ===== هدر گرادیان (مثل بقیه صفحات) ===== -->
@@ -13,7 +15,7 @@
             <div class="cs-head-sub">@ViewBag.ClassName</div>
         </div>
     </div>
-    <span class="cs-count">@Model.Count.ToString(fa) نفر</span>
+    <span class="cs-count">@activeStudents.Count.ToString(fa) شاگرد فعال</span>
     <a href="/Coach/Classes" class="coach-back-pill"><i class="bi bi-arrow-right"></i> کلاس‌ها</a>
 </div>
 
@@ -34,8 +36,15 @@
 }
 else
 {
-    <div class="row g-3">
-        @foreach (var st in Model)
+    @if (activeStudents.Count == 0)
+    {
+        <div class="cs-empty mb-3">
+            <div style="font-size:2.4rem" class="mb-2">👥</div>
+            در حال حاضر شاگرد فعالی در این کلاس نیست
+        </div>
+    }
+    <div class="row g-3" id="csActiveGrid">
+        @foreach (var st in activeStudents)
         {
             <div class="col-md-6 col-lg-4">
                 <a href="/Coach/StudentDetails/@st.SportMemberID" class="text-decoration-none">
@@ -58,6 +67,42 @@ else
             </div>
         }
     </div>
+
+    @if (inactiveStudents.Count > 0)
+    {
+        <button type="button" class="cs-more-btn" id="btnInactiveStudents" aria-expanded="false" aria-controls="csInactiveBox">
+            <i class="bi bi-person-dash-fill"></i>
+            <span>نمایش شاگردان غیرفعال (@inactiveStudents.Count.ToString(fa) نفر)</span>
+            <i class="bi bi-chevron-down cs-more-chev"></i>
+        </button>
+        <div id="csInactiveBox" class="cs-inactive-box" hidden>
+            <div class="row g-3">
+                @foreach (var st in inactiveStudents)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <a href="/Coach/StudentDetails/@st.SportMemberID" class="text-decoration-none">
+                            <div class="purple-style cs-card h-100">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="cs-avatar"><i class="bi bi-person-fill"></i></div>
+                                    <div style="min-width:0" class="flex-grow-1">
+                                        <div class="cs-name">@st.FullName</div>
+                                        <div class="cs-mobile" dir="ltr">@(string.IsNullOrEmpty(st.Mobile) ? "-" : st.Mobile)</div>
+                                    </div>
+                                    <span class="stt stt-@st.StatusClass">@st.StatusLabel</span>
+                                </div>
+                                <div class="d-flex flex-wrap gap-2 mt-3">
+                                    <span class="cs-pill"><i class="bi bi-calendar-x-fill"></i> پایان: @(st.EndDate ?? "-")</span>
+                                    <span class="cs-pill"><i class="bi bi-ticket-perforated-fill"></i> جلسات: @st.RemainingSessions.ToString(fa) / @st.TotalSessions.ToString(fa)</span>
+                                </div>
+                                <div class="cs-foot mt-3"><i class="bi bi-person-vcard"></i> مشاهده کارت و تاریخچه حضور</div>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
     <div class="cs-hint mt-3"><i class="bi bi-info-circle"></i> روی کارت هر شاگرد بزنید تا کارت کامل و تاریخچه حضورش باز شود.</div>
 }
 
@@ -239,6 +284,47 @@ else
         font-size: .75rem;
     }
 
+    /* ===== دکمهٔ نمایش شاگردان غیرفعال ===== */
+    .cs-more-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 14px;
+        padding: 11px 16px;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent);
+        border-radius: 14px;
+        background: color-mix(in srgb, var(--g-primary) 10%, transparent);
+        color: var(--g-text);
+        font-size: .84rem;
+        font-weight: 750;
+        cursor: pointer;
+        transition: background .2s ease, border-color .2s ease;
+    }
+
+        .cs-more-btn:hover {
+            background: color-mix(in srgb, var(--g-primary) 18%, transparent);
+            border-color: color-mix(in srgb, var(--g-primary) 45%, transparent);
+        }
+
+        .cs-more-btn i {
+            color: var(--g-primary);
+        }
+
+    .cs-more-chev {
+        transition: transform .25s ease;
+    }
+
+        .cs-more-btn[aria-expanded="true"] .cs-more-chev {
+            transform: rotate(180deg);
+        }
+
+    .cs-inactive-box {
+        margin-top: 14px;
+        overflow-anchor: none;
+    }
+
         .cs-hint i {
             color: var(--g-primary);
         }
@@ -284,6 +370,13 @@ else
                 var txt = $(this).text().toLowerCase();
                 $(this).closest('div[class*="col-"]').toggle(txt.indexOf(q) > -1);
             });
+        });
+
+        $('#btnInactiveStudents').on('click', function () {
+            var $box = $('#csInactiveBox');
+            var willOpen = $box.prop('hidden');
+            $box.prop('hidden', !willOpen);
+            $(this).attr('aria-expanded', willOpen ? 'true' : 'false');
         });
     </script>
 }

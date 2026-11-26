@@ -383,6 +383,7 @@
 
     .cm-box-body {
         padding: 12px;
+        overflow-anchor: none;
     }
 
     .cm-empty {
@@ -459,6 +460,10 @@
         transform: rotate(-90deg);
         background: color-mix(in srgb, var(--g-primary) 25%, transparent);
         color: var(--g-text);
+    }
+
+    .cmr-card.open .cmr-details {
+        display: block;
     }
 
     .cmr-details {
@@ -618,7 +623,6 @@
             var $c = $(this).closest('.cmr-card');
             var isOpen = $c.toggleClass('open').hasClass('open');
             $(this).attr('aria-expanded', isOpen ? 'true' : 'false');
-            $c.find('.cmr-details').slideToggle(200);
         });
 
         // ===== تقویم شمسی =====
