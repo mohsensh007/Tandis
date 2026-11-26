@@ -38,6 +38,22 @@ namespace TandisWebApp.Controllers
         public IActionResult Login(string? returnUrl = null)
         {
             ViewData["ReturnUrl"] = returnUrl ?? "/Home";
+
+            // PWA (افزودن به صفحهٔ اصلی) با /Account/Login باز می‌شود؛ اگر کوکی معتبر
+            // روی دستگاه هست، کاربر مستقیم به پنل خودش می‌رود و صفحهٔ ورود دوباره نشان داده نمی‌شود.
+            if (string.IsNullOrEmpty(returnUrl) && User.Identity?.IsAuthenticated == true)
+            {
+                if (User.FindFirstValue("IsAdmin") == "true")
+                    return Redirect("/Admin");
+
+                var memberId = User.FindFirstValue("MemberID");
+                if (!string.IsNullOrEmpty(memberId) && memberId != "0")
+                {
+                    var roleId = User.FindFirstValue("RoleID");
+                    return Redirect(roleId == "2" ? "/Coach" : "/Home");
+                }
+            }
+
             return View();
         }
 

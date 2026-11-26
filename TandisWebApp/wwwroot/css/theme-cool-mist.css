@@ -459,3 +459,120 @@ html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(input:not([type=chec
     html[data-theme] body:not(#lu):not(#mt-theme):not(#app) { background: #EDF2F8 !important; color: #263750 !important; }
     html[data-theme] body:not(#lu):not(#mt-theme):not(#app) :is(.card, .panel, .modal-content, .glass-card, .purple-style) { background: #EDF2F8 !important; color: #263750 !important; box-shadow: none !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
 }
+
+/* ============================================================
+   رفع «خط ناهمرنگ لبه» — سراسری (میز خدمات، پنل عضو، ادمین، ورود)
+   حاشیهٔ ۱ پیکسلیِ نیمه‌شفاف روی سطح‌های گرادیانی، در سمتی که
+   گرادیان روشن می‌شود، به شکل یک خط آبی/سفید باریک و ناخواسته دیده
+   می‌شد و رنگش با خودِ عنصر نمی‌خواند. حاشیه حذف می‌شود؛ شکل عنصر
+   با گرادیان، سایه و رینگ نوری نرمِ خودش مشخص می‌ماند.
+   ============================================================ */
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(
+    .btn, .btn-primary, .btn-secondary, .btn-success, .btn-warning, .btn-danger, .btn-info, .btn-light, .btn-dark,
+    .btn-outline-primary, .btn-outline-secondary, .btn-outline-success, .btn-outline-light, .btn-outline-dark,
+    .btn-glass, .btn-back-glass, .btn-logout-glass, .btn-blue-action, .btn-purple-main, .btn-all-menu,
+    .dk-btn, .dk-chosen, .dk-qty, .dk-box, .dk-modal, .dk-head,
+    .desk-card, .dc-icon, .theme-toggle,
+    .card, .glass-card, .purple-style, .modal-content, .panel, .tile,
+    .nav-card, .stat-card, .sanse-card, .ath-card, .ath-stat,
+    .ba-card, .ba-chart-box, .ba-btn, .ba-chip, .ba-id-chip, .ba-metric, .ba-note, .ba-input-group,
+    .mpl-card, .mpl-stat, .mp-day, .mpf-chip, .ms-card, .chip, .ds-chip, .ds-on,
+    .trf-card, .att-cal-panel, .att-cal-btn, .rgh-stat,
+    .commerce-panel, .commerce-cart-panel, .commerce-card, .commerce-product-card,
+    .commerce-cart-item, .commerce-category-button, .commerce-checkout, .commerce-buy,
+    .commerce-add, .commerce-quantity, .commerce-notice, .commerce-count, .commerce-hero,
+    .cat-item, .member-reports-card, .home-profile-card, .profile-card,
+    .badge, .badge-credit, .badge-debit, .badge-active, .badge-inactive, .status-chip, .membership-chip,
+    .rp-btn, .att-nav, .att-close, .coach-back-pill, .mpl-back-pill, .mp-back-pill, .ba-back,
+    .login-glass-card
+) {
+    border: 0 !important;
+}
+
+/* فیلدهای فرم: به‌جای حاشیهٔ یک‌طرفه، یک رینگ کامل و هم‌رنگ */
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(.form-control, .form-select, .ba-input, .ba-select, textarea.form-control) {
+    border-color: transparent !important;
+    box-shadow:
+        inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 34%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 55%, transparent) !important;
+}
+
+/* ============================================================
+   ریشهٔ خط لبه: گرادیان‌هایی که آخرین توقفشان نیمه‌شفاف بود، روی
+   لبهٔ گرد عنصر یک تَرَک ۱ پیکسلی می‌ساختند. اینجا پایهٔ رنگی مات
+   می‌شود و توقف آخر گرادیان هم مات تعریف می‌شود.
+   ============================================================ */
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(
+    .card, .glass-card, .purple-style, .modal-content, .panel, .tile,
+    .nav-card, .stat-card, .sanse-card, .ath-card, .ath-stat,
+    .ba-card, .ba-chart-box, .ba-metric, .ba-latest-item,
+    .mpl-card, .mpl-stat, .mp-day, .ms-card,
+    .trf-card, .att-cal-panel, .rgh-stat,
+    .commerce-panel, .commerce-cart-panel, .commerce-card, .commerce-product-card,
+    .commerce-cart-item, .commerce-hero,
+    .member-reports-card, .home-profile-card, .profile-card, .login-glass-card
+) {
+    background-color: var(--g-card-solid) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(
+    .btn, .btn-primary, .btn-success, .btn-warning, .btn-secondary,
+    .commerce-buy, .commerce-add, .commerce-checkout,
+    .ba-btn, .commerce-category-button.active
+) {
+    background-image: linear-gradient(135deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-primary) 82%, var(--g-surface-solid)) 54%,
+        color-mix(in srgb, var(--g-primary) 62%, var(--g-surface-solid)) 100%) !important;
+}
+
+/* ۴) دکمه‌ها و تب‌های مودال «تک جلسه» و «تعرفه‌ها» (پنل عضو) */
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.ss-btn, .ss-btn-cancel, .tf-filterbtn, .tf-fp-link, .tf-check, .ss-tab, .tf-tab) {
+    border: 0 !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2)
+    :is(.ss-btn, .ss-tab.active, .tf-tab.active) {
+    background-image: linear-gradient(135deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-primary) 80%, var(--g-surface-solid)) 52%,
+        color-mix(in srgb, var(--g-primary) 64%, var(--g-surface-solid)) 100%) !important;
+}
+
+/* ============================================================
+   علت اصلی خط عمودی نازک: سایهٔ داخلیِ پایین با spread منفی
+   (inset 0 -14px 20px -14px) که بدنهٔ خودش را ۱۴ پیکسل از چپ و
+   راست جمع می‌کند و لبهٔ عمودیِ آن روی سطح روشن دیده می‌شود.
+   سایه‌ها با نسخهٔ بدون لبهٔ عمودی جایگزین می‌شوند:
+   عمق از سایهٔ بیرونی + هایلایت نوری بالای عنصر.
+   ============================================================ */
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(
+    .btn, .btn-primary, .btn-success, .btn-warning, .btn-secondary, .btn-info,
+    .btn-outline-primary, .btn-outline-secondary, .btn-outline-light,
+    .btn-glass, .btn-back-glass, .btn-logout-glass, .btn-blue-action, .btn-purple-main,
+    .dk-btn, .dk-chosen, .commerce-buy, .commerce-add, .commerce-checkout,
+    .commerce-category-button.active, .ba-btn, .ba-chip, .ba-id-chip,
+    .theme-toggle, .att-cal-btn, .rp-btn
+) {
+    box-shadow:
+        0 16px 26px -18px color-mix(in srgb, var(--g-text) 62%, transparent),
+        0 6px 12px -10px color-mix(in srgb, var(--g-text) 42%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 76%, transparent) !important;
+}
+
+html[data-theme] body:not(#lu):not(#mt-theme):not(#app):not(#edge1):not(#edge2) :is(
+    .card, .glass-card, .purple-style, .modal-content, .panel, .tile,
+    .nav-card, .stat-card, .sanse-card, .ath-card, .ath-stat,
+    .ba-card, .ba-chart-box, .ba-metric, .ba-latest-item,
+    .mpl-card, .mpl-stat, .mp-day, .ms-card,
+    .trf-card, .att-cal-panel, .rgh-stat,
+    .commerce-panel, .commerce-cart-panel, .commerce-card, .commerce-product-card,
+    .commerce-cart-item, .commerce-hero, .commerce-notice,
+    .member-reports-card, .home-profile-card, .profile-card, .login-glass-card, .desk-card
+) {
+    box-shadow:
+        0 28px 46px -28px color-mix(in srgb, var(--g-text) 60%, transparent),
+        0 8px 18px -14px color-mix(in srgb, var(--g-text) 36%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 92%, transparent) !important;
+}

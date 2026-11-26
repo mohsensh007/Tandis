@@ -1,6 +1,7 @@
 @inject TandisWebApp.Services.ProfileService ProfileService
 @{
     var clubName = "باشگاه تندیس";
+    var isRegisterPage = ViewData["Title"]?.ToString() == "ثبت‌نام";
     string? clubLogoSrc = null;
 
     try { clubName = await ProfileService.GetClubNameAsync(); } catch { }
@@ -19,6 +20,17 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
     <script>(function(){try{var t=localStorage.getItem("tandis-theme");if(!t)t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.setAttribute("data-theme",t);}catch(e){document.documentElement.setAttribute("data-theme","light");}})();</script>
+    <script>
+        /* صفحهٔ بارگذاری (لوگو + چرخنده) فقط در بارگذاری واقعی صفحه؛
+           چرخش کارت بین ورود/ثبت‌نام این صفحه را نشان نمی‌دهد. */
+        (function () {
+            try {
+                if (sessionStorage.getItem('authFlip') !== '1') document.documentElement.classList.add('auth-booting');
+            } catch (e) {
+                document.documentElement.classList.add('auth-booting');
+            }
+        })();
+    </script>
 <head>
     <!-- PWA / Add to Home Screen -->
     <link rel="manifest" href="/manifest.json" asp-append-version="true" />
@@ -92,8 +104,415 @@
     <link rel="stylesheet" href="~/css/theme-arctic.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-glass.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-cool-mist.css" asp-append-version="true" />
+    <style>
+        /* ============================================================
+           صفحهٔ ورود / ثبت‌نام — همان زبان طراحی میز خدمات:
+           شیشهٔ سه‌لایه (پس‌زمینه / کارت / فیلد و دکمه)، پدینگ و فاصلهٔ درست،
+           خوانایی متن روی شیشه و لمس‌پذیری ۴۴px+
+           ============================================================ */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen {
+            padding-block: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-bottom)) !important;
+            padding-inline: max(14px, env(safe-area-inset-left)) max(14px, env(safe-area-inset-right)) !important;
+        }
+
+        /* لایهٔ ۲: کارت شیشه‌ای ورود */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .login-glass-card {
+            width: min(94vw, 430px) !important;
+            max-width: 430px !important;
+            max-height: calc(100dvh - 24px);
+            overflow-y: auto;
+            overscroll-behavior: contain;
+            scrollbar-width: none;
+            padding: 26px 22px !important;
+            border-radius: 30px !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 58%, transparent) !important;
+            background-image:
+                radial-gradient(96% 74% at 18% -18%, color-mix(in srgb, var(--g-surface-solid) 84%, transparent), transparent 62%),
+                radial-gradient(120% 92% at 100% 116%, color-mix(in srgb, var(--g-primary) 30%, transparent), transparent 66%),
+                linear-gradient(158deg,
+                    color-mix(in srgb, var(--g-card-solid) 78%, transparent) 0%,
+                    color-mix(in srgb, var(--g-nested-solid) 66%, transparent) 56%,
+                    color-mix(in srgb, var(--g-primary) 20%, transparent) 100%) !important;
+            box-shadow:
+                0 34px 62px -32px color-mix(in srgb, var(--g-text) 66%, transparent),
+                0 12px 24px -16px color-mix(in srgb, var(--g-text) 42%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 96%, transparent),
+                inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 15%, transparent),
+                inset 0 -26px 40px -30px color-mix(in srgb, var(--g-primary) 76%, transparent) !important;
+            -webkit-backdrop-filter: blur(22px) saturate(1.3) !important;
+            backdrop-filter: blur(22px) saturate(1.3) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .login-glass-card::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* لوگو در قاب شیشه‌ای (به‌جای شناور روی پس‌زمینه) */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .logo-section {
+            margin-bottom: 24px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .logo-section .main-logo {
+            width: 92px;
+            height: 92px;
+            max-width: 92px !important;
+            padding: 12px;
+            border-radius: 27px;
+            object-fit: contain;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent);
+            background-image: linear-gradient(150deg,
+                color-mix(in srgb, var(--g-surface-solid) 96%, transparent),
+                color-mix(in srgb, var(--g-primary) 26%, transparent));
+            box-shadow:
+                0 16px 28px -18px color-mix(in srgb, var(--g-text) 72%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent),
+                inset 0 -10px 16px -12px color-mix(in srgb, var(--g-primary) 72%, transparent);
+            filter: none;
+            transition: transform .28s ease, box-shadow .28s ease;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .logo-section .main-logo:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow:
+                0 22px 34px -18px color-mix(in srgb, var(--g-text) 72%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent),
+                inset 0 -10px 16px -12px color-mix(in srgb, var(--g-primary) 90%, transparent);
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .brand-text {
+            margin-top: 14px !important;
+            font-size: 1.16rem !important;
+            font-weight: 800 !important;
+            letter-spacing: 0 !important;
+            line-height: 1.7;
+            color: var(--g-text) !important;
+            text-shadow: 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 55%, transparent);
+        }
+
+        /* فاصلهٔ تضمین‌شده بین فیلدها */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .mb-3 {
+            margin-bottom: 15px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .form-label {
+            display: block;
+            font-size: .78rem !important;
+            font-weight: 780 !important;
+            line-height: 1.6;
+            margin-bottom: 7px !important;
+            color: color-mix(in srgb, var(--g-text) 86%, transparent) !important;
+        }
+
+        /* لایهٔ ۳: فیلدها */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen #authCard .form-container .form-control {
+            min-height: 50px;
+            padding: 13px 15px !important;
+            border-radius: 15px !important;
+            border: 1px solid color-mix(in srgb, var(--g-text) 26%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 16%, transparent) !important;
+            background-image: linear-gradient(150deg,
+                color-mix(in srgb, var(--g-surface-solid) 24%, transparent),
+                transparent 82%) !important;
+            color: var(--g-text) !important;
+            -webkit-text-fill-color: var(--g-text) !important;
+            font-size: 16px !important;
+            font-weight: 600;
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent),
+                inset 0 -8px 14px -12px color-mix(in srgb, var(--g-text) 52%, transparent) !important;
+            transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen #authCard .form-container .form-control::placeholder {
+            color: color-mix(in srgb, var(--g-text) 56%, transparent) !important;
+            -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 56%, transparent) !important;
+            opacity: 1 !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen #authCard .form-container .form-control:focus {
+            border-color: color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 26%, transparent) !important;
+            color: var(--g-text) !important;
+            -webkit-text-fill-color: var(--g-text) !important;
+            box-shadow:
+                0 0 0 4px color-mix(in srgb, var(--g-primary) 20%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent) !important;
+            outline: none !important;
+        }
+
+        /* دکمهٔ ورود / تغییر رمز: برجستگی ۳بعدی */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-primary,
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-warning {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-height: 52px;
+            margin-top: 4px !important;
+            padding: 14px 18px !important;
+            border-radius: 17px !important;
+            border: 1px solid color-mix(in srgb, var(--g-text) 32%, transparent) !important;
+            background-color: transparent !important;
+            background-image: linear-gradient(135deg,
+                var(--g-primary) 0%,
+                color-mix(in srgb, var(--g-primary) 82%, var(--g-surface-solid)) 54%,
+                var(--g-surface-solid) 100%) !important;
+            color: var(--g-text) !important;
+            -webkit-text-fill-color: var(--g-text) !important;
+            font-size: 1rem !important;
+            font-weight: 800 !important;
+            letter-spacing: .2px;
+            box-shadow:
+                0 18px 32px -18px color-mix(in srgb, var(--g-text) 62%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 78%, transparent),
+                inset 0 -14px 20px -14px color-mix(in srgb, var(--g-primary) 80%, transparent) !important;
+            transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-primary:hover,
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-warning:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.03);
+            box-shadow:
+                0 24px 38px -18px color-mix(in srgb, var(--g-text) 66%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 90%, transparent),
+                inset 0 -14px 20px -14px color-mix(in srgb, var(--g-primary) 90%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-primary:active,
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-warning:active {
+            transform: translateY(0) scale(.995);
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-primary:focus-visible,
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-warning:focus-visible {
+            outline: 3px solid color-mix(in srgb, var(--g-primary) 70%, transparent);
+            outline-offset: 2px;
+        }
+
+        /* ردیف «عضو نیستید؟ ثبت‌نام» به‌صورت یک نوار شیشه‌ای با فاصله */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen #loginForm .text-center.mt-3 {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 16px !important;
+            margin-bottom: 0 !important;
+            padding: 11px 14px !important;
+            border-radius: 15px !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 24%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 15%, transparent) !important;
+            background-image: linear-gradient(150deg,
+                color-mix(in srgb, var(--g-surface-solid) 20%, transparent),
+                transparent 85%) !important;
+            font-size: .8rem !important;
+            color: color-mix(in srgb, var(--g-text) 84%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen #loginForm .text-center.mt-3 a {
+            color: color-mix(in srgb, var(--g-primary) 55%, var(--g-text)) !important;
+            font-weight: 800 !important;
+            text-decoration: none !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen #loginForm .text-center.mt-3 a:hover {
+            text-decoration: underline !important;
+        }
+
+        /* فرم تغییر رمز اجباری */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen #changePassForm {
+            padding: 18px !important;
+            border-radius: 22px !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 28%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 20%, transparent) !important;
+            background-image: linear-gradient(155deg,
+                color-mix(in srgb, var(--g-surface-solid) 18%, transparent),
+                transparent 82%) !important;
+            box-shadow:
+                0 20px 36px -26px color-mix(in srgb, var(--g-text) 60%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen #changePassForm h6 {
+            padding: 10px 12px !important;
+            border-radius: 13px !important;
+            border: 1px solid color-mix(in srgb, #f59e0b 42%, transparent) !important;
+            background-color: color-mix(in srgb, #f59e0b 16%, transparent) !important;
+            color: color-mix(in srgb, #b45309 55%, var(--g-text)) !important;
+            font-size: .84rem !important;
+            font-weight: 800 !important;
+            line-height: 1.8;
+        }
+
+        /* فلش بازگشت (صفحهٔ ثبت‌نام) به‌صورت دکمهٔ شیشه‌ای */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen #regBackArrow {
+            top: 14px !important;
+            right: 14px !important;
+            width: 42px;
+            height: 42px;
+            display: inline-flex !important;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent);
+            background-color: color-mix(in srgb, var(--g-nested-solid) 18%, transparent);
+            color: var(--g-text) !important;
+            font-size: 1.05rem !important;
+            text-shadow: none !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .mini-logo {
+            bottom: 16px;
+            left: 16px;
+            padding: 5px;
+            border-radius: 13px;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent);
+            background: color-mix(in srgb, var(--g-nested-solid) 16%, transparent);
+            opacity: .95;
+            filter: none;
+        }
+
+        /* ✅ لوگوی کوچک پایین-چپ نباید روی نوار «عضو نیستید؟ ثبت‌نام» بیفتد:
+           در صفحهٔ ورود، فضای اختصاصی پایین کارت برای لوگو رزرو می‌شود */
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen #authCard.is-login:has(> .mini-logo) {
+            padding-bottom: 82px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen #authCard.is-login > .mini-logo {
+            bottom: 18px;
+            left: 18px;
+        }
+
+        @@media (max-width: 480px) {
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .login-glass-card {
+                padding: 22px 17px !important;
+                border-radius: 26px !important;
+            }
+
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .logo-section .main-logo {
+                width: 80px;
+                height: 80px;
+                max-width: 80px !important;
+                padding: 10px;
+                border-radius: 23px;
+            }
+
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .brand-text {
+                font-size: 1.04rem !important;
+            }
+        }
+
+        @@media (prefers-reduced-motion: reduce) {
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .logo-section .main-logo,
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-primary,
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-warning {
+                transition: box-shadow .2s ease, border-color .2s ease;
+            }
+
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .logo-section .main-logo:hover,
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-primary:hover,
+            html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .login-fullscreen .form-container .btn-warning:hover {
+                transform: none;
+            }
+        }
+    </style>
+
+    <style>
+        /* ===== صفحهٔ بارگذاری ورود: لوگو + حلقهٔ چرخان ===== */
+        .auth-boot {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background-color: #0b1220;
+            background-image:
+                radial-gradient(90% 70% at 18% -14%, #1b3350 0%, transparent 64%),
+                radial-gradient(120% 90% at 100% 116%, color-mix(in srgb, #2f6fb5 55%, transparent), transparent 66%),
+                linear-gradient(158deg, #0b1220 0%, #101d2f 56%, #0b1220 100%);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity .4s ease, visibility 0s linear .4s;
+        }
+
+        html.auth-booting .auth-boot {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transition: opacity .2s ease;
+        }
+
+        .auth-boot-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .auth-boot-logo {
+            position: relative;
+            width: 104px;
+            height: 104px;
+            display: grid;
+            place-items: center;
+        }
+
+        .auth-boot-logo img {
+            width: 76px;
+            height: 76px;
+            padding: 8px;
+            object-fit: contain;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, .07);
+            box-shadow:
+                0 20px 34px -18px rgba(0, 0, 0, .9),
+                inset 0 1px 0 rgba(255, 255, 255, .28),
+                inset 0 -10px 18px -14px rgba(47, 111, 181, .9);
+        }
+
+        .auth-boot-ring {
+            position: absolute;
+            inset: -12px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: #7fb0ff;
+            border-right-color: rgba(127, 176, 255, .32);
+            animation: authBootSpin .85s linear infinite;
+        }
+
+        .auth-boot-text {
+            color: #dbe7f5;
+            font-size: .86rem;
+            font-weight: 700;
+            letter-spacing: .2px;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, .5);
+        }
+
+        @@keyframes authBootSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        @@media (prefers-reduced-motion: reduce) {
+            .auth-boot { transition: opacity .2s ease; }
+            .auth-boot-ring { animation-duration: 2.4s; }
+        }
+    </style>
 </head>
-<body data-theme-switch="1">
+<body data-theme-switch="@(isRegisterPage ? null : "1")">
+    <div class="auth-boot" id="authBoot" aria-hidden="true">
+        <div class="auth-boot-card">
+            <div class="auth-boot-logo">
+                <img src="@(clubLogoSrc ?? Url.Content("~/images/logo2.png"))" alt="" decoding="async" />
+                <span class="auth-boot-ring" aria-hidden="true"></span>
+            </div>
+            <div class="auth-boot-text">در حال بارگذاری…</div>
+        </div>
+    </div>
     <div class="login-fullscreen">
         <!-- عکس پس‌زمینه -->
         <div class="login-background">
@@ -103,7 +522,7 @@
         </div>
 
         <!-- ✅ فرم شیشه‌ای — این همون «کارت» هست که می‌چرخه -->
-        <div class="purple-style login-glass-card" id="authCard" style="position:relative;">
+        <div class="purple-style login-glass-card @(ViewData["Title"]?.ToString() == "ثبت‌نام" ? "is-register" : "is-login")" id="authCard" style="position:relative;">
 
             <!-- ✅ فلش بازگشت به ورود (فقط توی صفحه ثبت‌نام) -->
             @if (ViewData["Title"]?.ToString() == "ثبت‌نام")
@@ -300,6 +719,26 @@
         })();
     </script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        /* پایان صفحهٔ بارگذاری: پس از آمادگی کامل صفحه با یک محو شدن نرم */
+        (function () {
+            var root = document.documentElement;
+            function finish() {
+                if (!root.classList.contains('auth-booting')) return;
+                window.setTimeout(function () {
+                    root.classList.remove('auth-booting');
+                    window.setTimeout(function () {
+                        var boot = document.getElementById('authBoot');
+                        if (boot && boot.parentNode) boot.parentNode.removeChild(boot);
+                    }, 460);
+                }, 240);
+            }
+            if (document.readyState === 'complete') finish();
+            else window.addEventListener('load', finish);
+            window.setTimeout(finish, 6000);
+        })();
+    </script>
     <script src="~/js/theme.js" asp-append-version="true"></script>
 </body>
 </html>

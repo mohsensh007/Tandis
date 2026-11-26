@@ -515,6 +515,151 @@
     <link rel="stylesheet" href="~/css/theme-arctic.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-glass.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-cool-mist.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/member-glass.css" asp-append-version="true" />
+    <style>
+        /* ============================================================
+           پوستهٔ پنل عضو (هدر بالا + نوار پایین + مودال خروج)
+           همان زبان طراحی میز خدمات: شیشهٔ لایه‌دار، پدینگ و فاصلهٔ درست
+           ============================================================ */
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .navbar.mh2 {
+            background-color: color-mix(in srgb, var(--g-card-solid) 62%, transparent) !important;
+            background-image:
+                radial-gradient(120% 150% at 0% 0%, color-mix(in srgb, var(--g-surface-solid) 70%, transparent), transparent 58%),
+                linear-gradient(125deg, color-mix(in srgb, var(--g-primary) 20%, transparent), transparent 58%),
+                linear-gradient(150deg, color-mix(in srgb, var(--g-card-solid) 74%, transparent), transparent 82%) !important;
+            border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+            box-shadow:
+                0 22px 42px -30px color-mix(in srgb, var(--g-text) 70%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 85%, transparent) !important;
+            -webkit-backdrop-filter: blur(18px) saturate(1.2) !important;
+            backdrop-filter: blur(18px) saturate(1.2) !important;
+        }
+
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .mh2-inner {
+            gap: 8px !important;
+        }
+
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .mh2-logo-wrap {
+            width: 46px;
+            height: 46px;
+            padding: 5px;
+            border-radius: 15px;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent);
+            background-image: linear-gradient(150deg,
+                color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+                color-mix(in srgb, var(--g-primary) 26%, transparent));
+            box-shadow:
+                0 10px 18px -12px color-mix(in srgb, var(--g-text) 70%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent);
+        }
+
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .mh2-logo-wrap .mh2-logo {
+            width: 100%;
+            height: 100%;
+            filter: none;
+        }
+
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .mh2-bio {
+            width: 44px;
+            height: 44px;
+            border-radius: 15px;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent);
+            background-color: color-mix(in srgb, var(--g-nested-solid) 20%, transparent);
+            background-image: linear-gradient(150deg,
+                color-mix(in srgb, var(--g-surface-solid) 34%, transparent),
+                transparent 86%);
+            color: var(--g-text);
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent),
+                0 10px 18px -16px color-mix(in srgb, var(--g-text) 62%, transparent);
+            transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+        }
+
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .mh2-bio:hover {
+            transform: translateY(-2px);
+            border-color: color-mix(in srgb, var(--g-primary) 55%, transparent);
+            box-shadow:
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 85%, transparent),
+                0 14px 22px -14px color-mix(in srgb, var(--g-primary) 70%, transparent);
+        }
+
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .mh2-club {
+            padding: 7px 13px;
+            border-radius: 13px;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent);
+            background-color: color-mix(in srgb, var(--g-nested-solid) 22%, transparent);
+            background-image: linear-gradient(150deg,
+                color-mix(in srgb, var(--g-surface-solid) 40%, transparent),
+                transparent 86%);
+            color: var(--g-text) !important;
+            font-weight: 800 !important;
+            box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 72%, transparent);
+        }
+
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .mh2-rule {
+            height: 1px;
+            margin-block: 2px;
+            background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--g-primary) 34%, transparent) 45%, transparent) !important;
+        }
+
+        /* نوار پایین موبایل */
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .purple-style.bottom-nav {
+            padding: 8px 8px calc(6px + env(safe-area-inset-bottom)) !important;
+            border-radius: 24px !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 62%, transparent) !important;
+            background-image:
+                radial-gradient(120% 160% at 0% 0%, color-mix(in srgb, var(--g-surface-solid) 58%, transparent), transparent 62%),
+                linear-gradient(150deg, color-mix(in srgb, var(--g-card-solid) 70%, transparent), transparent 85%) !important;
+            box-shadow:
+                0 22px 40px -24px color-mix(in srgb, var(--g-text) 66%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+            backdrop-filter: blur(20px) saturate(1.2) !important;
+        }
+
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .bottom-nav .bn-item {
+            min-height: 52px;
+            padding: 6px 2px 4px !important;
+            gap: 4px;
+            border-radius: 16px;
+            font-size: .68rem !important;
+            font-weight: 700 !important;
+            color: color-mix(in srgb, var(--g-text) 72%, transparent) !important;
+        }
+
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .bottom-nav .bn-item i,
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .bottom-nav .bn-item .bn-icon {
+            font-size: 1.2rem !important;
+            line-height: 1;
+        }
+
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .bottom-nav .bn-item.bn-active {
+            color: var(--g-text) !important;
+            background-color: color-mix(in srgb, var(--g-nested-solid) 20%, transparent);
+        }
+
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .bottom-nav .bn-item.bn-active .bn-icon {
+            color: color-mix(in srgb, var(--g-primary) 88%, var(--g-text)) !important;
+        }
+
+        /* مودال تایید خروج */
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .logout-modal {
+            border-radius: 24px !important;
+            border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+            background-color: color-mix(in srgb, var(--g-card-solid) 72%, transparent) !important;
+            background-image:
+                radial-gradient(110% 90% at 20% -20%, color-mix(in srgb, var(--g-surface-solid) 70%, transparent), transparent 60%),
+                linear-gradient(155deg, color-mix(in srgb, var(--g-card-solid) 78%, transparent), color-mix(in srgb, var(--g-primary) 18%, transparent)) !important;
+            color: var(--g-text) !important;
+            box-shadow:
+                0 30px 60px -30px color-mix(in srgb, var(--g-text) 70%, transparent),
+                inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 85%, transparent),
+                inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 14%, transparent) !important;
+            -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+            backdrop-filter: blur(20px) saturate(1.2) !important;
+        }
+    </style>
 </head>
 <body class="admin-glass-body member-ui">
     @if (!isAuthenticated)

@@ -2,9 +2,119 @@
     ViewData["Title"] = "پروفایل";
 }
 
-<div class="row g-3">
+<style>
+    /* ============================================================
+       پروفایل عضو — همان زبان طراحی میز خدمات:
+       کارت سه‌بعدی شیشه‌ای، لایه‌بندی رنگ، و متن جدا از پس‌زمینه
+       ============================================================ */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-profile .profile-card {
+        overflow: hidden;
+        border-radius: 26px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 58%, transparent) !important;
+        background-image:
+            radial-gradient(96% 78% at 16% -20%, color-mix(in srgb, var(--g-surface-solid) 86%, transparent), transparent 62%),
+            radial-gradient(120% 92% at 100% 118%, color-mix(in srgb, var(--g-primary) 30%, transparent), transparent 66%),
+            linear-gradient(158deg,
+                color-mix(in srgb, var(--g-card-solid) 76%, transparent) 0%,
+                color-mix(in srgb, var(--g-nested-solid) 64%, transparent) 58%,
+                color-mix(in srgb, var(--g-primary) 20%, transparent) 100%) !important;
+        box-shadow:
+            0 28px 48px -28px color-mix(in srgb, var(--g-text) 64%, transparent),
+            0 8px 18px -14px color-mix(in srgb, var(--g-text) 40%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+            inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 15%, transparent),
+            inset 0 -22px 34px -28px color-mix(in srgb, var(--g-primary) 72%, transparent) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(1.25) !important;
+        backdrop-filter: blur(20px) saturate(1.25) !important;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-profile .profile-card > .card-header {
+        padding: 14px 18px !important;
+        border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 24%, transparent) !important;
+        background-color: transparent !important;
+        background-image: linear-gradient(135deg,
+            color-mix(in srgb, var(--g-primary) 42%, transparent),
+            color-mix(in srgb, var(--g-surface-solid) 28%, transparent)) !important;
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+        font-size: .92rem !important;
+        font-weight: 800 !important;
+        text-shadow: 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 45%, transparent);
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-profile .profile-card > .card-body {
+        padding: 20px !important;
+        border-radius: 0 0 26px 26px !important;
+        background-color: transparent !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-profile .profile-card .form-label {
+        display: block;
+        margin-bottom: 7px !important;
+        color: color-mix(in srgb, var(--g-text) 80%, transparent) !important;
+        -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 80%, transparent) !important;
+        font-size: .78rem !important;
+        font-weight: 750 !important;
+        line-height: 1.6;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-profile .profile-card .form-control[readonly] {
+        min-height: 48px;
+        padding: 12px 15px !important;
+        border: 1px solid color-mix(in srgb, var(--g-text) 24%, transparent) !important;
+        border-radius: 14px !important;
+        background-color: color-mix(in srgb, var(--g-nested-solid) 18%, transparent) !important;
+        background-image: linear-gradient(150deg,
+            color-mix(in srgb, var(--g-surface-solid) 26%, transparent),
+            transparent 82%) !important;
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+        box-shadow:
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent),
+            inset 0 -8px 14px -12px color-mix(in srgb, var(--g-text) 52%, transparent) !important;
+        font-size: .92rem !important;
+        font-weight: 700 !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-profile .profile-card .form-control[readonly]:focus {
+        border-color: color-mix(in srgb, var(--g-primary) 60%, transparent) !important;
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--g-primary) 18%, transparent) !important;
+    }
+
+    /* آواتار: قاب سه‌بعدی */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-profile .profile-card :is(img.rounded-circle, #avatar) {
+        width: 128px !important;
+        height: 128px !important;
+        border: 3px solid color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+        box-shadow:
+            0 20px 32px -18px color-mix(in srgb, var(--g-text) 66%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent),
+            inset 0 -12px 20px -14px color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+        object-fit: cover;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-profile .profile-card #avatar {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent !important;
+        background-image: linear-gradient(150deg,
+            var(--g-primary) 0%,
+            color-mix(in srgb, var(--g-primary) 74%, var(--g-surface-solid)) 58%,
+            color-mix(in srgb, var(--g-surface-solid) 92%, transparent) 100%) !important;
+        color: var(--g-text) !important;
+        font-size: 2.4rem !important;
+    }
+</style>
+
+<div class="row g-3 member-profile">
     <div class="col-md-4">
-        <div class="card text-center">
+        <div class="card text-center profile-card">
             <div class="card-header">تصویر پروفایل</div>
             <div class="purple-style card-body">
                 @if (ViewData["HasFace"] as bool? == true)
@@ -23,7 +133,7 @@
         </div>
     </div>
     <div class="col-md-8">
-        <div class="card">
+        <div class="card profile-card">
             <div class="card-header">اطلاعات پروفایل</div>
             <div class="purple-style card-body">
                 <div class="row g-3">

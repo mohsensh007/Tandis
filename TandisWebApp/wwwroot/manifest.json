@@ -3,7 +3,7 @@
   "short_name": "تندیس",
   "description": "پنل اعضای باشگاه",
   "id": "/",
-  "start_url": "/Home",
+  "start_url": "/Account/Login",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",

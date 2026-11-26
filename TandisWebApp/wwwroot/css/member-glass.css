@@ -1,0 +1,685 @@
+/* ============================================================
+   member-glass.css — زبان طراحی مشترک همهٔ صفحات پنل عضو
+   همان زبان میز خدمات: کارت سه‌بعدی شیشه‌ای، لایه‌بندی رنگ روی
+   سطح، و جداسازی رنگ متن از پس‌زمینه.
+   فقط روی body.member-ui اثر می‌گذارد؛ ادمین/دسک/ورود دست‌نخورده‌اند.
+   ============================================================ */
+
+/* ---------- ۱) پایه: متن همیشه روی سطح خودش خوانا ---------- */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.card, .glass-card, .purple-style, .modal-content, .mpl-card, .mp-day, .ath-card, .ba-card, .ba-chart-box, .ms-card, .commerce-panel, .commerce-cart-panel, .commerce-card, .commerce-product-card) {
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: currentColor;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(h1, h2, h3, h4, h5, h6) {
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    text-shadow: 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 45%, transparent);
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.text-muted, .text-white-50, .small.text-muted) {
+    color: color-mix(in srgb, var(--g-text) 70%, transparent) !important;
+    -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 70%, transparent) !important;
+}
+
+/* ---------- ۲) لایهٔ ۲: سطح اصلی کارت‌ها ---------- */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.card, .glass-card, .purple-style, .modal-content) {
+    border-radius: 26px !important;
+    border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+    background-color: color-mix(in srgb, var(--g-card-solid) 58%, transparent) !important;
+    background-image:
+        radial-gradient(96% 78% at 16% -20%, color-mix(in srgb, var(--g-surface-solid) 86%, transparent), transparent 62%),
+        radial-gradient(120% 92% at 100% 118%, color-mix(in srgb, var(--g-primary) 30%, transparent), transparent 66%),
+        linear-gradient(158deg,
+            color-mix(in srgb, var(--g-card-solid) 76%, transparent) 0%,
+            color-mix(in srgb, var(--g-nested-solid) 64%, transparent) 58%,
+            color-mix(in srgb, var(--g-primary) 20%, transparent) 100%) !important;
+    box-shadow:
+        0 28px 48px -28px color-mix(in srgb, var(--g-text) 64%, transparent),
+        0 8px 18px -14px color-mix(in srgb, var(--g-text) 40%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+        inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 15%, transparent),
+        inset 0 -22px 34px -28px color-mix(in srgb, var(--g-primary) 72%, transparent) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(1.25) !important;
+    backdrop-filter: blur(20px) saturate(1.25) !important;
+    overflow: hidden;
+}
+
+/* هدر کارت‌ها: نوار رنگی خودش + متن با کنتراست کافی */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.card > .card-header, .glass-card > .card-header, .glass-card > .grad-header, .modal-content > .modal-header, .modal-content > .grad-header, .card-head-purple) {
+    padding: 14px 18px !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 24%, transparent) !important;
+    background-color: transparent !important;
+    background-image: linear-gradient(135deg,
+        color-mix(in srgb, var(--g-primary) 42%, transparent),
+        color-mix(in srgb, var(--g-surface-solid) 28%, transparent)) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    border-radius: 26px 26px 0 0 !important;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent) !important;
+    font-size: .92rem !important;
+    font-weight: 800 !important;
+    text-shadow: 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 45%, transparent);
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.card > .card-body, .glass-card > .card-body, .modal-content > .modal-body) {
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    color: var(--g-text) !important;
+}
+
+/* ---------- ۳) لایهٔ ۳: کاشی‌های داخلی ---------- */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(
+    .ath-stat, .mpl-stat, .ba-id-chip, .renew-info-box, .cat-item,
+    .commerce-category-button, .commerce-cart-item, .commerce-card, .commerce-product-card,
+    .mp-day, .ms-card, .coach-item, .note-box, .empty-state
+) {
+    border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+    border-radius: 18px !important;
+    background-color: color-mix(in srgb, var(--g-card-solid) 46%, transparent) !important;
+    background-image: linear-gradient(158deg,
+        color-mix(in srgb, var(--g-surface-solid) 34%, transparent) 0%,
+        transparent 62%,
+        color-mix(in srgb, var(--g-primary) 16%, transparent) 100%) !important;
+    box-shadow:
+        0 16px 24px -20px color-mix(in srgb, var(--g-text) 58%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent),
+        inset 0 -12px 18px -16px color-mix(in srgb, var(--g-primary) 65%, transparent) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.commerce-card, .commerce-product-card, .mpl-card, .ms-card, .cat-item) {
+    transition: transform .22s cubic-bezier(.2, .8, .3, 1), box-shadow .22s ease, border-color .22s ease;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.commerce-card, .commerce-product-card, .mpl-card, .ms-card, .cat-item):hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--g-primary) 50%, transparent) !important;
+    box-shadow:
+        0 24px 34px -22px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent) !important;
+}
+
+/* آیکون‌های داخل کاشی‌ها: قاب سه‌بعدی */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.commerce-card-icon, .commerce-product-icon, .ath-card-title > i, .ba-card-title > i) {
+    border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent) !important;
+    background-color: transparent !important;
+    background-image: linear-gradient(148deg,
+        color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+        color-mix(in srgb, var(--g-primary) 26%, transparent)) !important;
+    box-shadow:
+        0 10px 18px -12px color-mix(in srgb, var(--g-text) 66%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent),
+        inset 0 -8px 14px -10px color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+    color: color-mix(in srgb, var(--g-primary) 86%, var(--g-text)) !important;
+}
+
+/* ---------- ۴) فرم‌ها و فیلدها ---------- */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.form-control, .form-select, .ba-input, .ba-select, .commerce-quantity, textarea.form-control) {
+    min-height: 48px;
+    padding: 12px 15px !important;
+    border: 1px solid color-mix(in srgb, var(--g-text) 24%, transparent) !important;
+    border-radius: 14px !important;
+    background-color: color-mix(in srgb, var(--g-nested-solid) 18%, transparent) !important;
+    background-image: linear-gradient(150deg,
+        color-mix(in srgb, var(--g-surface-solid) 26%, transparent),
+        transparent 82%) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    box-shadow:
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent),
+        inset 0 -8px 14px -12px color-mix(in srgb, var(--g-text) 52%, transparent) !important;
+    font-size: .92rem;
+    font-weight: 650;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.form-control, .form-select, .ba-input, .ba-select, textarea.form-control)::placeholder {
+    color: color-mix(in srgb, var(--g-text) 56%, transparent) !important;
+    -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 56%, transparent) !important;
+    opacity: 1 !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.form-control, .form-select, .ba-input, .ba-select):focus {
+    border-color: color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+    box-shadow:
+        0 0 0 4px color-mix(in srgb, var(--g-primary) 20%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent) !important;
+    outline: none !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.form-label, .ba-label) {
+    margin-bottom: 7px !important;
+    color: color-mix(in srgb, var(--g-text) 80%, transparent) !important;
+    -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 80%, transparent) !important;
+    font-size: .8rem !important;
+    font-weight: 750 !important;
+}
+
+/* ---------- ۵) دکمه‌ها (برجستگی ۳بعدی) ---------- */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.btn-primary, .btn-success, .btn-warning, .commerce-checkout, .commerce-buy, .commerce-add) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 46px;
+    padding: 11px 18px !important;
+    border: 1px solid color-mix(in srgb, var(--g-text) 30%, transparent) !important;
+    border-radius: 15px !important;
+    background-color: transparent !important;
+    background-image: linear-gradient(135deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-primary) 82%, var(--g-surface-solid)) 54%,
+        color-mix(in srgb, var(--g-surface-solid) 96%, transparent) 100%) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    font-weight: 800 !important;
+    box-shadow:
+        0 16px 26px -18px color-mix(in srgb, var(--g-text) 62%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 78%, transparent),
+        inset 0 -12px 18px -14px color-mix(in srgb, var(--g-primary) 80%, transparent) !important;
+    transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.btn-primary, .btn-success, .btn-warning, .commerce-checkout, .commerce-buy, .commerce-add):hover {
+    transform: translateY(-2px);
+    filter: brightness(1.03);
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.btn-primary, .btn-success, .btn-warning, .commerce-checkout, .commerce-buy, .commerce-add):disabled {
+    transform: none;
+    filter: grayscale(.35) opacity(.65);
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.btn-back-glass, .mpl-back-pill, .mp-back-pill, .coach-back-pill, .ba-back, .btn-outline-secondary, .btn-outline-light) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 44px;
+    padding: 9px 15px !important;
+    border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+    border-radius: 14px !important;
+    background-color: color-mix(in srgb, var(--g-nested-solid) 18%, transparent) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    font-weight: 750 !important;
+    text-decoration: none !important;
+    box-shadow:
+        0 12px 20px -16px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 75%, transparent) !important;
+}
+
+/* ---------- ۶) جدول‌ها ---------- */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .table {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--g-text);
+    margin-bottom: 0;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .table > thead th {
+    padding: 10px 12px !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+    background-color: color-mix(in srgb, var(--g-primary) 15%, transparent) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    font-size: .78rem !important;
+    font-weight: 800 !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .table > tbody td {
+    padding: 11px 12px !important;
+    border-top: 1px solid color-mix(in srgb, var(--g-primary) 13%, transparent) !important;
+    border-bottom: 0 !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    background-color: transparent !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .table-striped > tbody > tr:nth-of-type(odd) > * {
+    background-color: color-mix(in srgb, var(--g-surface-solid) 10%, transparent) !important;
+    --bs-table-accent-bg: transparent;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .table > tbody > tr:hover > * {
+    background-color: color-mix(in srgb, var(--g-primary) 10%, transparent) !important;
+}
+
+/* ---------- ۷) نشان‌ها و رنگ‌های وضعیت ---------- */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .badge {
+    padding: 5px 10px !important;
+    border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent) !important;
+    border-radius: 999px !important;
+    background-color: color-mix(in srgb, var(--g-primary) 14%, transparent) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    font-weight: 750 !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.text-danger, .text-success, .text-info, .text-warning) {
+    -webkit-text-fill-color: currentColor !important;
+}
+
+/* ---------- ۸) فروشگاه / بوفه / بلیت / خدمات ---------- */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.commerce-panel, .commerce-cart-panel) {
+    border-radius: 26px !important;
+    border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+    background-color: color-mix(in srgb, var(--g-card-solid) 58%, transparent) !important;
+    background-image:
+        radial-gradient(96% 78% at 16% -20%, color-mix(in srgb, var(--g-surface-solid) 86%, transparent), transparent 62%),
+        linear-gradient(158deg,
+            color-mix(in srgb, var(--g-card-solid) 76%, transparent) 0%,
+            color-mix(in srgb, var(--g-nested-solid) 64%, transparent) 58%,
+            color-mix(in srgb, var(--g-primary) 20%, transparent) 100%) !important;
+    box-shadow:
+        0 28px 48px -28px color-mix(in srgb, var(--g-text) 64%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+        inset 0 -22px 34px -28px color-mix(in srgb, var(--g-primary) 72%, transparent) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(1.25) !important;
+    backdrop-filter: blur(20px) saturate(1.25) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.commerce-panel-head, .commerce-cart-head) {
+    border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent) !important;
+    background-color: transparent !important;
+    background-image: linear-gradient(135deg,
+        color-mix(in srgb, var(--g-primary) 36%, transparent),
+        color-mix(in srgb, var(--g-surface-solid) 24%, transparent)) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.commerce-panel-title, .commerce-cart-title, .commerce-hero h1, .commerce-kicker) {
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .commerce-hero {
+    border-radius: 26px !important;
+    border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+    background-color: color-mix(in srgb, var(--g-card-solid) 52%, transparent) !important;
+    background-image:
+        radial-gradient(120% 130% at 6% -20%, color-mix(in srgb, var(--g-surface-solid) 78%, transparent), transparent 62%),
+        linear-gradient(140deg,
+            color-mix(in srgb, var(--g-primary) 40%, transparent) 0%,
+            color-mix(in srgb, var(--g-nested-solid) 55%, transparent) 62%,
+            color-mix(in srgb, var(--g-surface-solid) 34%, transparent) 100%) !important;
+    box-shadow:
+        0 26px 44px -28px color-mix(in srgb, var(--g-text) 62%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 88%, transparent),
+        inset 0 -20px 30px -26px color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .commerce-notice {
+    border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+    border-radius: 16px !important;
+    background-color: color-mix(in srgb, var(--g-nested-solid) 18%, transparent) !important;
+    color: var(--g-text) !important;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .commerce-category-button.active {
+    border-color: color-mix(in srgb, var(--g-primary) 55%, transparent) !important;
+    background-image: linear-gradient(135deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-primary) 78%, var(--g-surface-solid)) 60%,
+        color-mix(in srgb, var(--g-surface-solid) 92%, transparent) 100%) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    box-shadow:
+        0 10px 18px -14px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 82%, transparent),
+        inset 0 -3px 0 var(--g-primary) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .commerce-count {
+    border: 1px solid color-mix(in srgb, var(--g-primary) 35%, transparent) !important;
+    background-color: color-mix(in srgb, var(--g-primary) 15%, transparent) !important;
+    color: var(--g-text) !important;
+    border-radius: 999px !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.commerce-price, .commerce-card-title, .commerce-product-title, .commerce-cart-item-name, .commerce-total strong) {
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    font-weight: 800 !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.commerce-card-subtitle, .commerce-cart-item-meta, .commerce-kicker, .commerce-stock) {
+    color: color-mix(in srgb, var(--g-text) 70%, transparent) !important;
+    -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 70%, transparent) !important;
+}
+
+/* ---------- ۹) تمدید / ثبت‌نام دوره ---------- */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .cat-item.active {
+    border-color: color-mix(in srgb, var(--g-primary) 55%, transparent) !important;
+    background-image: linear-gradient(135deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-surface-solid) 90%, transparent) 100%) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    box-shadow:
+        0 10px 18px -14px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 -3px 0 var(--g-primary) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.renew-info-box, .empty-state) {
+    color: color-mix(in srgb, var(--g-text) 82%, transparent) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .cal-table :is(th, td) {
+    color: var(--g-text) !important;
+    border-color: color-mix(in srgb, var(--g-primary) 18%, transparent) !important;
+}
+
+/* ---------- ۱۰) برنامهٔ تمرینی ---------- */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .mp-day {
+    border-radius: 20px !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.mp-day-head, .mpl-head) {
+    border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent) !important;
+    background-color: transparent !important;
+    background-image: linear-gradient(135deg,
+        color-mix(in srgb, var(--g-primary) 34%, transparent),
+        color-mix(in srgb, var(--g-surface-solid) 22%, transparent)) !important;
+    color: var(--g-text) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .mpf-chip {
+    min-height: 44px;
+    border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+    border-radius: 14px !important;
+    background-color: color-mix(in srgb, var(--g-nested-solid) 18%, transparent) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    transition: transform .2s ease, background-color .2s ease, border-color .2s ease;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .mpf-chip.mpf-on {
+    border-color: color-mix(in srgb, var(--g-primary) 55%, transparent) !important;
+    background-image: linear-gradient(135deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-surface-solid) 90%, transparent) 100%) !important;
+    box-shadow:
+        0 10px 18px -14px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent) !important;
+}
+
+/* ---------- ۱۱) باشگاه / تحلیل بدن / پیام‌ها ---------- */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ath-card {
+    border-radius: 22px !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.ath-card-title, .ba-card-title) {
+    color: var(--g-text) !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 20%, transparent) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.ms-card-unread) {
+    border-color: color-mix(in srgb, var(--g-primary) 58%, transparent) !important;
+    box-shadow:
+        0 20px 30px -22px color-mix(in srgb, var(--g-text) 62%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 90%, transparent),
+        inset 0 -12px 18px -16px color-mix(in srgb, var(--g-primary) 80%, transparent) !important;
+}
+
+/* ---------- ۱۲) دسترس‌پذیری و موبایل ---------- */
+html[data-theme] body.member-ui :is(button, a, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--g-primary) 75%, transparent);
+    outline-offset: 2px;
+}
+
+@media (max-width: 480px) {
+    html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.card, .glass-card, .purple-style, .modal-content, .commerce-panel, .commerce-cart-panel, .commerce-hero) {
+        border-radius: 22px !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html[data-theme] body.member-ui * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* ============================================================
+   ۱۳) صفحهٔ تحلیل بدن — لایه‌بندی رنگ، عمق و جداسازی متن
+   ============================================================ */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.ba-card, .ba-chart-box, .ba-help-dialog) {
+    border-radius: 26px !important;
+    border: 1px solid transparent !important;
+    background-color: color-mix(in srgb, var(--g-card-solid) 58%, transparent) !important;
+    background-image:
+        radial-gradient(96% 78% at 16% -20%, color-mix(in srgb, var(--g-surface-solid) 86%, transparent), transparent 62%),
+        radial-gradient(120% 92% at 100% 118%, color-mix(in srgb, var(--g-primary) 30%, transparent), transparent 66%),
+        linear-gradient(158deg,
+            color-mix(in srgb, var(--g-card-solid) 76%, transparent) 0%,
+            color-mix(in srgb, var(--g-nested-solid) 64%, transparent) 58%,
+            color-mix(in srgb, var(--g-primary) 20%, transparent) 100%) !important;
+    box-shadow:
+        0 28px 48px -28px color-mix(in srgb, var(--g-text) 64%, transparent),
+        0 8px 18px -14px color-mix(in srgb, var(--g-text) 38%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+        inset 0 -22px 34px -28px color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(1.25) !important;
+    backdrop-filter: blur(20px) saturate(1.25) !important;
+    color: var(--g-text) !important;
+    overflow: hidden;
+}
+
+/* عنوان کارت: نوار رنگی مستقل از بدنهٔ کارت */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-card > .ba-card-title {
+    margin: -18px -18px 16px !important;
+    padding: 14px 18px !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+    border-radius: 26px 26px 0 0 !important;
+    background-color: transparent !important;
+    background-image: linear-gradient(135deg,
+        color-mix(in srgb, var(--g-primary) 44%, transparent),
+        color-mix(in srgb, var(--g-surface-solid) 26%, transparent)) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    font-size: .95rem !important;
+    font-weight: 800 !important;
+    text-shadow: 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 45%, transparent);
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-card > .ba-card-title > i {
+    width: 34px;
+    height: 34px;
+    display: inline-grid;
+    place-items: center;
+    flex: 0 0 auto;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    background-image: linear-gradient(148deg,
+        color-mix(in srgb, var(--g-surface-solid) 92%, transparent),
+        color-mix(in srgb, var(--g-primary) 28%, transparent)) !important;
+    box-shadow:
+        0 8px 14px -10px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 95%, transparent) !important;
+    color: color-mix(in srgb, var(--g-primary) 85%, var(--g-text)) !important;
+    font-size: .95rem;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-card-title .ba-card-hint {
+    color: color-mix(in srgb, var(--g-text) 66%, transparent) !important;
+}
+
+/* چیپ‌های هویتی */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-id-chip {
+    min-height: 34px;
+    padding: 6px 14px !important;
+    border: 1px solid transparent !important;
+    border-radius: 999px !important;
+    background-color: color-mix(in srgb, var(--g-card-solid) 46%, transparent) !important;
+    background-image: linear-gradient(150deg,
+        color-mix(in srgb, var(--g-surface-solid) 34%, transparent),
+        transparent 70%,
+        color-mix(in srgb, var(--g-primary) 16%, transparent)) !important;
+    box-shadow:
+        0 10px 18px -16px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 78%, transparent) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    font-weight: 750 !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-id-chip.ba-chip-name {
+    background-image: linear-gradient(135deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-surface-solid) 88%, transparent) 100%) !important;
+    box-shadow:
+        0 12px 20px -16px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 82%, transparent) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-id-chip i {
+    color: color-mix(in srgb, var(--g-primary) 80%, var(--g-text)) !important;
+}
+
+/* کاشی‌های نتیجه */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-metric {
+    border: 1px solid transparent !important;
+    border-radius: 18px !important;
+    background-color: color-mix(in srgb, var(--g-card-solid) 46%, transparent) !important;
+    background-image: linear-gradient(158deg,
+        color-mix(in srgb, var(--g-surface-solid) 34%, transparent) 0%,
+        transparent 62%,
+        color-mix(in srgb, var(--g-primary) 18%, transparent) 100%) !important;
+    box-shadow:
+        0 16px 24px -20px color-mix(in srgb, var(--g-text) 58%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent),
+        inset 0 -12px 18px -16px color-mix(in srgb, var(--g-primary) 65%, transparent) !important;
+    padding: 40px 12px 16px !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-metric:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--g-primary) 45%, transparent) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-metric .ba-m-value {
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    font-size: 1.5rem !important;
+    text-shadow: 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 40%, transparent);
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.ba-metric .ba-m-label, .ba-metric .ba-m-unit) {
+    color: color-mix(in srgb, var(--g-text) 68%, transparent) !important;
+    -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 68%, transparent) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-metric .ba-m-badge {
+    border: 1px solid transparent !important;
+    background-color: color-mix(in srgb, var(--g-primary) 18%, transparent) !important;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 65%, transparent) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+}
+
+/* تب‌ها و چیپ‌های نمودار */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-chip {
+    min-height: 42px;
+    padding: 7px 14px !important;
+    border: 1px solid transparent !important;
+    border-radius: 13px !important;
+    background-color: color-mix(in srgb, var(--g-nested-solid) 18%, transparent) !important;
+    background-image: linear-gradient(150deg,
+        color-mix(in srgb, var(--g-surface-solid) 22%, transparent),
+        transparent 82%) !important;
+    color: color-mix(in srgb, var(--g-text) 78%, transparent) !important;
+    -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 78%, transparent) !important;
+    font-weight: 750 !important;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 55%, transparent) !important;
+    transition: transform .2s ease, background-color .2s ease;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-chip.active {
+    background-image: linear-gradient(135deg,
+        var(--g-primary) 0%,
+        color-mix(in srgb, var(--g-primary) 78%, var(--g-surface-solid)) 60%,
+        color-mix(in srgb, var(--g-surface-solid) 92%, transparent) 100%) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    box-shadow:
+        0 10px 18px -14px color-mix(in srgb, var(--g-text) 60%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 82%, transparent),
+        inset 0 -3px 0 var(--g-primary) !important;
+}
+
+/* نمودار: قاب و راهنما */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-chart-box {
+    padding: 16px !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-legend {
+    color: color-mix(in srgb, var(--g-text) 72%, transparent) !important;
+    font-weight: 650 !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-empty {
+    color: color-mix(in srgb, var(--g-text) 62%, transparent) !important;
+}
+
+/* جدول اندازه‌گیری‌ها */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-table-wrap {
+    border: 1px solid transparent !important;
+    border-radius: 16px !important;
+    background-color: color-mix(in srgb, var(--g-card-solid) 40%, transparent) !important;
+    background-image: linear-gradient(158deg,
+        color-mix(in srgb, var(--g-surface-solid) 20%, transparent),
+        transparent 80%) !important;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 60%, transparent) !important;
+    overflow: hidden;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-table thead th {
+    background-color: color-mix(in srgb, var(--g-primary) 16%, transparent) !important;
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-table tbody td {
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+    border-top: 1px solid color-mix(in srgb, var(--g-primary) 12%, transparent) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-note {
+    border: 1px solid transparent !important;
+    border-radius: 16px !important;
+    background-color: color-mix(in srgb, var(--g-primary) 12%, transparent) !important;
+    background-image: linear-gradient(150deg,
+        color-mix(in srgb, var(--g-surface-solid) 24%, transparent),
+        transparent 85%) !important;
+    color: var(--g-text) !important;
+    box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 65%, transparent) !important;
+}
+
+/* آخرین اندازه‌گیری‌ها */
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .ba-latest-item {
+    border: 1px solid transparent !important;
+    border-radius: 16px !important;
+    background-color: color-mix(in srgb, var(--g-card-solid) 44%, transparent) !important;
+    background-image: linear-gradient(158deg,
+        color-mix(in srgb, var(--g-surface-solid) 26%, transparent),
+        transparent 78%) !important;
+    box-shadow:
+        0 12px 20px -18px color-mix(in srgb, var(--g-text) 55%, transparent),
+        inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.ba-latest-title, .ba-latest-measurement, .ba-m-value, .ba-latest-primary) {
+    color: var(--g-text) !important;
+    -webkit-text-fill-color: var(--g-text) !important;
+}
+
+html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) :is(.ba-latest-date, .ba-m-unit) {
+    color: color-mix(in srgb, var(--g-text) 64%, transparent) !important;
+    -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 64%, transparent) !important;
+}

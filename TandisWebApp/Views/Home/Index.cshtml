@@ -1460,6 +1460,951 @@
             color: var(--g-primary);
             font-size: .82rem;
         }
+
+    /* ============================================================
+       پنل عضو — همان زبان طراحی میز خدمات:
+       شیشهٔ سه‌لایه (پس‌زمینه / باکس بخش / کارت)، پدینگ و فاصلهٔ تضمین‌شده،
+       برجستگی ۳بعدی ملایم، خوانایی متن روی شیشه و لمس‌پذیری ۴۴px+
+       ============================================================ */
+
+    /* ریشهٔ پنل: فاصلهٔ عمودی تضمین‌شده بین همهٔ کارت‌ها و باکس‌ها */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home > * {
+        margin-bottom: 0 !important;
+    }
+
+    /* ---------- کارت‌های پایه (سانس‌های فعال، آمار مالی) ---------- */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .card {
+        position: relative;
+        border-radius: 24px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 54%, transparent) !important;
+        background-image:
+            radial-gradient(94% 74% at 18% -20%, color-mix(in srgb, var(--g-surface-solid) 82%, transparent), transparent 62%),
+            linear-gradient(158deg,
+                color-mix(in srgb, var(--g-card-solid) 72%, transparent) 0%,
+                color-mix(in srgb, var(--g-nested-solid) 60%, transparent) 58%,
+                color-mix(in srgb, var(--g-primary) 20%, transparent) 100%) !important;
+        box-shadow:
+            0 22px 40px -26px color-mix(in srgb, var(--g-text) 62%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 88%, transparent),
+            inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 13%, transparent) !important;
+        -webkit-backdrop-filter: blur(16px) saturate(1.25) !important;
+        backdrop-filter: blur(16px) saturate(1.25) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .card > .card-header {
+        padding: 14px 18px !important;
+        border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 20%, transparent) !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        font-size: .9rem !important;
+        font-weight: 800 !important;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .card > .card-body {
+        padding: 16px 18px !important;
+        border-radius: 0 0 24px 24px !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .card .hd-icon {
+        color: color-mix(in srgb, var(--g-primary) 88%, var(--g-text)) !important;
+        margin-left: 7px;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .card .hd-badge {
+        min-width: 30px;
+        padding: 5px 10px;
+        border-radius: 999px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 40%, transparent) !important;
+        background: color-mix(in srgb, var(--g-primary) 18%, transparent) !important;
+        color: var(--g-text) !important;
+        font-size: .74rem !important;
+        font-weight: 800 !important;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* ---------- هدر پروفایل ---------- */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .home-profile-card {
+        border-radius: 26px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 58%, transparent) !important;
+        background-image:
+            radial-gradient(96% 78% at 16% -20%, color-mix(in srgb, var(--g-surface-solid) 86%, transparent), transparent 62%),
+            radial-gradient(120% 92% at 100% 118%, color-mix(in srgb, var(--g-primary) 30%, transparent), transparent 66%),
+            linear-gradient(158deg,
+                color-mix(in srgb, var(--g-card-solid) 76%, transparent) 0%,
+                color-mix(in srgb, var(--g-nested-solid) 64%, transparent) 58%,
+                color-mix(in srgb, var(--g-primary) 20%, transparent) 100%) !important;
+        box-shadow:
+            0 28px 48px -28px color-mix(in srgb, var(--g-text) 64%, transparent),
+            0 8px 18px -14px color-mix(in srgb, var(--g-text) 40%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+            inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 15%, transparent),
+            inset 0 -22px 34px -28px color-mix(in srgb, var(--g-primary) 72%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .home-profile-card > .card-body {
+        padding: 18px 20px !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .home-profile-summary {
+        gap: 16px !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .home-avatar-wrap {
+        width: 92px;
+        height: 92px;
+        flex: 0 0 auto;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .home-avatar-wrap .avatar-circle {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 40%, transparent);
+        background-image: linear-gradient(150deg,
+            color-mix(in srgb, var(--g-primary) 88%, transparent),
+            color-mix(in srgb, var(--g-surface-solid) 70%, transparent));
+        box-shadow:
+            0 14px 26px -16px color-mix(in srgb, var(--g-text) 66%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent);
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .home-avatar-wrap .avatar-circle i {
+        color: var(--g-text);
+        opacity: .9;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home #dashFullName {
+        margin-bottom: 10px !important;
+        font-size: 1.06rem !important;
+        font-weight: 800 !important;
+        line-height: 1.6;
+        color: var(--g-text) !important;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* چیپ‌های کد عضویت و وضعیت: یک شکل، یک اندازه، فاصلهٔ درست */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.membership-chip, .status-chip) {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 32px;
+        padding: 6px 13px !important;
+        border-radius: 999px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 28%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-nested-solid) 22%, transparent) !important;
+        background-image: linear-gradient(150deg,
+            color-mix(in srgb, var(--g-surface-solid) 38%, transparent),
+            transparent 86%) !important;
+        color: var(--g-text) !important;
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+        font-size: .74rem !important;
+        font-weight: 750 !important;
+        white-space: nowrap;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.membership-chip, .status-chip) i {
+        font-size: .9rem !important;
+        color: color-mix(in srgb, var(--g-primary) 85%, var(--g-text)) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .status-chip.status-active {
+        border-color: color-mix(in srgb, var(--g-text) 26%, transparent) !important;
+        color: var(--g-text) !important;
+    }
+
+    /* ---------- منوی کارت‌دار دسکتاپ ---------- */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home #navMenu {
+        --bs-gutter-x: 12px;
+        --bs-gutter-y: 12px;
+        margin-bottom: 0 !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home #navMenu .nav-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        min-height: 120px;
+        height: 100%;
+        padding: 16px 10px !important;
+        border-radius: 22px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 28%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 50%, transparent) !important;
+        background-image:
+            radial-gradient(92% 72% at 22% -22%, color-mix(in srgb, var(--g-surface-solid) 84%, transparent), transparent 62%),
+            linear-gradient(158deg,
+                color-mix(in srgb, var(--g-card-solid) 72%, transparent) 0%,
+                color-mix(in srgb, var(--g-nested-solid) 58%, transparent) 62%,
+                color-mix(in srgb, var(--g-primary) 20%, transparent) 100%) !important;
+        box-shadow:
+            0 18px 30px -22px color-mix(in srgb, var(--g-text) 60%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 88%, transparent),
+            inset 0 -18px 26px -22px color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+        -webkit-backdrop-filter: blur(14px) saturate(1.2) !important;
+        backdrop-filter: blur(14px) saturate(1.2) !important;
+        text-align: center;
+        text-decoration: none !important;
+        transform: perspective(900px) translateY(0) rotateX(0deg);
+        transition: transform .24s cubic-bezier(.2, .8, .3, 1), box-shadow .24s ease, border-color .24s ease;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home #navMenu .nav-card:hover {
+        transform: perspective(900px) translateY(-5px) rotateX(5deg);
+        border-color: color-mix(in srgb, var(--g-primary) 55%, transparent) !important;
+        box-shadow:
+            0 30px 42px -22px color-mix(in srgb, var(--g-text) 60%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 96%, transparent),
+            inset 0 -18px 26px -22px color-mix(in srgb, var(--g-primary) 88%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home #navMenu .nav-card:active {
+        transform: perspective(900px) translateY(-1px) rotateX(2deg) scale(.995);
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home #navMenu .nav-icon {
+        width: 48px;
+        height: 48px;
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        border-radius: 16px;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent);
+        background-image: linear-gradient(148deg,
+            color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+            color-mix(in srgb, var(--g-primary) 26%, transparent));
+        box-shadow:
+            0 10px 18px -12px color-mix(in srgb, var(--g-text) 66%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent),
+            inset 0 -8px 14px -10px color-mix(in srgb, var(--g-primary) 70%, transparent);
+        font-size: 1.42rem !important;
+        line-height: 1;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home #navMenu .nav-icon i {
+        color: color-mix(in srgb, var(--g-primary) 86%, var(--g-text)) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home #navMenu .nav-title {
+        font-size: .74rem !important;
+        font-weight: 750 !important;
+        line-height: 1.6 !important;
+        color: var(--g-text) !important;
+        text-wrap: balance;
+    }
+
+    /* ---------- کاروسل موبایل ---------- */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .cf-stage {
+        height: 312px;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .cf-card {
+        border-radius: 26px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 62%, transparent) !important;
+        background-image:
+            radial-gradient(90% 70% at 20% -18%, color-mix(in srgb, var(--g-surface-solid) 80%, transparent), transparent 62%),
+            linear-gradient(150deg,
+                color-mix(in srgb, var(--g-card-solid) 74%, transparent),
+                color-mix(in srgb, var(--g-nested-solid) 58%, transparent) 60%,
+                color-mix(in srgb, var(--g-primary) 22%, transparent)) !important;
+        box-shadow: 0 26px 44px -26px color-mix(in srgb, var(--g-text) 62%, transparent) !important;
+        -webkit-backdrop-filter: blur(16px) saturate(1.3) !important;
+        backdrop-filter: blur(16px) saturate(1.3) !important;
+        text-shadow: none !important;
+        gap: 12px;
+        padding: 16px;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .cf-card.cf-active {
+        background-image: linear-gradient(150deg,
+            color-mix(in srgb, var(--g-primary) 78%, transparent),
+            color-mix(in srgb, var(--g-surface-solid) 55%, transparent)) !important;
+        border-color: color-mix(in srgb, var(--g-text) 28%, transparent) !important;
+        box-shadow: 0 30px 50px -24px color-mix(in srgb, var(--g-text) 56%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .cf-icon {
+        font-size: 3rem;
+        line-height: 1;
+        color: color-mix(in srgb, var(--g-primary) 88%, var(--g-text)) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .cf-card.cf-active .cf-icon {
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .cf-title {
+        font-size: .96rem !important;
+        font-weight: 800 !important;
+        line-height: 1.55;
+        color: var(--g-text) !important;
+        text-align: center;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .btn-all-menu {
+        min-height: 44px;
+        padding: 10px 20px !important;
+        border-radius: 999px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-nested-solid) 20%, transparent) !important;
+        background-image: linear-gradient(150deg,
+            color-mix(in srgb, var(--g-surface-solid) 36%, transparent),
+            transparent 86%) !important;
+        color: var(--g-text) !important;
+        font-size: .78rem !important;
+        font-weight: 750 !important;
+        box-shadow:
+            0 12px 22px -18px color-mix(in srgb, var(--g-text) 60%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        backdrop-filter: blur(12px) !important;
+    }
+
+    /* ---------- منوی «همه بخش‌ها» ---------- */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .allmenu-item {
+        min-height: 96px;
+        padding: 14px 8px !important;
+        border-radius: 20px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 64%, transparent) !important;
+        background-image: linear-gradient(150deg,
+            color-mix(in srgb, var(--g-surface-solid) 34%, transparent),
+            transparent 86%) !important;
+        color: var(--g-text) !important;
+        box-shadow:
+            0 16px 26px -22px color-mix(in srgb, var(--g-text) 60%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent) !important;
+        -webkit-backdrop-filter: blur(14px) saturate(1.2) !important;
+        backdrop-filter: blur(14px) saturate(1.2) !important;
+        font-size: .78rem !important;
+        font-weight: 700 !important;
+        text-align: center;
+        gap: 10px;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .allmenu-item .am-icon {
+        font-size: 1.7rem !important;
+        color: color-mix(in srgb, var(--g-primary) 86%, var(--g-text)) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .allmenu-close {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 28%, transparent);
+        background-color: color-mix(in srgb, var(--g-nested-solid) 20%, transparent);
+        color: var(--g-text) !important;
+        font-size: 1rem;
+    }
+
+    /* ---------- کارت‌های میان‌بر (برنامه تمرینی / شروع تمرین / تحلیل بدن) ---------- */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry {
+        position: relative;
+        display: block;
+        border-radius: 22px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 48%, transparent) !important;
+        background-image:
+            radial-gradient(90% 80% at 18% -20%, color-mix(in srgb, var(--g-surface-solid) 78%, transparent), transparent 62%),
+            linear-gradient(158deg,
+                color-mix(in srgb, var(--g-card-solid) 70%, transparent),
+                color-mix(in srgb, var(--g-nested-solid) 56%, transparent) 62%,
+                color-mix(in srgb, var(--g-primary) 18%, transparent)) !important;
+        box-shadow:
+            0 20px 34px -24px color-mix(in srgb, var(--g-text) 60%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 86%, transparent),
+            inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 12%, transparent) !important;
+        -webkit-backdrop-filter: blur(14px) saturate(1.2) !important;
+        backdrop-filter: blur(14px) saturate(1.2) !important;
+        overflow: hidden;
+        transform: perspective(900px) translateY(0) rotateX(0deg);
+        transition: transform .24s cubic-bezier(.2, .8, .3, 1), box-shadow .24s ease, border-color .24s ease;
+        text-decoration: none !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry:hover {
+        transform: perspective(900px) translateY(-4px) rotateX(3deg);
+        border-color: color-mix(in srgb, var(--g-primary) 52%, transparent) !important;
+        box-shadow:
+            0 30px 44px -24px color-mix(in srgb, var(--g-text) 60%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+            inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 22%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry:active {
+        transform: perspective(900px) translateY(-1px) rotateX(1deg) scale(.997);
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry-inner {
+        padding: 16px 18px !important;
+        gap: 14px !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 17px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent);
+        background-image: linear-gradient(148deg,
+            color-mix(in srgb, var(--g-surface-solid) 92%, transparent),
+            color-mix(in srgb, var(--g-primary) 30%, transparent)) !important;
+        color: var(--g-text) !important;
+        font-size: 1.45rem !important;
+        box-shadow:
+            0 10px 18px -12px color-mix(in srgb, var(--g-text) 62%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 100%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry-icon i {
+        color: color-mix(in srgb, var(--g-primary) 88%, var(--g-text)) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry-title {
+        margin-bottom: 5px !important;
+        font-size: 1rem !important;
+        font-weight: 800 !important;
+        line-height: 1.6;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry-sub {
+        font-size: .76rem !important;
+        line-height: 1.8 !important;
+        color: color-mix(in srgb, var(--g-text) 72%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry-right {
+        color: color-mix(in srgb, var(--g-primary) 85%, var(--g-text)) !important;
+        font-size: 1.05rem !important;
+        gap: 8px !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry-count {
+        padding: 5px 12px !important;
+        border-radius: 999px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 40%, transparent) !important;
+        background: color-mix(in srgb, var(--g-primary) 18%, transparent) !important;
+        color: var(--g-text) !important;
+        font-size: .72rem !important;
+        font-weight: 800 !important;
+    }
+
+    /* ---------- مودال‌ها (تک جلسه / تعرفه‌ها) ---------- */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .modal-content {
+        border-radius: 28px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 66%, transparent) !important;
+        background-image:
+            radial-gradient(96% 76% at 18% -20%, color-mix(in srgb, var(--g-surface-solid) 84%, transparent), transparent 62%),
+            radial-gradient(120% 92% at 100% 118%, color-mix(in srgb, var(--g-primary) 26%, transparent), transparent 66%),
+            linear-gradient(158deg,
+                color-mix(in srgb, var(--g-card-solid) 78%, transparent) 0%,
+                color-mix(in srgb, var(--g-nested-solid) 64%, transparent) 58%,
+                color-mix(in srgb, var(--g-primary) 18%, transparent) 100%) !important;
+        box-shadow:
+            0 34px 62px -32px color-mix(in srgb, var(--g-text) 68%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+            inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 14%, transparent) !important;
+        -webkit-backdrop-filter: blur(22px) saturate(1.25) !important;
+        backdrop-filter: blur(22px) saturate(1.25) !important;
+        overflow: hidden;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .modal-header {
+        padding: 16px 20px !important;
+        border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent) !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .modal-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 1rem !important;
+        font-weight: 800 !important;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .modal-title i {
+        color: color-mix(in srgb, var(--g-primary) 88%, var(--g-text)) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .modal-body {
+        padding: 18px 20px 20px !important;
+        background: transparent !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .modal-footer {
+        padding: 14px 20px !important;
+        border-top: 1px solid color-mix(in srgb, var(--g-primary) 20%, transparent) !important;
+        background: transparent !important;
+        gap: 8px;
+    }
+
+    /* تب‌های مودال */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.ss-tabs, .tf-tabs) {
+        gap: 8px !important;
+        margin-bottom: 16px !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.ss-tab, .tf-tab) {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 46px;
+        padding: 10px 8px !important;
+        border-radius: 15px !important;
+        border: 1px solid color-mix(in srgb, var(--g-text) 20%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-nested-solid) 18%, transparent) !important;
+        background-image: none !important;
+        color: color-mix(in srgb, var(--g-text) 84%, transparent) !important;
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 58%, transparent) !important;
+        font-size: .78rem !important;
+        font-weight: 750 !important;
+        white-space: nowrap;
+        transition: transform .18s ease, border-color .18s ease, background-color .18s ease;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.ss-tab, .tf-tab).active {
+        border-color: color-mix(in srgb, var(--g-text) 28%, transparent) !important;
+        background-image: linear-gradient(135deg,
+            color-mix(in srgb, var(--g-primary) 88%, transparent),
+            color-mix(in srgb, var(--g-surface-solid) 55%, transparent)) !important;
+        color: var(--g-text) !important;
+        box-shadow:
+            0 12px 22px -14px color-mix(in srgb, var(--g-text) 60%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 78%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.ss-tab, .tf-tab):active {
+        transform: scale(.985);
+    }
+
+    /* کارت‌های داخل مودال */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.ss-card, .tf-card) {
+        padding: 14px 16px !important;
+        margin-bottom: 12px !important;
+        border-radius: 18px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 24%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 54%, transparent) !important;
+        background-image: linear-gradient(150deg,
+            color-mix(in srgb, var(--g-surface-solid) 26%, transparent),
+            transparent 86%) !important;
+        box-shadow:
+            0 14px 24px -20px color-mix(in srgb, var(--g-text) 55%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 66%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.ss-card, .tf-card):hover {
+        border-color: color-mix(in srgb, var(--g-primary) 45%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.ss-title, .tf-title) {
+        font-size: .95rem !important;
+        font-weight: 800 !important;
+        line-height: 1.6;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.ss-sub, .tf-sub, .tf-detail) {
+        font-size: .78rem !important;
+        line-height: 1.75 !important;
+        color: color-mix(in srgb, var(--g-text) 74%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.ss-price, .tf-price) {
+        font-size: .9rem !important;
+        font-weight: 800 !important;
+        color: color-mix(in srgb, var(--g-primary) 45%, var(--g-text)) !important;
+        font-variant-numeric: tabular-nums;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.ss-card .ss-time-pill, .tf-card .tf-pill, .ss-card .ss-date-pill) {
+        min-height: 26px;
+        padding: 4px 10px !important;
+        border-radius: 999px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 34%, transparent) !important;
+        background: color-mix(in srgb, var(--g-primary) 14%, transparent) !important;
+        color: var(--g-text) !important;
+        font-size: .73rem !important;
+        font-weight: 750 !important;
+    }
+
+    /* دکمهٔ ثبت / اعمال */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .ss-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        min-height: 44px;
+        padding: 10px 18px !important;
+        border-radius: 15px !important;
+        border: 1px solid color-mix(in srgb, var(--g-text) 28%, transparent) !important;
+        background-image: linear-gradient(135deg,
+            var(--g-primary),
+            color-mix(in srgb, var(--g-primary) 55%, var(--g-surface-solid))) !important;
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+        box-shadow:
+            0 14px 26px -16px color-mix(in srgb, var(--g-text) 58%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 72%, transparent) !important;
+        font-size: .84rem !important;
+        font-weight: 800 !important;
+        transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .ss-btn:hover {
+        transform: translateY(-2px);
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .ss-btn:active {
+        transform: scale(.98);
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .ss-empty,
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .tf-empty {
+        padding: 28px 12px !important;
+        color: color-mix(in srgb, var(--g-text) 72%, transparent) !important;
+        font-size: .82rem;
+    }
+
+    /* فیلتر رشته‌ها */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .tf-filterbar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-bottom: 12px;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .tf-filterbtn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 42px;
+        padding: 8px 14px;
+        border-radius: 14px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-nested-solid) 20%, transparent) !important;
+        color: var(--g-text) !important;
+        font-size: .78rem;
+        font-weight: 750;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .tf-filterpanel {
+        padding: 14px !important;
+        margin-bottom: 12px;
+        border-radius: 18px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-nested-solid) 22%, transparent) !important;
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 62%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .tf-check {
+        min-height: 42px;
+        padding: 9px 12px !important;
+        border-radius: 13px !important;
+        border: 1px solid color-mix(in srgb, var(--g-text) 18%, transparent) !important;
+        background: color-mix(in srgb, var(--g-nested-solid) 14%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .tf-check-name {
+        font-size: .8rem !important;
+        font-weight: 700 !important;
+        color: var(--g-text) !important;
+    }
+
+    /* ---------- پنل تایید (تک جلسه) ---------- */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .ss-confirm-panel {
+        border-radius: 26px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 70%, transparent) !important;
+        background-image:
+            radial-gradient(96% 76% at 20% -20%, color-mix(in srgb, var(--g-surface-solid) 82%, transparent), transparent 62%),
+            linear-gradient(158deg,
+                color-mix(in srgb, var(--g-card-solid) 80%, transparent),
+                color-mix(in srgb, var(--g-nested-solid) 66%, transparent) 60%,
+                color-mix(in srgb, var(--g-primary) 18%, transparent)) !important;
+        box-shadow:
+            0 32px 60px -30px color-mix(in srgb, var(--g-text) 70%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 90%, transparent),
+            inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 14%, transparent) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(1.2) !important;
+        backdrop-filter: blur(20px) saturate(1.2) !important;
+        padding: 26px 22px !important;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .ss-confirm-icon {
+        font-size: 2.4rem !important;
+        line-height: 1;
+        color: color-mix(in srgb, var(--g-primary) 88%, var(--g-text)) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .ss-confirm-text {
+        margin-top: 8px;
+        font-size: .88rem !important;
+        font-weight: 650 !important;
+        line-height: 1.95 !important;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .ss-confirm-btns {
+        display: flex;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .ss-btn-cancel {
+        flex: 1 1 0;
+        min-height: 44px;
+        padding: 10px 16px !important;
+        border-radius: 15px !important;
+        border: 1px solid color-mix(in srgb, var(--g-text) 24%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-nested-solid) 18%, transparent) !important;
+        color: var(--g-text) !important;
+        font-size: .84rem !important;
+        font-weight: 750 !important;
+    }
+
+    /* ---------- سانس‌های فعال ---------- */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .sans-card {
+        padding: 16px !important;
+        border-radius: 20px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-nested-solid) 24%, transparent) !important;
+        background-image: linear-gradient(150deg,
+            color-mix(in srgb, var(--g-surface-solid) 30%, transparent),
+            transparent 86%) !important;
+        box-shadow:
+            0 16px 26px -22px color-mix(in srgb, var(--g-text) 58%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 66%, transparent) !important;
+        color: var(--g-text) !important;
+        overflow: hidden;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .sans-name {
+        font-size: 1.02rem !important;
+        font-weight: 800 !important;
+        line-height: 1.6;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.sans-coach, .sans-meta) {
+        font-size: .78rem !important;
+        line-height: 1.85 !important;
+        color: color-mix(in srgb, var(--g-text) 76%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .sans-pill {
+        min-height: 28px;
+        padding: 5px 12px !important;
+        border-radius: 999px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 34%, transparent) !important;
+        background: color-mix(in srgb, var(--g-primary) 14%, transparent) !important;
+        color: var(--g-text) !important;
+        font-size: .74rem !important;
+        font-weight: 750 !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .sans-remain {
+        font-weight: 800 !important;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .empty-state {
+        width: 100%;
+        padding: 26px 12px !important;
+        border-radius: 18px !important;
+        border: 1px dashed color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+        background: color-mix(in srgb, var(--g-nested-solid) 14%, transparent) !important;
+        color: color-mix(in srgb, var(--g-text) 74%, transparent) !important;
+        font-size: .82rem;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .empty-state .empty-icon {
+        font-size: 1.9rem !important;
+        color: color-mix(in srgb, var(--g-primary) 70%, var(--g-text)) !important;
+        margin-bottom: 8px;
+    }
+
+    /* ---------- کارت‌های آمار مالی ---------- */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .home-credit-grid {
+        --bs-gutter-x: 12px;
+        --bs-gutter-y: 12px;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-card {
+        height: 100%;
+        border-radius: 20px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 24%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 50%, transparent) !important;
+        background-image:
+            radial-gradient(92% 74% at 20% -20%, color-mix(in srgb, var(--g-surface-solid) 76%, transparent), transparent 62%),
+            linear-gradient(158deg,
+                color-mix(in srgb, var(--g-card-solid) 70%, transparent),
+                color-mix(in srgb, var(--g-nested-solid) 56%, transparent) 62%,
+                color-mix(in srgb, var(--g-primary) 18%, transparent)) !important;
+        box-shadow:
+            0 18px 30px -22px color-mix(in srgb, var(--g-text) 58%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 82%, transparent) !important;
+        text-shadow: none !important;
+        transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-card:hover {
+        transform: translateY(-3px);
+        border-color: color-mix(in srgb, var(--g-primary) 50%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-card > .card-body {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        height: 100%;
+        padding: 14px 15px !important;
+        border-radius: 20px !important;
+        background: transparent !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 13px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent);
+        background-color: color-mix(in srgb, var(--g-nested-solid) 24%, transparent) !important;
+        display: grid !important;
+        place-items: center;
+        color: color-mix(in srgb, var(--g-primary) 88%, var(--g-text)) !important;
+        font-size: 1.1rem;
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 66%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-label {
+        font-size: .78rem !important;
+        font-weight: 750 !important;
+        line-height: 1.5;
+        color: color-mix(in srgb, var(--g-text) 86%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-amount {
+        margin-top: auto;
+        padding: 9px 12px !important;
+        border-radius: 13px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 28%, transparent) !important;
+        background: color-mix(in srgb, var(--g-nested-solid) 22%, transparent) !important;
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 60%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-value {
+        font-size: 1rem !important;
+        font-weight: 800 !important;
+        color: var(--g-text) !important;
+        font-variant-numeric: tabular-nums;
+        text-overflow: ellipsis;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-unit {
+        font-size: .68rem !important;
+        font-weight: 650 !important;
+        color: color-mix(in srgb, var(--g-text) 62%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.credit-amount.is-debit, .credit-amount.is-credit) .credit-value {
+        color: color-mix(in srgb, var(--g-primary) 45%, var(--g-text)) !important;
+    }
+
+    /* فاصلهٔ امن از نوار پایین شناور در موبایل */
+    html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .member-main {
+        padding-bottom: calc(28px + env(safe-area-inset-bottom));
+    }
+
+    @@media (max-width: 767.98px) {
+        html[data-theme] body.member-ui:not(#lu):not(#mt-theme):not(#app) .member-main {
+            padding-bottom: calc(104px + env(safe-area-inset-bottom));
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home {
+            gap: 14px;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .home-profile-card > .card-body {
+            padding: 16px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .home-avatar-wrap {
+            width: 74px;
+            height: 74px;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .home-profile-summary {
+            gap: 13px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry-inner {
+            padding: 14px 16px !important;
+            gap: 12px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .mp-entry-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 15px !important;
+            font-size: 1.3rem !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .modal-body {
+            padding: 14px 16px 18px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .modal-header {
+            padding: 14px 16px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-card > .card-body {
+            padding: 12px 13px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-amount {
+            padding: 8px 10px !important;
+        }
+
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home .credit-value {
+            font-size: .92rem !important;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.nav-card, .mp-entry, .credit-card),
+        html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-home :is(.nav-card, .mp-entry, .credit-card):hover {
+            transform: none;
+            transition: box-shadow .2s ease, border-color .2s ease;
+        }
+    }
 </style>
 
 <!-- ========== سانس‌های فعال ========== -->

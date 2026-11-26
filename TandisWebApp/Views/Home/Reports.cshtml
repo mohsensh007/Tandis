@@ -8,6 +8,405 @@
 
 <link rel="stylesheet" href="~/css/member-reports.css" asp-append-version="true" />
 
+<style>
+    /* ============================================================
+       گزارش‌های من — همان زبان طراحی میز خدمات:
+       کارت سه‌بعدی شیشه‌ای، لایه‌بندی رنگ روی سطح، و جداسازی رنگ متن
+       از پس‌زمینه (متن همیشه روی لایهٔ روشن/تیرهٔ خودش خوانا است)
+       ============================================================ */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports {
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-reports-heading h1 {
+        color: var(--g-text) !important;
+        text-shadow: 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 45%, transparent);
+    }
+
+    /* لایهٔ ۱: کارت اصلی گزارش‌ها */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-reports-card {
+        overflow: hidden;
+        border-radius: 26px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 30%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 58%, transparent) !important;
+        background-image:
+            radial-gradient(96% 78% at 16% -20%, color-mix(in srgb, var(--g-surface-solid) 86%, transparent), transparent 62%),
+            radial-gradient(120% 92% at 100% 118%, color-mix(in srgb, var(--g-primary) 30%, transparent), transparent 66%),
+            linear-gradient(158deg,
+                color-mix(in srgb, var(--g-card-solid) 76%, transparent) 0%,
+                color-mix(in srgb, var(--g-nested-solid) 64%, transparent) 58%,
+                color-mix(in srgb, var(--g-primary) 20%, transparent) 100%) !important;
+        box-shadow:
+            0 28px 48px -28px color-mix(in srgb, var(--g-text) 64%, transparent),
+            0 8px 18px -14px color-mix(in srgb, var(--g-text) 40%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+            inset 0 0 0 1px color-mix(in srgb, var(--g-primary) 15%, transparent),
+            inset 0 -22px 34px -28px color-mix(in srgb, var(--g-primary) 72%, transparent) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(1.25) !important;
+        backdrop-filter: blur(20px) saturate(1.25) !important;
+    }
+
+    /* هدر: نوار رنگی خودش + متن با کنتراست کافی */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-reports-card > .card-header {
+        padding: 14px 18px !important;
+        border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 24%, transparent) !important;
+        background-color: transparent !important;
+        background-image: linear-gradient(135deg,
+            color-mix(in srgb, var(--g-primary) 42%, transparent),
+            color-mix(in srgb, var(--g-surface-solid) 28%, transparent)) !important;
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+        font-size: .92rem !important;
+        font-weight: 800 !important;
+        text-shadow: 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 45%, transparent);
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-reports-card > .card-body {
+        background-color: transparent !important;
+        background-image: none !important;
+        box-shadow: none !important;
+        color: var(--g-text) !important;
+    }
+
+    /* لایهٔ ۲: نوار تب‌ها (سگمنت شیشه‌ای) */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .nav-tabs-custom {
+        gap: .4rem !important;
+        padding: .3rem !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 24%, transparent) !important;
+        border-radius: 16px !important;
+        background-color: color-mix(in srgb, var(--g-nested-solid) 18%, transparent) !important;
+        background-image: linear-gradient(150deg,
+            color-mix(in srgb, var(--g-surface-solid) 22%, transparent),
+            transparent 85%) !important;
+        box-shadow:
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 60%, transparent),
+            inset 0 -10px 18px -16px color-mix(in srgb, var(--g-text) 55%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .nav-tabs-custom .nav-link {
+        min-height: 46px !important;
+        border: 1px solid transparent !important;
+        border-radius: 12px !important;
+        background: transparent !important;
+        color: color-mix(in srgb, var(--g-text) 76%, transparent) !important;
+        -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 76%, transparent) !important;
+        font-weight: 700 !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .nav-tabs-custom .nav-link i {
+        color: inherit !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .nav-tabs-custom .nav-link.active {
+        border-color: color-mix(in srgb, var(--g-primary) 45%, transparent) !important;
+        background-color: transparent !important;
+        background-image: linear-gradient(135deg,
+            var(--g-primary) 0%,
+            color-mix(in srgb, var(--g-primary) 80%, var(--g-surface-solid)) 58%,
+            color-mix(in srgb, var(--g-surface-solid) 92%, transparent) 100%) !important;
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+        box-shadow:
+            0 12px 20px -14px color-mix(in srgb, var(--g-text) 60%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 85%, transparent),
+            inset 0 -3px 0 var(--g-primary) !important;
+    }
+
+    /* لایهٔ ۳: جدول مالی */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-finance-table thead th {
+        padding: 10px 12px !important;
+        border-bottom: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-primary) 15%, transparent) !important;
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+        font-size: .78rem !important;
+        font-weight: 800 !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-finance-table tbody td {
+        padding: 12px !important;
+        border-top: 1px solid color-mix(in srgb, var(--g-primary) 13%, transparent) !important;
+        border-bottom: 0 !important;
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-finance-table tbody tr.finance-record:hover { 
+        background-color: color-mix(in srgb, var(--g-surface-solid) 12%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .finance-currency {
+        color: color-mix(in srgb, var(--g-text) 66%, transparent) !important;
+    }
+
+    /* لایهٔ ۳: کاشی‌های خلاصهٔ ثبت‌نام */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .rgh-stat {
+        gap: .4rem !important;
+        padding: .95rem .6rem !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 26%, transparent) !important;
+        border-radius: 18px !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 46%, transparent) !important;
+        background-image: linear-gradient(158deg,
+            color-mix(in srgb, var(--g-surface-solid) 34%, transparent) 0%,
+            transparent 62%,
+            color-mix(in srgb, var(--g-primary) 16%, transparent) 100%) !important;
+        box-shadow:
+            0 16px 24px -20px color-mix(in srgb, var(--g-text) 58%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 80%, transparent),
+            inset 0 -12px 18px -16px color-mix(in srgb, var(--g-primary) 65%, transparent) !important;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .rgh-num {
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+        font-size: 1.1rem !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .rgh-lbl {
+        color: color-mix(in srgb, var(--g-text) 70%, transparent) !important;
+        -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 70%, transparent) !important;
+        font-weight: 600 !important;
+    }
+
+    /* لایهٔ ۳: کارت‌های تردد / سوابق */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-card {
+        margin-bottom: 10px;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 22%, transparent) !important;
+        border-radius: 18px !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 46%, transparent) !important;
+        background-image: linear-gradient(158deg,
+            color-mix(in srgb, var(--g-surface-solid) 30%, transparent) 0%,
+            transparent 66%,
+            color-mix(in srgb, var(--g-primary) 14%, transparent) 100%) !important;
+        box-shadow:
+            0 16px 26px -22px color-mix(in srgb, var(--g-text) 58%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 82%, transparent) !important;
+        color: var(--g-text) !important;
+        transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-card:hover {
+        transform: translateY(-2px);
+        border-color: color-mix(in srgb, var(--g-primary) 50%, transparent) !important;
+        box-shadow:
+            0 24px 34px -22px color-mix(in srgb, var(--g-text) 60%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-card.open {
+        border-color: color-mix(in srgb, var(--g-primary) 55%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-num {
+        border: 1px solid color-mix(in srgb, var(--g-primary) 34%, transparent) !important;
+        background-image: linear-gradient(150deg,
+            color-mix(in srgb, var(--g-surface-solid) 88%, transparent),
+            color-mix(in srgb, var(--g-primary) 30%, transparent)) !important;
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+        box-shadow:
+            0 8px 14px -10px color-mix(in srgb, var(--g-text) 60%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 95%, transparent) !important;
+        font-weight: 800 !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-head,
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-line,
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-line > b {
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-line > i,
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-line > span > span {
+        color: color-mix(in srgb, var(--g-text) 72%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-toggle {
+        border: 1px solid color-mix(in srgb, var(--g-primary) 28%, transparent) !important;
+        border-radius: 12px !important;
+        background-color: color-mix(in srgb, var(--g-nested-solid) 20%, transparent) !important;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-details {
+        margin-top: .5rem;
+        padding-top: .6rem;
+        border-top: 1px solid color-mix(in srgb, var(--g-primary) 18%, transparent);
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-drow > span {
+        color: color-mix(in srgb, var(--g-text) 68%, transparent) !important;
+        -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 68%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-drow > b {
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .trf-day {
+        color: color-mix(in srgb, var(--g-primary) 55%, var(--g-text)) !important;
+        -webkit-text-fill-color: color-mix(in srgb, var(--g-primary) 55%, var(--g-text)) !important;
+        background-color: color-mix(in srgb, var(--g-primary) 14%, transparent) !important;
+        border-color: color-mix(in srgb, var(--g-primary) 34%, transparent) !important;
+    }
+
+    /* تقویم حضور: همان کارت سه‌بعدی */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) #attCalOverlay.member-reports-calendar .att-cal-panel {
+        border-radius: 26px !important;
+        border: 1px solid color-mix(in srgb, var(--g-primary) 32%, transparent) !important;
+        background-color: color-mix(in srgb, var(--g-card-solid) 62%, transparent) !important;
+        background-image:
+            radial-gradient(96% 78% at 18% -18%, color-mix(in srgb, var(--g-surface-solid) 84%, transparent), transparent 62%),
+            linear-gradient(158deg,
+                color-mix(in srgb, var(--g-card-solid) 80%, transparent) 0%,
+                color-mix(in srgb, var(--g-nested-solid) 64%, transparent) 58%,
+                color-mix(in srgb, var(--g-primary) 20%, transparent) 100%) !important;
+        box-shadow:
+            0 32px 58px -30px color-mix(in srgb, var(--g-text) 70%, transparent),
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 94%, transparent),
+            inset 0 -22px 34px -28px color-mix(in srgb, var(--g-primary) 70%, transparent) !important;
+        color: var(--g-text) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) #attCalOverlay.member-reports-calendar .att-cal-title {
+        color: var(--g-text) !important;
+        -webkit-text-fill-color: var(--g-text) !important;
+        font-weight: 800 !important;
+    }
+
+    /* ---------- گزارش مالی: رنگ تفکیک‌شده، لایه‌بندی و برجستگی ---------- */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-finance-table thead th {
+        box-shadow:
+            inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent),
+            inset 0 -1px 0 color-mix(in srgb, var(--g-primary) 40%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-finance-table tbody tr.finance-record td {
+        background-color: color-mix(in srgb, var(--g-card-solid) 32%, transparent) !important;
+        background-image: linear-gradient(150deg,
+            color-mix(in srgb, var(--g-surface-solid) 12%, transparent),
+            transparent 82%) !important;
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 45%, transparent);
+        transition: background-color .2s ease, box-shadow .2s ease;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-finance-table tbody tr.finance-record:nth-of-type(even) td {
+        background-color: color-mix(in srgb, var(--g-primary) 8%, transparent) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-finance-table tbody tr.finance-record:hover td {
+        background-color: color-mix(in srgb, var(--g-primary) 14%, transparent) !important;
+        box-shadow: inset 0 1px 0 color-mix(in srgb, var(--g-surface-solid) 70%, transparent);
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-finance-table tbody tr.finance-record td:first-child {
+        border-start-start-radius: 12px;
+        border-end-start-radius: 12px;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .member-finance-table tbody tr.finance-record td:last-child {
+        border-start-end-radius: 12px;
+        border-end-end-radius: 12px;
+    }
+
+    /* مبلغ: چیپ رنگی با کنتراست کافی — بستانکار سبز، بدهکار قرمز */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .finance-amount-value {
+        display: inline-flex;
+        align-items: center;
+        gap: .35rem;
+        padding: 5px 12px;
+        border: 1px solid transparent;
+        border-radius: 999px;
+        font-weight: 800;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .finance-amount-value.finance-credit {
+        color: #0B7A52 !important;
+        -webkit-text-fill-color: #0B7A52 !important;
+        background-color: rgba(16, 185, 129, .16) !important;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, .55),
+            0 8px 16px -14px rgba(6, 95, 70, .8) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .finance-amount-value.finance-debit {
+        color: #B42318 !important;
+        -webkit-text-fill-color: #B42318 !important;
+        background-color: rgba(239, 68, 68, .14) !important;
+        box-shadow:
+            inset 0 1px 0 rgba(255, 255, 255, .5),
+            0 8px 16px -14px rgba(153, 27, 27, .7) !important;
+    }
+
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .member-reports .finance-amount-value.finance-credit {
+        color: #6EE7B7 !important;
+        -webkit-text-fill-color: #6EE7B7 !important;
+        background-color: rgba(16, 185, 129, .18) !important;
+    }
+
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .member-reports .finance-amount-value.finance-debit {
+        color: #FCA5A5 !important;
+        -webkit-text-fill-color: #FCA5A5 !important;
+        background-color: rgba(239, 68, 68, .18) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .finance-currency {
+        color: color-mix(in srgb, var(--g-text) 66%, transparent) !important;
+        -webkit-text-fill-color: color-mix(in srgb, var(--g-text) 66%, transparent) !important;
+        font-weight: 600 !important;
+    }
+
+    /* نشان‌های نوع سند و اعداد خلاصه هم رنگ معنایی بگیرند */
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .badge-credit {
+        color: #0B7A52 !important;
+        -webkit-text-fill-color: #0B7A52 !important;
+        background-color: rgba(16, 185, 129, .16) !important;
+        border-color: transparent !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5) !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .badge-debit {
+        color: #B42318 !important;
+        -webkit-text-fill-color: #B42318 !important;
+        background-color: rgba(239, 68, 68, .13) !important;
+        border-color: transparent !important;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45) !important;
+    }
+
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .member-reports .badge-credit {
+        color: #6EE7B7 !important;
+        -webkit-text-fill-color: #6EE7B7 !important;
+    }
+
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .member-reports .badge-debit {
+        color: #FCA5A5 !important;
+        -webkit-text-fill-color: #FCA5A5 !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .rgh-green {
+        color: #0B7A52 !important;
+        -webkit-text-fill-color: #0B7A52 !important;
+    }
+
+    html[data-theme] body:not(#lu):not(#mt-theme):not(#app) .member-reports .rgh-red {
+        color: #B42318 !important;
+        -webkit-text-fill-color: #B42318 !important;
+    }
+
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .member-reports .rgh-green {
+        color: #6EE7B7 !important;
+        -webkit-text-fill-color: #6EE7B7 !important;
+    }
+
+    html[data-theme="dark"] body:not(#lu):not(#mt-theme):not(#app) .member-reports .rgh-red {
+        color: #FCA5A5 !important;
+        -webkit-text-fill-color: #FCA5A5 !important;
+    }
+</style>
+
 <section class="member-reports" aria-labelledby="memberReportsTitle">
     <div class="member-reports-heading mb-3">
         <h1 class="h5 mb-0" id="memberReportsTitle"><i class="bi bi-bar-chart-fill hd-icon" aria-hidden="true"></i> گزارش‌های من</h1>
