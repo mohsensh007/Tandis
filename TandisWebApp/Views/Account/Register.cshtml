@@ -5,6 +5,20 @@
 }
 <script>
     window.DESK_MODE = @(deskMode ? "true" : "false");
+    // ✅✅ هر «ورودِ تازه» به صفحهٔ ثبت‌نام = شروع از اول
+    // (چه ثبت‌نام قبلی تمام شده باشد، چه نصفه رها شده باشد).
+    // فقط رفرشِ همین صفحه مرحلهٔ «ثبت چهره / انتخاب سانس» را نگه می‌دارد.
+    (function () {
+        var isReload = false;
+        try {
+            var nav = performance.getEntriesByType ? performance.getEntriesByType('navigation')[0] : null;
+            isReload = !!(nav && nav.type === 'reload');
+        } catch (e) { isReload = false; }
+        if (!isReload) {
+            try { sessionStorage.removeItem('regDone'); } catch (e) { }
+            window.REG_FRESH_START = true;
+        }
+    })();
     // ✅ میز خدمات: کد ملی نفر قبلی (autofill مرورگر یا بازگشت از صفحه) هرگز نمایش داده نشود
     window.addEventListener('pageshow', function () {
         if (!window.DESK_MODE) return;
@@ -1006,6 +1020,7 @@
         });
                 // ✅✅ اگه کاربر مرحله ۳ رو refresh کرد، همون‌جا بمونه
         (function restoreStep3() {
+            if (window.REG_FRESH_START) return;   // ✅ ورودِ تازه به صفحه = از اول
             var raw = sessionStorage.getItem('regDone');
             if (!raw) return;
             var d; try { d = JSON.parse(raw); } catch (e) { return; }
@@ -1272,13 +1287,12 @@
                 '<div class="dc-confirm">' +
                 '<div><b>' + (p.sportName || '') + ' — ' + (p.sanseName || '') + '</b>' +
                 '<span>' + dcMoney(p.totalAmount) + ' ریال</span></div>' +
+                // ✅ عضو تازه‌ثبت‌نام هیچ اعتباری ندارد؛ فقط پرداخت با کارت‌خوان
                 '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">' +
-                '<button type="button" class="btn btn-primary" id="dcPos">پرداخت با کارت‌خوان</button>' +
-                '<button type="button" class="btn btn-outline-primary" id="dcCredit">پرداخت از اعتبار</button>' +
+                '<button type="button" class="btn btn-primary w-100" id="dcPos">پرداخت با کارت‌خوان</button>' +
                 '<button type="button" class="btn btn-link" id="dcBack">بازگشت</button></div></div>';
 
             dcEl('dcBack').onclick = function () { dcLoadSanses(0); };
-            dcEl('dcCredit').onclick = function () { dcSubmit(p, 'credit'); };
             dcEl('dcPos').onclick = function () { dcSubmit(p, 'pos'); };
         }
 
